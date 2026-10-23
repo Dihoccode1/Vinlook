@@ -1146,3 +1146,23 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. Added daily open/close/reopen endpoints, original openedAt/ID preservation, atomic manual-close AuditLog reason and approved midnight/startup/current-principal reconciliation. Unique account/day retained; bounded3contention attempts; unknown commit not replayed. No schema/index/dependency/env additions.
 - Actual9session +49regression groups passed (58total), build and three-service smoke passed. Real Mongo rollback on audit failure,8concurrent open/close, exact Vietnam midnight and new Node startup reconciliation verified. All3task-only Mongo containers/own volumes removed after exact ID/label/mount checks. No Atlas/real staff/hosting/paid changes. Full evidence planning/task007-implementation-evidence.md.
 - Await Tu review/user merge after draft PR. History/audit ingestion/Manager APIs/UI/deployment/CI remain pending; readiness503.
+
+## DEC-139 TASK007 draft PR created
+
+- Date:23October2026. Draft PR15 https://github.com/Dihoccode1/Vinlook/pull/15, branch codex/task-007-sessions, head9fbbc6d4a77b8d5eba36b8fed7d48c625c8be075;16changed files, all16blob hashes verified. Main untouched.58passed groups/build/smoke and remaining gates included.
+- Await Tu human review/user merge; no reviewer notification or auto-merge sent. Postpublication tracking retained locally for a later reviewed change to preserve this review head.
+
+## DEC-140 TASK007 merge verified; TASK008 issue/contract prepared
+
+- Date:23October2026. User reports approval/merge. PR15 merged=true and maina3d46e9214b083f628dd48a80e756ada40939175 verified; formal reviews empty, retain user-reported review. TASK007 complete with prior58passed groups/build/smoke evidence.
+- Actual Issue16 TASK008 opened with approved ownerTu/reviewerDuy; no remote assignment/identity impersonation or reviewer notification. Prepared planning/task008-audit-contract.md: Content-only append/dedup receiver, original session/delayed-event rules, action/result registry, Staff/Manager history filtering and bound signed cursor. Missing concrete data/API details await A approval under Master Prompt Rule1 before code. No production/paid/deployment changes. Local tracking accompanies next reviewed branch.
+
+## DEC-141 TASK008 contract A approved
+
+- Date:23October2026. User explicitly approved A (implement/test). Covers Content-only receiver/action/result schema, exact replay/conflicting event IDs, delayed original session and historical actor handling, Staff/Manager query scopes/filters and signed role/requester/filter-bound cursor, Manager authorized session reconciliation. OwnerTu/reviewerDuy retained; AI assistance does not impersonate either. No production changes implied.
+
+## DEC-142 TASK008 implementation and actual isolated evidence
+
+- Date:23October2026. Added Content-only audit receiver with original session/actor semantics, normalized replay/conflict detection, bounded insert races; Staff-own/Manager account+operator history with strict filters, signed requester/role/filter/endpoint cursor and authorized stale-session reconciliation. No schema/index/secret/dependency additions.
+- Actual9audit +58regression groups passed (67unique total), build/smoke passed. Initial stopped Docker engine recovered through hidden existing Desktop startup; one initial child-start10s timeout recorded, unchanged separate runtime15/15 passed. Causes not invented; no skipped checks or timeout edits. All4exact task test containers/own volumes removed after ID/label/mount checks. No Atlas/real staff/paid/provider/deployment changes.
+- OwnerTu/reviewerDuy retained, publication via Duy connector/AI not impersonated Tu authorship or human approval. Full evidence planning/task008-implementation-evidence.md; draft PR follows. Content outbox/sender/UI/operator writers/production/CI remain separate; readiness503.
