@@ -126,7 +126,20 @@
     "state": "open",
     "assignee": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Contract A approved;77groups/build/smoke passed;draft PR publication in progress,Tu review pending",
-    "branch": "codex/task-009-staff-recovery"
+    "readiness": "Merged;user reports approval/review;77passed groups/build/smoke evidence retained",
+    "branch": "codex/task-009-staff-recovery",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/19",
+    "headCommit": "2c3830b326c342d7f1082e1d52d2824cb67feba4",
+    "mergeCommit": "cb6ae68ef215d8da40a5c904b40d96ffd7029fbb",
+    "reviewEvidence": "User approval/merge report;PR19 merge and main verified"
+  },
+  "TASK-010": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/20",
+    "number": 20,
+    "state": "open",
+    "assignee": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Contract A approved;61relevant groups/build/smoke passed;native human TTY acceptance pending;draft PR publication in progress",
+    "branch": "codex/task-010-manager-operator"
   }
 }

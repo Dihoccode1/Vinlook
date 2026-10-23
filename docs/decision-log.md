@@ -1191,3 +1191,23 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. Added Manager-only Staff list/approve/lock/unlock/code issuance and public atomic reset with approved authVersion revocation/serialization, raw-once32byte code/SHA256/15minute expiry/one-use, local account audit and reset IP30/account5fixed-window guards. No schema/index/secret/dependency additions; Staff cursor endpoint separately bound.
 - Final10Staff groups +67regressions passed (77unique total), build/smoke passed. Earlier9group Staff run retained separately, not double-counted. Real Mongo concurrent issue/reset, actual bcrypt12 Unicode, expired-at-consumption rollback, audit-failure rollback, version bound, token invalidation and new-process rate persistence proved with synthetic fixtures. All6task-only containers/own volumes removed after exact ID/label/mount checks.
 - No Atlas/real Manager/staff/provider/paid/hosting changes. Full evidence planning/task009-implementation-evidence.md. Operator bootstrap/issuance TASK010, UI/verificationdelivery/production/CI remain pending; readiness503. Draft PR for Tu review/user merge follows.
+
+## DEC-148 TASK009 draft PR created
+
+- Date:23October2026. Draft PR19 https://github.com/Dihoccode1/Vinlook/pull/19, branch codex/task-009-staff-recovery, head2c3830b326c342d7f1082e1d52d2824cb67feba4;13changed files, all13blob hashes verified. Main untouched.77passed groups/build/smoke and remaining gates included.
+- Await Tu human review/user merge; no notification or auto-merge sent. Postpublication tracking retained locally for next reviewed change to preserve this review head.
+
+## DEC-149 TASK009 merge verified; TASK010 issue/contract prepared
+
+- Date:23October2026. User reports approval/merge. PR19 verified merged=true/draftfalse and maincb6ae68ef215d8da40a5c904b40d96ffd7029fbb; prior77passed groups/build/smoke evidence retained. TASK009 complete, no duplicate review requested.
+- Actual Issue20 TASK010 opened,ownerDuy/reviewerTu. Prepared planning/task010-operator-contract.md: separate local operator URI/key verifier/alias, hidden TTY/default dry-run/explicit apply, verified target and namespaced bootstrap audit race guard, recovery transaction and separate Manager unlock command. Newly specified CLI/data/concurrency semantics await A approval under Master Prompt Rule1 before code. No actual operator assigned/secret/Manager/Atlas write; real operations require separate Duy authorization.
+
+## DEC-150 TASK010 contract A approved
+
+- Date:23October2026. User explicitly approved A (implement/test): private operator config, hidden TTY/default dry-run/explicit apply, verified target/namespaced bootstrap audit guard, recovery and separate unlock, bounded transactions and truthful failed audit. Scope limited to code and synthetic isolated tests,not actual operator/secret/Manager/Atlas provisioning. OwnerDuy/reviewerTu retained.
+
+## DEC-151 TASK010 implementation and actual isolated evidence
+
+- Date:23October2026. Added local operator CLI/private config/hidden TTY/default dry-run/explicit apply, namespaced bootstrap audit concurrency guard, operator recovery and separate unlock with atomic audit/version updates. No public route/schema/index/dependency; new operator-only env examples intentionally invalid. Runbook separates code availability from actual operator/target authorization.
+- Initial Mongo1pass/6failures exposed parallel transaction preflight; changed queries to sequential, then fresh Mongo7/7passed. Operator unit/stream/actual help/nonTTY4/4 plus50relevant regressions passed (61unique), build/smoke passed. Actual human native TTY acceptance remains pending; injected prompts/streams not misrepresented. Full evidence planning/task010-implementation-evidence.md.
+- All4task-only Mongo containers/own volumes removed after exact ID/label/mount checks. No actual operator/scoped DB identity/secret/Manager/Atlas/paid/hosting changes. Readiness503; actual operational use/UI/deployment/CI remain separate. Draft PR for Tu human review/user merge follows.

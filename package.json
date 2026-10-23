@@ -26,6 +26,8 @@
     "test:authorization:db": "node --test services/identity/test/authorization.integration.test.js",
     "test:sessions:db": "node --test services/identity/test/session.integration.test.js",
     "test:audit:db": "node --test services/identity/test/audit.integration.test.js",
-    "test:staff:db": "node --test services/identity/test/staff.integration.test.js"
+    "test:staff:db": "node --test services/identity/test/staff.integration.test.js",
+    "test:operator": "node --test services/identity/test/operator.test.js",
+    "test:operator:db": "node --test services/identity/test/operator.integration.test.js"
   }
 }
