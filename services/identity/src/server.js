@@ -3,11 +3,13 @@ import { createApp } from './app.js';
 import { loadConfig, ConfigurationError } from './config.js';
 import { loadAuthConfig, AuthConfigurationError } from './auth/config.js';
 import { connectAuthRuntime } from './auth/runtime.js';
+import { loadServiceCredentials } from './authorization.js';
 
 export async function startServer(config = loadConfig(), authConfig = loadAuthConfig(config.mode)) {
+  const callers = loadServiceCredentials(authConfig);
   const runtime = await connectAuthRuntime(authConfig);
   try {
-    const server = createApp(runtime).listen(config.port, config.host);
+    const server = createApp({ ...runtime, callers }).listen(config.port, config.host);
     server.once('close', () => { runtime.close().catch(() => { process.exitCode = 1; }); });
     server.once('error', () => { runtime.close().catch(() => {}); });
     return server;

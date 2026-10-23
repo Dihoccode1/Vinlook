@@ -1106,3 +1106,23 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. Added strict pending signup/active login, official bcrypt6.0.0 cost12, jose6.2.13 HS256 two-hour claims, separate private config/read-only startup catalog gate, exact-origin CORS and durable HMAC fixed-window rate counters with bounded insert races.
 - Actual4auth helper/10real Mongo HTTP/7schema/15runtime groups passed; build and three-service smoke passed. Wrong-login race5×401/3×429; IP budget30of40 admitted; new Node process retained Mongo registration limit. Final local bcrypt sample203ms hash/202ms compare, not hosted load acceptance.
 - Restricted-shell loopbackEACCES was resolved by authorized local execution; no false pass. Both exact task-owned Mongo containers/anonymous volumes removed after ID/label/mount verification. No Atlas, production user or paid resource changed. TASK006 authority/RBAC, migration, proxy/deployment/CI remain open; readiness stays503. Full evidence in planning/task005-implementation-evidence.md; draft review PR follows.
+
+## DEC-131 TASK005 draft PR created
+
+- Date:23October2026. Draft PR11 https://github.com/Dihoccode1/Vinlook/pull/11 opened on codex/task-005-auth, head9df30e5b5cd99ccfb143a209a1b0b10e946af966,20changed files. All20published blob hashes matched local inventory. Main unchanged.
+- Actual36passed groups/build/smoke and remaining gates included. Await designated Tu human review/user merge; no reviewer message or auto-merge sent. Postpublication tracking kept locally for a later reviewed change to preserve this review head.
+
+## DEC-132 TASK005 merge verified; TASK006 issue and concrete contract prepared
+
+- Date:23October2026. User reports review/merge. GitHub PR11 verified merged=true; main is merge ce8e050449eaf784928d8c70ab79544a7ca62b04. Formal reviews list empty; preserve user-reported review rather than inventing GitHub approval. TASK005 deliverable complete with actual prior36passed groups/build/smoke evidence.
+- Actual Issue12 TASK006 opened, ownerDuy/reviewerTu. Prepared planning/task006-authorization-contract.md: current authority/me/internal endpoint, scoped caller header/env and old-key expiry, read-only current VN-day session, role gates and fail-closed3000ms service adapters. Existing D003/D007/D017 approvals retained. Genuinely missing concrete transport/config/error details await contract A approval under Master Prompt Rule1 before TASK006 code. No production credential/DB/deployment or reviewer notification changed.
+
+## DEC-133 TASK006 contract A approved
+
+- Date:23October2026. User explicitly approved A and implementation/tests. Covers current DB principal/me/internal authorization, scoped caller credentials/rotation, current VN-day session context, role gates and3000ms fail-closed adapters in planning/task006-authorization-contract.md. No production secret/provisioning/deployment permission implied.
+
+## DEC-134 TASK006 implementation and actual isolated evidence
+
+- Date:23October2026. Added current-principal/me/internal authorization, scoped caller credentials with absolute previous-key expiry, read-only current Vietnam-day session context, server role/session gates and separately owned Content/Usage fail-closed adapters. No positive authority cache, retry, redirects or cross-service Mongo access. Deadline3000ms covers response body.
+- Actual5adapter/config +8real Mongo authorization +36regression groups passed (49total), build and three-service smoke passed. Fixture lock/version/role changes affect subsequent requests; Vietnam midnight/context, credential expiry/removal and both timeout phases checked. All3task-only test containers/anonymous volumes removed after exact ID/label/mount checks. No production/provider/paid changes. Full evidence planning/task006-implementation-evidence.md.
+- Draft PR and Tu human review follow. Actual business endpoints/Manager mutations/session lifecycle/audit/production migration/deployment/CI remain pending; readiness503.

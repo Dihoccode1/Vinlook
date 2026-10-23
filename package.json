@@ -21,6 +21,8 @@
     "test:identity": "node --test services/identity/test/schemas.test.js",
     "test:identity:db": "node --test services/identity/test/indexes.integration.test.js",
     "test:auth": "node --test services/identity/test/auth.test.js",
-    "test:auth:db": "node --test services/identity/test/auth.integration.test.js"
+    "test:auth:db": "node --test services/identity/test/auth.integration.test.js",
+    "test:authorization": "node --test tests/authorization.test.mjs",
+    "test:authorization:db": "node --test services/identity/test/authorization.integration.test.js"
   }
 }
