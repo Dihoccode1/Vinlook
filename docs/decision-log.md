@@ -1231,3 +1231,37 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. Implemented approved Content POI/Revision/LocalizedContent schema factories, strict fields/assets/16locales and exact partial/unique/geo indexes; explicit Content Mongoose9.11.3 dependency reuses existing runtime. No API/startup DB connection/real seed/provider/Atlas change. OwnerTu/reviewerDuy retained.
 - Disconnected7/7, actual Mongo6/6 and27relevant regressions passed (40unique groups); workspace build/three-service smoke passed. Actual concurrent draft/in_review unique slot and transaction rollback proved. Deliberate raw invalid-approved fixture demonstrates schema bypass, not full publication enforcement. Evidence planning/task011-implementation-evidence.md.
 - Initial stopped Docker Engine and lost execution sessions retained honestly; unchanged checks rerun to confirmed exit0. Only exact task container/own volumes removed after ID/label/mount verification. Human review/merge pending; TASK010 native human TTY/real operations independently pending.
+
+## DEC-156 TASK011 draft PR created
+
+- Date:23October2026. Draft PR23 https://github.com/Dihoccode1/Vinlook/pull/23, branch codex/task-011-content-models, head56ac03c2f79124fab4e3fd5350c691da7bf4d6e4;14changed files and all14remote blob hashes verified. PR open/drafttrue/mergedfalse, main untouched.40relevant passed groups/build/smoke and remaining boundaries documented.
+- Await Duy human review/user merge; approved ownerTu retained, no reviewer message or auto-merge. Postpublication tracking retained locally for next reviewed change to preserve review head.
+
+## DEC-157 TASK011 merge verified
+
+- Date:23October2026. User approved TASK011. GitHub PR23 verified merged=true,closed,draft=false; merge commit c1251196541b23958aca9a5448770ab09b5b9492. User approval recorded without inventing a formal GitHub review.40relevant passed groups/build/smoke retained; no repeated tests or review requested.
+- Next planned task TASK012 draft save/conflict/invalidation API, ownerDuy/reviewerTu. Concrete API details and outbox/idempotency prerequisite boundaries still require a reviewable contract under Master Prompt Rule1 before implementation. TASK010 native human TTY remains separately pending.
+
+## DEC-158 TASK011 issue closure and reported review
+
+- Date:23October2026. User reports Tu review and calls closed item TASK012. Verified actual Issue22 is TASK011 and closed at2026-10-23T14:11:28Z; repository issue inventory contains no TASK012 issue. Recorded reported Tu review without changing approved ownerTu/reviewerDuy or fabricating formal approval. TASK011 closed;TASK012 remains planned,not implemented/closed.
+
+## DEC-159 TASK011 closure confirmation
+
+- Date:23October2026. User explicitly confirms Tu reviewed and closed TASK011. Issue22 independently verified closed at2026-10-23T14:11:28Z. This confirmation explicitly names TASK011; the TASK012 wording in DEC158 is not attributed to this message. User-reported Tu review supplements prior Duy approval without changing approved assignment or fabricating a formal GitHub review. TASK011 complete;TASK012 remains next planned work.
+
+## DEC-160 TASK012 actual issue and prerequisite proposal
+
+- Date:23October2026. Created actual Issue24 TASK012 with existing traceability/ownerDuy/reviewerTu. Detected omitted TASK015 prerequisite: approved mutation+outbox atomicity and create idempotency cannot be supplied by TASK011 three-model definitions or TASK008 receiver. TASK015 dependencies are merged; no cycle.
+- Proposed A reorder TASK015 before TASK012 implementation; alternative B prepare TASK012 contract first, then fulfill TASK015 prerequisite. Full scope/impact/acceptance in planning/task012-prerequisite-proposal.md. Await user sequence decision under Master Prompt Rule1; no new schema/API/code/Atlas or unapproved assignment change.
+
+## DEC-161 TASK015-first sequencing approved; contract prepared
+
+- Date:23October2026. User selected A: TASK015 before TASK012. Updated TASK012 dependency/backlog/Issue24; actual Issue25 TASK015 created. Existing ownerDuy/reviewerTu retained. Scope/deadline unchanged, no schedule success inferred.
+- Proposed concrete planning/task015-outbox-contract.md covers two owned models, atomic replay/outbox runner,24h replay/no TTL/in_progress quarantine, bounded authenticated sender/retry/lifecycle and isolated evidence. Await contract A approval under Master Prompt Rule1 before product code. No schema/Atlas/real credentials provisioned.
+
+## DEC-162 TASK015 contract A approved and implemented
+
+- Date:23October2026. User explicitly approved A implement/test: strict outbox/replay models, atomic runner,24h expiry/quarantine, bounded sender/retry/lifecycle. Added scoped primitives with no startup connection/public endpoints/new dependency/Atlas writes. OwnerDuy/reviewerTu retained.
+- Final6durability+12actualMongo/HTTP+34relevant regressions passed (52unique); full workspace build and final Content build/three-service health checks passed. Actual Node restart, post-commit injected unknown acknowledgement, receiver dedup, expiry/concurrency/rollback/backoff/counter starvation evidenced. Initial Windows launch failure, fixture0/9 and sandbox35/40 followed by unchanged elevated40/40 retained honestly in planning/task015-implementation-evidence.md.
+- All4exact task containers/own volumes removed after ID/label/mount checks. No real business endpoint/Atlas/provider/production changes, readiness503. Await Tu human review/user merge;TASK012 remains pending.
