@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-015 / UC-015\nKiểm tra và trình nội dung để duyệt công\nkhai
+' Sources: US-012. **Related Requirement / Acceptance:** REQ-012, REQ-017–019 / AC-012, AC-017–019. REQ-012, REQ-017–019 / AC-012, AC-017–019.
+start
+if (Có quyền và phiên mở?) then (Có)
+:Staff hoặc Manager trong phiên mở đọc kết\nquả text/audio.;
+:Kiểm tra các đầu ra theo ngôn ngữ và thời\nlượng.;
+:Trình bản cần Manager duyệt công khai.;
+else (Không)
+:Không thực hiện thao tác nội dung trái điều\nkiện;
+stop
+endif
+stop
+legend bottom
+ACT-015 → UC-015 → US-012
+REQ-012, REQ-017–019 / AC-012, AC-017–019.
+Actor: Staff hoặc Manager
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

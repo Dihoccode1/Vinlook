@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-031 / UC-031\nXem số người trong phiên nghe hiện tại
+' Sources: US-028. **Related Requirement / Acceptance:** REQ-022, REQ-023 / AC-022, AC-023. REQ-022, REQ-023 / AC-022, AC-023.
+start
+:Staff/Manager mở số liệu người nghe.;
+:Tổng hợp trạng thái theo Play Pause kết thúc\nvà đóng trang.;
+if (Đã nghe hết, đóng trang hoặc hết timeout?) then (Có)
+:Bỏ khỏi số người nghe hiện tại theo refresh\n30 giây;
+else (Không)
+:Giữ người nghe từ Play, kể cả Pause;
+:Hiển thị số phiên nghe hiện tại toàn hệ\nthống mỗi 30 giây.;
+endif
+stop
+legend bottom
+ACT-031 → UC-031 → US-028
+REQ-022, REQ-023 / AC-022, AC-023.
+Actor: Staff hoặc Manager
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

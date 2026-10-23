@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-009 / UC-009\nCập nhật gói offline đã có
+' Sources: US-008, US-009. **Related Requirement / Acceptance:** REQ-008, REQ-009, REQ-021 / AC-008, AC-009, AC-021. REQ-008, REQ-009, REQ-021 / AC-008, AC-009, AC-021.
+start
+:Báo có bản dữ liệu mới.;
+:Khách chủ động tải bản mới trong khi giữ gói\ncũ.;
+if (Bản mới đã tải đủ?) then (Có)
+:Thay thế khi bản mới tải đủ.;
+else (Không)
+:Giữ gói cũ, báo chưa hoàn tất, cho thử lại;
+stop
+endif
+stop
+legend bottom
+ACT-009 → UC-009 → US-008, US-009
+REQ-008, REQ-009, REQ-021 / AC-008, AC-009,\nAC-021.
+Actor: Du khách
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

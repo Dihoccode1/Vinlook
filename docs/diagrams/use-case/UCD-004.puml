@@ -1,0 +1,34 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam usecaseBackgroundColor #EEF5FF
+skinparam usecaseBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title UCD-004 — Monitoring\nĐIỀU CHỈNH THEO PHƯƠNG ÁN B — DEC-050
+actor "Staff" as staff
+actor "Manager" as manager
+rectangle "Vinlook — sản phẩm (góc nhìn monitoring)" {
+usecase "UC-030\nXem số khách online hiện tại" as u30
+usecase "UC-031\nXem số người trong phiên nghe hiện\ntại" as u31
+usecase "UC-032\nXem sức khỏe phụ thuộc và trạng\nthái xử lý nội dung" as u32
+}
+staff -- u30
+staff -- u31
+staff -- u32
+manager -- u30
+manager -- u31
+manager -- u32
+note bottom of u31
+Pause vẫn được tính người nghe.
+Cập nhật 30 giây, không có tín hiệu 90 giây thì loại.
+end note
+legend bottom
+Góc nhìn nghiệp vụ, không phải ranh giới microservice.
+Nét liền: actor tham gia Use Case, không chỉ thứ tự thao tác.
+Không đề xuất actor generalization hoặc include ở bản này.
+endlegend
+@enduml

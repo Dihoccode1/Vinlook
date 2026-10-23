@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-010 / UC-010\nChọn ngôn ngữ giao diện/nội dung du khách
+' Sources: US-010, US-009. **Related Requirement / Acceptance:** REQ-009, REQ-010 / AC-009, AC-010. REQ-009, REQ-010 / AC-009, AC-010.
+start
+:Khách chọn ngôn ngữ online.;
+if (Đang online?) then (Có)
+:Hiển thị UI và mô tả theo lựa chọn trong 16\nngôn ngữ.;
+:Giữ nội dung tương ứng trong luồng xem.;
+else (Không)
+:Dùng UI và mô tả tiếng Anh offline;
+endif
+:Hiển thị UI và mô tả theo ngôn ngữ khả dụng;
+stop
+legend bottom
+ACT-010 → UC-010 → US-010, US-009
+REQ-009, REQ-010 / AC-009, AC-010.
+Actor: Du khách
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

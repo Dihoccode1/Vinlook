@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-002 / UC-002\nXem thông tin, ảnh và mô tả một POI
+' Sources: US-001, US-010. **Related Requirement / Acceptance:** REQ-001, REQ-010, REQ-014 / AC-001, AC-010, AC-014. REQ-001, REQ-010, REQ-014 / AC-001, AC-010, AC-014.
+start
+:Chọn một POI công khai.;
+if (POI đã công khai?) then (Có)
+:Đọc thông tin ảnh và mô tả của điểm.;
+:Hiển thị chi tiết theo ngôn ngữ khả dụng.;
+else (Không)
+:Không phục vụ bản nháp chưa duyệt;
+stop
+endif
+stop
+legend bottom
+ACT-002 → UC-002 → US-001, US-010
+REQ-001, REQ-010, REQ-014 / AC-001, AC-010,\nAC-014.
+Actor: Du khách
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

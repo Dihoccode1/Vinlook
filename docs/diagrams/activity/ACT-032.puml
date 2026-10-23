@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-032 / UC-032\nXem sức khỏe phụ thuộc và trạng thái xử lý\nnội dung
+' Sources: US-029, US-026. **Related Requirement / Acceptance:** REQ-021, REQ-024 / AC-021, AC-024. REQ-021, REQ-024 / AC-021, AC-024.
+start
+:Staff/Manager mở trang tình trạng hệ thống.;
+:Đọc trạng thái backend MongoDB Python worker\nvà các công việc.;
+if (Phụ thuộc/công việc đang hoạt động thành\ncông?) then (Có)
+:Hiển thị tiến độ thành công thất bại hoặc\nchờ tương ứng.;
+else (Không)
+:Hiển thị đúng trạng thái chờ/lỗi, không giả\nthành công;
+:Hiển thị tiến độ thành công thất bại hoặc\nchờ tương ứng.;
+endif
+stop
+legend bottom
+ACT-032 → UC-032 → US-029, US-026
+REQ-021, REQ-024 / AC-021, AC-024.
+Actor: Staff hoặc Manager
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

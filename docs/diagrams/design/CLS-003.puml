@@ -1,0 +1,28 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName SansSerif
+title CLS-003 — Usage monitoring responsibility view
+footer APPROVED D-016 DEC-076 | UC-030, UC-031, UC-032
+
+class "Usage Monitoring API" as API {
+ heartbeat()
+ startEndPlayback()
+ summarizeCurrent()
+ dependencyStatus()
+}
+class BrowserPresence {
+ browserId
+ lastSeenAt 
+}
+class ListeningSession {
+ browserId
+ playbackId
+ lastSeenAt
+ endedAt 
+}
+BrowserPresence "1" -- "0..*" ListeningSession
+API ..> BrowserPresence
+API ..> ListeningSession
+note bottom of API: Unique browsers, >90s stale excluded; no GPS history.
+
+@enduml

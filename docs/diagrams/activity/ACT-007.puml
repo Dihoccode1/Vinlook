@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-007 / UC-007\nTải dữ liệu offline lần đầu
+' Sources: US-008. **Related Requirement / Acceptance:** REQ-007, REQ-008, REQ-021 / AC-007, AC-008, AC-021. REQ-007, REQ-008, REQ-021 / AC-007, AC-008, AC-021.
+start
+:Khách chủ động bắt đầu tải khi online.;
+:Tải bộ dữ liệu offline được cung cấp.;
+if (Tải đủ dữ liệu?) then (Có)
+:Xác nhận đủ rồi báo sẵn sàng.;
+else (Không)
+:Báo chưa hoàn tất và cho thử lại;
+stop
+endif
+stop
+legend bottom
+ACT-007 → UC-007 → US-008
+REQ-007, REQ-008, REQ-021 / AC-007, AC-008,\nAC-021.
+Actor: Du khách
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

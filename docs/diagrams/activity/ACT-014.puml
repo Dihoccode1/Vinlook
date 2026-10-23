@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-014 / UC-014\nThử lại phần xử lý bị lỗi/chờ khi có điều\nkiện
+' Sources: US-013. **Related Requirement / Acceptance:** REQ-013, REQ-028 / AC-013, AC-028. REQ-013, REQ-028 / AC-013, AC-028.
+start
+:Người có quyền chọn phần xử lý chưa hoàn\ntất.;
+if (Đủ điều kiện thử lại?) then (Có)
+:Khi điều kiện dịch vụ/worker/quota cho phép,\nchủ động thử lại.;
+:Giữ kết quả tốt trước đó và cập nhật trạng\nthái phần được chạy lại.;
+else (Không)
+:Giữ kết quả tốt và trạng thái chờ/lỗi;
+stop
+endif
+stop
+legend bottom
+ACT-014 → UC-014 → US-013
+REQ-013, REQ-028 / AC-013, AC-028.
+Actor: Staff hoặc Manager
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

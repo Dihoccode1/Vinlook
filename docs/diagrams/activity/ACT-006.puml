@@ -1,0 +1,53 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-006 / UC-006\nDẫn đường đi bộ đến một đích
+' Sources: US-004, US-005, US-006. **Related Requirement / Acceptance:** REQ-004–007, REQ-027 / AC-004–007, AC-027. REQ-004–007, REQ-027 / AC-004–007, AC-027.
+start
+:Du khách chọn một POI làm đích;
+if (Có quyền GPS, vị trí và dữ liệu cần thiết?) then (Có)
+:Tính tuyến đi bộ tới POI;
+else (Không)
+:Thông báo điều kiện GPS/dữ liệu còn thiếu;
+stop
+endif
+if (Tìm được tuyến đi bộ?) then (Có)
+:Hiển thị chỉ dẫn chữ/hình;
+else (Không)
+:Thông báo không có tuyến,
+cho thử lại hoặc chọn POI khác;
+stop
+endif
+while (Màn hình Vinlook mở và đang dẫn đường?) is (Có)
+if (GPS còn khả dụng?) then (Có)
+:Cập nhật vị trí và chỉ dẫn;
+if (Đi lệch tuyến?) then (Có)
+:Tính lại đường đi bộ,
+kể cả offline với gói đủ;
+if (Tìm được tuyến mới?) then (Có)
+:Hiển thị tuyến được tính lại;
+else (Không)
+:Thông báo không có tuyến,
+cho thử lại hoặc chọn điểm khác;
+endif
+endif
+else (Không)
+:Giữ tuyến và vị trí cuối, báo mất GPS,
+không coi vị trí cuối là hiện tại;
+:Tiếp tục cập nhật khi GPS trở lại;
+endif
+endwhile (Không)
+stop
+legend bottom
+ACT-006 → UC-006 → US-004, US-005, US-006
+REQ-004–007, REQ-027 / AC-004–007, AC-027.
+Actor: Du khách
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

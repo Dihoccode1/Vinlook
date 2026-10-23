@@ -1,0 +1,42 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName SansSerif
+title SEQ-007 — Processing jobs, media and worker lease
+footer APPROVED D-016 DEC-076 | UC-013, UC-014
+
+actor Staff
+participant "POI & Content" as POI
+participant "Identity & Staff" as Identity
+database "POI DB" as DB
+participant "Provider adapter / local worker" as Processor
+participant "Cloudinary" as Media
+Staff -> POI: Process / retry + version + Idempotency-Key
+POI -> Identity: Verify account/role/session
+Identity --> POI: Context / error
+POI -> DB: Save immutable input jobs + outbox
+POI --> Staff: 202 job IDs / conflict
+Processor -> POI: Authenticated claim
+POI -> DB: Atomic exclusive lease + attempt
+POI --> Processor: Snapshot + attempt + lease
+loop During processing
+ Processor -> POI: Renew lease
+end
+Processor -> Processor: Translate / synthesize capability-specific task
+opt Audio result
+ Processor -> POI: Request restricted upload parameters
+ POI --> Processor: Signed parameters
+ Processor -> Media: Upload new immutable asset
+ Media --> Processor: Reference
+end
+Processor -> POI: Result with attempt/input version
+alt Valid lease + current input + verified output
+ POI -> DB: Accept once; review pending
+else Stale / expired / changed input
+ POI --> Processor: Reject stale result
+end
+opt Provider failure / quota
+ POI -> DB: failed / waiting_quota; preserve good output
+end
+note over POI,Processor: Abandoned lease reclaim differs from Staff retry; no automatic publish
+
+@enduml

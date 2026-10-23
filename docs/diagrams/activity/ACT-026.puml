@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-026 / UC-026\nXem lịch sử phiên theo quyền
+' Sources: US-023. **Related Requirement / Acceptance:** REQ-019 / AC-019. REQ-019 / AC-019.
+start
+:Nhân viên yêu cầu xem lịch sử phiên.;
+if (Người xem là Manager?) then (Có)
+:Cho phép đọc lịch sử của mọi nhân viên;
+else (Không)
+:Chỉ lọc lịch sử của chính Staff;
+:Lọc dữ liệu theo quyền Staff/Manager.;
+:Hiển thị người thời điểm thao tác POI và kết\nquả.;
+endif
+stop
+legend bottom
+ACT-026 → UC-026 → US-023
+REQ-019 / AC-019.
+Actor: Staff hoặc Manager
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

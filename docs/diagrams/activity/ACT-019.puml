@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-019 / UC-019\nĐăng ký nhân viên và nhận trạng thái chờ
+' Sources: US-017, US-026. **Related Requirement / Acceptance:** REQ-016, REQ-021 / AC-016, AC-021. REQ-016, REQ-021 / AC-016, AC-021.
+start
+:Người đăng ký nhập họ tên email mật khẩu và\nxác nhận.;
+if (Mật khẩu xác nhận khớp?) then (Có)
+:Kiểm tra xác nhận mật khẩu phù hợp.;
+:Ghi đăng ký chờ Manager duyệt và hiện trạng\nthái.;
+else (Không)
+:Từ chối đăng ký khi không khớp;
+stop
+endif
+stop
+legend bottom
+ACT-019 → UC-019 → US-017, US-026
+REQ-016, REQ-021 / AC-016, AC-021.
+Actor: Người đăng ký Staff
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

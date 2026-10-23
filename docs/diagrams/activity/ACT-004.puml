@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-004 / UC-004\nXem/chọn từ các POI gần nhất
+' Sources: US-003. **Related Requirement / Acceptance:** REQ-003 / AC-003. REQ-003 / AC-003.
+start
+:Mở danh sách gợi ý với GPS khả dụng.;
+if (Có GPS khả dụng?) then (Có)
+:Lọc POI trong 3 km đường thẳng và xếp gần\nnhất.;
+:Hiển thị tối đa 4 điểm để chọn.;
+else (Không)
+:Thông báo cần GPS cho gợi ý theo vị trí;
+stop
+endif
+stop
+legend bottom
+ACT-004 → UC-004 → US-003
+REQ-003 / AC-003.
+Actor: Du khách
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

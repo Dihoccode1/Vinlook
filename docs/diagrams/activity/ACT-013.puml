@@ -1,0 +1,36 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-013 / UC-013\nChủ động chạy dịch và tạo audio
+' Sources: US-011, US-013. **Related Requirement / Acceptance:** REQ-011, REQ-013, REQ-018 / AC-011, AC-013, AC-018. REQ-011, REQ-013, REQ-018 / AC-011, AC-013, AC-018.
+start
+:Người có quyền và phiên mở chủ động chạy xử\nlý.;
+if (Dịch vụ, worker và quota khả dụng?) then (Có)
+:Tạo bản dịch/audio từ nguồn Anh theo\nprovider được duyệt.;
+:Giữ kết quả và trạng thái để nhân viên kiểm\ntra.;
+else (Không)
+:Chờ hoặc dừng, báo lý do, giữ phần thành\ncông;
+stop
+endif
+if (Các đầu ra đều thành công?) then (Có)
+:Chờ nhân viên kiểm tra và trình duyệt,
+không tự công khai;
+else (Không)
+:Giữ phần thành công, báo phần lỗi,
+cho thử lại khi có điều kiện,
+không bỏ cổng duyệt đủ 16 ngôn ngữ;
+endif
+stop
+legend bottom
+ACT-013 → UC-013 → US-011, US-013
+REQ-011, REQ-013, REQ-018 / AC-011, AC-013,\nAC-018.
+Actor: Staff hoặc Manager
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

@@ -1,0 +1,68 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName SansSerif
+title CLS-002 — POI and content responsibility view
+footer APPROVED D-016 DEC-076 | UC-012, UC-013, UC-014, UC-015, UC-016, UC-017, UC-018
+
+class "POI & Content API" as API {
+ editDraft()
+ processSnapshot()
+ claimRenewAcceptJob()
+ reviewExactVersion()
+ publish()
+ softDeleteRestore()
+}
+class POI {
+ id
+ publishedRevisionId
+ deletedAt 
+}
+class POIRevision {
+ id
+ poiId
+ editVersion
+ sourceVersion
+ location
+ entrance
+ status 
+}
+class LocalizedContent {
+ revisionId
+ languageCode
+ textVersion
+ text
+ audioAsset
+ reviewStatus 
+}
+class ProcessingJob {
+ inputVersion
+ inputSnapshot
+ attemptId
+ leaseExpiresAt
+ status 
+}
+class AuditOutbox {
+ eventId
+ payload
+ deliveredAt 
+}
+class IdempotencyRecord {
+ actorId
+ operation
+ key
+ requestHash
+ status
+ expiresAt 
+}
+POI "1" -- "0..*" POIRevision
+POIRevision "1" -- "0..16" LocalizedContent
+POIRevision "1" -- "0..*" ProcessingJob
+API ..> POI
+API ..> POIRevision
+API ..> LocalizedContent
+API ..> ProcessingJob
+API ..> AuditOutbox
+API ..> IdempotencyRecord
+note bottom of POIRevision: At most one working draft/in_review per POI; published immutable.
+
+@enduml

@@ -1,0 +1,49 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam usecaseBackgroundColor #EEF5FF
+skinparam usecaseBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title UCD-003 — Tài khoản và phiên làm việc\nĐIỀU CHỈNH THEO PHƯƠNG ÁN B — DEC-050
+actor "Staff" as staff
+actor "Manager" as manager
+actor "Người đăng ký Staff" as applicant
+rectangle "Vinlook — sản phẩm (góc nhìn tài khoản và phiên làm\nviệc)" {
+usecase "UC-019\nĐăng ký nhân viên và nhận trạng\nthái chờ" as u19
+usecase "UC-020\nĐăng nhập theo trạng thái/quyền\ntài khoản" as u20
+usecase "UC-021\nDuyệt đăng ký để cấp quyền Staff" as u21
+usecase "UC-023\nKhóa/mở khóa Staff và áp dụng\nquyền mới" as u23
+usecase "UC-024\nMở hoặc mở lại phiên làm việc cùng\nngày" as u24
+usecase "UC-025\nĐóng phiên làm việc" as u25
+usecase "UC-026\nXem lịch sử phiên theo quyền" as u26
+usecase "UC-027\nXác minh Staff và cấp mã khôi phục" as u27
+usecase "UC-028\nDùng mã khôi phục để đặt mật khẩu\nmới" as u28
+}
+staff -- u20
+staff -- u24
+staff -- u25
+staff -- u26
+staff -- u28
+manager -- u20
+manager -- u21
+manager -- u23
+manager -- u24
+manager -- u25
+manager -- u26
+manager -- u27
+applicant -- u19
+note bottom of u26
+Staff xem lịch sử của mình, Manager xem tất cả.
+Đăng nhập và phiên mở được xét như precondition
+ở luồng cần chúng, không buộc đăng nhập lại mỗi UC.
+end note
+legend bottom
+Góc nhìn nghiệp vụ, không phải ranh giới microservice.
+Nét liền: actor tham gia Use Case, không chỉ thứ tự thao tác.
+Không đề xuất actor generalization hoặc include ở bản này.
+endlegend
+@enduml

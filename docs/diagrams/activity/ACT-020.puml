@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-020 / UC-020\nĐăng nhập theo trạng thái/quyền tài khoản
+' Sources: US-018. **Related Requirement / Acceptance:** REQ-016, REQ-017 / AC-016, AC-017. REQ-016, REQ-017 / AC-016, AC-017.
+start
+:Nhân viên nhập email/mật khẩu.;
+:Xác thực và kiểm tra trạng thái/quyền tài\nkhoản.;
+if (Thông tin đúng, tài khoản khả dụng và đúng\nquyền?) then (Có)
+:Cho truy cập đúng quyền Staff/Manager.;
+else (Không)
+:Không cấp quyền cho tài khoản chờ/khóa hoặc\nthông tin sai;
+stop
+endif
+stop
+legend bottom
+ACT-020 → UC-020 → US-018
+REQ-016, REQ-017 / AC-016, AC-017.
+Actor: Staff hoặc Manager
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

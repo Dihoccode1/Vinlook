@@ -1,0 +1,37 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName SansSerif
+title SEQ-009 — Backup, restore trial, CI/CD and checkpoint
+footer APPROVED D-016 DEC-076 | UC-033, UC-034, UC-035, UC-036, UC-037
+
+actor "Authorized operator" as Op
+actor Duy
+participant "CI / release runner" as CI
+participant "Hosted services" as Services
+database "Three owned DBs" as DB
+participant "Media / package artifacts" as Assets
+Op -> Services: Maintenance, stop writers and workers
+Services --> Op: Quiescent state confirmed / failure
+Op -> DB: Dump approved namespaces
+Op -> Assets: Copy referenced originals and immutable datasets
+Op -> Op: Verify manifest, hashes, encryption and completeness
+alt Backup complete
+ Op -> Services: Resume operation
+else Incomplete
+ Op -> Duy: Report failed backup; do not mark gate passed
+end
+Op -> DB: Restore trial into isolated local target
+Op -> Op: No Production egress; check indexes, references, stale leases
+CI -> CI: PR checks/build/tests; trusted main release after phase gates
+alt Checks pass and release conditions authorized
+ CI -> Services: Deploy affected components at known SHA
+ Services --> CI: Deployment states
+ CI -> Services: Smoke checks; stop dependent rollout on failure
+else Checks fail
+ CI -> Duy: No release; report blocker
+end
+Op -> Op: Update local worker from CI-checked package runbook
+Duy -> Services: Check runnable MVP and critical flows
+Duy -> Duy: Accept only with evidence; no Critical/Blocker
+
+@enduml
