@@ -1126,3 +1126,23 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. Added current-principal/me/internal authorization, scoped caller credentials with absolute previous-key expiry, read-only current Vietnam-day session context, server role/session gates and separately owned Content/Usage fail-closed adapters. No positive authority cache, retry, redirects or cross-service Mongo access. Deadline3000ms covers response body.
 - Actual5adapter/config +8real Mongo authorization +36regression groups passed (49total), build and three-service smoke passed. Fixture lock/version/role changes affect subsequent requests; Vietnam midnight/context, credential expiry/removal and both timeout phases checked. All3task-only test containers/anonymous volumes removed after exact ID/label/mount checks. No production/provider/paid changes. Full evidence planning/task006-implementation-evidence.md.
 - Draft PR and Tu human review follow. Actual business endpoints/Manager mutations/session lifecycle/audit/production migration/deployment/CI remain pending; readiness503.
+
+## DEC-135 TASK006 draft PR created
+
+- Date:23October2026. Draft PR13 https://github.com/Dihoccode1/Vinlook/pull/13, branch codex/task-006-authorization, head0e2c88215b64bd5c88d4bd11390ec7c11365aa3d;22changed files and22blob hashes verified. Main untouched.49passed groups/build/smoke and remaining gates documented.
+- Await Tu human review/user merge; no reviewer notification or auto-merge sent. Postpublication map/log updated locally for the next reviewed change, preserving this review head.
+
+## DEC-136 TASK006 merge verified; TASK007 scope and contract prepared
+
+- Date:23October2026. User reports review/merge. PR13 verified merged=true and main99b63dd14162cc751c94ca0e8fa8260850eb2a15; formal reviews empty, preserve user report. TASK006 complete with prior49passed groups/build/smoke evidence.
+- Actual Issue14 TASK007 opened,ownerDuy/reviewerTu. Prepared planning/task007-session-contract.md for missing endpoint/status/retry semantics, manual-close reason in local atomic audit, original openedAt preservation and midnight reconciliation timestamps/races. Existing one-session/Vietnam-day requirement retained; no new scheduler/paid resource. Contract A awaits approval under Master Prompt Rule1 before product code. Local tracking to accompany next reviewed branch.
+
+## DEC-137 TASK007 contract A approved
+
+- Date:23October2026. User explicitly approved A (implement/test). Includes same-ID reopen/original openedAt, strict close reason in atomic local AuditLog transaction, logical midnight and lazy/startup materialization, timestamps/error/retry/race semantics. Existing TASK006 read-only session context is explicitly extended for prior-day reconciliation. No production database/credential/deployment permission implied.
+
+## DEC-138 TASK007 implementation and actual evidence
+
+- Date:23October2026. Added daily open/close/reopen endpoints, original openedAt/ID preservation, atomic manual-close AuditLog reason and approved midnight/startup/current-principal reconciliation. Unique account/day retained; bounded3contention attempts; unknown commit not replayed. No schema/index/dependency/env additions.
+- Actual9session +49regression groups passed (58total), build and three-service smoke passed. Real Mongo rollback on audit failure,8concurrent open/close, exact Vietnam midnight and new Node startup reconciliation verified. All3task-only Mongo containers/own volumes removed after exact ID/label/mount checks. No Atlas/real staff/hosting/paid changes. Full evidence planning/task007-implementation-evidence.md.
+- Await Tu review/user merge after draft PR. History/audit ingestion/Manager APIs/UI/deployment/CI remain pending; readiness503.

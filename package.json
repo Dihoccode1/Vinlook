@@ -23,6 +23,7 @@
     "test:auth": "node --test services/identity/test/auth.test.js",
     "test:auth:db": "node --test services/identity/test/auth.integration.test.js",
     "test:authorization": "node --test tests/authorization.test.mjs",
-    "test:authorization:db": "node --test services/identity/test/authorization.integration.test.js"
+    "test:authorization:db": "node --test services/identity/test/authorization.integration.test.js",
+    "test:sessions:db": "node --test services/identity/test/session.integration.test.js"
   }
 }

@@ -89,13 +89,14 @@ test('JWT errors and deleted account denied; authVersion, lock, pending and role
   assert.equal((await internal()).body.data.account.role, 'Staff');
 });
 
-test('session context uses verified actor/current Vietnam day; no mutation or old-day admission', async () => {
+test('session context uses verified actor/current Vietnam day; prior sessions reconcile without admission', async () => {
   const prior = await models.WorkSession.create({ staffId: account._id, workDateVN: '2026-10-22', status: 'open', openedAt: new Date('2026-10-22T03:00:00Z') });
   assert.equal((await internal()).body.data.currentWorkSession, null);
   const session = await models.WorkSession.create({ staffId: account._id, workDateVN: '2026-10-23', status: 'open', openedAt: new Date(clock) });
   const principal = (await internal()).body.data;
   assert.equal(principal.currentWorkSession.id, String(session._id));
-  assert.equal((await models.WorkSession.findById(prior._id)).status, 'open');
+  assert.equal((await models.WorkSession.findById(prior._id)).status, 'closed');
+  assert.equal((await models.WorkSession.findById(prior._id)).closedAt.toISOString(), '2026-10-22T17:00:00.000Z');
   assert.throws(() => requireAuthority(principal, { roles: ['Manager'] }), e => e.status === 403);
   requireAuthority(principal, { requireSession: true });
   assert.throws(() => requireAuthority({ ...principal, currentWorkSession: null }, { requireSession: true }), e => e.code === 'WORK_SESSION_REQUIRED');
