@@ -16,7 +16,7 @@ Schema document validation enforces the approved bounds, states, exclusive accou
 
 ## Limits the API must enforce
 
-Unique constraints require actual indexes: `unique` is not a Mongoose validator. Tests explicitly build them only on a fresh task-owned Mongo database. Production connection/index migration is not implemented here.
+Unique constraints require actual indexes: `unique` is not a Mongoose validator. Tests explicitly build them only on a fresh task-owned Mongo database. TASK-005 adds an Identity connection and read-only catalog verification, but production index migration/provisioning remains pending.
 
 Do not rely on document middleware or cross-field validators for arbitrary updateOne/findOneAndUpdate/bulkWrite/direct collection operations. Those paths can bypass document hooks, and query validators do not have a loaded document's state. Each later operation must validate its allowlist and whole candidate state or enforce equivalent conditional updates/transactions. No generic write/update API is supplied.
 
