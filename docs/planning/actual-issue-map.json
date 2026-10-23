@@ -5,11 +5,14 @@
     "assignee": "Dihoccode1",
     "state": "closed",
     "evidence": "GitHub create_issue response verified 23/10/2026",
-    "readiness": "Documentation draft PR open; human review and merge pending; existing closed Issue is not verified completion",
+    "readiness": "Baseline merged; user reports Tu review; formal GitHub review list empty",
     "seedCommit": "e9f378c5284f8918e6b254c80a0fa616c273d2f7",
     "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/3",
     "branch": "codex/task-001-docs-baseline",
-    "baselineCommit": "0afb8e72c928c7325d53f722da9f8f3f9ede06f4"
+    "baselineCommit": "0afb8e72c928c7325d53f722da9f8f3f9ede06f4",
+    "mergeCommit": "c32f98b07fa9866993f9639930ee1f6a03e82ed8",
+    "mergedBy": "Dihoccode1",
+    "reviewEvidence": "User report, not a GitHub approval submission"
   },
   "RSH-TTS-001": {
     "url": "https://github.com/Dihoccode1/Vinlook/issues/2",
@@ -17,5 +20,20 @@
     "assignee": "Dihoccode1",
     "state": "open",
     "readiness": "MMS English/Pidgin and four Gemini short outputs observed; quality and product integration pending"
+  },
+  "TASK-002": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/4",
+    "number": 4,
+    "state": "closed",
+    "approvedOwner": "ngoctu0405",
+    "reviewer": "Dihoccode1",
+    "remoteAssignment": "not applied; assignability pending",
+    "readiness": "User checked and closed Issue; actual scaffold now prepared and locally verified; review PR and merge pending",
+    "checks": [
+      "npm ci",
+      "npm run build",
+      "npm run check:scaffold",
+      "browser AX at localhost:5173"
+    ]
   }
 }

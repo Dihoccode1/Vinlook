@@ -18,7 +18,7 @@ Docker/Compose for reproducible runtime; GitHub Actions for CI/CD; Vercel fronte
 
 ## Current state
 
-Requirements, design and the initial backlog were approved. This repository bootstrap contains documentation and conventions only: there is no implemented product, running product CI/CD or deployed Vinlook backend yet.
+Requirements, design and the initial backlog were approved. TASK-002 adds a React preview and three independently runnable Express scaffolds. Business features, product CI/CD and hosted Vinlook backends are not implemented yet.
 
 Routing research selected JavaScript A* with a preprocessed walking graph. Actual iPhone evidence exists; Android testing was explicitly waived, not passed. Research evidence is not full navigation acceptance.
 
@@ -35,7 +35,8 @@ The full Day 5 milestone remains required but is not supported by the present ca
 - [Test plan](docs/test-plan-proposal.md)
 - [Traceability](docs/traceability-matrix.md)
 - [Contribution and review process](CONTRIBUTING.md)
+- [Local scaffold commands and boundaries](docs/development.md)
 
 Some documents retain historical proposal wording. Their approval sections and later numbered decisions determine current status. Task completion requires actual deliverables and review evidence, even when its GitHub issue has been closed.
 
-There are no product installation commands at this stage. Follow the next tracked implementation task after the documentation baseline is reviewed.
+For local setup, use the exact Node/npm versions and commands in the development guide. No provider credentials are needed for this scaffold. TASK-003 follows with runtime configuration and health contracts.
