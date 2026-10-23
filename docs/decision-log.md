@@ -1007,3 +1007,32 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Registry versions/peers checked. Initial full npm packument read timed out; compact latest metadata succeeded. npm install and clean npm ci succeeded; audit reported0vulnerabilities at install time. Clean-install frontend build, backend syntax checks and real three-listener HTTP404/header/closure smoke passed. Backend paths intentionally unimplemented; no fake business features or health contract outside TASK003.
 - Browser first127.0.0.1 attempt timed out. After restarting dev outside sandbox, localhost:5173 AX showed actual rendered heading and unavailable-guide notice. Screenshot follow-up failed with session binding error; no screenshot or mobile visual acceptance claimed. No provider calls, secrets, database operations, CI/CD deployment or Docker creation.
 - Owner/reviewer approval remains Tú/Duy; AI-produced scaffold requires human review. Existing closed Issue is retained without silently reopening. Do not call TASK002 Done before PR review/merge.
+
+## DEC-114 TASK002 implementation PR created
+
+- Date:23October2026. Actual scaffold commit a8b0368a2019ba4831e2cc05f2ea9fc59cc0b7a2 on codex/task-002-scaffold. Draft PR5: https://github.com/Dihoccode1/Vinlook/pull/5, open/not merged,29changed files. All29Git blob hashes matched uploaded local content. Main untouched.
+- Clean install/build/listener smoke passed as DEC113. Temporary Vite server stopped after browser check; no hosted deployment. Human review pending despite already-closed Issue4. No automatic merge, false review submission or permission change performed.
+- PR/map links recorded locally after commit to preserve review head; will accompany later reviewed tracking changes.
+
+## DEC-115 TASK002 review reported and merge observed; TASK003 Issue opened
+
+- Date:23October2026. User reports review. PR5 GitHub inspection shows closed, draft=false, merged=true, merge commita6f7cbbc819f7dc91795951b2106770acff408f3. Reviews/threads/comments empty; do not fabricate a formal approval. No extra merge or duplicate review requested.
+- TASK002 scaffold delivery now merged, with earlier clean-install/build/smoke evidence. No Docker/CI/deployment inferred.
+- Created TASK003 Issue6: https://github.com/Dihoccode1/Vinlook/issues/6. Runtime config/env boundaries/minimal health; dependency TASK002 satisfied. Exact names/required sets/health visibility must reconcile approved contracts before implementation. No TASK003 code yet. Local issue map updated; tracking will accompany next review branch.
+
+## DEC-116 TASK003 scope approved; missing minimal runtime/health contract proposed
+
+- Date:23October2026. User reports checking and approving TASK003. Existing design reviewed: staff-protected /monitoring/health/jobs, secret ownership, on-demand checks and timeouts approved; exact public process-health paths/env names/defaults not specified.
+- Prepared planning/task003-config-health-contract.md with A recommended process config + liveness200/readiness503until verified, or B livenessonly/defer readiness. Required production host/port, native env-file loading and safe response envelopes stated explicitly.
+- Master Prompt Rule1 requires asking before unspecified API/deployment contract choices. Prepared concrete proposal; no TASK003 code or provider/secret mutation. Existing TASK002 code remains unchanged while contract decision is pending.
+
+## DEC-117 TASK003 contract A approved
+
+- Date:23October2026. User selects A from planning/task003-config-health-contract.md, including NODE_ENV/HOST/PORT semantics, native env-file loading, public health paths/envelopes and truthful503 readiness. No real dependency success or production deployment implied.
+
+## DEC-118 TASK003 implemented and verified locally
+
+- Date:23October2026. Implemented service-owned Zod4.6.7 process config, filtered nonsecret return fields, safe ConfigurationError before socket bind, optional Node24env-file start/dev commands and nonsecret per-service examples.
+- All three services return liveness200 and readiness503 DEPENDENCIES_UNVERIFIED with server UUID/no-store; protected monitoring/business routes remain404. No DB/provider sampling or background keep-awake traffic added.
+- npm install updated exact dependency/lockfile and reported0vulnerabilities. Final15runtime/health tests passed: default/production config, invalid input matrices/redaction, invalid actual entrypoints, native env-file loading/override precedence, real HTTP routes/no reflection/no cache. Frontend build/backend syntax and three-listener scaffold smoke passed. No hosted/Docker/CI/CD acceptance or real dependency readiness claimed.
+- Branch codex/task-003-runtime-health created from merged TASK002 main a6f7cbbc819f7dc91795951b2106770acff408f3. Draft review PR pending creation; no direct main push or auto-merge.
