@@ -1,5 +1,6 @@
 import express from 'express';
 import {mediaRouter} from '../media/router.js';
+import {publicationRouter} from '../publication/router.js';
 import {randomUUID} from 'node:crypto';
 import {protectedRequest} from '../authorization.js';
 import {uuid,MutationFailure} from '../durability/validation.js';
@@ -18,6 +19,7 @@ export function draftRouter(runtime){
   if(req.originalUrl.includes('?'))return next(new DraftFailure('INVALID_INPUT',422));next();
  });
  router.use(mediaRouter(runtime));
+ router.use(publicationRouter(runtime));
  const auth=write=>protectedRequest(runtime.authorization,{roles:['Staff','Manager'],requireSession:write});
  const json=[(req,res,next)=>req.is('application/json')?next():next(new DraftFailure('UNSUPPORTED_MEDIA_TYPE',415)),express.json({limit:131072,strict:true})];
  const key=req=>parse(uuid,req.get('Idempotency-Key'));
@@ -28,6 +30,7 @@ export function draftRouter(runtime){
  router.patch('/admin/revisions/:id/languages/:code',auth(true),...json,run((req,p)=>service.patch(parse(objectId,req.params.id),parse(languageInput,req.body),p,parse(locale,req.params.code))));
  router.get('/admin/pois/:id',auth(false),run(async req=>({status:200,body:{data:await service.read(parse(objectId,req.params.id))}})));
  router.use((error,req,res,_next)=>{
+  if(res.headersSent)return;
   let status=503,code='CONTENT_UNAVAILABLE';
   if(error instanceof MutationFailure){status=error.status;code=error.code;}
   else if(error.type==='entity.too.large'){status=413;code='PAYLOAD_TOO_LARGE';}

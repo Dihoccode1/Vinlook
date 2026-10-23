@@ -193,7 +193,21 @@
     "state": "open",
     "approvedOwner": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Contract B approved;81relevant groups/build/health passed;draft PR preparation;real provider acceptance pending",
-    "branch": "codex/task-019-backend-media"
+    "readiness": "Code merged;81relevant passed groups/build/health evidence retained;real Cloudinary/Render/Atlas acceptance pending",
+    "branch": "codex/task-019-backend-media",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/29",
+    "headCommit": "9b44ae933d4ba3d0531ab2315b07c699a944c1e8",
+    "mergeCommit": "6af58ec282babb3c66e6103f95a55855c432d222",
+    "reviewEvidence": "User reports review and merge;PR29 merged verified;no formal GitHub review inferred"
+  },
+  "TASK-013": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/30",
+    "number": 30,
+    "state": "open",
+    "approvedOwner": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Approved A implemented;113unique relevant groups/build/health passed;await draft PR/Tu human review/user merge;actual registry/provider acceptance pending",
+    "contract": "docs/planning/task013-review-publication-contract.md",
+    "branch": "codex/task-013-review-publication"
   }
 }

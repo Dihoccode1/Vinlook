@@ -42,3 +42,5 @@ The full Day 5 milestone remains required but is not supported by the present ca
 Some documents retain historical proposal wording. Their approval sections and later numbered decisions determine current status. Task completion requires actual deliverables and review evidence, even when its GitHub issue has been closed.
 
 For local setup, use the exact Node/npm versions and commands in the development guide. Identity auth startup now requires private backend configuration and an already provisioned owned database/index catalog. Isolated tests generate synthetic keys and do not need Atlas/provider credentials. See [TASK-005 evidence and remaining gates](docs/planning/task005-implementation-evidence.md).
+
+TASK-013 adds staff language review/submission and Manager return/atomic publication, with preserved published history and durable replay. See [contract](docs/planning/task013-review-publication-contract.md) and [isolated evidence / remaining gates](docs/planning/task013-implementation-evidence.md). An explicitly approved model registry and real provider acceptance remain required; current runtime does not silently enable publication without them.
