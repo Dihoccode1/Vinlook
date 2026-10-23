@@ -20,7 +20,7 @@ Docker/Compose for reproducible runtime; GitHub Actions for CI/CD; Vercel fronte
 
 Requirements, design and the initial backlog were approved. TASK-002 provides a React preview and three Express scaffolds; TASK-003 runtime/health and TASK-004 Identity models are merged. TASK-005 pending signup, active login, bcrypt/JWT and durable auth limits are merged. Other business features, product CI/CD and hosted Vinlook backends remain pending.
 
-TASK-006–010 Identity backend and operator CLI code are merged; native human terminal/real operational acceptance remains pending. TASK-011 Content-owned POI/revision/localized schemas are merged. TASK-015 adds isolated transactional outbox/idempotency primitives and a sender for review; TASK-012 depends on this merge. Content APIs/pipeline, curated data/media, frontend administration and overall readiness remain pending. See [TASK-011 evidence](docs/planning/task011-implementation-evidence.md).
+TASK-006–010 Identity backend and operator CLI code are merged; native human terminal/real operational acceptance remains pending. TASK-011 Content-owned POI/revision/localized schemas are merged. TASK-015 transactional outbox/idempotency primitives are merged. TASK-012 adds protected draft APIs and opt-in verified Content runtime for review; pipeline, real media verification, curated data, frontend administration and overall readiness remain pending. See [TASK-012 evidence](docs/planning/task012-implementation-evidence.md). See [TASK-011 evidence](docs/planning/task011-implementation-evidence.md).
 
 Routing research selected JavaScript A* with a preprocessed walking graph. Actual iPhone evidence exists; Android testing was explicitly waived, not passed. Research evidence is not full navigation acceptance.
 

@@ -37,6 +37,7 @@ export function createContentSchemas() {
   }, nested);
 
   const POI = new Schema({
+    mutationVersion: { ...version(0), default: 0 },
     publishedRevisionId: nullableId(),
     deletedAt: { type: Date, default: null, validate: { validator: finiteDate, message: 'Invalid date' } },
     deletedBy: { ...nullableId(), validate: { validator(value) { return (value != null) === (this.deletedAt != null); }, message: 'Invalid deletion pair' } },
@@ -86,7 +87,7 @@ export function createContentModels(connection) {
   return Object.fromEntries(Object.entries(createContentSchemas()).map(([name, schema]) =>
     [name, connection.models[name] ?? connection.model(name, schema)]));
 }
-const fields = new Set(['publishedRevisionId', 'deletedAt', 'deletedBy', 'poiId', 'revisionNumber', 'editVersion', 'sourceVersion',
+const fields = new Set(['mutationVersion', 'publishedRevisionId', 'deletedAt', 'deletedBy', 'poiId', 'revisionNumber', 'editVersion', 'sourceVersion',
   'status', 'nameEN', 'location', 'entrance', 'thumbnailAsset', 'sourceTextEN', 'createdBy', 'revisionId', 'languageCode',
   'textVersion', 'text', 'audioAsset', 'durationSeconds', 'reviewStatus', 'reviewedBy', 'reviewedAt',
   ...['location', 'entrance'].flatMap(root => [`${root}.type`, `${root}.coordinates`, `${root}.coordinates.0`, `${root}.coordinates.1`]),

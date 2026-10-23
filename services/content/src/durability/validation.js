@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const id = z.string().regex(/^[a-f0-9]{24}$/);
 export const uuid = z.uuid().refine(v => v === v.toLowerCase());
 export const utc = z.string().refine(v => { try { return new Date(v).toISOString() === v; } catch { return false; } });
-export const operations = ['poi.create', 'revision.process', 'job.retry', 'revision.publish', 'poi.delete', 'poi.restore'];
+export const operations = ['poi.create', 'revision.draft', 'revision.process', 'job.retry', 'revision.publish', 'poi.delete', 'poi.restore'];
 export const actions = ['poi.create', 'poi.update', 'poi.delete', 'poi.restore', 'revision.submit', 'revision.return', 'revision.publish', 'content.review', 'job.create', 'job.retry', 'job.complete'];
 const codes = ['VALIDATION_FAILED', 'CONFLICT', 'DEPENDENCY_UNAVAILABLE', 'PROCESSING_FAILED'];
 export const eventSchema = z.strictObject({ eventId: uuid, actorId: id, workSessionId: id, action: z.enum(actions), poiId: id,
