@@ -149,11 +149,33 @@
   "TASK-011": {
     "url": "https://github.com/Dihoccode1/Vinlook/issues/22",
     "number": 22,
-    "state": "open",
+    "state": "closed",
     "approvedOwner": "ngoctu0405",
     "reviewer": "Dihoccode1",
     "remoteAssignment": "not applied;preserve approved owner",
-    "readiness": "Contract A approved; implemented;40relevant groups/build/smoke passed;draft PR preparation;human review/merge pending",
-    "branch": "codex/task-011-content-models"
+    "readiness": "Complete;PR23 merged and Issue22 closed;40relevant groups/build/smoke evidence retained",
+    "branch": "codex/task-011-content-models",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/23",
+    "headCommit": "56ac03c2f79124fab4e3fd5350c691da7bf4d6e4",
+    "mergeCommit": "c1251196541b23958aca9a5448770ab09b5b9492",
+    "reviewEvidence": "User reports Tu review and Duy approval;Issue22 closure and PR23 merge verified;no formal GitHub review inferred",
+    "closedAt": "2026-10-23T14:11:28Z"
+  },
+  "TASK-012": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/24",
+    "number": 24,
+    "state": "open",
+    "approvedOwner": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Sequence A approved;blocked by TASK015 merge and own API contract"
+  },
+  "TASK-015": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/25",
+    "number": 25,
+    "state": "open",
+    "approvedOwner": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Contract A approved;52relevant groups/build/health passed;draft PR preparation;review/merge pending",
+    "branch": "codex/task-015-content-durability"
   }
 }

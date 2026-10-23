@@ -30,6 +30,8 @@
     "test:operator": "node --test services/identity/test/operator.test.js",
     "test:operator:db": "node --test services/identity/test/operator.integration.test.js",
     "test:content": "node --test services/content/test/schemas.test.js",
-    "test:content:db": "node --test services/content/test/indexes.integration.test.js"
+    "test:content:db": "node --test services/content/test/indexes.integration.test.js",
+    "test:durability": "node --test services/content/test/durability.test.js",
+    "test:durability:db": "node --test services/content/test/durability.integration.test.js"
   }
 }
