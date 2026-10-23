@@ -167,7 +167,8 @@
     "state": "open",
     "approvedOwner": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Sequence A approved;blocked by TASK015 merge and own API contract"
+    "readiness": "Contract A approved;58relevant groups/build/health passed;draft PR preparation;review/merge pending",
+    "branch": "codex/task-012-draft-api"
   },
   "TASK-015": {
     "url": "https://github.com/Dihoccode1/Vinlook/issues/25",
@@ -175,7 +176,11 @@
     "state": "open",
     "approvedOwner": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Contract A approved;52relevant groups/build/health passed;draft PR preparation;review/merge pending",
-    "branch": "codex/task-015-content-durability"
+    "readiness": "Code merged;52relevant passed groups/build/health evidence retained",
+    "branch": "codex/task-015-content-durability",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/26",
+    "headCommit": "9b6e2ebb2dd920a5ebc5203aac6c6e649b37bb93",
+    "mergeCommit": "7dcf6f4520286aaacb3bba108ab04a33e7b44ead",
+    "reviewEvidence": "User reports review and merge;PR26 merged verified;no formal GitHub review inferred"
   }
 }

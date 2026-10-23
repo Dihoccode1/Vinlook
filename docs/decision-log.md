@@ -1265,3 +1265,24 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. User explicitly approved A implement/test: strict outbox/replay models, atomic runner,24h expiry/quarantine, bounded sender/retry/lifecycle. Added scoped primitives with no startup connection/public endpoints/new dependency/Atlas writes. OwnerDuy/reviewerTu retained.
 - Final6durability+12actualMongo/HTTP+34relevant regressions passed (52unique); full workspace build and final Content build/three-service health checks passed. Actual Node restart, post-commit injected unknown acknowledgement, receiver dedup, expiry/concurrency/rollback/backoff/counter starvation evidenced. Initial Windows launch failure, fixture0/9 and sandbox35/40 followed by unchanged elevated40/40 retained honestly in planning/task015-implementation-evidence.md.
 - All4exact task containers/own volumes removed after ID/label/mount checks. No real business endpoint/Atlas/provider/production changes, readiness503. Await Tu human review/user merge;TASK012 remains pending.
+
+## DEC-163 TASK015 draft PR created and diff focused
+
+- Date:23October2026. Draft PR26 https://github.com/Dihoccode1/Vinlook/pull/26, branch codex/task-015-content-durability, final head9b6e2ebb2dd920a5ebc5203aac6c6e649b37bb93;16final changed files and all16blob hashes verified. PR open/drafttrue/mergedfalse. Main untouched.
+- Removed two locally existing but previously untracked large backlog documents from PR and restored prior development.md blob, leaving exact dependency/approved contract and evidence in focused planning artifacts/Issues24,25. Local planning edits retained; no product code changed after final tests. Await Tu human review/user merge, no auto-merge/reviewer message. Postpublication tracking remains local for next reviewed change.
+
+## DEC-164 TASK015 merge verified
+
+- Date:23October2026. User reports review and merge. PR26 verified closed/mergedtrue/draftfalse, merge commit7dcf6f4520286aaacb3bba108ab04a33e7b44ead.52relevant passed groups/build/health evidence retained, no duplicate tests/review requested or formal GitHub approval fabricated.
+- TASK012 implementation prerequisite TASK015 now satisfied; detailed endpoint/version/invalidation contract still requires approval before code. No production/Atlas or operational acceptance inferred from merge.
+
+## DEC-165 TASK012 draft API contract prepared
+
+- Date:23October2026. Existing Issue24, ownerDuy/reviewerTu. TASK015 prerequisite merged. Prepared planning/task012-draft-api-contract.md with exact create/clone/PATCH/read shapes, revision.draft replay enum proposal, source/locale invalidation, no-op/conflict semantics, media verifier/runtime/index gates and explicit POI.mutationVersion schema amendment for parent concurrency.
+- Await A approval under Master Prompt Rule1 before implementation. No new schema field implemented, API code, Atlas/provider call or production activation performed; new mutationVersion field awaits explicit approval, no no-op locking claim.
+
+## DEC-166 TASK012 contract A approved and implemented
+
+- Date:23October2026. User explicitly approved A implement/test, including POI.mutationVersion and revision.draft operation. Added protected create/clone/PATCH/locale/read with current authority/session, atomic outbox/replay and source/text invalidation preserving published graph; opt-in verified runtime no automatic schema/index/data repair. OwnerDuy/reviewerTu retained.
+-4draft groups+14actualMongo/HTTP+40relevant regressions passed (58unique), full build/three-service health checks passed. Initial11integrationgroups passed then expanded14on fresh DB; no failures/double counting. True parent-write/delete race, localized/outbox rollback, actual receiver and startup process fail-closed demonstrated. Evidence planning/task012-implementation-evidence.md.
+-Only2verified task containers/own volumes removed. No real Atlas/backfill/provider/media/geography/deployment or CI/CD acceptance; nonnull production thumbnail safely blocked pending TASK019 verifier. Overall readiness503; await Tu human review/user merge.
