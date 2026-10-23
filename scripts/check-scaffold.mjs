@@ -5,8 +5,8 @@ import { once } from 'node:events';
 const servers = [];
 try {
   for (const name of ['identity', 'content', 'usage']) {
-    const { startServer } = await import(`../services/${name}/src/server.js`);
-    const server = startServer({ port: 0 });
+    const { createApp } = await import(`../services/${name}/src/app.js`);
+    const server = createApp().listen(0, '127.0.0.1');
     servers.push(server);
     await once(server, 'listening');
     const port = server.address().port;

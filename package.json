@@ -16,6 +16,7 @@
     "preinstall": "node scripts/check-runtime.mjs",
     "dev": "npm run dev --workspace=@vinlook/web",
     "build": "npm run build --workspaces --if-present",
-    "check:scaffold": "node scripts/check-scaffold.mjs"
+    "check:scaffold": "node scripts/check-scaffold.mjs",
+    "test:runtime": "node --test tests/runtime-health.test.mjs"
   }
 }

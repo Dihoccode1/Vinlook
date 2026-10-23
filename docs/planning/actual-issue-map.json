@@ -28,12 +28,26 @@
     "approvedOwner": "ngoctu0405",
     "reviewer": "Dihoccode1",
     "remoteAssignment": "not applied; assignability pending",
-    "readiness": "User checked and closed Issue; actual scaffold now prepared and locally verified; review PR and merge pending",
+    "readiness": "Merged; human review user-reported, formal GitHub reviews empty",
     "checks": [
       "npm ci",
       "npm run build",
       "npm run check:scaffold",
       "browser AX at localhost:5173"
-    ]
+    ],
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/5",
+    "branch": "codex/task-002-scaffold",
+    "headCommit": "a8b0368a2019ba4831e2cc05f2ea9fc59cc0b7a2",
+    "mergeCommit": "a6f7cbbc819f7dc91795951b2106770acff408f3",
+    "reviewEvidence": "User report; PR5 verified merged"
+  },
+  "TASK-003": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/6",
+    "number": 6,
+    "state": "open",
+    "approvedOwner": "ngoctu0405",
+    "reviewer": "Dihoccode1",
+    "readiness": "ContractA approved; runtime/health implemented;15tests and build/smoke pass; PR review pending",
+    "branch": "codex/task-003-runtime-health"
   }
 }

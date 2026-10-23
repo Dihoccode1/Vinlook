@@ -9,6 +9,7 @@ npm ci
 npm run dev
 npm run build
 npm run check:scaffold
+npm run test:runtime
 ```
 
 Frontend dev runs at `http://127.0.0.1:5173`. Start each backend in a separate terminal:
@@ -19,9 +20,19 @@ npm start --workspace=@vinlook/content
 npm start --workspace=@vinlook/usage
 ```
 
-These development-only listeners use ports 3001, 3002 and 3003 respectively on localhost. Stop a terminal with Ctrl+C. The services deliberately return 404 for all paths: business endpoints and the approved health/config contract are not implemented here. Port/host/env validation and deployment commands belong to TASK-003 and deployment tasks. Do not deploy this localhost-only scaffold directly to Render.
+Development defaults are localhost ports 3001, 3002 and 3003 respectively. Stop a terminal with Ctrl+C. TASK-003 validates NODE_ENV/HOST/PORT before listening and provides the minimal health routes below. Business and protected monitoring endpoints remain404. This is not a deployed production service.
 
-The smoke check starts all three real listeners concurrently on OS-assigned ports, verifies HTTP404 and no framework header, then closes them. It does not test authentication, database access, provider availability, network isolation, hosted lifecycle or signal delivery on Linux. Backend build checks ESM syntax; there is no transpilation.
+## Runtime configuration and minimal health
+
+Start/dev reads an optional `.env` in the service directory through Node's native env-file flag. Copy only the nonsecret settings from that service's `.env.example` if needed; shell/hosting values take precedence. Never put a real `.env` into Git or use a frontend env variable for backend credentials.
+
+NODE_ENV permits development/test/production (default development). HOST defaults127.0.0.1 in dev/test. PORT defaults3001/3002/3003 in dev/test and must be an integer1–65535. Production requires explicit HOST=0.0.0.0 and PORT; do not infer production just from a hosting hostname. Invalid settings stop startup with field names and no values. The process config deliberately returns only these consumed nonsecret fields; database/auth/provider required config belongs to those actual implementation tasks.
+
+GET `/health/live` returns200 `{data:{status:"up"},requestId}`. GET `/health/ready` deliberately returns503 `{error:{code:"DEPENDENCIES_UNVERIFIED",message:"Service dependencies are not verified",requestId}}` until actual owned dependencies are implemented and checked. Both return Cache-Control:no-store and a server-generated UUID, without echoing the caller's ID. A live process is not a ready product. Do not use these endpoints to keep Render awake.
+
+Protected `/monitoring/health` and `/monitoring/jobs` remain404 until staff auth and the actual monitoring feature exist. No dependency polling, DB/provider details or cross-service DB credentials are exposed. D-017 freshness/timeouts remain contracts for later real dependency checks; no timer makes an unimplemented dependency healthy.
+
+The scaffold smoke check starts all three apps concurrently on OS-assigned ports, verifies HTTP404 for unimplemented paths and no framework header, then closes them. The runtime suite checks defaults, missing/invalid production inputs, pre-listen startup failure, sentinel redaction and truthful health responses. Neither verifies authentication, database access, provider availability, network isolation, hosted lifecycle or signal delivery on Linux. Backend build checks ESM syntax; there is no transpilation.
 
 ## Structure
 
@@ -37,4 +48,4 @@ No shared database access, gateway, message broker or fourth hosted backend is i
 
 Install versions are exact in workspace package files, and transitive versions/integrities are locked in package-lock.json. Use `npm ci` to reproduce them; don't copy node_modules. No product Python dependencies are installed by npm; the separate research virtualenv is excluded from publication.
 
-Runtime/hosting checks, Docker Compose, GitHub Actions, CI/CD, all product features and full mobile/browser acceptance remain later tracked work. A passed scaffold check is not MVP completion.
+Hosted runtime checks, Docker Compose, GitHub Actions, CI/CD, real dependency readiness, product features and full mobile/browser acceptance remain later tracked work. Passed scaffold/runtime checks are not MVP completion.
