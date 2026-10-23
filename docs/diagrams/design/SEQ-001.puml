@@ -1,0 +1,46 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName SansSerif
+title SEQ-001 — Public map, search, language and audio
+footer APPROVED D-016 DEC-076 | UC-001, UC-002, UC-003, UC-004, UC-005, UC-010, UC-011
+
+actor Tourist
+participant UI
+participant "Browser GPS" as GPS
+participant "Local data / media" as Local
+participant "POI & Content API" as POI
+database "POI DB" as DB
+participant "Usage Monitoring API" as Usage
+Tourist -> UI: Open map / search / select POI
+alt Online
+ UI -> POI: Read published, non-deleted POIs
+ POI -> DB: Query published revision
+ DB --> POI: Public snapshot
+ POI --> UI: Result or read error
+else Complete offline package
+ UI -> Local: Read verified English snapshot
+ Local --> UI: Snapshot or missing-data error
+end
+opt Locate / nearby
+ UI -> GPS: Request location with permission
+ alt Valid fix
+  GPS --> UI: Position + accuracy
+  UI -> UI: Nearest <=4 within 3 km straight-line
+ else Denied / unavailable
+  GPS --> UI: Error
+  UI -> UI: Keep map/search available
+ end
+end
+Tourist -> UI: Play selected narration
+UI -> Local: Load selected audio URL / cached English
+alt Audio available
+ Local --> UI: Audio
+ UI -> UI: Start playback; pause keeps listening lifecycle
+ opt Online telemetry
+  UI -> Usage: Start / heartbeat / end by playbackId
+ end
+else Load fails
+ UI -> UI: Show Retry; no autoplay fallback
+end
+
+@enduml

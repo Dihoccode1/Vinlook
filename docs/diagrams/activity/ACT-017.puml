@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-017 / UC-017\nĐánh dấu xóa POI
+' Sources: US-015. **Related Requirement / Acceptance:** REQ-009, REQ-015, REQ-018, REQ-019 / AC-009, AC-015, AC-018, AC-019. REQ-009, REQ-015, REQ-018, REQ-019 / AC-009, AC-015, AC-018, AC-019.
+start
+if (Manager và phiên mở?) then (Có)
+:Manager có phiên mở chọn POI cần ngừng phục\nvụ.;
+:Đánh dấu xóa và giữ bản ghi/nội dung cần\nphục hồi.;
+:Ghi nhật ký và ẩn điểm khỏi dữ liệu công\nkhai sau đồng bộ.;
+else (Không)
+:Từ chối đánh dấu xóa;
+stop
+endif
+stop
+legend bottom
+ACT-017 → UC-017 → US-015
+REQ-009, REQ-015, REQ-018, REQ-019 / AC-009,\nAC-015, AC-018, AC-019.
+Actor: Manager
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

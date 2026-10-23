@@ -1,0 +1,42 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName SansSerif
+title SEQ-002 — Foreground routing and stale results
+footer APPROVED D-016 DEC-076 | UC-006
+
+actor Tourist
+participant UI
+participant "Browser GPS" as GPS
+participant "Graph loader" as Data
+participant "A* Web Worker" as Engine
+Tourist -> UI: Start walking to one POI
+UI -> GPS: Subscribe foreground fixes
+GPS --> UI: Fix + accuracy / unavailable
+alt Valid fix and entrance
+ UI -> Data: Obtain compatible graph snapshot
+ Data --> UI: Graph / unavailable
+ alt Graph available
+  UI -> Engine: LOAD_GRAPH then CALCULATE_ROUTE(requestId)
+  Engine -> Engine: Snap, directed path, instructions
+  Engine --> UI: Result / NO_ROUTE / SNAP_NOT_FOUND
+  UI -> UI: Accept current request + destination + version only
+ else Missing graph
+  UI -> UI: Data unavailable + Retry
+ end
+else GPS uncertain / unavailable
+ UI -> UI: Preserve route; mark position unavailable
+end
+loop Foreground valid fixes
+ GPS --> UI: New fix
+ UI -> UI: Arrival / off-route counters / cooldown
+ opt Recalculation needed
+  UI -> Engine: Current recalculation only
+  Engine --> UI: Versioned result
+ end
+end
+opt Stop / destination changed / synced deletion
+ UI -> Engine: Terminate current worker if calculation active
+ UI -> UI: Invalidate request; stop old navigation
+end
+
+@enduml

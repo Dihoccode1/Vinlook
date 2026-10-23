@@ -1,0 +1,21 @@
+{
+  "TASK-001": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/1",
+    "number": 1,
+    "assignee": "Dihoccode1",
+    "state": "closed",
+    "evidence": "GitHub create_issue response verified 23/10/2026",
+    "readiness": "Documentation draft PR open; human review and merge pending; existing closed Issue is not verified completion",
+    "seedCommit": "e9f378c5284f8918e6b254c80a0fa616c273d2f7",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/3",
+    "branch": "codex/task-001-docs-baseline",
+    "baselineCommit": "0afb8e72c928c7325d53f722da9f8f3f9ede06f4"
+  },
+  "RSH-TTS-001": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/2",
+    "number": 2,
+    "assignee": "Dihoccode1",
+    "state": "open",
+    "readiness": "MMS English/Pidgin and four Gemini short outputs observed; quality and product integration pending"
+  }
+}

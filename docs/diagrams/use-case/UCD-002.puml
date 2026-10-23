@@ -1,0 +1,48 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam usecaseBackgroundColor #EEF5FF
+skinparam usecaseBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title UCD-002 — Nội dung và vòng đời POI\nĐIỀU CHỈNH THEO PHƯƠNG ÁN B — DEC-050
+actor "Staff" as staff
+actor "Manager" as manager
+rectangle "Vinlook — sản phẩm (góc nhìn nội dung và vòng đời poi)" {
+usecase "UC-012\nTạo/chỉnh sửa và lưu POI nháp" as u12
+usecase "UC-013\nChủ động chạy dịch và tạo audio" as u13
+usecase "UC-014\nThử lại phần xử lý bị lỗi/chờ khi\ncó điều kiện" as u14
+usecase "UC-015\nKiểm tra và trình nội dung để\nduyệt công khai" as u15
+usecase "UC-016\nDuyệt và công khai bản đủ 16 ngôn\nngữ" as u16
+usecase "UC-017\nĐánh dấu xóa POI" as u17
+usecase "UC-018\nKhôi phục POI đã đánh dấu xóa về\nnháp" as u18
+}
+staff -- u12
+staff -- u13
+staff -- u14
+staff -- u15
+manager -- u12
+manager -- u13
+manager -- u14
+manager -- u15
+manager -- u16
+manager -- u17
+manager -- u18
+note bottom of u14
+Có công việc lỗi/chờ, có quyền và phiên mở,
+đủ điều kiện dịch vụ/worker/quota để thử lại.
+Đây là Use Case độc lập theo lựa chọn B.
+end note
+note bottom of u16
+Chỉ Manager công khai đủ 16 ngôn ngữ.
+Có phiên mở là precondition, không include UC-024.
+end note
+legend bottom
+Góc nhìn nghiệp vụ, không phải ranh giới microservice.
+Nét liền: actor tham gia Use Case, không chỉ thứ tự thao tác.
+Không đề xuất actor generalization hoặc include ở bản này.
+endlegend
+@enduml

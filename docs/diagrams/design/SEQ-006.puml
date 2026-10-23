@@ -1,0 +1,35 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName SansSerif
+title SEQ-006 — POI revisions, review, publish, soft delete and restore
+footer APPROVED D-016 DEC-076 | UC-012, UC-015, UC-016, UC-017, UC-018
+
+actor "Staff / Manager" as Person
+participant "POI & Content" as POI
+participant "Identity & Staff" as Identity
+database "POI DB" as DB
+participant "Cloudinary" as Media
+Person -> POI: Mutation + expectedEditVersion
+POI -> Identity: Current role/account/open session
+Identity --> POI: Context / deny
+alt Authorized and matching version
+ POI -> DB: Validate one draft and published immutability
+ alt Draft edit
+  POI -> DB: Save draft; invalidate changed dependencies
+ else Review / submit
+  POI -> DB: Review exact versions / in_review lock
+ else Manager publish
+  POI -> Media: Verify referenced assets
+  Media --> POI: Metadata / failure
+  POI -> DB: Check 16 approved current contents + entrance
+  POI -> DB: Transaction: pointer + outbox + idempotency outcome
+ else Manager delete / restore
+  POI -> DB: Soft delete or restore as draft + audit outbox
+ end
+ POI --> Person: Outcome and current version
+else Stale / wrong state / incomplete media / denied
+ POI --> Person: 409 / 422 / 403 / dependency error
+end
+note over POI,DB: No hard delete, no cross-service DB access
+
+@enduml

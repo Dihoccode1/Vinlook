@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-037 / UC-037\nXét bằng chứng và nghiệm thu checkpoint
+' Sources: US-034. **Related Requirement / Acceptance:** REQ-030 / AC-030. REQ-030 / AC-030.
+start
+:Duy nhận bản chạy và evidence checkpoint.;
+:Đối chiếu phạm vi quality gate các AC và lỗi\ncòn tồn tại.;
+if (Đủ phạm vi, evidence và không còn\nCritical/Blocker?) then (Có)
+:Ghi kết quả xét đạt hoặc các điểm chưa đạt.;
+else (Không)
+:Ghi chưa đạt, trình vấn đề, không tự giảm\nscope hoặc kéo lịch;
+stop
+endif
+stop
+legend bottom
+ACT-037 → UC-037 → US-034
+REQ-030 / AC-030.
+Actor: Duy
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

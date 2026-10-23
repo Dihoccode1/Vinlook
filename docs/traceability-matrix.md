@@ -1,0 +1,45 @@
+# Vinlook — Requirement traceability matrix (Design review)
+
+Ngày 23/10/2026. Chỉ ghi liên kết artifact hiện có; không có Actual Issue/PR/TC product-pass. Manifest diagram cung cấp UC→REQ/US. Các ID range trong UC phải đọc kèm nguồn để không hiểu nhầm những ID chỉ xuất hiện ở đầu/cuối range.
+
+| UC | REQ / AC | Feature | US | ACT | Sequence | Class view | TC | Issue / PR | MVP / trạng thái |
+|---|---|---|---|---|---|---|---|---|---|
+| UC-001 | REQ-001, REQ-014, AC-001, AC-014 | FEAT-001, FEAT-004 | US-001, US-007, US-012, US-014 | ACT-001 | SEQ-001 | CLS-004 | TC-001, TC-050 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-002 | REQ-001, REQ-010, REQ-014, AC-001, AC-010, AC-014 | FEAT-001, FEAT-003, FEAT-004 | US-001, US-007, US-010, US-012, US-014 | ACT-002 | SEQ-001 | CLS-004 | TC-002 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-003 | REQ-002, REQ-025, AC-002, AC-025 | FEAT-001, FEAT-002 | US-001, US-002 | ACT-003 | SEQ-001 | CLS-004 | TC-003 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-004 | REQ-003, AC-003 | FEAT-001 | US-001, US-002, US-003, US-007 | ACT-004 | SEQ-001 | CLS-004 | TC-004, TC-050 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-005 | REQ-004, AC-004 | FEAT-001, FEAT-002 | US-001, US-003, US-004, US-005 | ACT-005 | SEQ-001 | CLS-004 | TC-005 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-006 | REQ-004, REQ-027, AC-004, AC-027 | FEAT-001, FEAT-002 | US-001, US-002, US-003, US-004, US-005, US-006, US-007 | ACT-006 | SEQ-002 | CLS-004 | TC-006, TC-043, TC-044, TC-050 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-007 | REQ-007, REQ-008, REQ-021, AC-007, AC-008, AC-021 | FEAT-001, FEAT-002, FEAT-003, FEAT-004 | US-008, US-012 | ACT-007 | SEQ-003 | CLS-004 | TC-007, TC-042 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-008 | REQ-007, REQ-009, AC-007, AC-009 | FEAT-001, FEAT-002, FEAT-003, FEAT-004 | US-001, US-007, US-008, US-009, US-010, US-015 | ACT-008 | SEQ-003 | CLS-004 | TC-008, TC-052 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-009 | REQ-008, REQ-009, REQ-021, AC-008, AC-009, AC-021 | FEAT-001, FEAT-002, FEAT-003, FEAT-004 | US-007, US-008, US-009, US-010, US-012, US-015 | ACT-009 | SEQ-003 | CLS-004 | TC-009, TC-042, TC-044 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-010 | REQ-009, REQ-010, AC-009, AC-010 | FEAT-001, FEAT-002, FEAT-003, FEAT-004 | US-007, US-009, US-010, US-012, US-014, US-015 | ACT-010 | SEQ-001 | CLS-004 | TC-010, TC-051 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-011 | REQ-009, REQ-010, REQ-023, AC-009, AC-010, AC-023 | FEAT-001, FEAT-002, FEAT-003, FEAT-004 | US-007, US-009, US-010, US-012, US-014, US-015 | ACT-011 | SEQ-001 | CLS-004 | TC-011, TC-050, TC-051 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-012 | REQ-014, REQ-018, REQ-019, AC-014, AC-018, AC-019 | FEAT-004, FEAT-005 | US-012, US-014, US-018, US-022 | ACT-012 | SEQ-006 | CLS-002 | TC-012, TC-039, TC-041, TC-047 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-013 | REQ-011, REQ-013, REQ-018, AC-011, AC-013, AC-018 | FEAT-003, FEAT-005 | US-011, US-012, US-013, US-014, US-018, US-022, US-029 | ACT-013 | SEQ-007 | CLS-002 | TC-013, TC-040, TC-041, TC-045, TC-049 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-014 | REQ-013, REQ-028, AC-013, AC-028 | FEAT-003, FEAT-005 | US-011, US-012, US-013, US-029 | ACT-014 | SEQ-007 | CLS-002 | TC-014, TC-040, TC-049 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-015 | REQ-012, REQ-017, AC-012, AC-017 | FEAT-003, FEAT-004, FEAT-005 | US-011, US-012, US-014, US-018, US-022 | ACT-015 | SEQ-006 | CLS-002 | TC-015 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-016 | REQ-012, REQ-017, AC-012, AC-017 | FEAT-003, FEAT-004, FEAT-005 | US-011, US-012, US-014, US-018, US-022 | ACT-016 | SEQ-006 | CLS-002 | TC-016, TC-039, TC-041, TC-045, TC-049, TC-051 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-017 | REQ-009, REQ-015, REQ-018, REQ-019, AC-009, AC-015, AC-018, AC-019 | FEAT-004, FEAT-005 | US-009, US-014, US-015, US-022, US-023 | ACT-017 | SEQ-006 | CLS-002 | TC-017 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-018 | REQ-015, REQ-018, REQ-019, REQ-026, AC-015, AC-018, AC-019, AC-026 | FEAT-004, FEAT-005 | US-012, US-015, US-016, US-022, US-031 | ACT-018 | SEQ-006 | CLS-002 | TC-018 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-019 | REQ-016, REQ-021, AC-016, AC-021 | FEAT-003, FEAT-005 | US-008, US-011, US-013, US-017, US-019, US-026 | ACT-019 | SEQ-004 | CLS-001 | TC-019, TC-038 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-020 | REQ-016, REQ-017, AC-016, AC-017 | FEAT-005 | US-018, US-019, US-020 | ACT-020 | SEQ-004 | CLS-001 | TC-020, TC-046 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-021 | REQ-016, REQ-017, AC-016, AC-017 | FEAT-005 | US-017, US-019, US-020 | ACT-021 | SEQ-004 | CLS-001 | TC-021 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-022 | REQ-016, REQ-029, AC-016, AC-029 | FEAT-005 | US-020 | ACT-022 | SEQ-004 | CLS-001 | TC-022 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-023 | REQ-017, AC-017 | FEAT-005 | US-018, US-021, US-023 | ACT-023 | SEQ-004 | CLS-001 | TC-023, TC-046 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-024 | REQ-018, AC-018 | FEAT-005 | US-018, US-022 | ACT-024 | SEQ-005 | CLS-001 | TC-024, TC-046 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-025 | REQ-018, AC-018 | FEAT-005 | US-018, US-022 | ACT-025 | SEQ-005 | CLS-001 | TC-025 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-026 | REQ-019, AC-019 | FEAT-005 | US-011, US-022, US-023 | ACT-026 | SEQ-005 | CLS-001 | TC-026, TC-047 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-027 | REQ-020, AC-020 | FEAT-005 | US-018, US-024 | ACT-027 | SEQ-004 | CLS-001 | TC-027 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-028 | REQ-020, AC-020 | FEAT-005 | US-018, US-024 | ACT-028 | SEQ-004 | CLS-001 | TC-028, TC-038 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-029 | REQ-020, AC-020 | FEAT-005 | US-020, US-025 | ACT-029 | SEQ-004 | CLS-001 | TC-029 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-030 | REQ-022, AC-022 | FEAT-006 | US-018, US-027 | ACT-030 | SEQ-008 | CLS-003 | TC-030, TC-048 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-031 | REQ-022, REQ-023, AC-022, AC-023 | FEAT-003, FEAT-006 | US-010, US-027, US-028 | ACT-031 | SEQ-008 | CLS-003 | TC-031, TC-048 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-032 | REQ-021, REQ-024, AC-021, AC-024 | FEAT-003, FEAT-005, FEAT-006 | US-008, US-011, US-013, US-017, US-019, US-026, US-029 | ACT-032 | SEQ-008 | CLS-003 | TC-032 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-033 | REQ-026, AC-026 | FEAT-004, FEAT-005 | US-014, US-023, US-031 | ACT-033 | SEQ-009 | Ops runbook / existing module | TC-033 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-034 | REQ-026, AC-026 | FEAT-004, FEAT-005 | US-014, US-023, US-031 | ACT-034 | SEQ-009 | Ops runbook / existing module | TC-034 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-035 | REQ-028, REQ-029, REQ-031, REQ-032, AC-028, AC-029, AC-031, AC-032 | FEAT-001 | US-032, US-033, US-035, US-036 | ACT-035 | SEQ-009 | Ops runbook / existing module | TC-035 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-036 | REQ-028, AC-028 | FEAT-001 | US-032, US-033, US-035, US-036 | ACT-036 | SEQ-009 | Ops runbook / existing module | TC-036 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+| UC-037 | REQ-030, AC-030 | FEAT-001 | US-034 | ACT-037 | SEQ-009 | Ops runbook / existing module | TC-037 | Chưa tạo/xác minh | Day 5 baseline; TC proposed, ngoại lệ Android DEC-070 |
+
+Sequence/class views đã duyệt DEC-076; TC/Test Plan đã duyệt DEC-079. UCD liên kết qua manifest Use Case Diagram đã duyệt DEC-050. Chưa gán TASK IDs/deployment sản phẩm hoặc khóa assignment. Harness research không được điền vào cột Implementation PR hay TC product-pass.

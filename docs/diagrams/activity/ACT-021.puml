@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-021 / UC-021\nDuyệt đăng ký để cấp quyền Staff
+' Sources: US-019. **Related Requirement / Acceptance:** REQ-016, REQ-017 / AC-016, AC-017. REQ-016, REQ-017 / AC-016, AC-017.
+start
+if (Manager và có đăng ký chờ?) then (Có)
+:Manager xem đăng ký đang chờ.;
+:Phê duyệt cấp quyền Staff.;
+:Hiển thị trạng thái đã duyệt để nhân viên\nđăng nhập.;
+else (Không)
+:Không cấp quyền Staff trái điều kiện;
+stop
+endif
+stop
+legend bottom
+ACT-021 → UC-021 → US-019
+REQ-016, REQ-017 / AC-016, AC-017.
+Actor: Manager
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+!pragma useVerticalIf on
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #EEF5FF
+skinparam activityBorderColor #315D8A
+skinparam ArrowColor #315D8A
+title ACT-008 / UC-008\nMở lại và tiếp tục dùng khi offline
+' Sources: US-007, US-009. **Related Requirement / Acceptance:** REQ-007, REQ-009 / AC-007, AC-009. REQ-007, REQ-009 / AC-007, AC-009.
+start
+:Khách mở lại ứng dụng không có Internet.;
+if (Có gói offline đã tải đủ?) then (Có)
+:Đọc gói offline đã tải đủ và dùng tiếng Anh.;
+:Cho xem/tìm/nghe và GPS/dẫn đường/tính lại\nvới dữ liệu sẵn có.;
+else (Không)
+:Không báo sẵn sàng offline;
+stop
+endif
+stop
+legend bottom
+ACT-008 → UC-008 → US-007, US-009
+REQ-007, REQ-009 / AC-007, AC-009.
+Actor: Du khách
+Trạng thái: ĐÃ ĐƯỢC DUY DUYỆT — DEC-049
+endlegend
+@enduml
