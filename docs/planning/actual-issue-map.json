@@ -113,7 +113,20 @@
     "approvedOwner": "ngoctu0405",
     "reviewer": "Dihoccode1",
     "remoteAssignment": "not applied;preserve approved ownership",
-    "readiness": "Contract A approved;67groups/build/smoke passed;draft PR publication in progress,Duy review pending",
-    "branch": "codex/task-008-audit-history"
+    "readiness": "Merged;Duy approval user-reported;67passed groups/build/smoke evidence retained",
+    "branch": "codex/task-008-audit-history",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/17",
+    "headCommit": "e248b5b37f0130fa8226699488c46067c1eae312",
+    "reviewEvidence": "User approval report;PR17 merge and main verified",
+    "mergeCommit": "e9b7bd5d83d44feeef066d02a6f863bcf3309707"
+  },
+  "TASK-009": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/18",
+    "number": 18,
+    "state": "open",
+    "assignee": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Contract A approved;77groups/build/smoke passed;draft PR publication in progress,Tu review pending",
+    "branch": "codex/task-009-staff-recovery"
   }
 }

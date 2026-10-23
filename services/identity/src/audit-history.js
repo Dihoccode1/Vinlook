@@ -24,7 +24,7 @@ const common = { staffId: id.optional(), dateFrom: day.optional(), dateTo: day.o
 const sessionQuery = z.strictObject({ ...common, status: z.enum(['open', 'closed']).optional() });
 const auditQuery = z.strictObject({ ...common, workSessionId: id.optional(), poiId: id.optional(),
   action: z.string().regex(/^[A-Za-z0-9_.]{1,100}$/).optional(), actorType: z.enum(['account', 'operator']).optional() });
-const cursorSchema = z.strictObject({ p: z.strictObject({ v: z.literal(1), endpoint: z.enum(['sessions', 'audit']),
+const cursorSchema = z.strictObject({ p: z.strictObject({ v: z.literal(1), endpoint: z.enum(['sessions', 'audit', 'staff']),
   requester: id, role: z.enum(['Staff', 'Manager']), filters: z.record(z.string(), z.string()),
   last: z.strictObject({ value: z.string(), id }) }), s: z.string().regex(/^[a-f0-9]{64}$/) });
 const invalid = () => new AuthorizationError(422, 'INVALID_INPUT', 'Invalid audit or history input');
@@ -77,7 +77,8 @@ export function decodeHistoryCursor(secret, token, context) {
     if (!timingSafeEqual(Buffer.from(value.s, 'hex'), Buffer.from(signature(cursorKey(secret), value.p), 'hex'))) throw invalid();
     const { v: _v, last, ...binding } = value.p;
     if (JSON.stringify(binding) !== JSON.stringify(context)) throw invalid();
-    if (!(context.endpoint === 'sessions' ? day : iso).safeParse(last.value).success) throw invalid();
+    if (!(context.endpoint === 'sessions' ? day : context.endpoint === 'staff' ? id : iso).safeParse(last.value).success) throw invalid();
+    if (context.endpoint === 'staff' && last.value !== last.id) throw invalid();
     return last;
   } catch { throw invalid(); }
 }
