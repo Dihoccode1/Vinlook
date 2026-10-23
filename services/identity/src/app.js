@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { authRouter } from './auth/router.js';
 import { authorizationRouter } from './authorization.js';
 import { sessionRouter } from './session-router.js';
+import { auditHistoryRouter } from './audit-history.js';
 
 export function createApp(authRuntime) {
   const app = express();
@@ -10,6 +11,7 @@ export function createApp(authRuntime) {
   if (authRuntime) {
     app.set('trust proxy', authRuntime.config.proxyCidrs.length ? [...authRuntime.config.proxyCidrs] : false);
     app.use('/api/v1/auth', authRouter(authRuntime));
+    app.use('/api/v1', auditHistoryRouter(authRuntime));
     app.use('/api/v1/work-sessions', sessionRouter(authRuntime));
     if (authRuntime.callers) app.use('/api/v1', authorizationRouter(authRuntime, authRuntime.callers));
   }

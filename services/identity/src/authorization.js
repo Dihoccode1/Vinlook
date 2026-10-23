@@ -71,7 +71,7 @@ export function requireAuthority(principal, { roles = ['Staff', 'Manager'], requ
   return principal;
 }
 
-function validCaller(request, callers, now) {
+export function validCaller(request, callers, now) {
   const caller = request.get('X-Vinlook-Service');
   const record = Object.hasOwn(callers, caller ?? '') ? callers[caller] : null;
   let supplied;
