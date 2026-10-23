@@ -1378,3 +1378,7 @@ Recorded from user confirmations in this chat. Individual entries record their c
 
 - Date:24October2026 UTC+7. User explicitly approved A for isolated implementation/testing. Added strict ProcessingJob/caller credentials/scoped process/retry/claim/renew/result plus attempt-bound worker media routes; source/text/destination snapshots and original-cycle audit preserved. No real registry/model/provider/worker deployment selected. OwnerDuy/reviewerTu retained.
 -142unique relevant passed groups:15jobsMongoHTTP,65units/regressions,14draftMongo,17lifecycleMongo,16publicationMongo,15mediaMongo; full workspace build exit0. Initial0/10fixture setup failure (helper shadowed Node process) fixed; overlapping runs not counted twice. All8fixture containers/own volumes removed after full ID/label/mount checks. Overall readiness503; no actual Atlas/provider/key/worker/hosted/operator acceptance. Await draft PR/human review/user merge.
+
+## DEC-185 TASK016 canonical worker ID correction verified
+
+- Date:24October2026 UTC+7. Before PR, final review corrected worker media ownership comparison to use canonical parsed job ID. Existing upload/result/foreign-intent test strengthened with uppercase ID and rerun on a fresh guarded fixture:1passed/0failed, overlaps prior142unique groups. Final Content build exit0. Canonical fixtureab4226781af5ea7e16caba8161cd43c3dd55e66afd4576e7d036dc3c84c9cf59 and own volumes removed after exact identity/mount checks; total9fixtures cleaned. No scope/config decision changed.

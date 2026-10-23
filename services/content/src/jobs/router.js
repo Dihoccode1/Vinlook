@@ -24,8 +24,8 @@ export function jobRouter(runtime){
  router.post('/internal/jobs/:id/result',publicationDeadline,worker,...json,run((req,res)=>service.result(parse(objectId,req.params.id),parse(resultInput,req.body),res.locals.worker,res.locals.publication)));
  const ownedIntent=async(req,res)=>{
   if(!runtime.media||!runtime.models.MediaUpload)throw new DraftFailure('JOB_CONFIGURATION_UNAVAILABLE');
-  const row=await runtime.models.MediaUpload.findById(parse(objectId,req.params.intentId)).setOptions({timeoutMS:10000});if(!row||row.kind!=='audio'||String(row.jobId)!==req.params.id||!row.attemptId)throw new DraftFailure('ACCESS_DENIED',403);
-  const admitted=await service.admit(parse(objectId,req.params.id),row.attemptId,res.locals.worker);return {row,...admitted};
+  const jobId=parse(objectId,req.params.id),row=await runtime.models.MediaUpload.findById(parse(objectId,req.params.intentId)).setOptions({timeoutMS:10000});if(!row||row.kind!=='audio'||String(row.jobId)!==jobId||!row.attemptId)throw new DraftFailure('ACCESS_DENIED',403);
+  const admitted=await service.admit(jobId,row.attemptId,res.locals.worker);return {row,...admitted};
  };
  router.post('/internal/jobs/:id/media-intents',worker,...json,run(async(req,res)=>{
   const input=parse(attemptInput,req.body),{job,state}=await service.admit(parse(objectId,req.params.id),input.attemptId,res.locals.worker);if(job.taskType!=='audio'||!runtime.media)throw new DraftFailure('ACCESS_DENIED',403);

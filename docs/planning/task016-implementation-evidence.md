@@ -18,11 +18,13 @@ Restricted worker media intent/upload/reconcile reuses backend probe/provider/di
 -17 lifecycle/public Mongo integration exit0,16.488s.
 -16 publication Mongo/provider-loopback integration exit0,35.515s.
 -15 media Mongo/provider-loopback integration exit0,13.683s. Sampled fixture parent RSS214552576bytes is not Render/50-user capacity acceptance.
-- Full workspace build exit0 (Web/Content/Identity/Usage). Existing truthful readiness503/no-store/independent listeners retained.
+- Full workspace build exit0 (Web/Content/Identity/Usage); final Content build exit0 after canonical-ID correction. Existing truthful readiness503/no-store/independent listeners retained.
 
 Jobs evidence proves16initial jobs with no English translation; process replay/active conflict and safe status read; single concurrent claim; local caller cannot claim translation; exact source/destination versions; translation receipt/follow-up once and actual Identity receiver delivery under original closed session; worker MP3 upload/verified attachment/receipt once; foreign intent and stale attempt denial; metadata edit valid vs changed source/in_review/deleted denial; exact5min expiry/renewal refusal/3reclaim cap; terminal quota/manual retry/new attempt; process/retry/result outbox rollback; lost upload ACK read-only reconciliation/no second upload; verified new Content connection retains lease; revoked key and scope injection denial; lost lease during provider side effect leaves unattached bytes; expired result deadline admits no write. No full real31-output POI pipeline/narration acceptance is inferred.
 
 ## Iterations and limits of evidence
+
+Final review corrected comparison of an uppercase worker job ID against canonical stored ID. Re-ran the full upload/attach/foreign-intent group on a fresh fixture with uppercase ID:1passed/0failed,4.592s, no skip; this overlaps the15group suite and is not added to142.
 
 Initial jobs run0passed/10failed before DB access: helper named process shadowed Node process.env in fixture setup. Renamed helper processJobs; unchanged initially-empty fixture rerun10/10passed. This failure is not counted as a business pass. Later14group suites passed; final15group suite adds stronger retry rollback, foreign intent and stale state assertions. Earlier overlapping4unit/12unit/10integration/14integration runs counted once only.
 
@@ -44,7 +46,9 @@ Regression fixture full IDs:
 - TASK014/4e8f1f595fc7de5d88d8639ac1fe43a79eb9a6deec5d350ffb27777a14473911
 - TASK012/394626216bd348b62a5ecc20e399258ad13a5ae79ff538115a88f6129435411d
 
-All8containers/own volumes removed after full ID/task label and volume-only /data/db or /data/configdb mount checks. Unrelated containers/volumes/images/engine untouched.
+Final canonical-ID fixture vinlook-task016-mongo-canonical:ab4226781af5ea7e16caba8161cd43c3dd55e66afd4576e7d036dc3c84c9cf59.
+
+All9containers/own volumes removed after full ID/task label and volume-only /data/db or /data/configdb mount checks. Unrelated containers/volumes/images/engine untouched.
 
 ## Runtime/release gates still pending
 
