@@ -36,6 +36,8 @@
     "test:drafts": "node --test services/content/test/drafts.test.js",
     "test:drafts:db": "node --test services/content/test/drafts.integration.test.js",
     "test:media": "node --test services/content/test/media.test.js",
-    "test:media:db": "node --test services/content/test/media.integration.test.js"
+    "test:media:db": "node --test services/content/test/media.integration.test.js",
+    "test:publication": "node --test services/content/test/publication.test.js",
+    "test:publication:db": "node --test services/content/test/publication.integration.test.js"
   }
 }

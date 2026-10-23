@@ -1312,3 +1312,25 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Approval23October2026; completion24October2026 UTC+7. User explicitly approved detailed backend transport/model/dependency/API/runtime contract B. Added private bounded backend media upload, binary child probe, durable intent/uncertain reconciliation and same-POI atomic attachment; no public audio worker bypass. OwnerDuy/reviewerTu retained.
 -8media+15actual mediaMongo/HTTP+14draftMongo+44related regressions passed (81unique), full build/final Content build/health passed. Earlier5/7units,0/3integration,12/13and13/14HTTP reset failures retained with corrections in planning/task019-implementation-evidence.md; no double counting or weakened large-file test. Fixed --env-file inheritance during review using synthetic-only regression.
 -All7TASK019 and1TASK012 regression exact containers/own volumes removed after ID/label/mount checks. No real Cloudinary/Atlas/key/provider/production write, narration/Linux/Render acceptance not implied. Readiness503; await Tu human review/user merge.
+
+
+## DEC-172 TASK019 draft PR created
+
+- Date:24October2026 UTC+7. Draft PR29 https://github.com/Dihoccode1/Vinlook/pull/29, branch codex/task-019-backend-media, final head9b44ae933d4ba3d0531ab2315b07c699a944c1e8;29changed files.28blob hashes and exact preserved-prefix log bytes verified; PR open/drafttrue/mergedfalse. Main untouched. Issue28 updated with actual implementation/test/PR state.
+-81unique passed groups/build/health, all8exact containers/own volumes removed and fixture-only provider limits documented. Await Tu human review/user merge; no reviewer message/auto-merge or real provider/Atlas activation. Postpublication tracking retained locally to preserve human review head.
+
+## DEC-173 TASK019 merge verified
+
+- Date:24October2026 UTC+7. User reports review and merge. GitHub PR29 verified closed/merged with merge commit6af58ec282babb3c66e6103f95a55855c432d222. Retain81unique passed groups/build/health evidence; no formal GitHub review or Issue28 closure inferred.
+- TASK012 and TASK019 code prerequisites for TASK013 are merged. Next step is preparing the concrete submit/review/publication contract for approval before implementation. Real Cloudinary/Atlas/Render acceptance and TASK010 native operator acceptance remain separate pending gates.
+
+## DEC-174 TASK013 publication contract proposed
+
+- Date:24October2026 UTC+7. Following user continuation, created actual Issue30 and planning/task013-review-publication-contract.md. TASK012/019 code prerequisites merged; ownerDuy/reviewerTu unchanged. Proposal A reuses current models/media/outbox and details review/submit/return/publish, exact current16locale gates, pointer/version/replay protection, explicit human geography attestation and fail-closed approved registry manifest with60s verification budget. Alternative B adds review-history/staging complexity and requires replacement design.
+- Await user approval under Master Prompt Rule1 before code. No dependency installed, business endpoint added, tests run, real registry selected, Atlas/provider write or deployment. Separate real provider/registry/hosted and TASK010 native terminal acceptance gates retained.
+
+## DEC-175 TASK013 contract A approved and implemented
+
+- Date:24October2026 UTC+7. User explicitly approved A for isolated implementation/testing. Added version-bound per-language review, submit/Manager return and atomic publication using existing schemas/outbox/replay. Strict trusted registry manifest is injected server-side only; actual model selection/integration remains pending and runtime fails closed without it. Manager geography attestation is manual, not automatic verification. OwnerDuy/reviewerTu retained.
+-113unique passed groups:16publicationMongo/HTTP,56unit/relevant regressions (55combined plus1new fake-clock deadline group; overlapping tests counted once),14draftMongo,15mediaMongo,12durabilityMongo. Full workspace build and final Content build passed. Failed fixture API-path assertion/Mongo nested-timeout runs and sandbox EACCES regression are documented with corrections; no skips or failed runs counted.
+-All6TASK013 and3regression exact containers/own volumes removed after identity/mount checks. No real provider/Atlas/key/deployment or registry/actual narration acceptance. Await draft PR/Tu human review/user merge; overall readiness503.

@@ -76,19 +76,19 @@ export function createMediaService(runtime,provider,{probe=probeMedia,mode='prod
     await verify(row,signal);return view(row);
    }catch{if(row.status!=='verified')await terminal(row,{status:'uncertain',safeErrorCode:'DEPENDENCY_UNAVAILABLE',finishedAt:new Date(now())}).catch(()=>{});throw new MediaFailure();}
   },
-  async verifyThumbnail(ref,{poiId}={}){
-   const row=await Model.findOne({status:'verified',kind:'thumbnail',publicId:ref.publicId,poiId}).setOptions(dbOptions());
+  async verifyThumbnail(ref,{poiId,signal,deadline}={}){
+   const row=await Model.findOne({status:'verified',kind:'thumbnail',publicId:ref.publicId,poiId}).setOptions(deadline?{timeoutMS:Math.max(1,Math.min(10000,deadline-Date.now()))}:dbOptions());
    if(!poiId||!row||canonical(asset(row))!==canonical(ref))return false;
-   await provider.verify(row.toObject());return true;
+   await provider.verify(row.toObject(),signal);return true;
   },
   async attachThumbnail(session,ref,{poiId}){
    const row=await Model.findOne({status:'verified',kind:'thumbnail',publicId:ref.publicId,poiId}).session(session);
    if(!row||canonical(asset(row))!==canonical(ref))throw new MediaFailure('INVALID_MEDIA_REFERENCE',422);
    if(row.attachedAt===null)await Model.updateOne({_id:row._id,status:'verified',attachedAt:null},{$set:{attachedAt:new Date(now())}},{session});
   },
-  async verifyAudioReference(ref,{poiId,sourceVersion,textVersion,languageCode}){
-   const row=await Model.findOne({status:'verified',kind:'audio',publicId:ref.publicId,poiId,sourceVersion,textVersion,languageCode}).setOptions(dbOptions());
-   if(!poiId||!row||canonical(asset(row))!==canonical(ref))return false;await provider.verify(row.toObject());return{durationSeconds:row.durationSeconds,bitrate:row.bitrate};
+  async verifyAudioReference(ref,{poiId,sourceVersion,textVersion,languageCode,signal,deadline}){
+   const row=await Model.findOne({status:'verified',kind:'audio',publicId:ref.publicId,poiId,sourceVersion,textVersion,languageCode}).setOptions(deadline?{timeoutMS:Math.max(1,Math.min(10000,deadline-Date.now()))}:dbOptions());
+   if(!poiId||!row||canonical(asset(row))!==canonical(ref))return false;await provider.verify(row.toObject(),signal);return{durationSeconds:row.durationSeconds,bitrate:row.bitrate};
   },
  };
 }

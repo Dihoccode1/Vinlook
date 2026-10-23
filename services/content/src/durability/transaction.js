@@ -3,7 +3,12 @@ import { z } from 'zod';
 import { MutationFailure, checked, id, uuid, operations, eventSchema, resultSchema, requestHash } from './validation.js';
 const inputSchema = z.strictObject({ actorId: id, workSessionId: id, operation: z.enum(operations), key: uuid, targetId: id.nullable(), input: z.unknown() });
 /** Internal primitive: caller must freshly authorize, validate business input and use only the supplied session. */
-export async function executeMutation(connection, models, input, mutate, now = Date.now) {
+export async function executeMutation(connection, models, input, mutate, now = Date.now, budgetContext = null) {
+  const remaining=()=>{
+    if (!budgetContext) return 10000;
+    if (budgetContext.signal?.aborted || !Number.isFinite(budgetContext.deadline) || budgetContext.deadline<=Date.now()) throw new MutationFailure('PUBLICATION_VERIFICATION_UNAVAILABLE');
+    return Math.max(1,Math.min(10000,budgetContext.deadline-Date.now()));
+  };
   const value = checked(inputSchema, input);
   const hash = requestHash({ operation: value.operation, targetId: value.targetId, body: value.input });
   const scope = { actorId: value.actorId, operation: value.operation, key: value.key };
@@ -20,6 +25,7 @@ export async function executeMutation(connection, models, input, mutate, now = D
     return { status: record.responseStatus, body, replayed: true };
   };
   for (let attempt = 0; attempt < 3; attempt++) {
+    remaining();
     let output;
     let session;
     try { session = await connection.startSession(); } catch { throw new MutationFailure(); }
@@ -32,6 +38,7 @@ export async function executeMutation(connection, models, input, mutate, now = D
         const [record] = await models.IdempotencyRecord.create([{ ...scope, requestHash: hash, status: 'in_progress', createdAt,
           expiresAt: new Date(createdAt.getTime()+86400000) }], { session });
         const result = await mutate(session, context);
+        remaining();
         const body = checked(resultSchema, result.body);
         if (!Number.isInteger(result.status) || result.status < 200 || result.status > 299 || !Array.isArray(result.events) || !result.events.length) throw new MutationFailure('INVALID_MUTATION_INPUT',422);
         for (let i=0;i<result.events.length;i++) {
@@ -41,11 +48,11 @@ export async function executeMutation(connection, models, input, mutate, now = D
         }
         record.status='completed'; record.responseStatus=result.status; record.responseBody=body; await record.save({session});
         output={status:result.status,body,replayed:false};
-      }, { timeoutMS:10000, maxCommitTimeMS:3000, readPreference:'primary', writeConcern:{w:'majority'} });
+      }, { timeoutMS:remaining(), maxCommitTimeMS:Math.min(3000,remaining()), readPreference:'primary', writeConcern:{w:'majority'} });
       return output;
     } catch(error) {
       if (error instanceof MutationFailure) throw error;
-      try { const found=replay(await models.IdempotencyRecord.findOne(scope).lean()); if(found)return found; }
+      try { const found=replay(await models.IdempotencyRecord.findOne(scope).setOptions({timeoutMS:remaining()}).lean()); if(found)return found; }
       catch(readError) { if(readError instanceof MutationFailure)throw readError; }
       if (!(error.code===11000 || error.hasErrorLabel?.('TransientTransactionError')) || attempt===2) throw new MutationFailure();
     } finally { await session.endSession(); }
