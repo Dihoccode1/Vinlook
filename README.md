@@ -18,7 +18,9 @@ Docker/Compose for reproducible runtime; GitHub Actions for CI/CD; Vercel fronte
 
 ## Current state
 
-Requirements, design and the initial backlog were approved. TASK-002 provides a React preview and three Express scaffolds; TASK-003 runtime/health and TASK-004 Identity models are merged. TASK-005 implements pending signup, active login, bcrypt/JWT and durable auth limits for review. Other business features, product CI/CD and hosted Vinlook backends remain pending.
+Requirements, design and the initial backlog were approved. TASK-002 provides a React preview and three Express scaffolds; TASK-003 runtime/health and TASK-004 Identity models are merged. TASK-005 pending signup, active login, bcrypt/JWT and durable auth limits are merged. Other business features, product CI/CD and hosted Vinlook backends remain pending.
+
+TASK-006 adds current-account authorization, `/me`, scoped internal service authorization and fail-closed Content/Usage adapters for review. It does not implement Manager mutation/recovery APIs or session lifecycle, and overall readiness remains503. See [TASK-006 evidence](docs/planning/task006-implementation-evidence.md).
 
 Routing research selected JavaScript A* with a preprocessed walking graph. Actual iPhone evidence exists; Android testing was explicitly waived, not passed. Research evidence is not full navigation acceptance.
 

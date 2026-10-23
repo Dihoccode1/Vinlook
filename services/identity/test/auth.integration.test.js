@@ -165,7 +165,9 @@ test('atomic IP budget admits exactly30 of40 concurrent claims; counter survives
     env: { ...process.env, NODE_ENV: 'test', HOST: '127.0.0.1', PORT: String(port),
       IDENTITY_MONGODB_URI: config.uri, IDENTITY_JWT_KEY_B64URL: config.jwtKey.toString('base64url'),
       IDENTITY_RATE_HMAC_KEY_B64URL: config.rateKey.toString('base64url'),
-      IDENTITY_ALLOWED_ORIGINS: config.origins.join(','), IDENTITY_TRUST_PROXY_CIDRS: '' },
+      IDENTITY_ALLOWED_ORIGINS: config.origins.join(','), IDENTITY_TRUST_PROXY_CIDRS: '',
+      IDENTITY_CONTENT_SERVICE_KEY_B64URL: randomBytes(32).toString('base64url'),
+      IDENTITY_USAGE_SERVICE_KEY_B64URL: randomBytes(32).toString('base64url') },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   try {
