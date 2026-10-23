@@ -1211,3 +1211,23 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. Added local operator CLI/private config/hidden TTY/default dry-run/explicit apply, namespaced bootstrap audit concurrency guard, operator recovery and separate unlock with atomic audit/version updates. No public route/schema/index/dependency; new operator-only env examples intentionally invalid. Runbook separates code availability from actual operator/target authorization.
 - Initial Mongo1pass/6failures exposed parallel transaction preflight; changed queries to sequential, then fresh Mongo7/7passed. Operator unit/stream/actual help/nonTTY4/4 plus50relevant regressions passed (61unique), build/smoke passed. Actual human native TTY acceptance remains pending; injected prompts/streams not misrepresented. Full evidence planning/task010-implementation-evidence.md.
 - All4task-only Mongo containers/own volumes removed after exact ID/label/mount checks. No actual operator/scoped DB identity/secret/Manager/Atlas/paid/hosting changes. Readiness503; actual operational use/UI/deployment/CI remain separate. Draft PR for Tu human review/user merge follows.
+
+## DEC-152 TASK010 draft PR created
+
+- Date:23October2026. Draft PR21 https://github.com/Dihoccode1/Vinlook/pull/21, branch codex/task-010-manager-operator, headb5c7918a1c773351c401520b0234282da5404b30;14changed files and14blob hashes verified. Main untouched.61relevant passed groups/build/smoke, corrected initial failure and manual TTY/real operation limits documented.
+- Await Tu human review/user merge; no reviewer message or auto-merge. Native human terminal acceptance remains pending, no real operator/Manager/Atlas changes. Postpublication tracking retained locally for next reviewed change,preserving this review head.
+
+## DEC-153 TASK010 code merge verified; TASK011 issue/contract prepared
+
+- Date:23October2026. User reports approval/merge. PR21 verified mergedtrue/draftfalse and maine7d3327dc9d545e078f65c3606dd883ccee4f140;61relevant passed groups/build/smoke retained. Code merged, but native human TTY and real operational acceptance remain pending; merge is not device/terminal evidence. No repeat review requested.
+- Actual Issue22 TASK011 opened with approved ownerTu/reviewerDuy,no remote assignment/impersonation. Prepared planning/task011-content-schema-contract.md: exact3Content collections/fields/assets/GeoJSON/review/version bounds and single working-state partial unique index. Missing concrete schema details await A approval under Master Prompt Rule1 before code. No actual POI/asset/Atlas/production changes. TASK011 independent of operator terminal gate.
+
+## DEC-154 TASK011 contract A approved
+
+- Date:23October2026. User explicitly approved A (implement/test): exact3Content collections/field bounds/GeoJSON/assets/16locales/review/version schemas and single cross-status partial unique working index, model/API/geography limits retained. OwnerTu/reviewerDuy; no actual POI/media/Atlas/provider mutation authorized. TASK010 human native TTY remains separate/pending.
+
+## DEC-155 TASK011 implementation and isolated evidence
+
+- Date:23October2026. Implemented approved Content POI/Revision/LocalizedContent schema factories, strict fields/assets/16locales and exact partial/unique/geo indexes; explicit Content Mongoose9.11.3 dependency reuses existing runtime. No API/startup DB connection/real seed/provider/Atlas change. OwnerTu/reviewerDuy retained.
+- Disconnected7/7, actual Mongo6/6 and27relevant regressions passed (40unique groups); workspace build/three-service smoke passed. Actual concurrent draft/in_review unique slot and transaction rollback proved. Deliberate raw invalid-approved fixture demonstrates schema bypass, not full publication enforcement. Evidence planning/task011-implementation-evidence.md.
+- Initial stopped Docker Engine and lost execution sessions retained honestly; unchanged checks rerun to confirmed exit0. Only exact task container/own volumes removed after ID/label/mount verification. Human review/merge pending; TASK010 native human TTY/real operations independently pending.
