@@ -980,3 +980,10 @@ Recorded from user confirmations in this chat. Individual entries record their c
 
 - Date: 23 October 2026. User selects A: exact README-only initial main commit; then codex/task-001-docs-baseline branch and draftPR with approved documentation/conventions; Tú human review; no auto-merge.
 - Authority is limited to documentation bootstrap. No product implementation, CI/deployment execution, permission change or paid resource authorized by this choice.
+
+## DEC-110 Actual bootstrap commits and draft PR created
+
+- Date: 23 October 2026. Executed approved A in Dihoccode1/Vinlook only. README seed on main: e9f378c5284f8918e6b254c80a0fa616c273d2f7. Created codex/task-001-docs-baseline and baseline commit0afb8e72c928c7325d53f722da9f8f3f9ede06f4.
+- Actual draft PR3: https://github.com/Dihoccode1/Vinlook/pull/3, open, not merged,103added files.104total files including README. Local/remote Git blob hashes compared exactly with original line endings preserved; zero missing/extra/mismatched files. Initial verification used newline-normalizing read_text and reported mismatches; corrected verifier to compare the exact uploaded bytes before creating the baseline commit.
+- Tree contains reviewed documentation/conventions only, no application code or workflow. Credential pattern scan had no findings. No product CI/deployment/tests or formal human review claimed.
+- Actual issue map updated with seed/branch/PR links. Issue1 remains previously closed; task acceptance still pending Tú review and merge. No reviewer notification, permission/settings change, automatic merge or resource deployment performed.
