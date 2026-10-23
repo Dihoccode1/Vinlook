@@ -1077,3 +1077,32 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. Actor/issuer conditional checks use document path validators instead of pre-validation hooks, reducing dependence on asynchronous validation hooks. Supported async validate/save remains the intended API; deprecated validateSync probe was removed from tests after framework warning.
 - Seven model groups passed with final validator implementation. A fresh task-owned vinlook-task004-mongo-final with same pinned image/loopback/label passed all5Mongo groups again. Exact returned container ID/label/mounts verified, then only that final disposable container and its anonymous volumes removed. No test DB/container retained or Atlas changed.
 - This recheck was justified by validator changes; prior runtime/build/smoke evidence remains valid because runtime/HTTP files were unchanged. Main remains untouched, review PR to follow.
+
+## DEC-126 TASK004 draft PR created
+
+- Date:23October2026. Actual commit62f2e43d13dc0075c7814ff6c47beb2b2619ff8e on codex/task-004-identity-models. Draft PR9: https://github.com/Dihoccode1/Vinlook/pull/9, open/not merged,14changed files. All14uploaded local/remote blob hashes matched. Main untouched.
+- Seven schema/five Mongo/fifteen runtime tests and build/scaffold checks passed; actual evidence and limits included. Test-only Mongo containers/anonymous volumes removed; no Atlas/production writes or auth API/deployment. Await Tú human review/merge; no review notification or auto-merge sent.
+- Local map includes actual PR/head links after publication; tracking updates accompany a later reviewed change to preserve this review head.
+
+## DEC-127 TASK004 review reported and merge verified; TASK005 opened
+
+- Date:23October2026. User reports Tú review. GitHub PR9 is closed/merged=true, draft=false, merge commit607e5d7e72ba79fcb61da169babf390905e59e55. Formal reviews/threads empty; retain user-reported reviewer evidence, not fabricated formal approval. No additional review/merge requested.
+- TASK004 model/index delivery merged with prior real test evidence. Actual TASK005 Issue10 created: https://github.com/Dihoccode1/Vinlook/issues/10, ownerDuy/reviewerTú. Scope registration/pending, active login, bcrypt12/JWT/rate counters. Exact env/claim/proxy/index contracts must be reconciled before coding; no TASK005 implementation yet.
+- Local tracking updated for later reviewed branch. No Production credential/database/deployment change.
+
+## DEC-128 TASK005 confirmation acknowledged; concrete auth contract prepared
+
+- Date:23October2026. User reports Tú confirmation then requests next step. Treat as task-scope confirmation, not delivered code. Reconciled UC019/020 and D006/007/017 against existing process config/model boundaries.
+- Prepared planning/task005-auth-contract.md with unified A: Identity-only secret env/encoding, index/startup gate, safe auth payload/statuses, explicit JWT namespace/claims, fixed-window durable rate races, CORS/proxy safety and fixture evidence. Existing password/bcrypt12/token2h/rate thresholds preserved. No guessed Render trust ranges, keys requested or product code change.
+- Under Rule1, genuinely missing schema/API/deployment semantics in this contract await user approval before implementation. Current review/merge of prior tasks remains valid.
+
+## DEC-129 TASK005 contract A approved
+
+- Date:23October2026. User approved A in full. Implement the exact secret configuration, auth endpoints, bcrypt12, JWT2h, durable fixed-window rate limits, CORS/proxy and read-only index gate in planning/task005-auth-contract.md.
+- Isolated local fixture tests and draft PR are authorized. No Atlas mutation, real account provisioning, deployment or merge is implied. Human reviewer remains Tú.
+
+## DEC-130 TASK005 implemented and verified in isolated Mongo
+
+- Date:23October2026. Added strict pending signup/active login, official bcrypt6.0.0 cost12, jose6.2.13 HS256 two-hour claims, separate private config/read-only startup catalog gate, exact-origin CORS and durable HMAC fixed-window rate counters with bounded insert races.
+- Actual4auth helper/10real Mongo HTTP/7schema/15runtime groups passed; build and three-service smoke passed. Wrong-login race5×401/3×429; IP budget30of40 admitted; new Node process retained Mongo registration limit. Final local bcrypt sample203ms hash/202ms compare, not hosted load acceptance.
+- Restricted-shell loopbackEACCES was resolved by authorized local execution; no false pass. Both exact task-owned Mongo containers/anonymous volumes removed after ID/label/mount verification. No Atlas, production user or paid resource changed. TASK006 authority/RBAC, migration, proxy/deployment/CI remain open; readiness stays503. Full evidence in planning/task005-implementation-evidence.md; draft review PR follows.

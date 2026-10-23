@@ -60,7 +60,20 @@
     "state": "open",
     "assignee": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Schema contract approved;7schema and5isolated Mongo tests passed; review PR pending",
-    "branch": "codex/task-004-identity-models"
+    "readiness": "Merged; Tu review user-reported; schema/index actual evidence retained",
+    "branch": "codex/task-004-identity-models",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/9",
+    "headCommit": "62f2e43d13dc0075c7814ff6c47beb2b2619ff8e",
+    "mergeCommit": "607e5d7e72ba79fcb61da169babf390905e59e55",
+    "reviewEvidence": "User reports Tu review; PR9 merge verified; formal reviews list empty"
+  },
+  "TASK-005": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/10",
+    "number": 10,
+    "state": "open",
+    "assignee": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Contract A approved; implemented and 36 test groups passed; draft PR publication in progress, Tu review pending",
+    "branch": "codex/task-005-auth"
   }
 }

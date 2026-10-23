@@ -18,7 +18,7 @@ Docker/Compose for reproducible runtime; GitHub Actions for CI/CD; Vercel fronte
 
 ## Current state
 
-Requirements, design and the initial backlog were approved. TASK-002 adds a React preview and three independently runnable Express scaffolds. Business features, product CI/CD and hosted Vinlook backends are not implemented yet.
+Requirements, design and the initial backlog were approved. TASK-002 provides a React preview and three Express scaffolds; TASK-003 runtime/health and TASK-004 Identity models are merged. TASK-005 implements pending signup, active login, bcrypt/JWT and durable auth limits for review. Other business features, product CI/CD and hosted Vinlook backends remain pending.
 
 Routing research selected JavaScript A* with a preprocessed walking graph. Actual iPhone evidence exists; Android testing was explicitly waived, not passed. Research evidence is not full navigation acceptance.
 
@@ -39,4 +39,4 @@ The full Day 5 milestone remains required but is not supported by the present ca
 
 Some documents retain historical proposal wording. Their approval sections and later numbered decisions determine current status. Task completion requires actual deliverables and review evidence, even when its GitHub issue has been closed.
 
-For local setup, use the exact Node/npm versions and commands in the development guide. No provider credentials are needed for this scaffold. TASK-003 follows with runtime configuration and health contracts.
+For local setup, use the exact Node/npm versions and commands in the development guide. Identity auth startup now requires private backend configuration and an already provisioned owned database/index catalog. Isolated tests generate synthetic keys and do not need Atlas/provider credentials. See [TASK-005 evidence and remaining gates](docs/planning/task005-implementation-evidence.md).

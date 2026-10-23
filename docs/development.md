@@ -44,10 +44,20 @@ The scaffold smoke check starts all three apps concurrently on OS-assigned ports
 | services/usage | Anonymous usage and monitoring boundary |
 | workers/mms | Reserved local Python worker boundary; no runtime implementation yet |
 
-No shared database access, gateway, message broker or fourth hosted backend is introduced. Identity now has service-owned model declarations and synthetic tests, but server startup does not connect to a database. There are no secrets, actual provider clients or fake feature-success endpoints. shadcn component location and the `@` alias are reserved; no unused component dependency is installed. The initial page is an explicitly unavailable guide preview, not final approved UI acceptance.
+No shared database access, gateway, message broker or fourth hosted backend is introduced. Identity now connects to its explicitly configured owned database and verifies its collection/index catalog before serving registration/login. Content/Usage still have no database clients. Provider integration and frontend auth UI remain pending. shadcn component location and the `@` alias are reserved; no unused component dependency is installed. The initial page is an explicitly unavailable guide preview, not final approved UI acceptance.
 
 Identity model checks: `npm run test:identity`. Real isolated Mongo index checks: `npm run test:identity:db` after creating the explicitly guarded disposable environment in [TASK-004 evidence](planning/task004-implementation-evidence.md). The integration suite refuses arbitrary URIs or an existing test database; no Atlas credential is needed. See [model boundaries](../services/identity/src/models/README.md) before adding write APIs.
 
 Install versions are exact in workspace package files, and transitive versions/integrities are locked in package-lock.json. Use `npm ci` to reproduce them; don't copy node_modules. No product Python dependencies are installed by npm; the separate research virtualenv is excluded from publication.
 
 Hosted runtime checks, Docker Compose, GitHub Actions, CI/CD, real dependency readiness, product features and full mobile/browser acceptance remain later tracked work. Passed scaffold/runtime checks are not MVP completion.
+
+## TASK-005 Identity authentication
+
+Identity startup additionally requires the secret variables and exact-origin settings in [the approved auth contract](planning/task005-auth-contract.md). Its example values are intentionally unusable. Use separate random keys per environment; keep them only in private backend configuration. A missing/mismatched database catalog stops startup before binding. Startup never creates, repairs or drops indexes; production provisioning/migration is still a separate deployment gate. Consequently a new empty Atlas database cannot yet boot this service by itself.
+
+POST `/api/v1/auth/register` creates pending Staff; POST `/api/v1/auth/login` returns a two-hour memory-only client token for active accounts. Pending/locked/unknown/wrong credentials share a generic401. No Manager approval bypass, recovery, current-authority/RBAC endpoint or frontend storage is provided by this task. `/health/ready` remains503.
+
+Run `npm run test:auth` for configuration/token/rate-helper tests. `npm run test:auth:db` requires a fresh, explicitly labelled/pinned, loopback-only TASK-005 Mongo replica set; see [test evidence and reproduction](planning/task005-implementation-evidence.md). It refuses arbitrary URIs, existing databases or Atlas. The suite alone creates collections/indexes and active fixtures inside this guarded environment.
+
+Empty proxy trust ignores forwarding headers. Before any public proxy deployment, verify the actual proxy behavior/source CIDRs and configure an exact allowlist; otherwise requests may share a proxy IP budget. This implementation follows [Express proxy guidance](https://expressjs.com/en/guide/behind-proxies/), uses [official bcrypt](https://github.com/kelektiv/node.bcrypt.js) cost12 with a72-byte input ceiling, and [jose](https://github.com/panva/jose) HS256 verification. Local timing samples are not a hosted load/latency acceptance test.

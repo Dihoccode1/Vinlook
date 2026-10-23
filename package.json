@@ -19,6 +19,8 @@
     "check:scaffold": "node scripts/check-scaffold.mjs",
     "test:runtime": "node --test tests/runtime-health.test.mjs",
     "test:identity": "node --test services/identity/test/schemas.test.js",
-    "test:identity:db": "node --test services/identity/test/indexes.integration.test.js"
+    "test:identity:db": "node --test services/identity/test/indexes.integration.test.js",
+    "test:auth": "node --test services/identity/test/auth.test.js",
+    "test:auth:db": "node --test services/identity/test/auth.integration.test.js"
   }
 }
