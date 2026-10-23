@@ -139,7 +139,21 @@
     "state": "open",
     "assignee": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Contract A approved;61relevant groups/build/smoke passed;native human TTY acceptance pending;draft PR publication in progress",
-    "branch": "codex/task-010-manager-operator"
+    "readiness": "Code merged;61relevant groups/build/smoke evidence retained;native human TTY/real operational acceptance still pending",
+    "branch": "codex/task-010-manager-operator",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/21",
+    "headCommit": "b5c7918a1c773351c401520b0234282da5404b30",
+    "mergeCommit": "e7d3327dc9d545e078f65c3606dd883ccee4f140",
+    "reviewEvidence": "User approval/merge report;PR21/main merge verified;no native TTY pass inferred"
+  },
+  "TASK-011": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/22",
+    "number": 22,
+    "state": "open",
+    "approvedOwner": "ngoctu0405",
+    "reviewer": "Dihoccode1",
+    "remoteAssignment": "not applied;preserve approved owner",
+    "readiness": "Contract A approved; implemented;40relevant groups/build/smoke passed;draft PR preparation;human review/merge pending",
+    "branch": "codex/task-011-content-models"
   }
 }
