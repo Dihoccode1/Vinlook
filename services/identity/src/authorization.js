@@ -3,6 +3,7 @@ import express from 'express';
 import { z } from 'zod';
 import { verifyToken } from './auth/token.js';
 import { AuthConfigurationError } from './auth/config.js';
+import { reconcileSessions, vietnamDay, sessionView } from './session-state.js';
 
 const digest = value => createHash('sha256').update(value).digest();
 function decode(value, field) {
@@ -49,19 +50,18 @@ export function bearerToken(value) {
   return value.slice(7);
 }
 
-const vnDay = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit' });
 export async function currentPrincipal(token, runtime) {
   let claims;
   try { claims = await verifyToken(token, runtime.config, runtime.now()); } catch { throw unauthenticated(); }
   const account = await runtime.models.StaffAccount.findById(claims.sub);
   if (!account || account.authVersion !== claims.authVersion) throw unauthenticated();
   if (account.status !== 'active') throw denied();
+  await reconcileSessions(runtime.models, runtime.now(), account._id);
   const session = await runtime.models.WorkSession.findOne({ staffId: account._id,
-    workDateVN: vnDay.format(new Date(runtime.now())), status: 'open' });
+    workDateVN: vietnamDay(runtime.now()), status: 'open' });
   return { account: { id: String(account._id), fullName: account.fullName, email: account.email,
     role: account.role, status: account.status, authVersion: account.authVersion },
-  currentWorkSession: session ? { id: String(session._id), workDateVN: session.workDateVN, status: session.status,
-    openedAt: session.openedAt.toISOString(), closedAt: session.closedAt?.toISOString() ?? null } : null };
+  currentWorkSession: session ? sessionView(session) : null };
 }
 
 export function requireAuthority(principal, { roles = ['Staff', 'Manager'], requireSession = false } = {}) {

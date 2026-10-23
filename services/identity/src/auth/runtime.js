@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'node:crypto';
 import { createIdentityModels } from '../models/index.js';
+import { reconcileSessions } from '../session-state.js';
 
 /** Read-only catalog verification; never repairs or builds a database. */
 export async function verifyIdentityIndexes(models) {
@@ -35,6 +36,7 @@ export async function connectAuthRuntime(config) {
   try {
     await connection.asPromise();
     const runtime = await createAuthRuntime(createIdentityModels(connection), config);
+    await reconcileSessions(runtime.models, runtime.now());
     return { ...runtime, close: () => connection.close() };
   } catch { await connection.close().catch(() => {}); throw new Error('Identity dependencies unavailable'); }
 }

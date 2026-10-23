@@ -86,7 +86,20 @@
     "state": "open",
     "assignee": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Contract A approved; 49 groups/build/smoke passed; draft PR publication in progress, Tu review pending",
-    "branch": "codex/task-006-authorization"
+    "readiness": "Merged; user reports review;49passed groups/build/smoke evidence retained",
+    "branch": "codex/task-006-authorization",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/13",
+    "headCommit": "0e2c88215b64bd5c88d4bd11390ec7c11365aa3d",
+    "mergeCommit": "99b63dd14162cc751c94ca0e8fa8260850eb2a15",
+    "reviewEvidence": "User report;PR13 merged verified;formal GitHub reviews empty"
+  },
+  "TASK-007": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/14",
+    "number": 14,
+    "state": "open",
+    "assignee": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Contract A approved;58groups/build/smoke passed;draft PR publication in progress,Tu review pending",
+    "branch": "codex/task-007-sessions"
   }
 }

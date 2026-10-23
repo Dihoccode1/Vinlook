@@ -17,7 +17,7 @@ export function loadAuthConfig(mode, environment = process.env) {
   // Explicit Identity-owned database required; never default to admin/test/another service.
   if (typeof uri !== 'string' || !/^mongodb(?:\+srv)?:\/\//.test(uri)) throw new AuthConfigurationError('IDENTITY_MONGODB_URI');
   const database = uri.slice(uri.indexOf('://') + 3).split('?')[0].split('/').slice(1).join('/');
-  if (database !== 'vinlook_identity' && !(mode === 'test' && /^vinlook_identity_task00[56]$/.test(database))) {
+  if (database !== 'vinlook_identity' && !(mode === 'test' && /^vinlook_identity_task00[567]$/.test(database))) {
     throw new AuthConfigurationError('IDENTITY_MONGODB_URI');
   }
   const jwtKey = key(environment.IDENTITY_JWT_KEY_B64URL, 'IDENTITY_JWT_KEY_B64URL');
