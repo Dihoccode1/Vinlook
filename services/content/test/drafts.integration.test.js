@@ -92,7 +92,7 @@ test('clone retains published graph and approvals; replay/concurrent clones neve
  assert.equal((await request('/admin/pois/'+poiId+'/draft','POST',body,{'Idempotency-Key':randomUUID()})).status,409);
  assert.equal((await patch(next,0,{sourceTextEN:'Draft-only changed English'})).status,200);
  assert.equal(JSON.stringify(await models.POIRevision.findById(revisionId).lean()),old);assert.equal(JSON.stringify(await models.LocalizedContent.find({revisionId}).sort({languageCode:1}).lean()),local);assert.equal(String((await models.POI.findById(poiId)).publishedRevisionId),revisionId);
- const view=await request('/admin/pois/'+poiId);assert.equal(view.body.data.workingRevision.id,next);assert.equal(view.body.data.localizedContents.find(v=>v.languageCode==='vi').isSourceCurrent,false);assert.equal(view.body.data.poi.mutationVersion,undefined);
+ const view=await request('/admin/pois/'+poiId);assert.equal(view.body.data.workingRevision.id,next);assert.equal(view.body.data.localizedContents.find(v=>v.languageCode==='vi').isSourceCurrent,false);assert.equal(view.body.data.poi.mutationVersion,2);
 });
 test('published/in_review/deleted gates, missing IDs, pointer mismatch and overflow are safe',async()=>{
  const p=await published();assert.equal((await patch(p.revisionId,0,{nameEN:'forbidden'})).status,409);

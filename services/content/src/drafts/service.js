@@ -107,7 +107,7 @@ export function createDraftService(runtime){
    const rev=working??published;
    const rows=rev?await models.LocalizedContent.find({revisionId:rev._id}).sort({languageCode:1}):[];
    const view=v=>{if(!v)return null;const obj=v.toObject();const {_id,...rest}=obj;return{id:String(_id),...rest};};
-   const poiView=view(poi);delete poiView.mutationVersion;
+   const poiView=view(poi);
    return{poi:poiView,publishedRevision:view(published),workingRevision:view(working),localizedContents:rows.map(row=>({...view(row),isSourceCurrent:row.sourceVersion===rev.sourceVersion,isAudioCurrent:row.sourceVersion===rev.sourceVersion&&Boolean(row.audioAsset)&&row.audioAsset.textVersion===row.textVersion}))};
   },
  };

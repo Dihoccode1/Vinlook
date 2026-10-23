@@ -38,6 +38,8 @@
     "test:media": "node --test services/content/test/media.test.js",
     "test:media:db": "node --test services/content/test/media.integration.test.js",
     "test:publication": "node --test services/content/test/publication.test.js",
-    "test:publication:db": "node --test services/content/test/publication.integration.test.js"
+    "test:publication:db": "node --test services/content/test/publication.integration.test.js",
+    "test:lifecycle": "node --test services/content/test/lifecycle.test.js",
+    "test:lifecycle:db": "node --test services/content/test/lifecycle.integration.test.js"
   }
 }

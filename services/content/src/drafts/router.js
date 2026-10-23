@@ -1,12 +1,14 @@
 import express from 'express';
 import {mediaRouter} from '../media/router.js';
+import {publicRouter} from '../public/router.js';
+import {lifecycleRouter} from '../lifecycle/router.js';
 import {publicationRouter} from '../publication/router.js';
 import {randomUUID} from 'node:crypto';
 import {protectedRequest} from '../authorization.js';
 import {uuid,MutationFailure} from '../durability/validation.js';
 import {createDraftService} from './service.js';
 import {DraftFailure,parse,objectId,createInput,cloneInput,patchInput,languageInput,locale} from './validation.js';
-const messages={INVALID_INPUT:'Invalid content input',CONTENT_NOT_FOUND:'Content was not found',POI_DELETED:'The POI is deleted',REVISION_NOT_EDITABLE:'The revision is not editable',EDIT_VERSION_CONFLICT:'The content has changed; reload before editing',WORKING_REVISION_EXISTS:'A working revision already exists',NO_PUBLISHED_REVISION:'No published revision exists',VERSION_EXHAUSTED:'The version limit was reached',IDEMPOTENCY_CONFLICT:'The idempotency key conflicts with the request',INVALID_MEDIA_REFERENCE:'The media reference is invalid',MEDIA_VERIFICATION_UNAVAILABLE:'Media verification is unavailable',IDEMPOTENCY_RECONCILIATION_REQUIRED:'The mutation requires reconciliation'};
+const messages={POI_NOT_FOUND:'The POI was not found',PUBLIC_CONTENT_UNAVAILABLE:'Public content is temporarily unavailable',PUBLIC_SNAPSHOT_CHANGED:'Public content changed; restart the list',INVALID_CURSOR:'The cursor is invalid',CURSOR_EXPIRED:'The cursor expired; restart the list',POI_ALREADY_DELETED:'The POI is already deleted',POI_NOT_DELETED:'The POI is not deleted',INVALID_INPUT:'Invalid content input',CONTENT_NOT_FOUND:'Content was not found',POI_DELETED:'The POI is deleted',REVISION_NOT_EDITABLE:'The revision is not editable',EDIT_VERSION_CONFLICT:'The content has changed; reload before editing',WORKING_REVISION_EXISTS:'A working revision already exists',NO_PUBLISHED_REVISION:'No published revision exists',VERSION_EXHAUSTED:'The version limit was reached',IDEMPOTENCY_CONFLICT:'The idempotency key conflicts with the request',INVALID_MEDIA_REFERENCE:'The media reference is invalid',MEDIA_VERIFICATION_UNAVAILABLE:'Media verification is unavailable',IDEMPOTENCY_RECONCILIATION_REQUIRED:'The mutation requires reconciliation'};
 export function draftRouter(runtime){
  const router=express.Router();const service=createDraftService(runtime);
  router.use((req,res,next)=>{
@@ -16,8 +18,10 @@ export function draftRouter(runtime){
   if(req.method==='OPTIONS'){
    res.set('Access-Control-Allow-Methods','GET,POST,PATCH,PUT,OPTIONS');res.set('Access-Control-Allow-Headers','Authorization,Content-Type,Idempotency-Key');return res.status(204).end();
   }
-  if(req.originalUrl.includes('?'))return next(new DraftFailure('INVALID_INPUT',422));next();
+  if(!/^\/pois(?:\/|$)/.test(req.path)&&req.originalUrl.includes('?'))return next(new DraftFailure('INVALID_INPUT',422));next();
  });
+ router.use(publicRouter(runtime));
+ router.use(lifecycleRouter(runtime));
  router.use(mediaRouter(runtime));
  router.use(publicationRouter(runtime));
  const auth=write=>protectedRequest(runtime.authorization,{roles:['Staff','Manager'],requireSession:write});

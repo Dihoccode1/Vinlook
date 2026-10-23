@@ -1,0 +1,7 @@
+# TASK014 soft delete and restore
+
+POST /api/v1/admin/pois/:id/delete or /restore accepts only expectedMutationVersion (16KiB JSON), UUID Idempotency-Key and fresh Manager/open-session authority. Existing admin detail now exposes its existing mutationVersion so the UI can act on the observed parent state. Use existing Content transaction/outbox/poi.delete or poi.restore replay scopes; no schema/index/dependency additions.
+
+Delete increments parent mutationVersion and stamps server actor/time, retaining published pointer, working and historical rows/assets. Public reads hide it. Restore clears deleted stamps AND public pointer, increments parent counter, reuses one working revision (draft or in_review) or clones retained published revision. It resets all working approvals, preserves source/text/media versions, never republishes or modifies historical published rows. Parent real writes serialize against draft save/publish; stale expected counters409. Invalid recovery source fails closed; no fabricated translations/audio, physical delete or cleanup. Worker admission/result integration is a later task and must check deleted/version state.
+
+TASK014 owner Tú/human reviewer Duy, AI assistance only. Isolated tests: npm run test:lifecycle and test:lifecycle:db using a fresh strictly guarded pinned/labelled loopback Mongo fixture; no real URI/Atlas/provider. See planning/task014-implementation-evidence.md for actual evidence and limitations. A soft-delete recovery is not a database backup/disaster restore test.

@@ -203,11 +203,26 @@
   "TASK-013": {
     "url": "https://github.com/Dihoccode1/Vinlook/issues/30",
     "number": 30,
-    "state": "open",
+    "state": "closed",
     "approvedOwner": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Approved A implemented;113unique relevant groups/build/health passed;await draft PR/Tu human review/user merge;actual registry/provider acceptance pending",
+    "readiness": "Code merged and Issue30 closed;113unique passed groups/build/health retained;actual registry/provider acceptance pending",
     "contract": "docs/planning/task013-review-publication-contract.md",
-    "branch": "codex/task-013-review-publication"
+    "branch": "codex/task-013-review-publication",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/31",
+    "headCommit": "e7a59dbe54b949136872ce685a41123f16fec567",
+    "reviewEvidence": "User reports approval/merge;PR31 merged and Issue30 closed verified;no formal GitHub review inferred",
+    "mergeCommit": "a075e35f9e54419f2a9006f14481d3d16285450c",
+    "closedAt": "2026-10-23T17:48:32Z"
+  },
+  "TASK-014": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/32",
+    "number": 32,
+    "state": "open",
+    "approvedOwner": "ngoctu0405",
+    "reviewer": "Dihoccode1",
+    "readiness": "Approved A implemented;123unique relevant groups/build/health passed;await draft PR/Duy review/user merge;real public hosting/offline acceptance pending",
+    "contract": "docs/planning/task014-public-lifecycle-contract.md",
+    "branch": "codex/task-014-public-lifecycle"
   }
 }
