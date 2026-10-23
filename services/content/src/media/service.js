@@ -36,7 +36,7 @@ export function createMediaService(runtime,provider,{probe=probeMedia,mode='prod
   // Server-only: TASK016 must supply an authenticated, verified immutable job snapshot.
   async issueAudio(snapshot,principal){return issue(snapshot.revisionId,{expectedEditVersion:snapshot.expectedEditVersion},principal,snapshot);},
   async status(id,principal){return view(await lookup(id,principal,false));},
-  async upload(id,principal,readBody,{signal}={}){return budgets.run({deadline:Date.now()+90000,signal},async()=>{
+  async upload(id,principal,readBody,{signal,deadline=Date.now()+90000}={}){return budgets.run({deadline:Math.min(deadline,Date.now()+90000),signal},async()=>{
    if(activeUpload)throw new MediaFailure('UPLOAD_BUSY');activeUpload=true;
    const controller=new AbortController(),total=setTimeout(()=>controller.abort(),90000),combined=signal?AbortSignal.any([signal,controller.signal]):controller.signal;
    budgets.getStore().signal=combined;

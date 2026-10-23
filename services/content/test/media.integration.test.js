@@ -120,7 +120,7 @@ test('observed single-upload memory and provider call counts are recorded withou
 });
 
 test('explicit cancellation after provider side effect retains digest for safe reconciliation',async()=>{
- const r=await draft(),id=await issue(r.revisionId);let started;const seen=new Promise(resolve=>started=resolve);holdStarted=started;providerMode='hold';const controller=new AbortController(),before=uploadCalls;
+ const r=await draft(),id=await issue(r.revisionId);let bodyRead=false;await assert.rejects(runtime.media.upload(id,principal,async()=>{bodyRead=true;return png();},{deadline:Date.now()-1}));assert.equal(bodyRead,false);assert.equal((await models.MediaUpload.findById(id)).status,'issued');let started;const seen=new Promise(resolve=>started=resolve);holdStarted=started;providerMode='hold';const controller=new AbortController(),before=uploadCalls;
  const pending=runtime.media.upload(id,principal,async()=>png(),{signal:controller.signal});await seen;controller.abort();await assert.rejects(pending);holdRelease();providerMode='normal';
  const stored=await models.MediaUpload.findById(id);assert.ok(['uploading','uncertain'].includes(stored.status));assert.ok(stored.sha256);assert.equal(uploadCalls,before+1);
  const old=clock;clock+=90001;assert.equal((await runtime.media.reconcile(id,principal)).status,'verified');clock=old;assert.equal(uploadCalls,before+1);
