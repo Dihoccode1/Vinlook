@@ -987,3 +987,23 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Actual draft PR3: https://github.com/Dihoccode1/Vinlook/pull/3, open, not merged,103added files.104total files including README. Local/remote Git blob hashes compared exactly with original line endings preserved; zero missing/extra/mismatched files. Initial verification used newline-normalizing read_text and reported mismatches; corrected verifier to compare the exact uploaded bytes before creating the baseline commit.
 - Tree contains reviewed documentation/conventions only, no application code or workflow. Credential pattern scan had no findings. No product CI/deployment/tests or formal human review claimed.
 - Actual issue map updated with seed/branch/PR links. Issue1 remains previously closed; task acceptance still pending Tú review and merge. No reviewer notification, permission/settings change, automatic merge or resource deployment performed.
+
+## DEC-111 User reports Tu review; formal result not yet observed
+
+- Date: 23 October 2026. User reports Tú has reviewed PR3. Read-only GitHub inspection: PR open, draft=false, head5751c4f4bfb6aeeed8d0f45d74c1fc753d52b968, mergeable=true/clean. Reviews, inline threads and merged discussion lists are empty.
+- Distinguish user-reported review activity from an observed approval. No change request observed, but absence of comments does not establish approval. Clarify review outcome / ask reviewer to submit the completed review, rather than re-request the review itself.
+- No PR commit, merge, reviewer impersonation or permission change performed. Keep reviewed head unchanged while result is clarified.
+
+## DEC-112 User confirms review and own merge; PR merge verified
+
+- Date: 23 October 2026. User confirms review and that they merged PR3. GitHub reports closed/merged=true, mergedBy Dihoccode1, mergedAt06:46:48UTC, merge commitc32f98b07fa9866993f9639930ee1f6a03e82ed8. Reviews collection remains empty: review is user-reported, not fabricated GitHub approval. Do not require duplicate review or perform another merge.
+- Documentation baseline predecessor delivered/merged. Created actual TASK002 Issue4: https://github.com/Dihoccode1/Vinlook/issues/4 with scaffold AC and boundaries. Approved owner Tú/reviewer Duy recorded; remote assignment not applied without assignability evidence. No product scaffold code or CI/deployment run yet.
+- Local mapping updated. These tracking changes are local and will accompany the next reviewed implementation branch, not a direct unreviewed main push.
+
+## DEC-113 TASK002 checked/closed by user; scaffold implemented for review
+
+- Date: 23 October 2026. User reports checking and closing TASK002; GitHub confirms Issue4 closed, but remote main initially still contained documentation only and no related PR. Record approval of task contents, not prior code completion. Continued implementation under the approved task/AC.
+- Prepared npm workspaces, React19.3.1/Vite8.3.5/ReactRouter8.5.0 DataMode/Tailwind4.3.3 preview, three independent Express5.3.0 ESM scaffolds and reserved local worker boundary. Node24.18.1/npm11.16.0 pinned; dependency lockfile committed for review. No shadcn component dependencies added until needed; component directory and alias prepared.
+- Registry versions/peers checked. Initial full npm packument read timed out; compact latest metadata succeeded. npm install and clean npm ci succeeded; audit reported0vulnerabilities at install time. Clean-install frontend build, backend syntax checks and real three-listener HTTP404/header/closure smoke passed. Backend paths intentionally unimplemented; no fake business features or health contract outside TASK003.
+- Browser first127.0.0.1 attempt timed out. After restarting dev outside sandbox, localhost:5173 AX showed actual rendered heading and unavailable-guide notice. Screenshot follow-up failed with session binding error; no screenshot or mobile visual acceptance claimed. No provider calls, secrets, database operations, CI/CD deployment or Docker creation.
+- Owner/reviewer approval remains Tú/Duy; AI-produced scaffold requires human review. Existing closed Issue is retained without silently reopening. Do not call TASK002 Done before PR review/merge.

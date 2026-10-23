@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@theme {
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+  --color-card: #ffffff;
+  --color-primary: #2563eb;
+  --color-muted-foreground: #475569;
+  --color-border: #cbd5e1;
+}
+:root { font-family: system-ui, sans-serif; color: var(--color-foreground); background: var(--color-background); }
+body { margin: 0; min-width: 320px; }
