@@ -1358,3 +1358,23 @@ Recorded from user confirmations in this chat. Individual entries record their c
 
 - Date:24October2026 UTC+7. User explicitly approved A for isolated implementation/testing. Added soft delete/restore-to-draft with reset approvals, existing parent counter exposure, current published public reads/search/nearby, signed digest-bound pagination and complete withdrawal IDs including restored-unpublished historical POIs. Optional distinct cursor key gates public endpoints; no real key setup or schema/index/dependency additions. OwnerTu/reviewerDuy retained; AI assistance is not human review.
 -123unique relevant passed groups:17lifecycle/public MongoHTTP,61units/regressions,14draftMongo,16publicationMongo,15mediaMongo. Full workspace build and final Content build passed. Earlier11/15integration and5units overlap; no double counting. All6fixture containers/own volumes removed after full identity/mount checks. No real Atlas/provider/credential/deployment/offline acceptance. Overall readiness503; await draft PR/human review/user merge.
+
+
+## DEC-181 TASK014 draft PR created
+
+- Date:24October2026 UTC+7. Draft PR33 https://github.com/Dihoccode1/Vinlook/pull/33, branch codex/task-014-public-lifecycle, headc6e20cb0739cba56a8586674f4d4529aa0251817;22changed files.21blob hashes and exact preserved-prefix decision-log content verified; actual PR open/drafttrue/mergedfalse. Main unchanged. Issue32 updated with actual approval/implementation/evidence/PR state.
+-123unique passed groups/build/health retained, all6fixture containers/own volumes removed. Approved ownerTu/reviewerDuy retained; no human review impersonation/reviewer message/auto-merge. No real provider/Atlas/key/hosting/offline acceptance. Postpublication tracking retained locally to preserve review head.
+
+## DEC-182 TASK014 merge and closure verified
+
+- Date:24October2026 UTC+7. On user continuation, GitHub verifies PR33 merged0d2673ff37e713d29ebc1c64c502cf43e28aae9d and Issue32 closed2026-10-23T18:16:03Z.123passed groups/build/health retained; no formal human review submission or real key/hosting/offline acceptance inferred. Next planned task TASK016 ownerDuy/reviewerTu; TASK015 already merged.
+
+## DEC-183 TASK016 job protocol proposed
+
+- Date:24October2026 UTC+7. Prepared planning/task016-job-protocol-contract.md and actual Issue34. OwnerDuy/reviewerTu retained. Proposal A reuses Mongo/outbox/media, details typed ProcessingJob/capabilities/process/retry/lease/result and progressive translation-to-audio snapshots, including destination row versions to prevent late manual-text overwrite. Worker upload adds immutable MediaUpload.attemptId and live admission; no actual registry/provider/worker runtime selected. Alternative B external queue requires replacement architecture contract.
+- Await explicit approval under Master Prompt Rule1 before schema/API/config implementation. No code/dependency/key/Atlas/provider/deployment changes in this planning turn. TASK014 merge/closure verified in DEC182; real provider/registry/hosted/offline/operator gates remain separate.
+
+## DEC-184 TASK016 contract A approved and implemented
+
+- Date:24October2026 UTC+7. User explicitly approved A for isolated implementation/testing. Added strict ProcessingJob/caller credentials/scoped process/retry/claim/renew/result plus attempt-bound worker media routes; source/text/destination snapshots and original-cycle audit preserved. No real registry/model/provider/worker deployment selected. OwnerDuy/reviewerTu retained.
+-142unique relevant passed groups:15jobsMongoHTTP,65units/regressions,14draftMongo,17lifecycleMongo,16publicationMongo,15mediaMongo; full workspace build exit0. Initial0/10fixture setup failure (helper shadowed Node process) fixed; overlapping runs not counted twice. All8fixture containers/own volumes removed after full ID/label/mount checks. Overall readiness503; no actual Atlas/provider/key/worker/hosted/operator acceptance. Await draft PR/human review/user merge.

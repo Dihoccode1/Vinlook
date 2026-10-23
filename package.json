@@ -40,6 +40,8 @@
     "test:publication": "node --test services/content/test/publication.test.js",
     "test:publication:db": "node --test services/content/test/publication.integration.test.js",
     "test:lifecycle": "node --test services/content/test/lifecycle.test.js",
-    "test:lifecycle:db": "node --test services/content/test/lifecycle.integration.test.js"
+    "test:lifecycle:db": "node --test services/content/test/lifecycle.integration.test.js",
+    "test:jobs": "node --test services/content/test/jobs.test.js",
+    "test:jobs:db": "node --test services/content/test/jobs.integration.test.js"
   }
 }

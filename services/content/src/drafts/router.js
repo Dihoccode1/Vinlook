@@ -1,5 +1,6 @@
 import express from 'express';
 import {mediaRouter} from '../media/router.js';
+import {jobRouter} from '../jobs/router.js';
 import {publicRouter} from '../public/router.js';
 import {lifecycleRouter} from '../lifecycle/router.js';
 import {publicationRouter} from '../publication/router.js';
@@ -18,8 +19,9 @@ export function draftRouter(runtime){
   if(req.method==='OPTIONS'){
    res.set('Access-Control-Allow-Methods','GET,POST,PATCH,PUT,OPTIONS');res.set('Access-Control-Allow-Headers','Authorization,Content-Type,Idempotency-Key');return res.status(204).end();
   }
-  if(!/^\/pois(?:\/|$)/.test(req.path)&&req.originalUrl.includes('?'))return next(new DraftFailure('INVALID_INPUT',422));next();
+  if(!/^\/pois(?:\/|$)/.test(req.path)&&!(req.method==='GET'&&req.path==='/admin/jobs')&&req.originalUrl.includes('?'))return next(new DraftFailure('INVALID_INPUT',422));next();
  });
+ router.use(jobRouter(runtime));
  router.use(publicRouter(runtime));
  router.use(lifecycleRouter(runtime));
  router.use(mediaRouter(runtime));
