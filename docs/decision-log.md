@@ -1334,3 +1334,27 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:24October2026 UTC+7. User explicitly approved A for isolated implementation/testing. Added version-bound per-language review, submit/Manager return and atomic publication using existing schemas/outbox/replay. Strict trusted registry manifest is injected server-side only; actual model selection/integration remains pending and runtime fails closed without it. Manager geography attestation is manual, not automatic verification. OwnerDuy/reviewerTu retained.
 -113unique passed groups:16publicationMongo/HTTP,56unit/relevant regressions (55combined plus1new fake-clock deadline group; overlapping tests counted once),14draftMongo,15mediaMongo,12durabilityMongo. Full workspace build and final Content build passed. Failed fixture API-path assertion/Mongo nested-timeout runs and sandbox EACCES regression are documented with corrections; no skips or failed runs counted.
 -All6TASK013 and3regression exact containers/own volumes removed after identity/mount checks. No real provider/Atlas/key/deployment or registry/actual narration acceptance. Await draft PR/Tu human review/user merge; overall readiness503.
+
+
+## DEC-176 TASK013 draft PR created
+
+- Date:24October2026 UTC+7. Draft PR31 https://github.com/Dihoccode1/Vinlook/pull/31, branch codex/task-013-review-publication, head e7a59dbe54b949136872ce685a41123f16fec567.16changed files verified;15Git blob hashes and exact preserved-prefix decision-log content matched. Actual PR open/drafttrue/mergedfalse, main unchanged. Issue30 updated with actual implementation/evidence/PR status.
+-113unique passed groups/build/health retained; all9fixture containers/own volumes removed. Await Tu human review/user merge. No reviewer message/auto-merge or real provider/Atlas/registry activation. Postpublication local tracking retained to preserve review head.
+
+## DEC-177 TASK013 user approval reported; merge not yet verified
+
+- Date:24October2026 UTC+7. User reports approval and merge of PR31. Two GitHub API reads currently return stateopen/mergedfalse/merged_atnull; main remains6af58ec282babb3c66e6103f95a55855c432d222 and Issue30 open. Record user report without marking code merged or treating merge_commit_sha preview as an actual merge.113passed groups/build/health retained; no deployment/provider/registry acceptance inferred.
+
+## DEC-178 TASK013 merge and closure verified
+
+- Date:24October2026 UTC+7. User repeated merge report and requested continuation. GitHub now verifies PR31 merged a075e35f9e54419f2a9006f14481d3d16285450c and Issue30 closed2026-10-23T17:48:32Z. Supersedes the unverified status in DEC177; prior observations preserved.113passed groups/build/health retained, no formal GitHub review or actual registry/provider acceptance inferred. Next planned task TASK014 ownerTu/reviewerDuy.
+
+## DEC-179 TASK014 lifecycle/public contract proposed
+
+- Date:24October2026 UTC+7. Prepared planning/task014-public-lifecycle-contract.md and actual Issue32. OwnerTu/reviewerDuy retained. Proposal A details soft delete/restore with existing version/replay/outbox; restoring resets approvals and clears public pointer; public locale/search/nearby; signed digest-bound pagination and full withdrawal IDs including restored-but-unpublished historical points. Proposes existing mutationVersion exposure in admin read, optional cursor key and bounded snapshot budgets. Alternative B adds durable catalog schema and requires replacement design.
+- Await explicit approval under Master Prompt Rule1 before API/config/behavior changes. No code/dependency/real Atlas/provider/credential/deployment changes. Prior TASK013 merge/Issue closure verified in DEC178; real registry/provider/hosted and operator gates remain separate.
+
+## DEC-180 TASK014 contract A approved and implemented
+
+- Date:24October2026 UTC+7. User explicitly approved A for isolated implementation/testing. Added soft delete/restore-to-draft with reset approvals, existing parent counter exposure, current published public reads/search/nearby, signed digest-bound pagination and complete withdrawal IDs including restored-unpublished historical POIs. Optional distinct cursor key gates public endpoints; no real key setup or schema/index/dependency additions. OwnerTu/reviewerDuy retained; AI assistance is not human review.
+-123unique relevant passed groups:17lifecycle/public MongoHTTP,61units/regressions,14draftMongo,16publicationMongo,15mediaMongo. Full workspace build and final Content build passed. Earlier11/15integration and5units overlap; no double counting. All6fixture containers/own volumes removed after full identity/mount checks. No real Atlas/provider/credential/deployment/offline acceptance. Overall readiness503; await draft PR/human review/user merge.
