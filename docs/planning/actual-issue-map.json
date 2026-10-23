@@ -47,7 +47,20 @@
     "state": "open",
     "approvedOwner": "ngoctu0405",
     "reviewer": "Dihoccode1",
-    "readiness": "ContractA approved; runtime/health implemented;15tests and build/smoke pass; PR review pending",
-    "branch": "codex/task-003-runtime-health"
+    "readiness": "Merged; user reports review; local15tests/build/smoke evidence retained",
+    "branch": "codex/task-003-runtime-health",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/7",
+    "headCommit": "f693192c7ce575a3132ae0f5dc0388d54af5a5ab",
+    "mergeCommit": "99128915198ddbeaa3837983fc9b2b457040f5a7",
+    "reviewEvidence": "User report, PR7 merge verified"
+  },
+  "TASK-004": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/8",
+    "number": 8,
+    "state": "open",
+    "assignee": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Schema contract approved;7schema and5isolated Mongo tests passed; review PR pending",
+    "branch": "codex/task-004-identity-models"
   }
 }

@@ -1036,3 +1036,44 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - All three services return liveness200 and readiness503 DEPENDENCIES_UNVERIFIED with server UUID/no-store; protected monitoring/business routes remain404. No DB/provider sampling or background keep-awake traffic added.
 - npm install updated exact dependency/lockfile and reported0vulnerabilities. Final15runtime/health tests passed: default/production config, invalid input matrices/redaction, invalid actual entrypoints, native env-file loading/override precedence, real HTTP routes/no reflection/no cache. Frontend build/backend syntax and three-listener scaffold smoke passed. No hosted/Docker/CI/CD acceptance or real dependency readiness claimed.
 - Branch codex/task-003-runtime-health created from merged TASK002 main a6f7cbbc819f7dc91795951b2106770acff408f3. Draft review PR pending creation; no direct main push or auto-merge.
+
+## DEC-119 TASK003 draft PR created
+
+- Date:23October2026. Actual commit f693192c7ce575a3132ae0f5dc0388d54af5a5ab on codex/task-003-runtime-health. Draft PR7: https://github.com/Dihoccode1/Vinlook/pull/7, open/not merged,24changed files. All24uploaded blob hashes matched local content.
+- Fifteen runtime/health tests, build and scaffold smoke passed; evidence/limits included in PR. No direct main update, provider credential use, background listener left running or deployment. Await human review/merge; do not claim Task003Done yet.
+- Actual PR/head links recorded locally after publication to preserve review head. These metadata updates accompany a later reviewed change.
+
+## DEC-120 TASK003 merge observed; TASK004 opened
+
+- Date:23October2026. User reports review/merge PR7. GitHub confirms closed/merged=true, mergedBy Dihoccode1, merge commit99128915198ddbeaa3837983fc9b2b457040f5a7. Prior15tests/build/smoke evidence applies to reviewed head; no new deployment inferred.
+- Created TASK004 Issue8: https://github.com/Dihoccode1/Vinlook/issues/8, assigned Duy; reviewer Tú per approved backlog. Scope service-owned Identity schemas/index declarations/synthetic fixtures. No auth endpoint or production DB mutation. Exact catalog reconciliation and isolated DB execution evidence required; no TASK004 code yet.
+- Local tracking updated for next reviewed branch. No additional merge, credentials or paid resource changes.
+
+## DEC-121 TASK004 reviewed; concrete schema gaps proposed
+
+- Date:23October2026. User reports review of TASK004. Inspected consolidated catalog and D004/005/007/014/017: core entities approved; AuditLog target account/reason required by D014 omitted from consolidated fields, result shape/hash encodings/rate indexes/operator alias representation unspecified.
+- Read-only Docker check first denied in sandbox, elevated read succeeded engine29.8.2. No container or Atlas mutation. npm registry Mongoose9.11.3 engine compatible with Node24.
+- Prepared planning/task004-identity-schema-contract.md: proposed explicit collection names, targetAccountId/reason, typed result, operator aliases, hash encodings/rate unique+TTL indexes, strict/no-auto-schema-write settings and isolated replica-set test plan. Existing behavior preserved; scope/data/API changes require Rule1 confirmation. No TASK004 schema code written pending A/details approval.
+
+## DEC-122 TASK004 schema contract approved
+
+- Date:23October2026. User approves planning/task004-identity-schema-contract.md in full: collection names, AuditLog.targetAccountId/reason, typed result, operator aliases, hashing encodings/rate indexes and strict/no-auto-write settings. Test-only local replica set authorized; no Atlas/real staff accounts.
+
+## DEC-123 TASK004 schema and real Mongo evidence
+
+- Date:23October2026. Added Identity-owned Mongoose9.11.3 models and synthetic fixtures; no service startup DB connection or auth endpoint added. Catalog updated with approved Identity addendum. Default query projections and serialization hide hash/key fields; safeIdentityError excludes original values and errors.
+- Official mongo8.0.34 image pulled, digestsha256:4a4ab5d4834207389e0d7270fac988e21ffedccecba77991a552f755df229907. Created only vinlook-task004-mongo-20261023, labelvinlook.task=TASK-004, port published only on127.0.0.1; fresh named test DB/replica set verified before explicit index creation. No Atlas/other existing containers modified.
+- Seven schema test groups passed. Five actual Mongo integration groups passed: concurrent normalized email dedup, staff/day uniqueness, audit event dedup/hash projections, rate window uniqueness/index TTL inspection and multi-collection transaction rollback. Recovery expired record retained (no TTL), demonstrating API expiry enforcement is still required. No exact TTL cleanup timing or atomic recovery API behavior claimed.
+- Package install reported0audit vulnerabilities; full regression and task-owned container cleanup to be recorded before PR. Readiness remains503; schema presence is not a verified DB-backed service.
+
+## DEC-124 TASK004 regressions passed and disposable resources cleaned
+
+- Date:23October2026. Final7schema/5actualMongo tests and15existingruntime tests passed; frontend/backend build and three-listener smoke passed. Catalog encoding update initially failed on Windows default charmap, then reapplied explicitly as UTF8; no source/model change or hidden failed test was ignored.
+- Verified task container3f7e694df97be60763855f396399d15a9bcd5c0f4b5e72034136161a9fa36d8c, task label and only expected anonymous Mongo mounts; stopped/removed that container with its own volumes. No other containers/volumes touched; image retained. No test listener remains active.
+- Model documentation explains query-update/document-hook limits, explicit index migration, API enforcement still pending and no readiness promotion. Reproduction/actual checks in planning/task004-implementation-evidence.md. Review PR pending creation.
+
+## DEC-125 Final Identity validation refinement and index recheck
+
+- Date:23October2026. Actor/issuer conditional checks use document path validators instead of pre-validation hooks, reducing dependence on asynchronous validation hooks. Supported async validate/save remains the intended API; deprecated validateSync probe was removed from tests after framework warning.
+- Seven model groups passed with final validator implementation. A fresh task-owned vinlook-task004-mongo-final with same pinned image/loopback/label passed all5Mongo groups again. Exact returned container ID/label/mounts verified, then only that final disposable container and its anonymous volumes removed. No test DB/container retained or Atlas changed.
+- This recheck was justified by validator changes; prior runtime/build/smoke evidence remains valid because runtime/HTTP files were unchanged. Main remains untouched, review PR to follow.

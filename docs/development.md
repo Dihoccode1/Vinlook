@@ -44,7 +44,9 @@ The scaffold smoke check starts all three apps concurrently on OS-assigned ports
 | services/usage | Anonymous usage and monitoring boundary |
 | workers/mms | Reserved local Python worker boundary; no runtime implementation yet |
 
-No shared database access, gateway, message broker or fourth hosted backend is introduced. There are no secrets, actual provider clients, persistence models or fake feature-success endpoints. shadcn component location and the `@` alias are reserved; no unused component dependency is installed. The initial page is an explicitly unavailable guide preview, not final approved UI acceptance.
+No shared database access, gateway, message broker or fourth hosted backend is introduced. Identity now has service-owned model declarations and synthetic tests, but server startup does not connect to a database. There are no secrets, actual provider clients or fake feature-success endpoints. shadcn component location and the `@` alias are reserved; no unused component dependency is installed. The initial page is an explicitly unavailable guide preview, not final approved UI acceptance.
+
+Identity model checks: `npm run test:identity`. Real isolated Mongo index checks: `npm run test:identity:db` after creating the explicitly guarded disposable environment in [TASK-004 evidence](planning/task004-implementation-evidence.md). The integration suite refuses arbitrary URIs or an existing test database; no Atlas credential is needed. See [model boundaries](../services/identity/src/models/README.md) before adding write APIs.
 
 Install versions are exact in workspace package files, and transitive versions/integrities are locked in package-lock.json. Use `npm ci` to reproduce them; don't copy node_modules. No product Python dependencies are installed by npm; the separate research virtualenv is excluded from publication.
 
