@@ -8,7 +8,7 @@ Ngày 23/10/2026. Bản tổng hợp từ D-004/005/007/013/014/017 đã duyệt
 |---|---|---|
 | StaffAccount | id; fullName; email; passwordHash; role; status; authVersion; createdAt; updatedAt | email unique chuẩn hóa, Staff/Manager, pending/active/locked; authVersion tăng khi reset; không confirmPassword trong DB |
 | WorkSession | id; staffId; workDateVN; status; openedAt; closedAt | unique staffId/date; open/closed; closedAt null khi mở; mở lại cùng ngày giữ ID |
-| AuditLog | id; eventId; actorType; actorId; operatorId; workSessionId; action; poiId; occurredAt; receivedAt; result | eventId unique; actor account hoặc operator đúng loại; session null cho operation ngoài phiên đã duyệt; thời điểm gốc khác receivedAt |
+| AuditLog | id; eventId; actorType; actorId; operatorId; workSessionId; action; poiId; occurredAt; receivedAt; targetAccountId; reason; result | eventId unique; actor account hoặc operator đúng loại; session null cho operation ngoài phiên đã duyệt; thời điểm gốc khác receivedAt |
 | RecoveryCode | id; staffId; codeHash; expiresAt; usedAt; issuedBy; issuedByOperator | one-use 15 phút; issuer account hoặc operator; không giữ mã rõ; expiry kiểm tra tại API |
 | AuthRateLimit | id; key; windowStart; count; expiresAt | key HMAC của tài khoản/IP+operation; không IP rõ; lưu server counter, có thể dọn expired theo ngoại lệ D-007 |
 
@@ -49,3 +49,8 @@ Health samples chỉ memory, không thêm collection. Không vị trí/GPS lịc
 Để ràng buộc audio với text và registry, đề xuất metadata trong audioAsset gồm **textVersion, registryVersion, voiceOrModelId** bên cạnh publicId/URL/format/duration; chỉ publish khi khớp. Đây là cụ thể hóa phụ thuộc D-013/018, cần duyệt cấu trúc tại D-021; không dùng URL ngẫu nhiên làm bằng chứng đúng version.
 
 Không tự thêm bảng task/milestone hay dữ liệu quản lý dự án vào Mongo; GitHub là nơi quản lý công việc.
+
+
+## Identity implementation addendum — DEC-122
+
+TASK-004 contract A approved: explicit collection names, AuditLog.targetAccountId/reason for operator Manager setup/recovery, strict result{status,errorCode}, operator aliases and safe bounds. Recovery SHA256/HMAC rate keys use lowercase hex64; rate unique(key,windowStart) plus allowed TTL(expiresAt,0). Hashes hidden by default. Staff timestamps only, no implicit version key, strict throw/no automatic collection/index creation. See planning/task004-identity-schema-contract.md. Actual index evidence is recorded separately; no Atlas mutation or auth API implied.

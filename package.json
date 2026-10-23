@@ -17,6 +17,8 @@
     "dev": "npm run dev --workspace=@vinlook/web",
     "build": "npm run build --workspaces --if-present",
     "check:scaffold": "node scripts/check-scaffold.mjs",
-    "test:runtime": "node --test tests/runtime-health.test.mjs"
+    "test:runtime": "node --test tests/runtime-health.test.mjs",
+    "test:identity": "node --test services/identity/test/schemas.test.js",
+    "test:identity:db": "node --test services/identity/test/indexes.integration.test.js"
   }
 }
