@@ -1166,3 +1166,28 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. Added Content-only audit receiver with original session/actor semantics, normalized replay/conflict detection, bounded insert races; Staff-own/Manager account+operator history with strict filters, signed requester/role/filter/endpoint cursor and authorized stale-session reconciliation. No schema/index/secret/dependency additions.
 - Actual9audit +58regression groups passed (67unique total), build/smoke passed. Initial stopped Docker engine recovered through hidden existing Desktop startup; one initial child-start10s timeout recorded, unchanged separate runtime15/15 passed. Causes not invented; no skipped checks or timeout edits. All4exact task test containers/own volumes removed after ID/label/mount checks. No Atlas/real staff/paid/provider/deployment changes.
 - OwnerTu/reviewerDuy retained, publication via Duy connector/AI not impersonated Tu authorship or human approval. Full evidence planning/task008-implementation-evidence.md; draft PR follows. Content outbox/sender/UI/operator writers/production/CI remain separate; readiness503.
+
+## DEC-143 TASK008 draft PR created
+
+- Date:23October2026. Draft PR17 https://github.com/Dihoccode1/Vinlook/pull/17, branch codex/task-008-audit-history, heade248b5b37f0130fa8226699488c46067c1eae312;13changed files, all13blob hashes verified. Main untouched.67passed groups/build/smoke, actual initial failures/rechecks and remaining gates documented.
+- Approved ownerTu/reviewerDuy retained; publication via Duy connector/AI assistance not impersonation or human approval. Await Duy human review/user merge, no notification or auto-merge sent. Postpublication tracking retained locally for next reviewed change to preserve this review head.
+
+## DEC-144 TASK008 user approval reported; merge pending
+
+- Date:23October2026. User says approved. PR17 verified open,draft=true,merged=false,unchanged heade248b5b37f0130fa8226699488c46067c1eae312. Record Duy user-reported approval,not formal GitHub approval or merge. A provisional merge_commit_sha on an open PR is not merge evidence.
+- Actual67passed groups/build/smoke evidence retained. Await user merge under established workflow; no auto-merge/reviewer message or Done claim. Local tracking only,published reviewed head unchanged.
+
+## DEC-145 TASK008 merge verified; TASK009 issue/contract prepared
+
+- Date:23October2026. User requests continuation. PR17 verified closed/draftfalse/mergedtrue and maine9b7bd5d83d44feeef066d02a6f863bcf3309707. Prior Duy approval report retained; no duplicate review requested. TASK008 complete with prior67passed groups/build/smoke evidence.
+- Actual Issue18 TASK009 opened,ownerDuy/reviewerTu. Prepared planning/task009-staff-recovery-contract.md for exact Staff lifecycle/listing, code/reset state/error/transaction semantics, local audit and durable reset rate budgets. Newly proposed lock/issuance JWT invalidation enables serialized issuance/reset without new schema fields and is explicitly called out for approval. Missing concrete details await A approval under Master Prompt Rule1; no product code or production credentials changed.
+
+## DEC-146 TASK009 contract A approved
+
+- Date:23October2026. User explicitly approved A (implement/test), including lock/issuance JWT invalidation, version-write serialization, Staff listing, exact lifecycle state commands/local audit and15minute single-use code/password reset transaction, reset IP30 and account5failed/15minute counters. OwnerDuy/reviewerTu retained; no real Manager or production changes authorized.
+
+## DEC-147 TASK009 implementation and actual isolated evidence
+
+- Date:23October2026. Added Manager-only Staff list/approve/lock/unlock/code issuance and public atomic reset with approved authVersion revocation/serialization, raw-once32byte code/SHA256/15minute expiry/one-use, local account audit and reset IP30/account5fixed-window guards. No schema/index/secret/dependency additions; Staff cursor endpoint separately bound.
+- Final10Staff groups +67regressions passed (77unique total), build/smoke passed. Earlier9group Staff run retained separately, not double-counted. Real Mongo concurrent issue/reset, actual bcrypt12 Unicode, expired-at-consumption rollback, audit-failure rollback, version bound, token invalidation and new-process rate persistence proved with synthetic fixtures. All6task-only containers/own volumes removed after exact ID/label/mount checks.
+- No Atlas/real Manager/staff/provider/paid/hosting changes. Full evidence planning/task009-implementation-evidence.md. Operator bootstrap/issuance TASK010, UI/verificationdelivery/production/CI remain pending; readiness503. Draft PR for Tu review/user merge follows.
