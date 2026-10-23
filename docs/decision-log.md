@@ -1286,3 +1286,29 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - Date:23October2026. User explicitly approved A implement/test, including POI.mutationVersion and revision.draft operation. Added protected create/clone/PATCH/locale/read with current authority/session, atomic outbox/replay and source/text invalidation preserving published graph; opt-in verified runtime no automatic schema/index/data repair. OwnerDuy/reviewerTu retained.
 -4draft groups+14actualMongo/HTTP+40relevant regressions passed (58unique), full build/three-service health checks passed. Initial11integrationgroups passed then expanded14on fresh DB; no failures/double counting. True parent-write/delete race, localized/outbox rollback, actual receiver and startup process fail-closed demonstrated. Evidence planning/task012-implementation-evidence.md.
 -Only2verified task containers/own volumes removed. No real Atlas/backfill/provider/media/geography/deployment or CI/CD acceptance; nonnull production thumbnail safely blocked pending TASK019 verifier. Overall readiness503; await Tu human review/user merge.
+
+## DEC-167 TASK012 draft PR created
+
+- Date:23October2026. Draft PR27 https://github.com/Dihoccode1/Vinlook/pull/27, branch codex/task-012-draft-api, final headc13096e75fe59d8508bf8d4275689ad4802f83a6;20changed files. All initial20blob hashes verified; preserved original mixed log/model line endings in final tree and verified those2remote files byte-for-byte, other18blobs unchanged. Diff focused: log21added/0deleted, model2added/1deleted. PR open/drafttrue/mergedfalse, main untouched.
+-58unique passed groups/build/health, cleanup and limits documented. Credential pattern scanner initially matched a synthetic credential-shaped invalid-URI fixture; replaced with credential-free wrong-DB URI and reran4unitgroups to exit0. No secret exposed or real credential used. Await Tu human review/user merge; no notification/auto-merge. Postpublication tracking retained locally to preserve review head.
+
+## DEC-168 TASK012 merge verified
+
+- Date:23October2026. User reports review and merge. PR27 independently verified closed/mergedtrue/draftfalse; merge commit255d71c1da96bc428618954743ca243dbf674cdb.58relevant passed groups/build/health retained; no repeated tests/review requested or formal GitHub review fabricated. Issue closure not inferred from PR merge.
+-Next work must follow backlog dependencies and approved concrete contracts; TASK013 requires TASK019 media verification in addition to now-merged TASK012. No real Atlas/migration/provider/production acceptance inferred.
+
+## DEC-169 TASK019 issue and upload approach decision prepared
+
+- Date:23October2026. Created actual Issue28 TASK019, approved ownerDuy/reviewerTu retained. Prerequisites merged; TASK013 depends on media verification. Official Cloudinary docs confirm1h signature validity and exclusion of file/resource_type from signed fields, requiring honest capability limits.
+- Proposed A direct signed fixed intent +post-upload verification (recommended), alternative B server-proxied upload with local admission/byte checks and extra host load. Concrete impact/next detailed contract in planning/task019-upload-approach-proposal.md. Await approach decision under Master Prompt Rule1; no product code/model/provider/Atlas change.
+
+## DEC-170 TASK019 backend upload B selected; concrete contract prepared
+
+- Date:23October2026. User selected B upload through backend, superseding direct-upload recommendation. Prepared planning/task019-backend-upload-contract.md with proposed strict MediaUpload collection, bounded backend multipart/binary probing, durable unknown-outcome reconciliation, immutable Cloudinary adapter, TASK012 attachment/runtime amendment and scoped internal audio primitive.
+-Read-only official npm metadata checked: busboy1.6.0,sharp0.35.5,music-metadata12.2.3; no package installed. Await detailed implementation contract approval under Master Prompt Rule1; transport B not reopened. No real key/provider/Atlas write/deployment.
+
+## DEC-171 TASK019 contract B approved and implemented
+
+- Approval23October2026; completion24October2026 UTC+7. User explicitly approved detailed backend transport/model/dependency/API/runtime contract B. Added private bounded backend media upload, binary child probe, durable intent/uncertain reconciliation and same-POI atomic attachment; no public audio worker bypass. OwnerDuy/reviewerTu retained.
+-8media+15actual mediaMongo/HTTP+14draftMongo+44related regressions passed (81unique), full build/final Content build/health passed. Earlier5/7units,0/3integration,12/13and13/14HTTP reset failures retained with corrections in planning/task019-implementation-evidence.md; no double counting or weakened large-file test. Fixed --env-file inheritance during review using synthetic-only regression.
+-All7TASK019 and1TASK012 regression exact containers/own volumes removed after ID/label/mount checks. No real Cloudinary/Atlas/key/provider/production write, narration/Linux/Render acceptance not implied. Readiness503; await Tu human review/user merge.

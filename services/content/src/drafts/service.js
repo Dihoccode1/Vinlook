@@ -9,7 +9,7 @@ const pending=row=>{row.reviewStatus='pending';row.reviewedBy=null;row.reviewedA
 const data=(poi,rev)=>({poiId:String(poi._id),revisionId:String(rev._id),editVersion:rev.editVersion,status:'draft'});
 export function createDraftService(runtime){
  const {connection,models,now=Date.now}=runtime;
- async function media(asset){if(asset!==null){if(!runtime.verifyThumbnail)throw new DraftFailure('MEDIA_VERIFICATION_UNAVAILABLE');if(await runtime.verifyThumbnail(asset)!==true)throw new DraftFailure('INVALID_MEDIA_REFERENCE',422);}}
+ async function media(asset,context){if(asset!==null){if(!runtime.verifyThumbnail)throw new DraftFailure('MEDIA_VERIFICATION_UNAVAILABLE');if(await runtime.verifyThumbnail(asset,context)!==true)throw new DraftFailure('INVALID_MEDIA_REFERENCE',422);}}
  async function parent(id,session,write=true){
   const poi=await models.POI.findById(id).session(session);
   if(!poi)throw new DraftFailure('CONTENT_NOT_FOUND',404);
@@ -30,7 +30,7 @@ export function createDraftService(runtime){
  function scope(principal,operation,key,targetId,input){return{actorId:principal.account.id,workSessionId:principal.currentWorkSession.id,operation,key,targetId,input};}
  return {
   async create(input,principal,key){
-   await media(input.thumbnailAsset);
+   if(input.thumbnailAsset!==null)throw new DraftFailure('MEDIA_INTENT_REQUIRED',422);
    return executeMutation(connection,models,scope(principal,'poi.create',key,null,input),async session=>{
     const [poi]=await models.POI.create([{}],{session});
     const [rev]=await models.POIRevision.create([{...input,poiId:poi._id,revisionNumber:1,editVersion:0,sourceVersion:1,status:'draft',createdBy:principal.account.id}],{session});
@@ -59,7 +59,7 @@ export function createDraftService(runtime){
    },now);
   },
   async patch(id,input,principal,code=null){
-   if(code===null&&Object.hasOwn(input.changes,'thumbnailAsset'))await media(input.changes.thumbnailAsset);
+   if(code===null&&input.changes.thumbnailAsset!==undefined&&input.changes.thumbnailAsset!==null){const target=await models.POIRevision.findById(id).select('poiId');if(!target)throw new DraftFailure('CONTENT_NOT_FOUND',404);await media(input.changes.thumbnailAsset,{poiId:String(target.poiId)});}
    const eventId=randomUUID(),occurredAt=new Date(now());let output;
    for(let attempt=0;attempt<3;attempt++){
     const session=await connection.startSession();
@@ -91,7 +91,7 @@ export function createDraftService(runtime){
         for(const row of rows){pending(row);await row.save({session});}
        }
       }
-      if(changed){await guard(poi,session);rev.editVersion=nextVersion(rev.editVersion);await rev.save({session});await insertAudit(session,principal,poi._id,eventId,occurredAt);}
+      if(changed){await guard(poi,session);rev.editVersion=nextVersion(rev.editVersion);await rev.save({session});if(code===null&&input.changes.thumbnailAsset&&runtime.attachThumbnail)await runtime.attachThumbnail(session,input.changes.thumbnailAsset,{poiId:String(poi._id),revisionId:String(rev._id)});await insertAudit(session,principal,poi._id,eventId,occurredAt);}
       output={status:200,body:{data:data(poi,rev)}};
      },{timeoutMS:10000,maxCommitTimeMS:3000,readPreference:'primary',writeConcern:{w:'majority'}});
      return output;

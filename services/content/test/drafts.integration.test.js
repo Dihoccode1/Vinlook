@@ -67,7 +67,7 @@ test('strict HTTP/CORS/body/media gates reject injection and oversized input saf
  assert.equal((await request('/admin/pois','POST',input(),{'Origin':'https://evil.example.invalid','Idempotency-Key':randomUUID()})).status,403);
  assert.equal((await request('/admin/pois?x=1','POST',input(),{'Idempotency-Key':randomUUID()})).status,422);
  assert.equal((await create({...input(),thumbnailAsset:{...asset(),publicId:'unknown'}})).status,422);
- const verifier=runtime.verifyThumbnail;runtime.verifyThumbnail=undefined;assert.equal((await create({...input(),thumbnailAsset:asset()})).status,503);runtime.verifyThumbnail=verifier;
+ const verifier=runtime.verifyThumbnail;runtime.verifyThumbnail=undefined;assert.equal((await create({...input(),thumbnailAsset:asset()})).status,422);const draft=await create();assert.equal((await patch(draft.body.data.revisionId,0,{thumbnailAsset:asset()})).status,503);runtime.verifyThumbnail=verifier;
 });
 
 test('same-version concurrent PATCH has one winner; no-op and lost-response retry preserve version rules',async()=>{
