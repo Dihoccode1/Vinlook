@@ -1,4 +1,8 @@
 import mongoose from 'mongoose';
+import {createMediaModel} from '../media/model.js';
+import {loadMediaConfig} from '../media/validation.js';
+import {createCloudinaryAdapter} from '../media/provider.js';
+import {createMediaService} from '../media/service.js';
 import {loadAuthorizationConfig} from '../authorization.js';
 import {createContentModels} from '../models/index.js';
 import {createDurabilityModels} from '../durability/models.js';
@@ -8,11 +12,11 @@ export function loadContentConfig(mode,environment=process.env){
  const invalid=()=>{throw new Error('Invalid Content runtime configuration');};
  const uri=environment.CONTENT_MONGODB_URI;
  let url;try{url=new URL(uri);}catch{invalid();}
- if(!['mongodb:','mongodb+srv:'].includes(url.protocol)||!(url.pathname==='/vinlook_content'||mode==='test'&&url.pathname==='/vinlook_content_task012'))invalid();
+ if(!['mongodb:','mongodb+srv:'].includes(url.protocol)||!(url.pathname==='/vinlook_content'||mode==='test'&&/^\/vinlook_content_task0(?:12|19)$/.test(url.pathname)))invalid();
  const authorization=loadAuthorizationConfig(mode,environment);
  const origins=(environment.CONTENT_ALLOWED_ORIGINS??(mode==='development'?'http://localhost:5173,http://127.0.0.1:5173':'')).split(',').map(v=>v.trim());
  for(const value of origins){try{const origin=new URL(value);if(origin.origin!==value||!(origin.protocol==='https:'||mode!=='production'&&origin.protocol==='http:'&&['localhost','127.0.0.1','[::1]'].includes(origin.hostname)))invalid();}catch{invalid();}}
- return Object.freeze({uri,authorization,origins:Object.freeze([...new Set(origins)])});
+ return Object.freeze({uri,authorization,mode,media:loadMediaConfig(environment),origins:Object.freeze([...new Set(origins)])});
 }
 export async function verifyContentCatalog(connection,models){
  const collections=await connection.db.listCollections().toArray();
@@ -30,8 +34,10 @@ export async function verifyContentCatalog(connection,models){
 export async function connectContentRuntime(config){
  const connection=mongoose.createConnection(config.uri,{autoCreate:false,autoIndex:false,bufferCommands:false,serverSelectionTimeoutMS:3000});
  try{
-  await connection.asPromise();const models={...createContentModels(connection),...createDurabilityModels(connection)};await verifyContentCatalog(connection,models);
+  await connection.asPromise();const models={...createContentModels(connection),...createDurabilityModels(connection)};const hasMedia=await connection.db.listCollections({name:'media_uploads'}).hasNext();if(config.media||hasMedia)models.MediaUpload=createMediaModel(connection);await verifyContentCatalog(connection,models);
   const sender=createOutboxSender(models.AuditOutbox,config.authorization);
-  return{connection,models,authorization:config.authorization,origins:config.origins,now:Date.now,start:()=>sender.start(),async close(){await sender.stop();await connection.close();}};
+  const runtime={connection,models,authorization:config.authorization,origins:config.origins,now:Date.now,start:()=>sender.start(),async close(){await sender.stop();await connection.close();}};
+  if(config.media){runtime.media=createMediaService(runtime,createCloudinaryAdapter(config.media),{mode:config.mode});runtime.verifyThumbnail=runtime.media.verifyThumbnail;runtime.attachThumbnail=runtime.media.attachThumbnail;}
+  return runtime;
  }catch{await connection.close().catch(()=>{});throw new Error('Content dependencies unavailable');}
 }

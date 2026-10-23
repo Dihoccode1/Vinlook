@@ -167,8 +167,12 @@
     "state": "open",
     "approvedOwner": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Contract A approved;58relevant groups/build/health passed;draft PR preparation;review/merge pending",
-    "branch": "codex/task-012-draft-api"
+    "readiness": "Code merged;58relevant groups/build/health evidence retained",
+    "branch": "codex/task-012-draft-api",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/27",
+    "headCommit": "c13096e75fe59d8508bf8d4275689ad4802f83a6",
+    "mergeCommit": "255d71c1da96bc428618954743ca243dbf674cdb",
+    "reviewEvidence": "User reports review and merge;PR27 merged verified;no formal GitHub review inferred"
   },
   "TASK-015": {
     "url": "https://github.com/Dihoccode1/Vinlook/issues/25",
@@ -182,5 +186,14 @@
     "headCommit": "9b6e2ebb2dd920a5ebc5203aac6c6e649b37bb93",
     "mergeCommit": "7dcf6f4520286aaacb3bba108ab04a33e7b44ead",
     "reviewEvidence": "User reports review and merge;PR26 merged verified;no formal GitHub review inferred"
+  },
+  "TASK-019": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/28",
+    "number": 28,
+    "state": "open",
+    "approvedOwner": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Contract B approved;81relevant groups/build/health passed;draft PR preparation;real provider acceptance pending",
+    "branch": "codex/task-019-backend-media"
   }
 }

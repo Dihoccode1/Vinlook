@@ -1,4 +1,5 @@
 import express from 'express';
+import {mediaRouter} from '../media/router.js';
 import {randomUUID} from 'node:crypto';
 import {protectedRequest} from '../authorization.js';
 import {uuid,MutationFailure} from '../durability/validation.js';
@@ -12,10 +13,11 @@ export function draftRouter(runtime){
   const origin=req.get('Origin');if(origin&&!runtime.origins.includes(origin))return next(new DraftFailure('ACCESS_DENIED',403));
   if(origin){res.set('Access-Control-Allow-Origin',origin);res.vary('Origin');}
   if(req.method==='OPTIONS'){
-   res.set('Access-Control-Allow-Methods','GET,POST,PATCH,OPTIONS');res.set('Access-Control-Allow-Headers','Authorization,Content-Type,Idempotency-Key');return res.status(204).end();
+   res.set('Access-Control-Allow-Methods','GET,POST,PATCH,PUT,OPTIONS');res.set('Access-Control-Allow-Headers','Authorization,Content-Type,Idempotency-Key');return res.status(204).end();
   }
   if(req.originalUrl.includes('?'))return next(new DraftFailure('INVALID_INPUT',422));next();
  });
+ router.use(mediaRouter(runtime));
  const auth=write=>protectedRequest(runtime.authorization,{roles:['Staff','Manager'],requireSession:write});
  const json=[(req,res,next)=>req.is('application/json')?next():next(new DraftFailure('UNSUPPORTED_MEDIA_TYPE',415)),express.json({limit:131072,strict:true})];
  const key=req=>parse(uuid,req.get('Idempotency-Key'));

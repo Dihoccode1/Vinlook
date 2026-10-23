@@ -34,6 +34,8 @@
     "test:durability": "node --test services/content/test/durability.test.js",
     "test:durability:db": "node --test services/content/test/durability.integration.test.js",
     "test:drafts": "node --test services/content/test/drafts.test.js",
-    "test:drafts:db": "node --test services/content/test/drafts.integration.test.js"
+    "test:drafts:db": "node --test services/content/test/drafts.integration.test.js",
+    "test:media": "node --test services/content/test/media.test.js",
+    "test:media:db": "node --test services/content/test/media.integration.test.js"
   }
 }
