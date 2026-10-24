@@ -1,0 +1,134 @@
+{
+  "status": "offline_readonly_verified",
+  "models": 11,
+  "files": 55,
+  "bytes": 1597661068,
+  "manifests": {
+    "hi": {
+      "files": {
+        "config.json": "30eebf11d14ec17cbfe000ba5a8a9e97717e5c25079a400f33f98115c5be9bf3",
+        "model.safetensors": "675b45f0c34c5f7f8c78baf0403a6afb16a3e5fac0c2740601dad877d1f5cb0c",
+        "special_tokens_map.json": "92a7a7e498bdc4376efc3cc2ed711a8980fa8cd48472bde07c2f5282c1af6524",
+        "tokenizer_config.json": "e0253ba9c7c4e2a99ef03f80832470ed91a9600103ec5f01dbee6b9f9791187d",
+        "vocab.json": "94e86533fb47d1c5a90d8d7f39d630d7cc7ce687521c9e826f536c2c6d25463e"
+      },
+      "model": "facebook/mms-tts-hin",
+      "revision": "1d83b223ec78e30b944f7d96bd117eb3d7023303"
+    },
+    "es": {
+      "files": {
+        "config.json": "97449dd4dfd6013796475b4aee479356779ac95df59b1dcc8dec1d720ef21275",
+        "model.safetensors": "b5e90d5fe0bcb2bfe8111abefd1c906181e96fc2db47444d6c57a061bc118a7b",
+        "special_tokens_map.json": "d50d1983755438839e663f13176dd7382cbc701d9fef4a1382147839aa449bce",
+        "tokenizer_config.json": "fce0c1fe73c80302ca34de83ba73ace0d96b9650078db1a0dfd7287d40faae27",
+        "vocab.json": "8054192bfa6dd0fea97def00ced0826ad5043c727785c5546e93efcbd9b70579"
+      },
+      "model": "facebook/mms-tts-spa",
+      "revision": "833b96c0278c85cf09776d565ba8f1cb2819f7ec"
+    },
+    "ar": {
+      "files": {
+        "config.json": "8695749d49be938a0d4cd233a9a22f554064de7cae6c41cf48f0317bd4b86686",
+        "model.safetensors": "77d29c97c92a047e567fcd0002a35775849197bb78f6dcfafbb213e1c63aae0a",
+        "special_tokens_map.json": "5fb1bfa11c274509023ee9b78051eb830f80a2a1633440158c54fc346b0f4345",
+        "tokenizer_config.json": "2ac9a7f409f16bda83eabf5bad040de3e85f095ecaf81aad365a5e29dcac5db5",
+        "vocab.json": "047c0c27fa0c9acebf14dac703a082ab11494d22ad8586c330deb33a65e998a8"
+      },
+      "model": "facebook/mms-tts-ara",
+      "revision": "afba26a4b470f9ae64aeeea91b99f080dee410de"
+    },
+    "fr": {
+      "files": {
+        "config.json": "d76f3cad35e24a6d10f9d65d833555b7ab8020d8fa8d30eb5d70070ef15ae315",
+        "model.safetensors": "61d825abf5c0c9aa623f5363e4605fa27fb258ac2131fa05e8d3b961ef612010",
+        "special_tokens_map.json": "16045ac774631738bf152958f821d200e6a3fe00a31200a2d00a8d2eb585c74c",
+        "tokenizer_config.json": "fdc2c7eeefeb440c698c62927fae34801640fc8e3f41841a8247ef4e7da5d740",
+        "vocab.json": "d11c7389cb4eec1237a964f18ed1973a47c8b6db6ad0726c065dd2ade6a9c5eb"
+      },
+      "model": "facebook/mms-tts-fra",
+      "revision": "5806d92d6247218c0e81e5f1a7462f6f636f70a2"
+    },
+    "bn": {
+      "files": {
+        "config.json": "fe73644ccc1adf786e8ce084c35224c2454bc121538ea38b500a558f874dbdaf",
+        "model.safetensors": "6a0e055ec13ecd0a07ead04dec7974a071846e64a9fe0c0b188f61b32a9bd5ba",
+        "special_tokens_map.json": "902fb8db5dab1fab387bb644304f903aabcacdc6a0f4fb64fcfb0b6c636f9c48",
+        "tokenizer_config.json": "2fa63cacf718974f5927c3a59446cdd2a07dc598a9e344d63481c6c746293904",
+        "vocab.json": "f6835e0c24b81eed0db2740dd70a490af6870106d076289ae018cff2cdc5e8ab"
+      },
+      "model": "facebook/mms-tts-ben",
+      "revision": "0da99de6074c8829121cdabfbdba423af18e8e56"
+    },
+    "id": {
+      "files": {
+        "config.json": "23b29969579a64c6eba5872fbec17e0d7aabe759466cb9256351c9d1cced15f5",
+        "model.safetensors": "d56181bae3a51458aab6b4a893ecd71d0fde69378f576c53e139b59940d80ca0",
+        "special_tokens_map.json": "dbee712fae22271ea3d855fbccd28b67b225eaa2f97df8c572332d8455adee4b",
+        "tokenizer_config.json": "ba29f9a05ff94d792bb0cfab2c5fd60cd707315dbb8e7e128c978a6cbccdff2d",
+        "vocab.json": "74f0afcf5201ff606cdc2746b18baf582918c2e5f363240d05b2a6d8afb8f180"
+      },
+      "model": "facebook/mms-tts-ind",
+      "revision": "50dc8c10320a328391efaab25e4c629f9bf254ec"
+    },
+    "ur": {
+      "files": {
+        "config.json": "67fc1825dd729d7c90de1a56eff72eaa0c51cae0d3f5d7b7fa0d8bb250d81a66",
+        "model.safetensors": "2339cfcdbeb7199e2cd572cba666e28124434818917537939cd016e5ec65886d",
+        "special_tokens_map.json": "b38bab08cc52c0a5a64df6f0cc60673697ed9761e78cd86189cd603fc21d232c",
+        "tokenizer_config.json": "48a070438d4663fb351c23949ca69e6c533460bea288e2943dd213fceb2c3544",
+        "vocab.json": "82765f67c007b56448d0951375cf8aeef44d0c47e89851b834f3fbd2f487a746"
+      },
+      "model": "facebook/mms-tts-urd-script_arabic",
+      "revision": "4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5"
+    },
+    "ru": {
+      "files": {
+        "config.json": "d76f3cad35e24a6d10f9d65d833555b7ab8020d8fa8d30eb5d70070ef15ae315",
+        "model.safetensors": "4ed1b47c11a9d3242ec1a094847f8252f7860c96aeb5ce316047985e58fe8759",
+        "special_tokens_map.json": "7807cfe333571a07dbcf74a5ad1e9755da2ff17a43f8fae808a76f48508d621b",
+        "tokenizer_config.json": "8a4d38ec4879e5632899764dae779b6ead35e8e295cc0ed79c2d9d0af648323a",
+        "vocab.json": "05dc299fc7281439c4792e6a6e12fa5f5a7bd4a2cf6b9cc807b602a2ff4e7abb"
+      },
+      "model": "facebook/mms-tts-rus",
+      "revision": "a6f0f76c028c49175f42074ee79bd3e17ee1dd47"
+    },
+    "de": {
+      "files": {
+        "config.json": "97449dd4dfd6013796475b4aee479356779ac95df59b1dcc8dec1d720ef21275",
+        "model.safetensors": "6068054cb03caf5a00902e17f083e042d247aa4ce8919d6a93567f5262c80ec5",
+        "special_tokens_map.json": "7a1cc941d7ea26ad0a9f78e166a97a76b21de2f09e320e3b564bf2e22c5d85c4",
+        "tokenizer_config.json": "c4884de4bd516ddd428820b4870d63a5f21e17d1fad9842b5e66c4da9dee86c5",
+        "vocab.json": "02d4fed38143de46776aec34d92e19d33a47fa8f3d4ba009fdd138a9569e4508"
+      },
+      "model": "facebook/mms-tts-deu",
+      "revision": "5cbe521869fcf9da4b2b3e85d7810e3005a121dc"
+    },
+    "pcm": {
+      "files": {
+        "config.json": "e4eb7428ea793b5447f0a43714a89b4831d187f92e414bb1aac4acc369532671",
+        "model.safetensors": "6c6c67b8f597ed88828f569e2ad886014b404b8f676dddae3cc4bd341b99c240",
+        "special_tokens_map.json": "845f635933c404f060a1d7a2f4c4494bf4a91f8ebec99a41108778d026426dfc",
+        "tokenizer_config.json": "1ce21310592af2abee88b4d8ef87c6cb0f2cda8dc0da69b794ae534b2d5c10f6",
+        "vocab.json": "848eec3932dd9d8d5d7edc7d9416b64b1a95f9511c9fa65d208c5ff6e43f3268"
+      },
+      "model": "facebook/mms-tts-pcm",
+      "revision": "1d0b2f030eed571b27a600ad350e50cebaccea9b"
+    },
+    "vi": {
+      "files": {
+        "config.json": "70dcc60b59337b43d58c865735846a2bc5a604d2698d7dfca713904da997ca8d",
+        "model.safetensors": "55ded90c3e57dc2814fa2cdfe3f9e7a5c28e1223b06c0a260a4495b080762ffd",
+        "special_tokens_map.json": "90b6165eb6c3fe8041fb7a46fb1b7c50220b2d2cbe232d2c1dca2b3f6900f721",
+        "tokenizer_config.json": "d2272a1d3a7b5330d28dd9daa6fdd549c8bedc723764a072c5c67cc66de08f52",
+        "vocab.json": "15972d5661d06687659208574acea6b7415f70456c3b291246971c003e755bb7"
+      },
+      "model": "facebook/mms-tts-vie",
+      "revision": "b58928d033932a49aa8e3d6cf11625b25fe928d2"
+    }
+  },
+  "date": "2026-10-25",
+  "unitTests": 40,
+  "volume": "vinlook-task025-remaining-models",
+  "inferenceRun": false,
+  "finalBatchPairs": 0
+}
