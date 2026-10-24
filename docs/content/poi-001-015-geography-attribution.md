@@ -43,3 +43,42 @@ Other POI identity context comes from already merged editorial research, not a f
 ## Handoff
 
 This ledger preserves provenance for desktop candidates only. Final marker/entrance choices, uncertain external access and human review remain pending. Runtime schema/API/DB/seed and publication gates unchanged. No claim that15marker candidates amount to15usable navigation destinations.
+
+## Follow-up: approved public exterior arrival semantics A
+
+Duy approved exterior public arrival on25October2026; no promise of venue entry, field step waived. Candidate endpoint selection now has15concrete coordinates and source-node IDs. Earlier statements about unresolved strict visitor-entry gates describe PR50 history; actual visitor-gate opening still is not established. Final human acceptance remains pending.
+
+| POI | Exterior approach way | Endpoint member node | Coordinate provenance/license |
+| --- | --- | --- | --- |
+| POI-001 | way/329878185 v34 | node/11845234638 v1 | OSM/Geofabrik, ODbL1.0 |
+| POI-002 | way/802069425 v3 | node/7502330712 v2 | OSM/Geofabrik, ODbL1.0 |
+| POI-003 | way/801950746 v2 | node/11537242394 v1 | OSM/Geofabrik, ODbL1.0 |
+| POI-004 | way/1119254704 v3 | node/10236343229 v2 | OSM/Geofabrik, ODbL1.0 |
+| POI-005 | way/1536298183 v1 | node/13995919935 v1 | OSM/Geofabrik, ODbL1.0 |
+| POI-006 | way/1237558230 v1 | node/11494719176 v2 | OSM/Geofabrik, ODbL1.0 |
+| POI-007 | way/193427293 v4 | node/411918528 v4 | OSM/Geofabrik, ODbL1.0 |
+| POI-008 | way/802157424 v4 | node/13305622232 v2 | OSM/Geofabrik, ODbL1.0 |
+| POI-009 | way/889445086 v5 | node/8269074784 v1 | OSM/Geofabrik, ODbL1.0 |
+| POI-010 | way/804073930 v4 | node/7520786480 v1 | OSM/Geofabrik, ODbL1.0 |
+| POI-011 | way/1544382384 v3 | node/14048099128 v2 | OSM/Geofabrik, ODbL1.0 |
+| POI-012 | way/1550324378 v1 | node/3490015098 v6 | OSM/Geofabrik, ODbL1.0 |
+| POI-013 | way/1237832393 v1 | node/11497726264 v1 | OSM/Geofabrik, ODbL1.0 |
+| POI-014 | way/564325161 v3 | node/7717917936 v1 | OSM/Geofabrik, ODbL1.0 |
+| POI-015 | way/1468659814 v6 | node/14028020211 v1 | OSM/Geofabrik, ODbL1.0 |
+
+Additional direct sources read25October2026:
+
+- [Palace visitor information](https://dinhdoclap.gov.vn/gio-tham-quan/): identifies Nguyen Du and Nam Ky Khoi Nghia gate corridors; not numerical evidence for an exact entrance point. The proposal uses a Nguyen Du map approach reference, explicitly distinguished from the gate.
+- [Nha Rong operator renovation notice](https://bennharong.vn/thong-bao-dong-cua-trung-tu-bao-tang), dated6May2026: closure for works, reopening to be announced separately. [Operator announcements](https://bennharong.vn/thong-bao) displayed closed visiting-hours status on research read. No reopening confirmation found; do not infer permanent closure. Staff events do not establish visitor access.
+
+## Executed follow-up and practical limits
+
+Reused pinned hcm-highways-source.osm.pbf and Vietnam source. Filtered candidate ways by approved-profile-like foot/access/conditional constraints, then checked selected nodes in full pinned input for versions and tags. No selected node has a barrier or explicit no/private access; no chosen way has explicit no/private/permit/customers/destination access or conditional tags. Missing tags are not proof of legal access. Exact object membership and numeric coordinate ranges checked. Earlier brute-force approach search cancelled and rerun with bounding-box pruning; only successful final results counted. No additional data service/download.
+
+Arrival-point exterior tests use the mapped POI footprint/site outlines rather than a cadastral boundary. POI007 was changed to a public corridor on the other side of the museum/zoo frontage; the internal museum-side path from the first pass is not the final endpoint. Streets are destinations rather than closed building polygons. Need human review of public-access interpretation; do not convert this evidence to a field survey.
+
+Graph file hash matches existing build evidence. Engine: existing docs/research/routing-spike/engine.mjs.15unique endpoint checks passed with A*/Dijkstra agreement and valid local paths. POI007 replacement rerun retained instead of old result. Neighbour expansion starts are test fixtures, not sourced tourist GPS; these checks prove graph connectivity only. No real-world access, current site opening, legal-boundary equivalence or product navigation success certified. No automated straight connector through a wall is inserted: endpoint is an existing graph vertex. Paths use research profile and its documented limitations.
+
+No application test rerun for documentation-only changes. Exact publication inventory is two updated geography Markdown files plus the approved arrival-semantics decision document; UTF8/null-byte/common credential-pattern/trailing-whitespace and15ID/range checks are run before publication. No secret, raw PBF, full graph, tiles, private photos, app code, schema/API, seed/Atlas or hosting changes.
+
+Final follow-up checks:15/15arrival endpoints inside pinned HCMC polygon; POI007 is outside mapped zoo outline. Highways input SHA256 recalculated and matches graph build source: `990154364d9d6d892e49c17cfb5dd2d5ed76f308e442c5b5c62e207540c609da`. Existing engine SHA256: `2379b95530607319cd09cf32f6b12e673dca1daf5a33f17f1dfef7a089e1728a`. These are data consistency checks, not official/legal or physical-access certification.
