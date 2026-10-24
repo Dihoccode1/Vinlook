@@ -1382,3 +1382,30 @@ Recorded from user confirmations in this chat. Individual entries record their c
 ## DEC-185 TASK016 canonical worker ID correction verified
 
 - Date:24October2026 UTC+7. Before PR, final review corrected worker media ownership comparison to use canonical parsed job ID. Existing upload/result/foreign-intent test strengthened with uppercase ID and rerun on a fresh guarded fixture:1passed/0failed, overlaps prior142unique groups. Final Content build exit0. Canonical fixtureab4226781af5ea7e16caba8161cd43c3dd55e66afd4576e7d036dc3c84c9cf59 and own volumes removed after exact identity/mount checks; total9fixtures cleaned. No scope/config decision changed.
+
+## DEC-186 TASK016 draft PR created
+
+- Date:24October2026 UTC+7. Draft PR35 https://github.com/Dihoccode1/Vinlook/pull/35, branch codex/task-016-job-protocol, final headb774a2ebdbcb65d1b76766145d2dc06523d99154;23changed files verified.22blob hashes and exact preserved-prefix decision-log content matched. PR open/drafttrue/mergedfalse; main unchanged. Issue34 updated actual implementation/evidence/PR state.
+-142unique passed groups/build/health retained; final focused canonical-ID group overlaps count; all9fixture containers/own volumes removed. Await Tu human review/user merge, no reviewer message/auto-merge or real provider/Atlas/registry/worker deployment. Postpublication tracking retained locally to preserve human review head.
+
+## DEC-187 TASK016 merge and closure verified
+
+- Date:24October2026 UTC+7. User reports approval/merge. GitHub verifies PR35 merged777a357e46cd9f03412b7ce7855854e8fa4f6545 and Issue34 closed2026-10-24T10:49:11Z.142unique passed groups/build/health retained; no formal GitHub review submission inferred. Actual registry/provider/worker/hosted/offline and TASK010 native operator acceptance remain separate pending gates. Next planned task TASK017 adapter/free-tier integration requires its concrete contract before code.
+
+## DEC-188 TASK017 continuation approved; placement decision proposed
+
+- Date:24October2026 UTC+7. User approves continuing after TASK016 merge. Refreshed official Google speech/pricing/structured-output/rate-limit docs read-only; existing hybrid/sample and credential-rotation evidence retained without actual new key/API/quota inspection. Created actual Issue36 and planning/task017-adapter-placement-proposal.md. Azure remains superseded by prior hybrid decision. OwnerTu/reviewerDuy retained.
+- Previously unresolved WAV-to-MP3 handoff needs explicit choice: A Content Gemini calls plus backend FFmpeg (recommended, requires packaging/resource validation); B move4GeminiTTS calls/key to local conversion worker; C durable intermediate WAV handoff with more schema. Existing TASK016 only accepts final verified MP3. Await placement selection then concrete contract before code under Master Prompt Rule1. Candidate translation gemini-3.5-flash-lite and retained Gemini3.8FlashTTS/Kore are not new runtime/quality/account-quota acceptance. No code/dependency/provider/key/billing/Atlas/deployment changed.
+
+## DEC-189 TASK017 placement A approved; detailed contract proposed
+
+- Date:24October2026 UTC+7. User explicitly selects Content Gemini calls plus backend FFmpeg; twelve MMS locales stay local. OwnerTu/reviewerDuy unchanged. Prepared planning/task017-adapter-contract.md: immutable hybrid registry, disabled activation, manual one-job runner, durable provider_calls/provider_controls, conservative unknown-outcome quarantine and acknowledged retry, bounded WAV/MP3 conversion and pinned Linux packaging/check gates.
+- New schema/API/config details are proposals requiring Rule1 approval before implementation. No application code, package installation, key inspection, real provider/Atlas/Cloudinary write or Render deployment performed. Real free-account quota/full narration/hosting acceptance remains pending.
+
+## DEC-190 TASK017 detailed contract approved and implemented
+
+- Date:24October2026 UTC+7. User explicitly approved detailed Content Gemini/FFmpeg contract for isolated implementation/testing. Added immutable hybrid registry/processing-publication mapping, bounded native REST/PCM-to-MP3 adapter, manual one-job runner, provider_calls/provider_controls dispatch/quota/admission fencing, unknown-outcome consent and atomic completion provenance. No new npm dependency. Exact Node Linux digest and Debian FFmpeg package SHA256 recorded before disposable build; no Windows installation. OwnerTu/reviewerDuy retained.
+-155unique relevant passed groups:66units/auth/runtime,26jobs/adaptersMongoHTTP,14draftMongo,16publicationMongo,17lifecycleMongo,15mediaMongo,1realLinuxFFmpegsmoke; full workspace build exit0. Synthetic90s PCM yielded90.048s/720428byte monoMP3 in approximately990ms, local NodeRSS112988160bytes; no Render resource claim. Earlier failing fixture/build findings fixed; repeated groups not double-counted. Nine scoped Mongo fixtures require identity/volume-only mount checks before cleanup.
+- No real Gemini/key/account-quota inspection, Atlas mutation, Cloudinary upload, model download, deployment or human review inferred. Overall readiness503; actual free-project/full narration/locale quality/MMSworker/hosted/offline/load and TASK010native operator gates remain pending. Evidence planning/task017-verification.md. Await draft PR/Duy human review/user merge.
+
+- Cleanup verified complete: all nine exact fixture containers and their own anonymous volumes removed; cached converter image retained. Final three focused checks passed/overlap155; final runner syntax check passed.
