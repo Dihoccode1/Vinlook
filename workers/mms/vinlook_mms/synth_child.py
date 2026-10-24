@@ -29,7 +29,7 @@ def cache_manifest(cache, profile):
     return folder
 
 
-def main():
+def main(report=None):
     raw = sys.stdin.buffer.read(131073); require(len(raw) <= 131072)
     task = json.loads(raw)
     folder = cache_manifest(task['cache'], task['profile'])
@@ -43,11 +43,14 @@ def main():
     require(type(rate) is int and 8000 <= rate <= 48000, 'MODEL_SAMPLE_RATE')
     parts = chunks(task['text'], lambda text: len(tokenizer(text)['input_ids']))
     total, signals = 0, []
-    for part in parts:
+    for index, part in enumerate(parts):
         with torch.inference_mode():
             signal = model(**tokenizer(part, return_tensors='pt')).waveform[0].cpu().numpy()
         require(signal.ndim == 1 and signal.size and np.isfinite(signal).all(), 'MEDIA_INVALID')
         total += signal.size
+        if report is not None:
+            report({'chunk': index + 1, 'chunks': len(parts), 'sampleRate': rate,
+                    'pcmDurationSeconds': total / rate, 'completeText': index + 1 == len(parts)})
         require(total / rate <= 150 and total * 2 <= 16777216, 'NARRATION_DURATION')
         signals.append(signal)
     require(90 <= total / rate <= 150, 'NARRATION_DURATION')
