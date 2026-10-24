@@ -218,11 +218,26 @@
   "TASK-014": {
     "url": "https://github.com/Dihoccode1/Vinlook/issues/32",
     "number": 32,
-    "state": "open",
+    "state": "closed",
     "approvedOwner": "ngoctu0405",
     "reviewer": "Dihoccode1",
-    "readiness": "Approved A implemented;123unique relevant groups/build/health passed;await draft PR/Duy review/user merge;real public hosting/offline acceptance pending",
+    "readiness": "Code merged and Issue32 closed;123unique passed groups/build/health retained;real public hosting/offline acceptance pending",
     "contract": "docs/planning/task014-public-lifecycle-contract.md",
-    "branch": "codex/task-014-public-lifecycle"
+    "branch": "codex/task-014-public-lifecycle",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/33",
+    "headCommit": "c6e20cb0739cba56a8586674f4d4529aa0251817",
+    "mergeCommit": "0d2673ff37e713d29ebc1c64c502cf43e28aae9d",
+    "closedAt": "2026-10-23T18:16:03Z",
+    "reviewEvidence": "PR33 merged and Issue32 closed verified;no formal human review submission inferred"
+  },
+  "TASK-016": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/34",
+    "number": 34,
+    "state": "open",
+    "approvedOwner": "Dihoccode1",
+    "reviewer": "ngoctu0405",
+    "readiness": "Approved A implemented;142unique relevant groups/build/health passed;await draft PR/Tu human review/user merge;actual registry/provider/worker acceptance pending",
+    "contract": "docs/planning/task016-job-protocol-contract.md",
+    "branch": "codex/task-016-job-protocol"
   }
 }

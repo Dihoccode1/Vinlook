@@ -8,7 +8,7 @@ const oid=()=>({type:Schema.Types.ObjectId,required:true,immutable:true});
 export function createMediaModel(connection){
  if(connection.models.MediaUpload)return connection.models.MediaUpload;
  const schema=new Schema({uploadId:{type:String,required:true,immutable:true,validate:v=>uuid.safeParse(v).success},kind:{type:String,enum:['thumbnail','audio'],required:true,immutable:true},
- poiId:oid(),revisionId:oid(),jobId:{type:Schema.Types.ObjectId,default:null,immutable:true},actorId:oid(),workSessionId:oid(),expectedEditVersion:{...count(),required:true,immutable:true},
+ poiId:oid(),revisionId:oid(),jobId:{type:Schema.Types.ObjectId,default:null,immutable:true},attemptId:{type:String,default:null,immutable:true,validate:v=>v===null||uuid.safeParse(v).success},actorId:oid(),workSessionId:oid(),expectedEditVersion:{...count(),required:true,immutable:true},
  sourceVersion:{...count(1),default:null},textVersion:{...count(1),default:null},languageCode:{type:String,enum:[...languageCodes,null],default:null},registryVersion:{type:String,match:/^[A-Za-z0-9._-]{1,100}$/,default:null},voiceOrModelId:{type:String,maxlength:200,default:null,validate:v=>v===null||v.trim()===v&&v.length>0&&!/[\x00-\x1f\x7f]/.test(v)},
  publicId:{type:String,required:true,immutable:true,maxlength:512},resourceType:{type:String,required:true,enum:['image','video'],immutable:true},format:{type:String,enum:['webp','mp3',null],default:null},
  status:{type:String,required:true,enum:['issued','uploading','verified','rejected','uncertain']},createdAt:{type:Date,required:true,immutable:true,validate:finite},expiresAt:{type:Date,required:true,immutable:true,validate:finite},
@@ -22,6 +22,7 @@ export function createMediaModel(connection){
  const path=`/${this.poiId}/${this.revisionId}/${this.kind}/${this.uploadId}`;
  if(!/^vinlook\/(development|test|production)\//.test(this.publicId??'')||!this.publicId?.endsWith(path)||this.publicId!==`vinlook/${this.publicId?.split('/')[1]}${path}`)fail('publicId');
  if(this.resourceType!==(audio?'video':'image'))fail('resourceType');
+ if(audio?this.attemptId===null:this.attemptId!==null)fail('attemptId');
  for(const k of ['jobId','sourceVersion','textVersion','languageCode','registryVersion','voiceOrModelId'])if(audio?this[k]===null:this[k]!==null)fail(k);
  if(+this.expiresAt!==+this.createdAt+900000)fail('expiresAt');
  if(this.status!=='issued'&&!this.startedAt)fail('startedAt');

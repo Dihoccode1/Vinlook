@@ -2,7 +2,7 @@ import express from 'express';
 import {protectedRequest} from '../authorization.js';
 import {MediaFailure,intentInput,empty,parseId,limits} from './validation.js';
 import {readMultipart} from './multipart.js';
-async function discardBody(req){
+export async function discardBody(req){
  if(req.readableEnded||req.destroyed)return;
  await new Promise(resolve=>{let drained=0;const done=()=>{clearTimeout(timer);req.off('data',count);req.off('end',done);req.off('close',done);resolve();};const count=chunk=>{drained+=chunk.length;if(drained>limits.audio+limits.overhead){req.destroy();done();}};const timer=setTimeout(()=>{req.destroy();done();},30000);req.on('error',done);req.on('data',count);req.once('end',done);req.once('close',done);req.resume();});
 }

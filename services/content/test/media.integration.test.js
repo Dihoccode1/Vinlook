@@ -103,7 +103,7 @@ test('immutable replacements keep previous verified/provider asset and never ove
  assert.equal(JSON.stringify(await models.POIRevision.findById(r.revisionId).lean()),before);assert.ok(assets.has(old.body.data.asset.publicId));assert.equal((await models.MediaUpload.findById(id)).status,'verified');
 });
 test('trusted internal audio primitive validates versions, MP3 mono and current source; public audio upload forbidden',async()=>{
- const r=await draft();const snapshot={revisionId:r.revisionId,expectedEditVersion:0,jobId:String(new mongoose.Types.ObjectId()),languageCode:'en',sourceVersion:1,textVersion:1,registryVersion:'fixture-v1',voiceOrModelId:'synthetic-voice'};
+ const r=await draft();const snapshot={attemptId:randomUUID(),revisionId:r.revisionId,expectedEditVersion:0,jobId:String(new mongoose.Types.ObjectId()),languageCode:'en',sourceVersion:1,textVersion:1,registryVersion:'fixture-v1',voiceOrModelId:'synthetic-voice'};
  await assert.rejects(runtime.media.issueAudio({...snapshot,textVersion:2},principal),{status:409});const row=await runtime.media.issueAudio(snapshot,principal);assert.equal((await upload(String(row._id),mp3())).status,403);
  const result=await runtime.media.upload(String(row._id),principal,async()=>mp3());assert.equal(result.status,201);assert.ok(result.data.durationSeconds>=90&&result.data.durationSeconds<=150);
  assert.ok(await runtime.media.verifyAudioReference(result.data.asset,{poiId:r.poiId,sourceVersion:1,textVersion:1,languageCode:'en'}));assert.equal(await runtime.media.verifyAudioReference(result.data.asset,{poiId:r.poiId,sourceVersion:2,textVersion:1,languageCode:'en'}),false);
