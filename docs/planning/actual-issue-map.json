@@ -264,12 +264,27 @@
   "TASK-018": {
     "url": "https://github.com/Dihoccode1/Vinlook/issues/38",
     "number": 38,
-    "state": "open",
+    "state": "closed",
     "approvedOwner": "ngoctu0405",
     "reviewer": "Dihoccode1",
-    "readiness": "Contract A approved;81unique relevant groups/build/Compose/CPU class imports passed;await draft PR/Duy review;actual model cache/inference/locale acceptance separate",
+    "readiness": "PR39 merged and scoped Issue38 closed;81unique relevant groups/build/Compose/CPU imports retained;actual model acquisition/inference/locale/hosting acceptance pending",
     "contract": "docs/planning/task018-local-worker-contract.md",
     "branch": "codex/task-018-local-mms-worker",
-    "verification": "docs/planning/task018-verification.md"
+    "verification": "docs/planning/task018-verification.md",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/39",
+    "headCommit": "81a41a4b220473da035d61c83d2ae7854701734a",
+    "mergeCommit": "8f037d19aaa3be0ddf8027b072aa4db22d99e2e1",
+    "reviewEvidence": "User reports review and merge;GitHub merge verified;no formal GitHub review submission inferred"
+  },
+  "TASK-020": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/41",
+    "number": 41,
+    "state": "open",
+    "approvedOwner": "2107h06",
+    "reviewer": "Dihoccode1",
+    "readiness": "Contract A approved;25unique groups/build/scaffold/resource manifest passed;await draft PR/Duy review;native copy/device/full offline acceptance pending",
+    "contract": "docs/planning/task020-ui-locale-contract.md",
+    "branch": "codex/task-020-ui-locales",
+    "verification": "docs/planning/task020-verification.md"
   }
 }

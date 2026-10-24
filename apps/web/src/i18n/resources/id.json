@@ -1,0 +1,69 @@
+{
+  "preview": {
+    "title": "Jelajahi Kota Ho Chi Minh.",
+    "subtitle": "Tempat wisata, rute jalan kaki, dan cerita audio dalam bahasa Anda.",
+    "statusTitle": "Panduan sedang dikembangkan",
+    "statusBody": "Pratinjau ini belum menyediakan peta, petunjuk arah, atau panduan audio."
+  },
+  "language": {
+    "label": "Bahasa",
+    "choose": "Pilih bahasa",
+    "englishOnlyOffline": "Hanya bahasa Inggris yang tersedia saat luring.",
+    "reconnectEnglish": "Anda kembali daring. Bahasa Inggris tetap dipilih sampai Anda memilih bahasa lain.",
+    "changed": "Bahasa diubah."
+  },
+  "common": {
+    "loading": "Memuat…",
+    "retry": "Coba lagi",
+    "cancel": "Batal",
+    "close": "Tutup",
+    "back": "Kembali",
+    "unavailable": "Tidak tersedia",
+    "empty": "Belum ada konten.",
+    "error": "Terjadi kesalahan."
+  },
+  "map": {
+    "title": "Peta",
+    "locateMe": "Temukan lokasi saya",
+    "locationDenied": "Izin lokasi ditolak.",
+    "locationUnavailable": "Lokasi Anda tidak tersedia.",
+    "nearby": "Tempat terdekat",
+    "noNearby": "Tidak ada tempat di sekitar.",
+    "foundCount": "Tempat ditemukan: {{count}}"
+  },
+  "poi": {
+    "details": "Detail tempat",
+    "description": "Deskripsi",
+    "noDescription": "Deskripsi belum tersedia.",
+    "imageUnavailable": "Gambar tidak tersedia."
+  },
+  "navigation": {
+    "walkTo": "Berjalan ke {{name}}",
+    "directions": "Petunjuk jalan kaki",
+    "calculating": "Menghitung rute…",
+    "noRoute": "Rute jalan kaki tidak ditemukan.",
+    "distance": "Jarak: {{distance}}",
+    "continue": "Terus lurus",
+    "turnLeft": "Belok kiri",
+    "turnRight": "Belok kanan",
+    "arrive": "Anda telah tiba."
+  },
+  "audio": {
+    "play": "Putar",
+    "pause": "Jeda",
+    "replay": "Putar lagi",
+    "unavailable": "Audio tidak tersedia.",
+    "loading": "Memuat audio…",
+    "stoppedForOffline": "Audio selain bahasa Inggris dihentikan. Tekan Putar untuk bahasa Inggris."
+  },
+  "offline": {
+    "mode": "Mode luring",
+    "prepare": "Siapkan panduan luring",
+    "downloading": "Mengunduh…",
+    "ready": "Panduan luring siap",
+    "unavailable": "Panduan luring tidak tersedia",
+    "updateAvailable": "Pembaruan luring tersedia.",
+    "downloadFailed": "Unduhan gagal.",
+    "englishNotice": "Panduan luring menggunakan bahasa Inggris."
+  }
+}

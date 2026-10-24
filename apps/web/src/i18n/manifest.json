@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "resourceVersion": "ui-v1",
+  "locales": {
+    "en": {
+      "file": "resources/en.json",
+      "sha256": "366d921d6eddaeb8916d6ada71437ac2bbcc59060feedcbd37f336c8107c1bf7",
+      "review": {
+        "status": "pending",
+        "source": "English reference copy"
+      }
+    },
+    "zh-Hant": {
+      "file": "resources/zh-Hant.json",
+      "sha256": "4dcd05ecd8dcf64838809964258a137a06b377e33fc937ed9d6c86647b590385",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "hi": {
+      "file": "resources/hi.json",
+      "sha256": "e207e16f3f4202946c24f52fe804f3ffc384b307aed99bc5b1f8675706f0f645",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "es": {
+      "file": "resources/es.json",
+      "sha256": "8f9c590b0efc9b41e22a3ebf2c8c53efe3b3e817954982a39356f20b6e5eaa18",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "ar": {
+      "file": "resources/ar.json",
+      "sha256": "280a51d74b4962d3afc1ad9bf09c45fed95e434069db6657c6241eb4f058292a",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "fr": {
+      "file": "resources/fr.json",
+      "sha256": "09ea2e04a169d8019b331f39b7f1eb445a94d86ae916be0476472c270f994190",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "bn": {
+      "file": "resources/bn.json",
+      "sha256": "9ea1545eb71d5d461f091fcbbebc2dd4b5e4bfa6ba0af0f7ba308077c023f4c8",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "pt-PT": {
+      "file": "resources/pt-PT.json",
+      "sha256": "3b6d932d7c748fc2ae78e24d0e598a80e40ff399fd2fb0fcac55f5ce2f1a035a",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "id": {
+      "file": "resources/id.json",
+      "sha256": "37a9f367a0e3cb8009b67eaa600d966f07dde0fa4bbfeda5df438c41a7abcdcd",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "ur": {
+      "file": "resources/ur.json",
+      "sha256": "683c1331f1c7b40c3a5bb0b1604f1d7b25609445409fc1011fbb42edaa9f2f31",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "ru": {
+      "file": "resources/ru.json",
+      "sha256": "5bf363fac3a2b884f9b45e6b747c29da77e61b67707e3501fb4dd371d1fcdfff",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "de": {
+      "file": "resources/de.json",
+      "sha256": "16be6044a2dd6877550a2a8c2a44649480dfcf31d1d65ae016f9e2b33c86470a",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "ja": {
+      "file": "resources/ja.json",
+      "sha256": "e8d08f288ed73d33855bcbfb0246a66156f2487e335adf52d6b9a0de2e42757d",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "pcm": {
+      "file": "resources/pcm.json",
+      "sha256": "8e8a035510bed39cec629887f57760466cf549e12d964a773435b5feaf3c9a7a",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "ar-EG": {
+      "file": "resources/ar-EG.json",
+      "sha256": "4d6ef637af815108e1d9d5962548fbeb88db7da5d5a4a6ffffb4f9fdd8e65614",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    },
+    "vi": {
+      "file": "resources/vi.json",
+      "sha256": "41a51814f31ad0b20d8094e980e5c709d388d9f86736934d269806b8a5e5f0d8",
+      "review": {
+        "status": "pending",
+        "source": "assistant-authored draft; native review pending"
+      }
+    }
+  }
+}

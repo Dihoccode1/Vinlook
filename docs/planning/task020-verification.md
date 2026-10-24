@@ -1,0 +1,13 @@
+# TASK-020 verification — 24 October 2026 UTC+7
+
+Contract A approved explicitly for implementation/tests. Owner Hạo/reviewer Duy retained. No provider/key/database/deployment activity or native-language/full-offline acceptance inferred.
+
+25 unique passed groups:5resource/state/i18next units,5rendered browser groups and15existing service runtime/health regression groups. Full workspace build and build-time manifest validation exit0. Existing installed Playwright1.62.1 with installed Microsoft Edge Chromium ran headless in temporary isolated profiles; no browser/test dependency download. Initial default Playwright launch lacked its managed browser executable, so the installed Edge channel was used. No Safari/iPhone/Android hardware or screen-reader acceptance claimed.
+
+Browser coverage: all16locales exact rendered title/lang/dir; no resource fetch upon selection; offline→English with one non-English stop event and disabled other options; reconnect staysEnglish until explicit selection; coordinator offline override despite navigator.onLine=true; staff English/LTR and unchanged LTR geometry path; mixed bdi text; labels/keyboard focus/single polite status; widths320/390/768 and200%text zoom without horizontal overflow; independent tabs andEnglish after reload. Test fixture has no production route/build entry. Production asset scan found no localeFixture test API. Arabic390px screenshot visually inspected for direction, focus, wrapping and overflow.
+
+All16resources contain51keys each with matching placeholders and canonical content hashes. Canonical resource payload40240UTF8bytes; generated JS407.15kB/gzip129.97kB, CSS7.64kB/gzip2.49kB from this local Vite build (tool-rounded sizes). These are observations, not a new performance target or complete offline package budget. All languages, including English source copy, remain pending specific human copy review. No English filler used to claim a translated preview.
+
+Early validation detected the shared English/Pidgin preview title and it was revised to an intended Pidgin draft; i18next instances now clone frozen source resources to keep fallback/mutation tests isolated. Early failed and repeated runs are not added to the25unique count. No production backend schema/API changed. Local test server/temporary browser profiles are closed after checks; ignored screenshot is local evidence, not a published asset.
+
+Remaining gates: Duy human review/user merge; native/script/variant quality review, actual POI/audio/route screens and English offline package, real device/assistive technology/network/cold-start/load and hosted acceptance; previous provider/MMS/operator gates remain separate. Readiness remains503. GitHub Actions execution is not claimed by local build/test evidence.

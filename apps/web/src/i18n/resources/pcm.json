@@ -1,0 +1,69 @@
+{
+  "preview": {
+    "title": "Come waka round Ho Chi Minh City.",
+    "subtitle": "Places wey you fit visit, road to waka, and audio tori for your language.",
+    "statusTitle": "We still dey build di guide",
+    "statusBody": "Dis first preview never get map, road direction or audio guide."
+  },
+  "language": {
+    "label": "Language",
+    "choose": "Choose language",
+    "englishOnlyOffline": "Na only English dey for offline mode.",
+    "reconnectEnglish": "Internet don come back. English go remain until you choose another language.",
+    "changed": "Language don change."
+  },
+  "common": {
+    "loading": "E dey load…",
+    "retry": "Try again",
+    "cancel": "Cancel am",
+    "close": "Close am",
+    "back": "Go back",
+    "unavailable": "E no dey available",
+    "empty": "Nothing dey here yet.",
+    "error": "Something no work well."
+  },
+  "map": {
+    "title": "Map",
+    "locateMe": "Find where I dey",
+    "locationDenied": "You no allow location access.",
+    "locationUnavailable": "We no fit find where you dey.",
+    "nearby": "Places wey near you",
+    "noNearby": "We no see any place near you.",
+    "foundCount": "Places wey we find: {{count}}"
+  },
+  "poi": {
+    "details": "Details about di place",
+    "description": "About di place",
+    "noDescription": "No description dey yet.",
+    "imageUnavailable": "Picture no dey available."
+  },
+  "navigation": {
+    "walkTo": "Waka go {{name}}",
+    "directions": "Road direction to waka",
+    "calculating": "We dey find road…",
+    "noRoute": "We no see road wey you fit waka.",
+    "distance": "Distance: {{distance}}",
+    "continue": "Continue straight",
+    "turnLeft": "Turn left",
+    "turnRight": "Turn right",
+    "arrive": "You don reach."
+  },
+  "audio": {
+    "play": "Play",
+    "pause": "Pause",
+    "replay": "Play again",
+    "unavailable": "Audio no dey available.",
+    "loading": "Audio dey load…",
+    "stoppedForOffline": "Audio for another language don stop. Press Play to hear English."
+  },
+  "offline": {
+    "mode": "Offline mode",
+    "prepare": "Prepare offline guide",
+    "downloading": "E dey download…",
+    "ready": "Offline guide don ready",
+    "unavailable": "Offline guide no dey available",
+    "updateAvailable": "New offline update dey.",
+    "downloadFailed": "Download no work.",
+    "englishNotice": "Di offline guide dey use English."
+  }
+}
