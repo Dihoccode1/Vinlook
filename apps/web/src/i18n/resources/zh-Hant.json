@@ -1,0 +1,69 @@
+{
+  "preview": {
+    "title": "探索胡志明市。",
+    "subtitle": "以您的語言探索景點、步行路線及語音故事。",
+    "statusTitle": "導覽應用程式建置中",
+    "statusBody": "此預覽版本尚未提供地圖、路線指引或語音導覽。"
+  },
+  "language": {
+    "label": "語言",
+    "choose": "選擇語言",
+    "englishOnlyOffline": "離線模式僅提供英語。",
+    "reconnectEnglish": "已恢復連線。在您選擇其他語言前，將繼續使用英語。",
+    "changed": "語言已變更。"
+  },
+  "common": {
+    "loading": "載入中…",
+    "retry": "重試",
+    "cancel": "取消",
+    "close": "關閉",
+    "back": "返回",
+    "unavailable": "無法使用",
+    "empty": "尚無內容。",
+    "error": "發生錯誤。"
+  },
+  "map": {
+    "title": "地圖",
+    "locateMe": "尋找我的位置",
+    "locationDenied": "位置存取權限遭拒。",
+    "locationUnavailable": "無法取得您的位置。",
+    "nearby": "附近景點",
+    "noNearby": "附近找不到景點。",
+    "foundCount": "找到的景點數：{{count}}"
+  },
+  "poi": {
+    "details": "景點詳細資料",
+    "description": "介紹",
+    "noDescription": "暫無介紹。",
+    "imageUnavailable": "無法顯示圖片。"
+  },
+  "navigation": {
+    "walkTo": "步行前往{{name}}",
+    "directions": "步行路線指引",
+    "calculating": "正在計算路線…",
+    "noRoute": "找不到步行路線。",
+    "distance": "距離：{{distance}}",
+    "continue": "繼續直行",
+    "turnLeft": "左轉",
+    "turnRight": "右轉",
+    "arrive": "您已抵達目的地。"
+  },
+  "audio": {
+    "play": "播放",
+    "pause": "暫停",
+    "replay": "重新播放",
+    "unavailable": "無法播放語音。",
+    "loading": "正在載入語音…",
+    "stoppedForOffline": "非英語語音已停止。請按播放以收聽英語。"
+  },
+  "offline": {
+    "mode": "離線模式",
+    "prepare": "準備離線導覽",
+    "downloading": "下載中…",
+    "ready": "離線導覽已備妥",
+    "unavailable": "無法使用離線導覽",
+    "updateAvailable": "有可用的離線更新。",
+    "downloadFailed": "下載失敗。",
+    "englishNotice": "離線導覽使用英語。"
+  }
+}

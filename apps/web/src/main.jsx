@@ -4,5 +4,6 @@ import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { App } from './App.jsx';
 import './styles.css';
+import {LocaleProvider} from './i18n/provider.jsx';
 const router = createBrowserRouter([{ path: '/', element: <App /> }]);
-createRoot(document.getElementById('root')).render(<StrictMode><RouterProvider router={router} /></StrictMode>);
+createRoot(document.getElementById('root')).render(<StrictMode><LocaleProvider><RouterProvider router={router} /></LocaleProvider></StrictMode>);

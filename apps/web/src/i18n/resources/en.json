@@ -1,0 +1,69 @@
+{
+  "preview": {
+    "title": "Discover Ho Chi Minh City.",
+    "subtitle": "Places to explore, walking routes and audio stories in your language.",
+    "statusTitle": "The guide is being built",
+    "statusBody": "This early preview does not yet include maps, directions or audio guides."
+  },
+  "language": {
+    "label": "Language",
+    "choose": "Choose a language",
+    "englishOnlyOffline": "Only English is available in offline mode.",
+    "reconnectEnglish": "You are back online. English stays selected until you choose another language.",
+    "changed": "Language changed."
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "unavailable": "Unavailable",
+    "empty": "Nothing to show yet.",
+    "error": "Something went wrong."
+  },
+  "map": {
+    "title": "Map",
+    "locateMe": "Find my location",
+    "locationDenied": "Location permission was denied.",
+    "locationUnavailable": "Your location is unavailable.",
+    "nearby": "Nearby places",
+    "noNearby": "No places found nearby.",
+    "foundCount": "Places found: {{count}}"
+  },
+  "poi": {
+    "details": "Place details",
+    "description": "Description",
+    "noDescription": "No description available.",
+    "imageUnavailable": "Image unavailable."
+  },
+  "navigation": {
+    "walkTo": "Walk to {{name}}",
+    "directions": "Walking directions",
+    "calculating": "Calculating route…",
+    "noRoute": "No walking route found.",
+    "distance": "Distance: {{distance}}",
+    "continue": "Continue straight",
+    "turnLeft": "Turn left",
+    "turnRight": "Turn right",
+    "arrive": "You have arrived."
+  },
+  "audio": {
+    "play": "Play",
+    "pause": "Pause",
+    "replay": "Play again",
+    "unavailable": "Audio unavailable.",
+    "loading": "Loading audio…",
+    "stoppedForOffline": "Non-English audio stopped. Press Play for English."
+  },
+  "offline": {
+    "mode": "Offline mode",
+    "prepare": "Prepare offline guide",
+    "downloading": "Downloading…",
+    "ready": "Offline guide ready",
+    "unavailable": "Offline guide unavailable",
+    "updateAvailable": "An offline update is available.",
+    "downloadFailed": "Download failed.",
+    "englishNotice": "The offline guide uses English."
+  }
+}
