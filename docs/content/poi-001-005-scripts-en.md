@@ -2,7 +2,7 @@
 
 Issue: [TASK-021 / #43](https://github.com/Dihoccode1/Vinlook/issues/43). Prepared on **24 October 2026 (UTC+7)** with AI assistance. Editorial owner: Tú (`ngoctu0405`). Human reviewer: Duy (`Dihoccode1`).
 
-**Status for all five scripts: `draft / pending Duy review`.** Human factual, language and pronunciation review remains pending. These are editorial reference IDs, not database IDs. Supporting facts, source-access results and unresolved questions are in [the source review](poi-001-005-source-review.md).
+**Status for all five scripts: `editorial source accepted / audio review pending`.** Duy confirmed Tu editorial review and PR54 merge on 25 October 2026. Audio pronunciation and multilingual review remain pending. These are editorial reference IDs, not database IDs. Supporting facts, source-access results and unresolved questions are in [the source review](poi-001-005-source-review.md).
 
 Only the text under each **Narration EN** heading is intended to be read aloud. Headings and editorial metadata are not spoken. No audio, translation, provider request, database write or publication was performed.
 
@@ -18,6 +18,8 @@ English name: **Independence Palace**.
 
 ### Narration EN
 
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
+
 Independence Palace brings modern Vietnamese design together with a place that witnessed major political change. Architect Ngô Viết Thụ designed the present building, whose construction began in July 1962. It was inaugurated on 31 October 1966 and served as the residence and workplace of the president of South Vietnam.
 
 Look at the stone screens around the second floor. Their repeated forms suggest bamboo, while their design draws on traditional palace doors in Huế. They also help control natural light. In front of the building, a broad lawn and a semicircular pond soften the formal setting. Lotus and water lilies connect this modern complex with familiar features of Vietnamese temples and pagodas.
@@ -28,10 +30,10 @@ The rooms offer another way to approach these events. Banquet and cabinet rooms,
 
 ### Editorial metadata (not spoken)
 
-- Word count: **230**.
-- Estimated duration: **92.0–138.0 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **248**.
+- Estimated duration: **99.2–148.8 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `editorial source accepted / audio review pending`.
 - Pronunciation review pending: **Dinh Độc Lập, Ngô Viết Thụ, Huế, Norodom**. No phonetic transcription has been verified.
 - Sources: IP-A, IP-B and IP-C in the source review. Exact room/basement totals are omitted because sources differ.
 
@@ -41,9 +43,11 @@ English name: **Notre-Dame Cathedral Basilica of Saigon**.
 
 ### Narration EN
 
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
+
 Notre-Dame Cathedral Basilica of Saigon brings together the city's architectural history and its Catholic life. Designed by J. Bourard, the church was built between 1877 and 1880. Its design combines Romanesque and Gothic influences, giving it a distinct place among the buildings inherited from the French colonial period.
 
-The foundation stone was laid on 7 October 1877. The opening and dedication followed on Easter Sunday, 11 April 1880. The familiar outline developed further in 1895, when the bell towers were added. Thinking about those separate stages helps you read the building as something shaped over time, rather than completed in a single moment.
+The foundation stone was laid on 7 October 1877. The opening and dedication followed on Easter Sunday, 11 April 1880. The familiar outline developed further in 1895, when the bell towers were added. Those separate stages reveal a building shaped over time.
 
 In the space before the cathedral stands a statue of Our Lady of Peace. Commissioned in Italy and brought to Saigon in 1959, it was made from white Carrara marble. Its presence adds another layer to the story: a place of public architecture is also a place where a religious community expresses its hopes.
 
@@ -53,10 +57,10 @@ As you consider the cathedral, hold both stories together: the work of builders 
 
 ### Editorial metadata (not spoken)
 
-- Word count: **233**.
-- Estimated duration: **93.2–139.8 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **238**.
+- Estimated duration: **95.2–142.8 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `editorial source accepted / audio review pending`.
 - Pronunciation review pending: **Nhà thờ Đức Bà Sài Gòn, Saigon, J. Bourard, Carrara**. No phonetic transcription has been verified.
 - Sources: ND-A, ND-B and ND-C. Basilica-status date is omitted because the institutional accounts differ. Interior description is historical context, not a promise of tourist entry.
 
@@ -66,6 +70,8 @@ English name: **Saigon Central Post Office**.
 
 ### Narration EN
 
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
+
 Saigon Central Post Office stands beside Notre-Dame Cathedral, facing the space of Paris Commune Square. The two buildings offer different views of the city's architectural past: one was created for worship, the other for communication.
 
 Construction of the post office began in eighteen eighty-six and was completed in eighteen ninety-one. Its design combines European classical forms with Asian decorative touches. Look at the balance of the front: a central section rises above the wings on either side, while arched windows repeat across the facade. Above the main entrance, a round clock marks the middle of the composition.
@@ -74,14 +80,14 @@ Inside, the building opens into a broad public hall. Decorated steel columns and
 
 Two historic maps preserve another layer of the building's story. One shows Saigon and its surroundings in eighteen ninety-two. The other records telegraph connections across southern Vietnam and Cambodia in nineteen thirty-six. Together, they turn a visit into an encounter with older ways of describing the city and connecting it with places beyond.
 
-Take a moment to compare the maps with the building around them. The balanced facade, the bright hall, and the traces of a communications network bring architecture and everyday urban history into the same space. Here, the city's past can be explored through both a building and the information it preserves.
+The facade, hall and historic maps connect architecture with everyday urban history. Together, they show how this building helped connect the city with places beyond.
 
 ### Editorial metadata (not spoken)
 
-- Word count: **244**.
-- Estimated duration: **97.6–146.4 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **236**.
+- Estimated duration: **94.4–141.6 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `editorial source accepted / audio review pending`.
 - Pronunciation review pending: **Bưu điện Trung tâm Sài Gòn, Saigon**. No phonetic transcription has been verified.
 - Sources: P3-A and SHARED-B. Architect attribution and precise map-mounting positions are omitted. No current opening/access or postal-service claim is made.
 
@@ -90,6 +96,8 @@ Take a moment to compare the maps with the building around them. The balanced fa
 English name: **Ho Chi Minh City Opera House**.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 Ho Chi Minh City Opera House brings a different kind of history to the city centre: the history of a stage. Construction began in eighteen ninety-eight, and the theatre was inaugurated on the first of January, nineteen hundred.
 
@@ -101,14 +109,14 @@ The building was restored in nineteen ninety-eight, during celebrations marking 
 
 The stage has provided a setting for Vietnamese performance. Bamboo circus productions presented here have brought together movement, music, and everyday materials to tell stories of village and urban life.
 
-Seen this way, the Opera House offers two experiences within one landmark. Its architecture invites observation from outside, while its history of performance reminds us that a theatre is also a place made meaningful by artists and audiences.
+From outside, notice its architectural detail while reflecting on the artists and audiences who have given this theatre meaning.
 
 ### Editorial metadata (not spoken)
 
-- Word count: **239**.
-- Estimated duration: **95.6–143.4 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **238**.
+- Estimated duration: **95.2–142.8 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `editorial source accepted / audio review pending`.
 - Pronunciation review pending: **Nhà hát Thành phố, Ho Chi Minh City**. No phonetic transcription has been verified.
 - Sources: SHARED-B and P4-C. Performance references describe documented past productions; they do not advertise a current programme or guarantee interior access.
 
@@ -118,19 +126,23 @@ English name: **Nha Rong Wharf**.
 
 ### Narration EN
 
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
+
 Nha Rong Wharf brings together the story of a commercial port and the life of the man later known as Ho Chi Minh. The building began as the headquarters of a French shipping company. Construction started in 1862 and finished the following year. Its Western design included a roof decoration familiar from Vietnamese temples: two dragons facing a moon. That feature gave the house, and then the wharf, their dragon name.
 
 The event remembered here took place on the fifth of June, nineteen eleven. Nguyen Tat Thanh, using the name Van Ba, left Saigon aboard the Amiral Latouche Tréville. He worked as a kitchen assistant as he began a journey overseas in search of a way to secure independence for Vietnam.
 
-His travels took him through France and countries in Europe, Asia, Africa and the Americas. During those years he worked, studied and became involved in political movements. He returned to Vietnam in nineteen forty-one, after three decades abroad.
+After working, studying and becoming involved in political movements overseas, he returned to Vietnam in nineteen forty-one, three decades after leaving Saigon.
 
-The museum came much later. In 1979, the city preserved the Dragon House as a memorial to Ho Chi Minh. In October 1995, the memorial became the Ho Chi Minh Museum's city branch. Its collections and research focus on his life, his departure from Saigon and his relationship with southern Vietnam. Seen together, the former shipping headquarters and its later memorial role connect the port's history with a journey that became central to Vietnam's history.
+The museum website carried a renovation closure notice when checked on 25 October 2026. Reopening had not been confirmed in that research.
+
+The museum came much later. In 1979, the city preserved the Dragon House as a memorial to Ho Chi Minh. In October 1995, the memorial became the Ho Chi Minh Museum's city branch. Its collections and research focus on his life, his departure from Saigon and his relationship with southern Vietnam. The former shipping headquarters connects the port's history with a journey central to Vietnam's history.
 
 ### Editorial metadata (not spoken)
 
-- Word count: **234**.
-- Estimated duration: **93.6–140.4 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **249**.
+- Estimated duration: **99.6–149.4 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `editorial source accepted / audio review pending`.
 - Pronunciation review pending: **Nha Rong / Nhà Rồng, Nguyen Tat Thanh / Nguyễn Tất Thành, Van Ba / Văn Ba, Amiral Latouche Tréville**. Unaccented Vietnamese names in this narration are provisional English spellings; Duy should confirm TTS handling. No phonetic transcription has been verified.
-- Sources: NR1, NR2 and NR3. NR4/NR5 concern renovation and belong only in the source-review notes. Current visitor access is unresolved.
+- Sources: NR1, NR2 and NR3. NR4/NR5 support the dated renovation research note now included in narration. No current reopening or interior access is promised.
