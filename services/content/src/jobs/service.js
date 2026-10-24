@@ -80,21 +80,23 @@ export function createJobService(runtime){
   },now);},
   async retry(id,input,p,key){configured();return executeMutation(connection,models,scope(p,'job.retry',key,id,input),async session=>{
    const job=await Job.findById(id).session(session);if(!job)bad('JOB_NOT_FOUND',404);if(!['failed','waiting_quota'].includes(job.status))bad('JOB_NOT_RETRYABLE',409);
+   if(job.error==='PROVIDER_OUTCOME_UNKNOWN'&&!input.acknowledgeProviderResend)bad('PROVIDER_RETRY_CONFIRMATION_REQUIRED',409);
+   if(input.acknowledgeProviderResend&&job.error!=='PROVIDER_OUTCOME_UNKNOWN')bad('INVALID_INPUT',422);
    const state=await current(job,session);if(state.rev.editVersion!==input.expectedEditVersion)bad('EDIT_VERSION_CONFLICT',409);
    job.status='queued';job.retryCount=nextVersion(job.retryCount);job.reclaimCount=0;job.attemptId=null;job.leaseOwner=null;job.leaseExpiresAt=null;job.lastResultHash=null;job.acceptedAt=null;job.resultRef=null;job.error=null;job.requestedBy=p.account.id;job.workSessionId=p.currentWorkSession.id;
    await job.save({session});await touch(state,session);return {status:202,body:{data:{poiId:String(job.poiId),revisionId:String(job.revisionId),jobIds:[id],status:'queued'}},events:[{poiId:String(job.poiId),action:'job.retry',result:{status:'succeeded',errorCode:null}}]};
   },now);},
   async read(id){if(!Job)bad('JOB_CONFIGURATION_UNAVAILABLE');const job=await Job.findById(id).setOptions({timeoutMS:10000});if(!job)bad('JOB_NOT_FOUND',404);return view(job);},
   async list(revisionId){if(!Job)bad('JOB_CONFIGURATION_UNAVAILABLE');const jobs=await Job.find({revisionId}).sort({_id:1}).limit(1001).setOptions({timeoutMS:10000});if(jobs.length>1000)bad();return {items:jobs.map(view)};},
-  async claim(caller,codes){configured();const supported=codes.filter(code=>registry.languages[code]&&(registry.languages[code].audio.execution===caller.execution||caller.execution==='server_adapter'&&registry.languages[code].translation));if(!supported.length)bad('INVALID_CAPABILITIES',422);
-   return transaction(async session=>{
+  async claim(caller,codes,existingSession=null){configured();const supported=codes.filter(code=>registry.languages[code]&&(registry.languages[code].audio.execution===caller.execution||caller.execution==='server_adapter'&&registry.languages[code].translation));if(!supported.length)bad('INVALID_CAPABILITIES',422);
+   const claim=async session=>{
     const candidates=await Job.find({languageCode:{$in:supported},'inputSnapshot.execution':caller.execution,$or:[{status:'queued'},{status:'running',leaseExpiresAt:{$lte:new Date(now())}}]}).sort({createdAt:1,_id:1}).limit(32).session(session);
     for(const job of candidates){
      try{await current(job,session);}catch(error){if(error.code!=='STALE_JOB_INPUT')throw error;job.status='failed';job.error='STALE_INPUT';await job.save({session});await audit(session,job,true);continue;}
      if(job.status==='running'){if(job.reclaimCount>=3){job.status='failed';job.error='LEASE_RECLAIM_EXHAUSTED';await job.save({session});await audit(session,job,true);continue;}job.reclaimCount++;}
      job.status='running';job.attemptId=randomUUID();job.leaseOwner=caller.id;job.leaseExpiresAt=new Date(now()+300000);await job.save({session});return {job:{id:String(job._id),taskType:job.taskType,languageCode:job.languageCode,inputVersion:object(job.inputVersion),inputSnapshot:object(job.inputSnapshot),attemptId:job.attemptId,leaseExpiresAt:job.leaseExpiresAt,retryCount:job.retryCount}};
     }return {job:null};
-   });
+   };return existingSession?claim(existingSession):transaction(claim);
   },
   async renew(id,attemptId,caller){configured();return transaction(async session=>{const job=await owned(id,attemptId,caller,session);await current(job,session);job.leaseExpiresAt=new Date(now()+300000);await job.save({session});return {jobId:id,leaseExpiresAt:job.leaseExpiresAt};});},
   async admit(id,attemptId,caller){configured();const job=await owned(id,attemptId,caller);const state=await current(job);return {job,state};},
@@ -131,7 +133,9 @@ export function createJobService(runtime){
      }
      job.resultRef={localizedContentId:row._id,textVersion:row.textVersion,mediaIntentId:media?.document._id??null};
     }
-    job.status=outcome.status;job.error=outcome.status==='succeeded'?null:outcome.errorCode;job.lastResultHash=hash;job.acceptedAt=new Date(now());await touch(state,session);await job.save({session});await audit(session,job,outcome.status!=='succeeded');return receipt(job);
+    job.status=outcome.status;job.error=outcome.status==='succeeded'?null:outcome.errorCode;job.lastResultHash=hash;job.acceptedAt=new Date(now());await touch(state,session);await job.save({session});await audit(session,job,outcome.status!=='succeeded');
+    if(caller.execution==='server_adapter'&&models.ProviderCall){const ledger=await models.ProviderCall.findOne({jobId:job._id,retryCount:job.retryCount}).session(session);if(ledger){if(outcome.status==='succeeded'&&ledger.attemptId!==job.attemptId)bad('STALE_JOB_ATTEMPT',409);ledger.state=outcome.status==='succeeded'?'completed':outcome.errorCode==='PROVIDER_OUTCOME_UNKNOWN'?'uncertain':'failed';ledger.finishedAt=new Date(now());ledger.resultHash=hash;ledger.errorCode=outcome.status==='succeeded'?null:outcome.errorCode;await ledger.save({session});}}
+    return receipt(job);
    },context);
   });},
  };

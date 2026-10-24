@@ -233,11 +233,28 @@
   "TASK-016": {
     "url": "https://github.com/Dihoccode1/Vinlook/issues/34",
     "number": 34,
-    "state": "open",
+    "state": "closed",
     "approvedOwner": "Dihoccode1",
     "reviewer": "ngoctu0405",
-    "readiness": "Approved A implemented;142unique relevant groups/build/health passed;await draft PR/Tu human review/user merge;actual registry/provider/worker acceptance pending",
+    "readiness": "Code merged and Issue34 closed;142unique relevant passed groups/build/health retained;actual registry/provider/worker acceptance pending",
     "contract": "docs/planning/task016-job-protocol-contract.md",
-    "branch": "codex/task-016-job-protocol"
+    "branch": "codex/task-016-job-protocol",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/35",
+    "headCommit": "b774a2ebdbcb65d1b76766145d2dc06523d99154",
+    "mergeCommit": "777a357e46cd9f03412b7ce7855854e8fa4f6545",
+    "closedAt": "2026-10-24T10:49:11Z",
+    "reviewEvidence": "User reports approval and merge;PR35 merged and Issue34 closed verified;no formal GitHub review submission inferred"
+  },
+  "TASK-017": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/36",
+    "number": 36,
+    "state": "open",
+    "approvedOwner": "ngoctu0405",
+    "reviewer": "Dihoccode1",
+    "readiness": "Detailed contract approved; isolated implementation and155unique relevant groups/build/Linux FFmpeg smoke passed; awaiting draft PR/human review; actual providers/hosting pending",
+    "proposal": "docs/planning/task017-adapter-placement-proposal.md",
+    "contract": "docs/planning/task017-adapter-contract.md",
+    "branch": "codex/task-017-gemini-adapters",
+    "verification": "docs/planning/task017-verification.md"
   }
 }
