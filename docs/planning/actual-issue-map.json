@@ -248,13 +248,28 @@
   "TASK-017": {
     "url": "https://github.com/Dihoccode1/Vinlook/issues/36",
     "number": 36,
-    "state": "open",
+    "state": "closed",
     "approvedOwner": "ngoctu0405",
     "reviewer": "Dihoccode1",
-    "readiness": "Detailed contract approved; isolated implementation and155unique relevant groups/build/Linux FFmpeg smoke passed; awaiting draft PR/human review; actual providers/hosting pending",
+    "readiness": "PR37 merge verified; scoped implementation completed;155unique relevant groups/build/Linux smoke retained;real provider/hosting acceptance pending",
     "proposal": "docs/planning/task017-adapter-placement-proposal.md",
     "contract": "docs/planning/task017-adapter-contract.md",
     "branch": "codex/task-017-gemini-adapters",
-    "verification": "docs/planning/task017-verification.md"
+    "verification": "docs/planning/task017-verification.md",
+    "pullRequest": "https://github.com/Dihoccode1/Vinlook/pull/37",
+    "headCommit": "9a3d0ccc7151ebf3972f1acec27f8dd0f743624f",
+    "mergeCommit": "cb93762ceec086a147c8c4cdd807f4d6a8e2ff04",
+    "reviewEvidence": "User reports review and merge;GitHub merge verified;no formal GitHub review submission inferred"
+  },
+  "TASK-018": {
+    "url": "https://github.com/Dihoccode1/Vinlook/issues/38",
+    "number": 38,
+    "state": "open",
+    "approvedOwner": "ngoctu0405",
+    "reviewer": "Dihoccode1",
+    "readiness": "Contract A approved;81unique relevant groups/build/Compose/CPU class imports passed;await draft PR/Duy review;actual model cache/inference/locale acceptance separate",
+    "contract": "docs/planning/task018-local-worker-contract.md",
+    "branch": "codex/task-018-local-mms-worker",
+    "verification": "docs/planning/task018-verification.md"
   }
 }

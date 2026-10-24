@@ -1,3 +1,4 @@
+import {parseBuffer} from 'music-metadata';
 import {createAdapterModels} from '../src/adapters/models.js';
 import assert from 'node:assert/strict';
 import {before,after,beforeEach,test} from 'node:test';
@@ -53,7 +54,8 @@ before(async()=>{
     uploadCalls++;if(providerMode==='quota')return res.status(429).json({error:{message:'private synthetic provider message'}});
     const form=await new Request('http://fixture.invalid',{method:'POST',body:req.body,headers:{'content-type':req.get('content-type')}}).formData();const publicId=form.get('public_id');assert.equal(form.get('overwrite'),'false');assert.equal(form.get('api_key'),providerConfig.key);assert.equal(form.get('signature'),createHash('sha256').update(`overwrite=false&public_id=${publicId}&timestamp=${form.get('timestamp')}&type=upload`+providerConfig.secret).digest('hex'));
     const bytes=Buffer.from(await form.get('file').arrayBuffer()),audio=req.path.includes('/video/');if(assets.has(publicId))return res.status(409).json({error:{message:'no overwrite'}});
-    const row={bytes,metadata:{public_id:publicId,version:7,asset_id:'fixture-'+assets.size,resource_type:audio?'video':'image',type:'upload',format:audio?'mp3':'webp',bytes:bytes.length,created_at:new Date(clock).toISOString(),...(audio?{duration:bytes.length/208*1152/44100,audio:{channels:1}}:{width:16,height:12}),secure_url:'http://evil.invalid/never-fetch'}};assets.set(publicId,row);
+    const audioInfo=audio?await parseBuffer(bytes,{mimeType:'audio/mpeg',size:bytes.length},{duration:true}):null;
+    const row={bytes,metadata:{public_id:publicId,version:7,asset_id:'fixture-'+assets.size,resource_type:audio?'video':'image',type:'upload',format:audio?'mp3':'webp',bytes:bytes.length,created_at:new Date(clock).toISOString(),...(audio?{duration:audioInfo.format.duration,audio:{channels:audioInfo.format.numberOfChannels}}:{width:16,height:12}),secure_url:'http://evil.invalid/never-fetch'}};assets.set(publicId,row);
     if(providerMode==='hold'){holdStarted();await new Promise(r=>holdRelease=r);}if(providerMode==='lost'){req.socket.destroy();return;}return res.json({public_id:publicId,version:7});
    }
    if(req.path.includes('/resources/')){

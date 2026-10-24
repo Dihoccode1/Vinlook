@@ -1,0 +1,25 @@
+services:
+  mms:
+    build:
+      context: ../..
+      dockerfile: workers/mms/Dockerfile
+    platform: linux/amd64
+    cpus: 4
+    mem_limit: 4g
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp:size=64m,mode=1777]
+    environment:
+      VINLOOK_CONTENT_ORIGIN: ${VINLOOK_CONTENT_ORIGIN:?Set the reviewed Content HTTPS origin}
+      VINLOOK_WORKER_ID: ${VINLOOK_WORKER_ID:?Set the dedicated worker ID}
+      VINLOOK_WORKER_KEY_B64URL: ${VINLOOK_WORKER_KEY_B64URL:?Supply the private worker key}
+      VINLOOK_LANGUAGES: ${VINLOOK_LANGUAGES:?Select prepared local locales}
+      VINLOOK_STATE_DIR: /state
+      VINLOOK_MODEL_CACHE_DIR: /models
+    volumes:
+      - state:/state
+      - models:/models:ro
+volumes:
+  state:
+  models:

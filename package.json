@@ -44,6 +44,8 @@
     "test:jobs": "node --test services/content/test/jobs.test.js",
     "test:jobs:db": "node --test services/content/test/jobs.integration.test.js",
     "test:adapters": "node --test services/content/test/adapters.test.js",
-    "test:adapters:db": "node --test services/content/test/adapters.integration.test.js"
+    "test:adapters:db": "node --test services/content/test/adapters.integration.test.js",
+    "test:worker": "docker run --rm --network none --read-only --tmpfs /tmp:size=64m,mode=1777 --entrypoint python vinlook-task018-worker:verified -W error::ResourceWarning -m unittest discover -s tests -v",
+    "test:worker:db": "node --test services/content/test/local-worker.integration.test.js"
   }
 }

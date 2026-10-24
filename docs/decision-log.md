@@ -1409,3 +1409,22 @@ Recorded from user confirmations in this chat. Individual entries record their c
 - No real Gemini/key/account-quota inspection, Atlas mutation, Cloudinary upload, model download, deployment or human review inferred. Overall readiness503; actual free-project/full narration/locale quality/MMSworker/hosted/offline/load and TASK010native operator gates remain pending. Evidence planning/task017-verification.md. Await draft PR/Duy human review/user merge.
 
 - Cleanup verified complete: all nine exact fixture containers and their own anonymous volumes removed; cached converter image retained. Final three focused checks passed/overlap155; final runner syntax check passed.
+
+## DEC-191 TASK017 draft PR created
+
+- Date:24October2026 UTC+7. Draft PR37 https://github.com/Dihoccode1/Vinlook/pull/37, branch codex/task-017-gemini-adapters, head9a3d0ccc7151ebf3972f1acec27f8dd0f743624f;28changed files/blob hashes verified, decision-log published prefix preserved exactly.155unique relevant passed groups/build/Linux smoke retained; all9fixtures cleaned. Await Duy human review/user merge; main unchanged. No real providers/Atlas/hosting acceptance or formal human review inferred. Postpublication tracking retained locally to preserve the review head.
+
+## DEC-192 TASK017 merge verified and scoped issue closed
+
+- Date:24October2026 UTC+7. User reports review/merge. GitHub verifies PR37 merged cb93762ceec086a147c8c4cdd807f4d6a8e2ff04 at2026-10-24T11:26:01Z. Issue36 scoped isolated implementation closed after verification.155unique relevant passed groups/build/Linux smoke retained; no formal GitHub review submission inferred. Next planned TASK018 local MMS worker requires concrete integration contract before code; actual providers/quota/locale/hosting/offline/load and TASK010native operator gates remain separate pending.
+
+## DEC-193 TASK018 continuation and local worker contract proposed
+
+- Date:24October2026 UTC+7. User requests continuation after TASK017 merge. Created actual Issue38 and planning/task018-local-worker-contract.md. OwnerTu/reviewerDuy unchanged. Proposed A local Linux Docker CPU worker with exact Python base digest, researched inference pins plus uroman1.3.1.1, existing FFmpeg checksum, immutable12locale registry, independent lease renewal, bounded chunking/audio, private local journal and conservative claim/intent/upload/result recovery. Alternative B nativeWindows requires replacement binary packaging.
+- Public image/package/VITS metadata inspected read-only; no package install/model download/provider/key/Atlas/deployment. Detailed packaging/dependency/recovery/config limits await explicit Rule1 approval before code. Initial approval requested for isolated fixtures and synthetic FFmpeg only; real MMS cache preparation/inference/locale/resource acceptance remains separate.
+
+## DEC-194 TASK018 local worker contract A approved and implemented
+
+- Date:24October2026 UTC+7. User explicitly approved A for isolated implementation/testing. Added LinuxDocker CPU worker with36hash-checked package wheels, canonical hybrid registry digest, credential-isolated MMS child, parent60s lease renewal, bounded chunk/PCM/MP3 validation, private phase journal and conservative claim/intent/upload/result recovery; no backend production schema/API changes. Research versions retained with uroman1.3.1.1 added as approved. OwnerTu/reviewerDuy unchanged.
+-81unique relevant passed groups:17PythonLinux,17Content/jobMongoHTTP including2actual Python/FFmpeg scenarios,32runtime/auth/job/mediaunits,15mediaMongo; full workspace build and synthetic Compose check exit0. CPU VitsModel/AutoTokenizer/uroman imports verified without weights/network, separate from test count. Actual synthetic90s16kHzPCM produced720428byte mono24kHz MP3; no real MMS quality/resource claim. Earlier fixture/EOF/pipe/UTF8 failures fixed, not counted as passes. All5exactMongo fixtures/own anonymous volumes removed after guarded inspection.
+- No model weight download/inference, real Content/Atlas/Cloudinary/Gemini key/call, deploy or human review inferred. prepare-models is plan-only; actual model acquisition/cache/inference/locale/resource, hosted/offline/load and TASK010operator gates remain pending. Evidence planning/task018-verification.md. Await draft PR/Duy human review/user merge.
