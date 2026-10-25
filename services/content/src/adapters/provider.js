@@ -1,6 +1,6 @@
 import {hybrid} from './config.js';
 import {requestHash} from '../durability/validation.js';
-export class ProviderFailure extends Error{constructor(code='PROVIDER_OUTCOME_UNKNOWN'){super(code);this.code=code;}}
+export class ProviderFailure extends Error{constructor(code='PROVIDER_OUTCOME_UNKNOWN',diagnosticCategory){super(code);this.code=code;if(diagnosticCategory)this.diagnosticCategory=diagnosticCategory;}}
 export function providerRequest(job){
  const s=job.inputSnapshot;
  if(s.registryVersion!==hybrid.registryVersion||s.execution!=='server_adapter')throw new ProviderFailure('PROVIDER_FAILED');
@@ -14,11 +14,11 @@ export function providerRequest(job){
 }
 export const dispatchHash=(job,r)=>requestHash({taskType:job.taskType,languageCode:job.languageCode,inputVersion:job.inputVersion,inputSnapshot:job.inputSnapshot,url:r.url,body:r.body});
 export async function boundedJson(response,cap,signal){
- if(!/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??''))throw new ProviderFailure();
- if(Number(response.headers.get('content-length'))>cap)throw new ProviderFailure();
+ if(!/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??'')){await response.body?.cancel().catch(()=>{});throw new ProviderFailure(undefined,'nonjson');}
+ if(Number(response.headers.get('content-length'))>cap){await response.body?.cancel().catch(()=>{});throw new ProviderFailure(undefined,'oversize');}
  const reader=response.body?.getReader();if(!reader)throw new ProviderFailure();let total=0;const chunks=[];
- try{for(;;){signal?.throwIfAborted();const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>cap)throw new ProviderFailure();chunks.push(Buffer.from(value));}return JSON.parse(Buffer.concat(chunks).toString('utf8'));}
- catch{await reader.cancel().catch(()=>{});throw new ProviderFailure();}finally{reader.releaseLock();}
+ try{for(;;){signal?.throwIfAborted();const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>cap)throw new ProviderFailure(undefined,'oversize');chunks.push(Buffer.from(value));}try{return JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new ProviderFailure(undefined,'jsonparse');}}
+ catch(error){await reader.cancel().catch(()=>{});throw error instanceof ProviderFailure?error:new ProviderFailure(undefined,'response_read');}finally{reader.releaseLock();}
 }
 export function parseTranslation(data,code){
  const c=data?.candidates;if(data?.promptFeedback?.blockReason||!Array.isArray(c)||c.length!==1||c[0].finishReason!=='STOP'||c[0].content?.role!=='model'||c[0].content.parts?.length!==1)throw new ProviderFailure();
@@ -33,10 +33,18 @@ export function parseAudio(data){
  const encoded=parts[0].data;if(typeof encoded!=='string'||!encoded.length||encoded.length>11184812||(encoded.length%4!==0||!/^[A-Za-z0-9+/]*={0,2}$/.test(encoded)))throw new ProviderFailure();
  const bytes=Buffer.from(encoded,'base64');if(bytes.length>8388608||bytes.toString('base64')!==encoded)throw new ProviderFailure();return bytes;
 }
-export function createGeminiProvider(config,{fetchImpl=fetch}={}){return {async call(job,{signal}={}){
+export function createGeminiProvider(config,{fetchImpl=fetch,logFailure=event=>console.error(JSON.stringify(event))}={}){return {async call(job,{signal}={}){
  const r=providerRequest(job),combined=AbortSignal.any([AbortSignal.timeout(r.timeout),...(signal?[signal]:[])]);
+ let phase='transport',httpStatus=null,jsonContentType=null;
  try{const response=await fetchImpl(r.url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':config.key},body:JSON.stringify(r.body),redirect:'error',signal:combined});
-  if(!response.ok){await response.body?.cancel().catch(()=>{});throw new ProviderFailure(response.status===429?'QUOTA_EXHAUSTED':'PROVIDER_FAILED');}
-  const data=await boundedJson(response,r.cap,combined);return job.taskType==='translation'?{text:parseTranslation(data,job.languageCode)}:{wav:parseAudio(data)};
- }catch(error){throw error instanceof ProviderFailure?error:new ProviderFailure();}
+  httpStatus=response.status;jsonContentType=/^application\/json(?:;|$)/i.test(response.headers.get('content-type')??'');
+  if(!response.ok){phase='http';await response.body?.cancel().catch(()=>{});throw new ProviderFailure(response.status===429?'QUOTA_EXHAUSTED':'PROVIDER_FAILED');}
+  phase='response_read';const data=await boundedJson(response,r.cap,combined);phase=job.taskType==='translation'?'translationvalidation':'audiovalidation';return job.taskType==='translation'?{text:parseTranslation(data,job.languageCode)}:{wav:parseAudio(data)};
+ }catch(error){
+  const allowed=['transport','timeout','aborted','http','response_read','nonjson','oversize','jsonparse','translationvalidation','audiovalidation'];
+  const category=combined.aborted?(combined.reason?.name==='TimeoutError'?'timeout':'aborted'):allowed.includes(error?.diagnosticCategory)?error.diagnosticCategory:phase;
+  const event={event:'gemini_provider_failure',taskType:job.taskType==='translation'?'translation':'audio',category,httpStatus:Number.isInteger(httpStatus)&&httpStatus>=100&&httpStatus<=599?httpStatus:null,jsonContentType:typeof jsonContentType==='boolean'?jsonContentType:null,...(/^[a-f0-9]{24}$/.test(job.id??'')?{jobId:job.id}:{})};
+  try{logFailure(event);}catch{} // Logging cannot change quota/unknown-outcome behavior.
+  throw error instanceof ProviderFailure?error:new ProviderFailure();
+ }
  }};}

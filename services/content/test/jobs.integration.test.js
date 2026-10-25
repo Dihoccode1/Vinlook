@@ -1,5 +1,6 @@
 import {parseBuffer} from 'music-metadata';
 import {createAdapterModels} from '../src/adapters/models.js';
+import {createTranslationPreflight} from '../src/adapters/preflight.js';
 import assert from 'node:assert/strict';
 import {before,after,beforeEach,test} from 'node:test';
 import {execFileSync,spawn} from 'node:child_process';
@@ -76,6 +77,22 @@ const claim=async(code='en')=>{const r=await worker('/claim',{workerId:'fixture-
 const result=(job,outcome)=>worker('/'+job.id+'/result',{attemptId:job.attemptId,inputVersion:job.inputVersion,outcome});
 async function audioIntent(job){const r=await worker('/'+job.id+'/media-intents',{attemptId:job.attemptId});assert.equal(r.status,200,JSON.stringify(r.body));return r.body.data.intentId;}
 async function workerUpload(job,id,bytes=mp3()){const form=new FormData();form.append('file',new Blob([bytes]),'synthetic.mp3');return worker(`/${job.id}/media-intents/${id}/file`,form,{},'PUT');}
+test('hosted preflight is Manager/session-only, rejects overrides and never creates work',async()=>{
+ const path='/admin/adapters/translation/preflight';let calls=0;
+ assert.equal((await request(path,'POST',{})).status,403);
+ await im.StaffAccount.updateOne({_id:staff._id},{$set:{role:'Manager'}});
+ try{
+  assert.equal((await request(path,'POST',{})).status,503);
+  runtime.translationPreflight=createTranslationPreflight({key:'synthetic-preflight-key'},{now,fetchImpl:async(url,o)=>{calls++;assert.equal(o.method,'GET');assert.equal(url,'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite');return Response.json({name:'models/gemini-3.5-flash-lite',supportedGenerationMethods:['generateContent'],privateData:'must-not-escape'});}});
+  assert.equal((await request(path,'POST',{model:'unapproved'})).status,422);assert.equal(calls,0);
+  await im.WorkSession.updateOne({_id:session._id},{$set:{status:'closed',closedAt:new Date(clock)}});
+  assert.equal((await request(path,'POST',{})).status,403);assert.equal(calls,0);
+  await im.WorkSession.updateOne({_id:session._id},{$set:{status:'open',closedAt:null}});
+  const before=await models.ProcessingJob.countDocuments({});const out=await request(path,'POST',{});assert.equal(out.status,200);assert.equal(out.body.data.status,'ok');assert.equal(out.body.data.supportsGenerateContent,true);assert.equal(JSON.stringify(out.body).includes('must-not-escape'),false);
+  const cooled=await request(path,'POST',{});assert.equal(cooled.status,429);assert.equal(cooled.headers.get('retry-after'),'60');assert.equal(calls,1);assert.equal(await models.ProcessingJob.countDocuments({}),before);
+ }finally{delete runtime.translationPreflight;await im.StaffAccount.updateOne({_id:staff._id},{$set:{role:'Staff'}});await im.WorkSession.updateOne({_id:session._id},{$set:{status:'open',closedAt:null}});}
+});
+
 test('seventh catalog and initial process16jobs are atomic/idempotent; English is never translated',async()=>{
  await verifyContentCatalog(connection,models);const r=await draft(),uuid=randomUUID();const first=await processJobs(r,0,uuid);assert.equal(first.status,202,JSON.stringify(first.body));assert.equal(first.body.data.jobIds.length,16);assert.deepEqual((await processJobs(r,0,uuid)).body.data,first.body.data);
  const jobs=await models.ProcessingJob.find({revisionId:r.revisionId});assert.equal(jobs.filter(j=>j.taskType==='translation').length,15);assert.equal(jobs.filter(j=>j.taskType==='audio').length,1);assert.equal((await processJobs(r,1)).status,409);
