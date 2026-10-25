@@ -1,6 +1,7 @@
 import {hybrid} from './config.js';
 import {requestHash} from '../durability/validation.js';
-export class ProviderFailure extends Error{constructor(code='PROVIDER_OUTCOME_UNKNOWN',diagnosticCategory){super(code);this.code=code;if(diagnosticCategory)this.diagnosticCategory=diagnosticCategory;}}
+export class ProviderFailure extends Error{constructor(code='PROVIDER_OUTCOME_UNKNOWN',diagnosticCategory,validationReason){super(code);this.code=code;if(diagnosticCategory)this.diagnosticCategory=diagnosticCategory;if(validationReason)this.validationReason=validationReason;}}
+const translationReasons=Object.freeze(['blocked','candidate_count','finish_reason','role','part_count','part_shape','inner_json','object_shape','locale','text_shape']);
 export function providerRequest(job){
  const s=job.inputSnapshot;
  if(s.registryVersion!==hybrid.registryVersion||s.execution!=='server_adapter')throw new ProviderFailure('PROVIDER_FAILED');
@@ -21,10 +22,17 @@ export async function boundedJson(response,cap,signal){
  catch(error){await reader.cancel().catch(()=>{});throw error instanceof ProviderFailure?error:new ProviderFailure(undefined,'response_read');}finally{reader.releaseLock();}
 }
 export function parseTranslation(data,code){
- const c=data?.candidates;if(data?.promptFeedback?.blockReason||!Array.isArray(c)||c.length!==1||c[0].finishReason!=='STOP'||c[0].content?.role!=='model'||c[0].content.parts?.length!==1)throw new ProviderFailure();
- const part=c[0].content.parts[0];if(Object.keys(part).some(k=>k!=='text')||typeof part.text!=='string')throw new ProviderFailure();
- let v;try{v=JSON.parse(part.text);}catch{throw new ProviderFailure();}
- if(!v||Array.isArray(v)||Object.keys(v).sort().join(',')!=='languageCode,text'||v.languageCode!==code||typeof v.text!=='string'||!v.text.trim()||v.text.length>20000)throw new ProviderFailure();return v.text.trim();
+ const reject=reason=>{throw new ProviderFailure(undefined,'translationvalidation',reason);};
+ const c=data?.candidates;if(data?.promptFeedback?.blockReason)reject('blocked');
+ if(!Array.isArray(c)||c.length!==1)reject('candidate_count');
+ if(c[0]?.finishReason!=='STOP')reject('finish_reason');
+ if(c[0].content?.role!=='model')reject('role');
+ if(c[0].content.parts?.length!==1)reject('part_count');
+ const part=c[0].content.parts[0];if(!part||Object.keys(part).some(k=>k!=='text')||typeof part.text!=='string')reject('part_shape');
+ let v;try{v=JSON.parse(part.text);}catch{reject('inner_json');}
+ if(!v||Array.isArray(v)||Object.keys(v).sort().join(',')!=='languageCode,text')reject('object_shape');
+ if(v.languageCode!==code)reject('locale');
+ if(typeof v.text!=='string'||!v.text.trim()||v.text.length>20000)reject('text_shape');return v.text.trim();
 }
 export function parseAudio(data){
  if(data?.status!=='completed'||!Array.isArray(data.steps))throw new ProviderFailure();
@@ -44,6 +52,7 @@ export function createGeminiProvider(config,{fetchImpl=fetch,logFailure=event=>c
   const allowed=['transport','timeout','aborted','http','response_read','nonjson','oversize','jsonparse','translationvalidation','audiovalidation'];
   const category=combined.aborted?(combined.reason?.name==='TimeoutError'?'timeout':'aborted'):allowed.includes(error?.diagnosticCategory)?error.diagnosticCategory:phase;
   const event={event:'gemini_provider_failure',taskType:job.taskType==='translation'?'translation':'audio',category,httpStatus:Number.isInteger(httpStatus)&&httpStatus>=100&&httpStatus<=599?httpStatus:null,jsonContentType:typeof jsonContentType==='boolean'?jsonContentType:null,...(/^[a-f0-9]{24}$/.test(job.id??'')?{jobId:job.id}:{})};
+  if(category==='translationvalidation'&&translationReasons.includes(error?.validationReason))event.validationReason=error.validationReason;
   try{logFailure(event);}catch{} // Logging cannot change quota/unknown-outcome behavior.
   throw error instanceof ProviderFailure?error:new ProviderFailure();
  }
