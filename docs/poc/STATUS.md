@@ -9,6 +9,8 @@
 - Schedule target two days, precise demonstration time not supplied. Very high feasibility risk; escalate any shortfall to Duy, no fictional completion or scope cut.
 - Baseline backlog/issues untouched. Live environments/data/secrets unchanged by this planning handoff. No product tests/load tests/deployment performed or claimed.
 
+Concurrent GitHub event observed during final verification: main advanced to4852688d12f4825117550ce3d65eedaf1dbaf542 through PR72 merging documentation seed712a49d88893f9fa205ca150b1a59c5d0083bf00 from codex/poc-demo. This agent did not create/merge PR72 and performs no revert. The five-file change is PoC documentation, not product completion. Original43a1769 remains the recorded pre-PoC checkpoint; do not reset current main to erase the concurrent merge. Future implementation PRs still target codex/poc-demo and require Duy's decision. Branch final-index commit2193e17562d3c1e433cd465eacf1b67058895703 contains linked Issues; newer status record follows.
+
 Daily journal format: timestamp,person,Issue,branch/commit,done/evidence,next,blockers/questions,live operations authorized. Contributors maintain their own docs/poc/tu or hao evidence; Duy updates shared status after verification.
 
 Return instruction: only on exact user message `quy lại tiến độ`, record PoC branch/SHA/openPRs/URLs/artifacts, preserve all local edits and deployments, fetch original baseline and read retained TASK025/batch/decisionlog before continuing original work. Never reset dirty tree or auto-merge PoC into main; use separate checkout/worktree if needed and authorized. At handoff original TASK025 remains open,3/80approved and next locale not selected.
