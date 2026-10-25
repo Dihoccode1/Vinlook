@@ -39,6 +39,21 @@ test('multipart enforces one named file, inclusive byte limits and rejects malfo
  await assert.rejects(read(multipart(Buffer.alloc(2097153))),{status:413});await assert.rejects(read(multipart(Buffer.from('ok'),{extra:true})),{status:400});await assert.rejects(read(multipart(Buffer.from('ok'),{name:'wrong'})),{status:400});
  await assert.rejects(read({headers:{'content-type':'text/plain'},bytes:Buffer.from('x')}),{status:415});
 });
+test('audio verification requests detailed metadata; missing duration and changed bytes still fail closed',async()=>{
+ const buffer=Buffer.from('original-audio-fixture'),value={...intent(),kind:'audio',resourceType:'video',publicId:intent().publicId.replace('/thumbnail/','/audio/'),format:'mp3',bytes:buffer.length,sha256:digest(buffer),durationSeconds:100.992,startedAt:new Date('2026-10-23T12:00:00.000Z'),providerVersion:null};
+ let mode='normal',metadataRequests=0,cdnRequests=0;
+ const adapter=createCloudinaryAdapter(config,{fetchImpl:async(url)=>{
+  if(url.includes('/resources/')){
+   metadataRequests++;const detailed=new URL(url).searchParams.get('media_metadata')==='true';
+   assert.equal(detailed,true);
+   return Response.json({public_id:value.publicId,resource_type:'video',type:'upload',format:'mp3',version:7,asset_id:'audio-fixture',bytes:buffer.length,created_at:value.startedAt.toISOString(),...(detailed&&mode!=='missing'?{duration:mode==='wrong'?101.992:100.992,audio:{channels:1}}:{})});
+  }
+  cdnRequests++;return new Response(mode==='corrupt'?Buffer.from('changed'):buffer);
+ }});
+ assert.equal((await adapter.verify(value)).providerVersion,7);assert.equal(metadataRequests,1);assert.equal(cdnRequests,1);
+ for(mode of ['missing','wrong','corrupt'])await assert.rejects(adapter.verify(value));
+});
+
 test('provider signs only fixed server params and verifies independent metadata/original digest',async()=>{
  const buffer=Buffer.from('canonical-fixture-bytes'),value={...intent(),format:'webp',bytes:buffer.length,sha256:digest(buffer),width:16,height:12,startedAt:new Date('2026-10-23T12:00:00.000Z'),providerVersion:null};let calls=0;
  const fake=async(url,options)=>{calls++;assert.equal(options.redirect,'error');if(url.endsWith('/image/upload')){assert.equal(options.body.get('public_id'),value.publicId);assert.equal(options.body.get('overwrite'),'false');const params={public_id:value.publicId,overwrite:'false',type:'upload',timestamp:options.body.get('timestamp')};assert.equal(options.body.get('signature'),signUpload(params,config.secret));return Response.json({public_id:value.publicId,version:7});}
