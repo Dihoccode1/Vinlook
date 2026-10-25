@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 
 const suites = {
-  identity: [['004', 'indexes'], ['005', 'auth'], ['006', 'authorization'], ['007', 'session'], ['008', 'audit'], ['009', 'staff'], ['010', 'operator']],
+  identity: [['004', 'indexes'], ['005', 'auth'], ['006', 'authorization'], ['007', 'session'], ['008', 'audit'], ['009', 'staff'], ['010', 'operator'], ['025', 'catalog']],
   content: [['011', 'indexes'], ['015', 'durability'], ['012', 'drafts'], ['019', 'media'], ['013', 'publication'], ['014', 'lifecycle'], ['016', 'jobs'], ['017', 'adapters']],
 };
 const service = process.argv[2];
