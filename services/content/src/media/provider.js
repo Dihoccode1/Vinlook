@@ -30,7 +30,7 @@ export function createCloudinaryAdapter(config,{fetchImpl=fetch}={}){
   },
   async verify(row,signal){
    if(!row.sha256||!row.bytes||!row.startedAt)throw new MediaFailure();
-   const url=`${root}/resources/${row.resourceType}/upload/${encodeURIComponent(row.publicId)}`;
+   const url=`${root}/resources/${row.resourceType}/upload/${encodeURIComponent(row.publicId)}${row.kind==='audio'?'?media_metadata=true':''}`;
    const metadata=await json(url,{headers:{Authorization:'Basic '+Buffer.from(config.key+':'+config.secret).toString('base64')}},signal,10000);
    const created=Date.parse(metadata.created_at),start=+new Date(row.startedAt);
    if(metadata.public_id!==row.publicId||metadata.resource_type!==row.resourceType||metadata.type!=='upload'||metadata.format!==row.format||!Number.isSafeInteger(metadata.version)||metadata.version<1||typeof metadata.asset_id!=='string'||!metadata.asset_id.length||metadata.asset_id.length>200||metadata.bytes!==row.bytes||!Number.isFinite(created)||created<start-5000||created>start+90000||row.providerVersion!==null&&row.providerVersion!==undefined&&metadata.version!==row.providerVersion)throw new MediaFailure();

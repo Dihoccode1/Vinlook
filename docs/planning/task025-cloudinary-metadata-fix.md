@@ -1,0 +1,9 @@
+# TASK025 — Cloudinary audio metadata request correction
+
+26October2026 UTC+7. Read-only user diagnostic on the exact existing audio confirms default Admin resource response200 has duration undefined. Same GET with media_metadata=true returns numeric duration100.992, matching local MP3. Other metadata constraints pass; original CDN200 has807980bytes and SHA256fc2f95fd19bf1f1c1edafe5d033a66f9826ca3b2b1ea99cc3fd6e54e4630783f matching local file. This is a missing request flag, not evidence of a duration discrepancy. Earlier durationMatches false alone did not distinguish missing from different.
+
+Correct only audio resource verification GET to request ?media_metadata=true. Thumbnail request unchanged. Retain <=64KiB bounded metadata, no redirects/retries, exact public ID/version/type/format/time/size, existing <=0.1second duration tolerance, channels and original-byte SHA256. No schema/index/config/dependency/lease change. This fixes implementation of existing verification requirement, not an acceptance-rule relaxation.
+
+Cloudinary official Admin API documents media_metadata default false and applicability to audio/video: https://cloudinary.com/documentation/admin_api#get_details_of_a_single_resource_by_public_id . It does not guarantee every metadata field; missing duration still fails closed.
+
+Nine media unit tests passed locally, including regression fixture whose default response omits duration, explicit flag returns expected duration, and missing/wrong duration/corrupt original bytes still reject. Production CI/integration/build pending. No real provider calls or lease/upload mutations during implementation. Existing one-time resume marker remains consumed; this fix alone does not authorize or enable a second recovery. Resolve live recovery separately after review/deploy with explicit contract decision. TASK0250/80finalpairs.
