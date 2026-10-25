@@ -103,6 +103,29 @@ test('worker-only runtime queues pinned English audio with Gemini disabled',asyn
  }finally{await restarted.close();}
 });
 
+test('worker-only runtime approves verified English with Gemini off but cannot submit incomplete revision',async()=>{
+ const r=await draft();
+ const config=loadContentConfig('test',{CONTENT_MONGODB_URI:uri,IDENTITY_BASE_URL:identityBase,CONTENT_IDENTITY_SERVICE_KEY_B64URL:contentKey,CONTENT_ALLOWED_ORIGINS:'https://web.example.invalid',CONTENT_WORKER_ID:'fixture-worker',CONTENT_WORKER_KEY_B64URL:workerKey,CONTENT_GEMINI_ENABLED:'false',CLOUDINARY_CLOUD_NAME:providerConfig.cloud,CLOUDINARY_API_KEY:providerConfig.key,CLOUDINARY_API_SECRET:providerConfig.secret});
+ const restarted=await connectContentRuntime(config);restarted.now=now;
+ // Substitute only provider transport: all routes, registry, DB and media checks stay real.
+ restarted.media=createMediaService(restarted,createCloudinaryAdapter(providerConfig,{fetchImpl:transport}),{mode:'test'});restarted.verifyThumbnail=restarted.media.verifyThumbnail;restarted.attachThumbnail=restarted.media.attachThumbnail;
+ const endpoint=await listen(createApp(restarted));
+ const call=async(path,body,asWorker=false)=>{const response=await fetch(endpoint+'/api/v1'+path,{method:'POST',headers:{'Content-Type':'application/json',...(asWorker?{'X-Vinlook-Worker-Id':'fixture-worker','X-Vinlook-Worker-Key':workerKey}:{Authorization:'Bearer '+token})},body:JSON.stringify(body)});return{status:response.status,body:await response.json()};};
+ try{
+  assert.equal(restarted.adapters,undefined);assert.equal(restarted.publicationRegistry.registryVersion,'vinlook-hybrid-v1');assert.ok(Object.isFrozen(restarted.publicationRegistry));
+  const next=createJobService(restarted);await next.process(r.revisionId,{expectedEditVersion:0,languages:['en']},principal,randomUUID());const job=(await next.claim(local,['en'])).job;
+  const issued=await call(`/internal/jobs/${job.id}/media-intents`,{attemptId:job.attemptId},true);assert.equal(issued.status,200);const mediaIntentId=issued.body.data.intentId;
+  const form=new FormData();form.append('file',new Blob([mp3()]),'fixture.mp3');const uploaded=await fetch(endpoint+`/api/v1/internal/jobs/${job.id}/media-intents/${mediaIntentId}/file`,{method:'PUT',headers:{'X-Vinlook-Worker-Id':'fixture-worker','X-Vinlook-Worker-Key':workerKey},body:form});assert.equal(uploaded.status,201,await uploaded.text());
+  assert.equal((await call(`/internal/jobs/${job.id}/result`,{attemptId:job.attemptId,inputVersion:job.inputVersion,outcome:{status:'succeeded',mediaIntentId}},true)).status,200);
+  const review={expectedEditVersion:2,expectedTextVersion:1,decision:'approved'},reviewPath=`/admin/revisions/${r.revisionId}/languages/en/review`;
+  providerMode='corrupt';assert.equal((await call(reviewPath,review)).status,503);assert.equal((await models.LocalizedContent.findOne({revisionId:r.revisionId,languageCode:'en'})).reviewStatus,'pending');assert.equal((await models.POIRevision.findById(r.revisionId)).editVersion,2);
+  providerMode='normal';assert.equal((await call(reviewPath,review)).status,200);
+  const en=await models.LocalizedContent.findOne({revisionId:r.revisionId,languageCode:'en'});assert.equal(en.reviewStatus,'approved');assert.equal(String(en.reviewedBy),String(staff._id));assert.ok(en.reviewedAt);
+  const submitted=await call(`/admin/revisions/${r.revisionId}/submit`,{expectedEditVersion:3});assert.equal(submitted.status,409);assert.equal(submitted.body.error.code,'PUBLICATION_NOT_READY');assert.equal((await models.POI.findById(r.poiId)).publishedRevisionId,null);
+  assert.equal(await models.AuditOutbox.countDocuments({'payload.poiId':r.poiId,'payload.action':'content.review'}),1);
+ }finally{providerMode='normal';await restarted.close();}
+});
+
 test('local capability cannot claim translation; concurrent claims have a single audio winner',async()=>{
  const r=await draft();await processJobs(r);assert.equal(await claim('vi'),null);
  const jobs=await Promise.all([claim(),claim()]);assert.equal(jobs.filter(Boolean).length,1);const job=jobs.find(Boolean);assert.equal(job.taskType,'audio');assert.equal((await worker('/'+job.id+'/renew',{attemptId:job.attemptId})).status,200);
