@@ -22,6 +22,31 @@ test('connection failure is sanitized and connection always closes', async () =>
   assert.equal(closed, 1);
 });
 
+test('URI hints distinguish failed paste and format mistakes without exposing input or connecting', async () => {
+  const cases = [
+    ['', 'EMPTY_INPUT'],
+    ['x'.repeat(4097), 'INPUT_TOO_LONG'],
+    ['"mongodb://fixture:secret@localhost/vinlook_identity"', 'WRAPPING_QUOTES'],
+    ['mongodb://fixture:secret@localhost/vinlook_identity ', 'WHITESPACE'],
+    ['mongodb+srv://<db_username>:<db_password>@fixture.invalid/', 'PLACEHOLDER_OR_ANGLE_BRACKET'],
+    ['not-a-uri-secret', 'MALFORMED_URI'],
+    ['https://fixture:secret@localhost/vinlook_identity', 'INVALID_SCHEME'],
+    ['mongodb://fixture:secret@localhost/vinlook_identity#secret', 'FRAGMENT_OR_UNENCODED_HASH'],
+    ['mongodb://fixture:secret@localhost/?appName=fixture', 'DATABASE_PATH_MUST_BE_VINLOOK_IDENTITY'],
+  ];
+  for (const [uri, hint] of cases) {
+    await assert.rejects(runCatalog([], { prompt: async () => uri, connect: () => assert.fail('invalid URI must not connect') }), error => {
+      assert.equal(error.code, 'CATALOG_INVALID_URI');
+      assert.equal(error.hint, hint);
+      assert.ok(!JSON.stringify(error).includes('secret'));
+      assert.ok(!JSON.stringify(error).includes('fixture'));
+      return true;
+    });
+  }
+  const accepted = 'mongodb+srv://fixture:p%23ss%40word@cluster.example.invalid/vinlook_identity?retryWrites=true&w=majority';
+  assert.equal(validateCatalogUri(accepted), accepted);
+});
+
 test('real CLI help needs no DB; redirected secret input and URI arguments fail closed', () => {
   const cli = 'services/identity/scripts/catalog.js';
   const help = spawnSync(process.execPath, [cli, '--help'], { encoding: 'utf8' });

@@ -3,7 +3,7 @@ import { createIdentityModels } from './models/index.js';
 import { verifyIdentityIndexes } from './auth/runtime.js';
 
 export class CatalogError extends Error {
-  constructor(code, completed = 0) { super(code); this.name = 'CatalogError'; this.code = code; this.completed = completed; }
+  constructor(code, completed = 0, hint) { super(code); this.name = 'CatalogError'; this.code = code; this.completed = completed; this.hint = hint; }
 }
 const fail = code => { throw new CatalogError(code); };
 const sameKey = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -15,11 +15,20 @@ const matches = (index, key, options) => sameKey(index.key, key)
   && Object.keys(index).every(k => ['v', 'ns', 'name', 'key', 'unique', 'expireAfterSeconds', 'background', 'sparse', 'hidden'].includes(k));
 
 export function validateCatalogUri(uri) {
-  if (typeof uri !== 'string' || uri.length > 4096 || /\s/.test(uri)) fail('CATALOG_INVALID_URI');
+  const invalid = hint => { throw new CatalogError('CATALOG_INVALID_URI', 0, hint); };
+  if (typeof uri !== 'string' || !uri.length) invalid('EMPTY_INPUT');
+  if (uri.length > 4096) invalid('INPUT_TOO_LONG');
+  if (/^["']|["']$/.test(uri)) invalid('WRAPPING_QUOTES');
+  if (/\s/.test(uri)) invalid('WHITESPACE');
+  if (/[<>]/.test(uri)) invalid('PLACEHOLDER_OR_ANGLE_BRACKET');
+  let url;
   try {
-    const url = new URL(uri);
-    if (!['mongodb:', 'mongodb+srv:'].includes(url.protocol) || !url.hostname || url.pathname !== '/vinlook_identity' || url.hash) fail('CATALOG_INVALID_URI');
-  } catch { fail('CATALOG_INVALID_URI'); }
+    url = new URL(uri);
+  } catch { invalid('MALFORMED_URI'); }
+  if (!['mongodb:', 'mongodb+srv:'].includes(url.protocol)) invalid('INVALID_SCHEME');
+  if (!url.hostname) invalid('MALFORMED_URI');
+  if (url.hash) invalid('FRAGMENT_OR_UNENCODED_HASH');
+  if (url.pathname !== '/vinlook_identity') invalid('DATABASE_PATH_MUST_BE_VINLOOK_IDENTITY');
   return uri;
 }
 

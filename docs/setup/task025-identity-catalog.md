@@ -16,6 +16,24 @@ node services/identity/scripts/catalog.js --apply
 
 The second command defaults to read-only plan. The third additionally asks you to type exactly `vinlook_identity` before connecting. Enter the intended URI only at the hidden prompt. There is no URI argument, automatic environment-secret lookup, test-database override or force/repair mode.
 
+### Invalid URI troubleshooting
+
+`CATALOG_INVALID_URI` occurs locally before any Mongo connection or catalog operation. Its optional `hint` contains only a fixed diagnostic code, never the entered URI, username, password, hostname or actual database path. Send only the resulting JSON for support.
+
+| Hint | Action |
+| --- | --- |
+| EMPTY_INPUT | Nothing was received. Restart the command and paste at the hidden prompt before pressing Enter. Nothing echoes while typing/pasting. |
+| WRAPPING_QUOTES | Paste the URI without surrounding single/double quotes. |
+| WHITESPACE | Remove spaces/newlines from the URI; encode special credential characters. |
+| PLACEHOLDER_OR_ANGLE_BRACKET | Replace placeholders privately and remove placeholder angle brackets. |
+| DATABASE_PATH_MUST_BE_VINLOOK_IDENTITY | Use `/vinlook_identity` immediately before `?` (or at the end when no query). |
+| FRAGMENT_OR_UNENCODED_HASH | URL-encode credential characters such as `#`; no URI fragment is allowed. |
+| INVALID_SCHEME | Start with `mongodb://` or `mongodb+srv://`. |
+| MALFORMED_URI | Check the copied connection string structure locally. |
+| INPUT_TOO_LONG | Input exceeds the existing 4096-character limit. |
+
+No input is automatically corrected; the original validation and exact database guard remain enforced. A successful Compass connection can use a different/default database path, so it does not establish that the catalog CLI URI has the required path.
+
 ## Catalog behavior
 
 Declarations come directly from `createIdentityModels`: five collections and eight declared indexes plus each ordinary Mongo `_id` index. Plan lists only missing model-owned collections/indexes and a complete flag. It reads collection/index metadata, never account documents. Unrelated collections are ignored.
