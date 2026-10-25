@@ -8,12 +8,16 @@ if (!['identity', 'content'].includes(service) || !/^vinlook-(identity|content):
 const docker = args => execFileSync('docker', args, { encoding: 'utf8', windowsHide: true, timeout: 60000 });
 const config = JSON.parse(docker(['image', 'inspect', image]))[0].Config;
 if (config.User !== 'node' || JSON.stringify(config.Cmd) !== JSON.stringify(['node', 'src/server.js'])) throw new Error('Invalid production image command/user');
+if (service === 'content') {
+  docker(['run', '--rm', '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', image, 'node', '--input-type=module', '-e', "import {loadContentConfig} from './src/drafts/runtime.js'; if(loadContentConfig('production')!==null)process.exit(1);"]);
+}
 const name = `vinlook-image-smoke-${randomUUID()}`;
 let created = false;
 try {
-  // Packaging smoke only; dependency-backed startup is covered separately by integration tests.
+  // Content uses its real default entrypoint; Identity needs private DB configuration,
+  // so its smoke remains packaging-only. Neither establishes live dependency readiness.
   const server = "import {createApp} from './src/app.js'; createApp().listen(10000,'127.0.0.1');";
-  docker(['run', '-d', '--rm', '--name', name, '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', image, 'node', '--input-type=module', '-e', server]);
+  docker(['run', '-d', '--rm', '--name', name, '--network', 'none', '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', image, ...(service === 'content' ? [] : ['node', '--input-type=module', '-e', server])]);
   created = true;
   const probe = "const l=await fetch('http://127.0.0.1:10000/health/live'); const r=await fetch('http://127.0.0.1:10000/health/ready'); if(l.status!==200 || r.status!==503 || (await l.json()).data.status!=='up' || (await r.json()).error.code!=='DEPENDENCIES_UNVERIFIED')process.exit(1);";
   let passed = false;

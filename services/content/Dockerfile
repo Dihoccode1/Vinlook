@@ -15,7 +15,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY services/content/package.json ./services/content/package.json
 COPY services/content/src ./services/content/src
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=10000
-ENV CONTENT_GEMINI_ENABLED=false CONTENT_FFMPEG_PATH=/usr/bin/ffmpeg CONTENT_FFPROBE_PATH=/usr/bin/ffprobe
+ENV CONTENT_GEMINI_ENABLED=false
 USER node
 WORKDIR /app/services/content
 EXPOSE 10000
