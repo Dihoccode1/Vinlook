@@ -81,6 +81,28 @@ test('seventh catalog and initial process16jobs are atomic/idempotent; English i
  const jobs=await models.ProcessingJob.find({revisionId:r.revisionId});assert.equal(jobs.filter(j=>j.taskType==='translation').length,15);assert.equal(jobs.filter(j=>j.taskType==='audio').length,1);assert.equal((await processJobs(r,1)).status,409);
  const status=await request('/admin/jobs?revisionId='+r.revisionId);assert.equal(status.status,200);assert.equal(status.body.data.items.length,16);assert.equal(JSON.stringify(status.body).includes('inputSnapshot'),false);assert.equal(JSON.stringify(status.body).includes('attemptId'),false);
 });
+test('English-only Process queues exactly one audio job and binds selection to replay',async()=>{
+ const r=await draft(),uuid=randomUUID(),path=`/admin/revisions/${r.revisionId}/process`,headers={'Idempotency-Key':uuid};
+ const first=await request(path,'POST',{expectedEditVersion:0,languages:['en']},headers);
+ assert.equal(first.status,202,JSON.stringify(first.body));assert.equal(first.body.data.jobIds.length,1);
+ const jobs=await models.ProcessingJob.find({revisionId:r.revisionId});assert.equal(jobs.length,1);assert.equal(jobs[0].languageCode,'en');assert.equal(jobs[0].taskType,'audio');
+ assert.deepEqual((await request(path,'POST',{expectedEditVersion:0,languages:['en']},headers)).body.data,first.body.data);
+ const changed=await request(path,'POST',{expectedEditVersion:0,languages:['vi']},headers);assert.equal(changed.status,409);assert.equal(changed.body.error.code,'IDEMPOTENCY_CONFLICT');
+ for(const languages of [[],['en','en'],['invalid']])assert.equal((await request(path,'POST',{expectedEditVersion:1,languages},{'Idempotency-Key':randomUUID()})).status,422);
+ assert.equal(await models.ProcessingJob.countDocuments({revisionId:r.revisionId}),1);
+});
+
+test('worker-only runtime queues pinned English audio with Gemini disabled',async()=>{
+ const r=await draft();
+ const config=loadContentConfig('test',{CONTENT_MONGODB_URI:uri,IDENTITY_BASE_URL:identityBase,CONTENT_IDENTITY_SERVICE_KEY_B64URL:contentKey,CONTENT_ALLOWED_ORIGINS:'https://web.example.invalid',CONTENT_WORKER_ID:'fixture-worker',CONTENT_WORKER_KEY_B64URL:workerKey,CONTENT_GEMINI_ENABLED:'false'});
+ const restarted=await connectContentRuntime(config);
+ try{
+  assert.equal(restarted.adapters,undefined);assert.equal(restarted.processingManifest.registryVersion,'vinlook-hybrid-v1');
+  const next=createJobService({...restarted,now});const queued=await next.process(r.revisionId,{expectedEditVersion:0,languages:['en']},principal,randomUUID());assert.equal(queued.status,202);assert.equal(queued.body.data.jobIds.length,1);
+  const claimed=await next.claim(local,['en']);assert.equal(claimed.job.languageCode,'en');assert.equal(claimed.job.taskType,'audio');assert.equal(claimed.job.inputSnapshot.registryVersion,'vinlook-hybrid-v1');
+ }finally{await restarted.close();}
+});
+
 test('local capability cannot claim translation; concurrent claims have a single audio winner',async()=>{
  const r=await draft();await processJobs(r);assert.equal(await claim('vi'),null);
  const jobs=await Promise.all([claim(),claim()]);assert.equal(jobs.filter(Boolean).length,1);const job=jobs.find(Boolean);assert.equal(job.taskType,'audio');assert.equal((await worker('/'+job.id+'/renew',{attemptId:job.attemptId})).status,200);

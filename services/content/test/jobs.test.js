@@ -4,10 +4,15 @@ import {randomBytes,randomUUID} from 'node:crypto';
 import mongoose from 'mongoose';
 import {requestHash} from '../src/durability/validation.js';
 import {createJobModel} from '../src/jobs/model.js';
-import {manifest,claimInput,resultInput} from '../src/jobs/validation.js';
+import {manifest,claimInput,resultInput,processInput} from '../src/jobs/validation.js';
 import {workerConfig,workerPrincipal} from '../src/jobs/credentials.js';
 import {languageCodes} from '../src/models/index.js';
 const key=()=>randomBytes(32).toString('base64url');
+test('Process accepts an explicit unique locale subset and preserves omitted selection',()=>{
+ assert.deepEqual(processInput.parse({expectedEditVersion:0}),{expectedEditVersion:0});
+ assert.deepEqual(processInput.parse({expectedEditVersion:0,languages:['en']}),{expectedEditVersion:0,languages:['en']});
+ for(const languages of [[],['en','en'],['unknown'],null,Array(17).fill('en')])assert.equal(processInput.safeParse({expectedEditVersion:0,languages}).success,false);
+});
 export const registry=()=>({registryVersion:'fixture-v1',languages:Object.fromEntries(languageCodes.map(c=>[c,{audio:{execution:'local_worker',modelId:'synthetic-audio'},translation:c==='en'?null:{execution:'server_adapter',modelId:'synthetic-translation'}}]))});
 test('strict manifest captures all16 execution/model routes, excludes English translation and freezes copy',()=>{
  const input=registry(),parsed=manifest(input);assert.ok(parsed);input.languages.en.audio.modelId='changed';assert.equal(parsed.languages.en.audio.modelId,'synthetic-audio');assert.ok(Object.isFrozen(parsed.languages.en));delete input.languages.vi;assert.equal(manifest(input),null);assert.equal(manifest(undefined),null);

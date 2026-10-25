@@ -70,7 +70,7 @@ export function createJobService(runtime){
    const state=await target(id,session);if(state.rev.editVersion!==input.expectedEditVersion)bad('EDIT_VERSION_CONFLICT',409);
    const rows=await models.LocalizedContent.find({revisionId:id}).session(session),en=rows.find(r=>r.languageCode==='en');if(!en||en.text!==state.rev.sourceTextEN||en.sourceVersion!==state.rev.sourceVersion)bad('CONTENT_STATE_UNAVAILABLE');
    const jobs=[];
-   for(const code of languageCodes){const row=rows.find(r=>r.languageCode===code);
+   for(const code of input.languages??languageCodes){const row=rows.find(r=>r.languageCode===code);
     const translation=code!=='en'&&(!row?.text||row.sourceVersion!==state.rev.sourceVersion);
     const audio=!translation&&(!row?.audioAsset||row.audioAsset.format!=='mp3'||!(row.durationSeconds>=90&&row.durationSeconds<=150)||row.audioAsset.textVersion!==row.textVersion||row.audioAsset.registryVersion!==registry.registryVersion||row.audioAsset.voiceOrModelId!==registry.languages[code].audio.modelId);
     if(translation||audio)jobs.push(await createJob(session,state,row,code,translation?'translation':'audio',p));
