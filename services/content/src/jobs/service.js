@@ -83,13 +83,19 @@ export function createJobService(runtime){
    if(!runtime.worker||!runtime.media||!models.MediaUpload)bad('JOB_CONFIGURATION_UNAVAILABLE');
    return executeMutation(connection,models,scope(p,'job.upload_resume',key,id,input),async session=>{
     const job=await Job.findById(id).session(session);if(!job)bad('JOB_NOT_FOUND',404);
-    if(job.status!=='running'||job.taskType!=='audio'||job.inputSnapshot.execution!=='local_worker'||job.attemptId!==input.attemptId||job.leaseOwner!==runtime.worker.id||!job.leaseExpiresAt||+job.leaseExpiresAt>now()||job.retryCount!==0||job.reclaimCount!==0||job.uploadResumedAt!=null||job.acceptedAt||job.resultRef||job.lastResultHash||job.error)bad('UPLOAD_RESUME_NOT_ALLOWED',409);
+    if(job.status!=='running'||job.taskType!=='audio'||job.inputSnapshot.execution!=='local_worker'||job.attemptId!==input.attemptId||job.leaseOwner!==runtime.worker.id||!job.leaseExpiresAt||+job.leaseExpiresAt>now()||job.retryCount!==0||job.reclaimCount!==0||job.acceptedAt||job.resultRef||job.lastResultHash||job.error)bad('UPLOAD_RESUME_NOT_ALLOWED',409);
+    // Read raw presence: Mongoose defaults must not hide a legacy missing counter.
+    const raw=await Job.collection.findOne({_id:job._id},{session,projection:{uploadResumeCount:1}});
+    const storedCount=raw?.uploadResumeCount;
+    if(storedCount!==undefined&&(!Number.isSafeInteger(storedCount)||storedCount<0||storedCount>2))bad('CONTENT_STATE_UNAVAILABLE');
+    const resumeCount=Math.max(storedCount??0,job.uploadResumedAt?1:0);
+    if(resumeCount>=2)bad('UPLOAD_RESUME_NOT_ALLOWED',409);
     const state=await current(job,session);if(state.rev.editVersion!==input.expectedEditVersion)bad('EDIT_VERSION_CONFLICT',409);
     const media=await models.MediaUpload.findById(input.mediaIntentId).session(session);
     if(!media||media.kind!=='audio'||!['uploading','uncertain','verified'].includes(media.status)||media.attachedAt||String(media.jobId)!==id||media.attemptId!==input.attemptId||String(media.poiId)!==String(job.poiId)||String(media.revisionId)!==String(job.revisionId)||media.languageCode!==job.languageCode||media.sourceVersion!==job.inputVersion.sourceVersion||media.textVersion!==job.inputVersion.textVersion||media.registryVersion!==job.inputSnapshot.registryVersion||media.voiceOrModelId!==job.inputSnapshot.modelId||media.format!=='mp3'||media.resourceType!=='video'||!media.sha256||!media.bytes||!media.startedAt||!(media.durationSeconds>=90&&media.durationSeconds<=150))bad('UPLOAD_RESUME_NOT_ALLOWED',409);
     try{await media.validate();}catch{bad('UPLOAD_RESUME_NOT_ALLOWED',409);}
     const resumedAt=new Date(now()),expiresAt=new Date(+resumedAt+300000);
-    const changed=await Job.updateOne({_id:job._id,status:'running',attemptId:input.attemptId,leaseOwner:runtime.worker.id,leaseExpiresAt:job.leaseExpiresAt,uploadResumedAt:null,retryCount:0,reclaimCount:0},{$set:{leaseExpiresAt:expiresAt,uploadResumedAt:resumedAt}},{session});
+    const changed=await Job.updateOne({_id:job._id,status:'running',attemptId:input.attemptId,leaseOwner:runtime.worker.id,leaseExpiresAt:job.leaseExpiresAt,uploadResumedAt:job.uploadResumedAt??null,uploadResumeCount:storedCount===undefined?{$exists:false}:storedCount,retryCount:0,reclaimCount:0},{$set:{leaseExpiresAt:expiresAt,uploadResumedAt:resumedAt,uploadResumeCount:resumeCount+1}},{session});
     if(changed.modifiedCount!==1)bad('UPLOAD_RESUME_NOT_ALLOWED',409);
     await touch(state,session);
     return{status:200,body:{data:{poiId:String(job.poiId),revisionId:String(job.revisionId),jobIds:[id],editVersion:state.rev.editVersion,status:'running'}},events:[{poiId:String(job.poiId),action:'job.retry',reason:'resume-upload: '+input.reason,result:{status:'succeeded',errorCode:null}}]};

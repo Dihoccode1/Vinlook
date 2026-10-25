@@ -183,13 +183,13 @@ async function resumableUpload(){
  return{r,job,input:{expectedEditVersion:1,attemptId:job.attemptId,mediaIntentId,reason:'Recover known upload'},manager:{...principal,account:{...principal.account,role:'Manager'}}};
 }
 
-test('Manager resumes original upload exactly once; replay is stable and reconcile/result never reuploads',async()=>{
+test('Manager resume replay is stable and reconcile/result never reuploads',async()=>{
  const f=await resumableUpload(),uuid=randomUUID(),oldClock=clock,uploads=uploadCalls;
  assert.equal((await request('/admin/jobs/'+f.job.id+'/resume-upload','POST',f.input,{'Idempotency-Key':uuid})).status,403);
  clock+=300001;
  try{
   const first=await service().resumeUpload(f.job.id,f.input,f.manager,uuid);assert.equal(first.status,200);assert.equal(first.body.data.editVersion,2);
-  const stored=await models.ProcessingJob.findById(f.job.id);assert.ok(stored.uploadResumedAt);assert.equal(stored.attemptId,f.job.attemptId);assert.equal(+stored.leaseExpiresAt,clock+300000);
+  const stored=await models.ProcessingJob.findById(f.job.id);assert.ok(stored.uploadResumedAt);assert.equal(stored.uploadResumeCount,1);assert.equal(stored.attemptId,f.job.attemptId);assert.equal(+stored.leaseExpiresAt,clock+300000);
   assert.deepEqual((await service().resumeUpload(f.job.id,f.input,f.manager,uuid)).body,first.body);
   assert.equal(+(await models.ProcessingJob.findById(f.job.id)).leaseExpiresAt,+stored.leaseExpiresAt);
   await assert.rejects(service().resumeUpload(f.job.id,{...f.input,reason:'Changed'},f.manager,uuid),e=>e.code==='IDEMPOTENCY_CONFLICT');
@@ -199,6 +199,40 @@ test('Manager resumes original upload exactly once; replay is stable and reconci
   assert.equal((await result(f.job,{status:'succeeded',mediaIntentId:f.input.mediaIntentId})).status,200);
   assert.equal(uploadCalls,uploads);assert.ok((await models.MediaUpload.findById(f.input.mediaIntentId)).attachedAt);
   assert.ok((await models.LocalizedContent.findOne({revisionId:f.r.revisionId,languageCode:'en'})).audioAsset);
+ }finally{clock=oldClock;}
+});
+
+test('recovery budget allows two total, counts legacy marker, and never grants a third or resets on retry',async()=>{
+ for(const legacy of [false,true]){
+  const f=await resumableUpload(),oldClock=clock;clock+=300001;
+  try{
+   if(legacy)await models.ProcessingJob.collection.updateOne({_id:new mongoose.Types.ObjectId(f.job.id)},{$set:{uploadResumedAt:new Date(clock-300000)},$unset:{uploadResumeCount:''}});
+   const input={...f.input},uuid=randomUUID();
+   const first=await service().resumeUpload(f.job.id,input,f.manager,uuid);assert.equal(first.status,200);
+   assert.equal((await models.ProcessingJob.findById(f.job.id)).uploadResumeCount,legacy?2:1);
+   if(!legacy){clock+=300001;input.expectedEditVersion=2;await service().resumeUpload(f.job.id,input,f.manager,randomUUID());}
+   let stored=await models.ProcessingJob.findById(f.job.id);assert.equal(stored.uploadResumeCount,2);const expiry=+stored.leaseExpiresAt;
+   clock+=300001;
+   await service().resumeUpload(f.job.id,f.input,f.manager,uuid);assert.equal(+(await models.ProcessingJob.findById(f.job.id)).leaseExpiresAt,expiry);
+   await assert.rejects(service().resumeUpload(f.job.id,{...input,expectedEditVersion:legacy?2:3},f.manager,randomUUID()),e=>e.code==='UPLOAD_RESUME_NOT_ALLOWED');
+   // Explicit retry retains lifetime budget even when it resets the attempt.
+   await models.ProcessingJob.updateOne({_id:f.job.id},{$set:{status:'failed',error:'PROVIDER_FAILED'}});
+   await service().retry(f.job.id,{expectedEditVersion:legacy?2:3},f.manager,randomUUID());
+   stored=await models.ProcessingJob.findById(f.job.id);assert.equal(stored.uploadResumeCount,2);assert.ok(stored.uploadResumedAt);
+   // Isolate the next legacy case from this intentionally requeued job.
+   await models.ProcessingJob.updateOne({_id:f.job.id},{$set:{status:'failed',error:'STALE_INPUT'}});
+  }finally{clock=oldClock;}
+ }
+});
+
+test('concurrent second recovery spends one remaining slot; legacy missing marker/counter starts at zero',async()=>{
+ const f=await resumableUpload(),oldClock=clock;clock+=300001;
+ try{
+  await models.ProcessingJob.collection.updateOne({_id:new mongoose.Types.ObjectId(f.job.id)},{$unset:{uploadResumeCount:'',uploadResumedAt:''}});
+  await service().resumeUpload(f.job.id,f.input,f.manager,randomUUID());assert.equal((await models.ProcessingJob.findById(f.job.id)).uploadResumeCount,1);
+  clock+=300001;const input={...f.input,expectedEditVersion:2};
+  const attempts=await Promise.allSettled([service().resumeUpload(f.job.id,input,f.manager,randomUUID()),service().resumeUpload(f.job.id,input,f.manager,randomUUID())]);
+  assert.equal(attempts.filter(x=>x.status==='fulfilled').length,1);assert.equal((await models.ProcessingJob.findById(f.job.id)).uploadResumeCount,2);assert.equal((await models.POIRevision.findById(f.r.revisionId)).editVersion,3);
  }finally{clock=oldClock;}
 });
 
@@ -213,7 +247,7 @@ test('resume rejects live/reclaimed/retried/stale/foreign media states and audit
   for(const field of ['reclaimCount','retryCount']){await models.ProcessingJob.updateOne({_id:f.job.id},{$set:{[field]:1}});await assert.rejects(service().resumeUpload(f.job.id,f.input,f.manager,randomUUID()),e=>e.code==='UPLOAD_RESUME_NOT_ALLOWED');await models.ProcessingJob.updateOne({_id:f.job.id},{$set:{[field]:0}});}
   const original=models.AuditOutbox.create;models.AuditOutbox.create=async()=>{throw Error('synthetic resume audit failure');};
   try{await assert.rejects(service().resumeUpload(f.job.id,f.input,f.manager,randomUUID()));}finally{models.AuditOutbox.create=original;}
-  const stored=await models.ProcessingJob.findById(f.job.id);assert.equal(stored.uploadResumedAt,null);assert.equal(+stored.leaseExpiresAt,+new Date(f.job.leaseExpiresAt));assert.equal((await models.POIRevision.findById(f.r.revisionId)).editVersion,1);
+  const stored=await models.ProcessingJob.findById(f.job.id);assert.equal(stored.uploadResumedAt,null);assert.equal(stored.uploadResumeCount,0);assert.equal(+stored.leaseExpiresAt,+new Date(f.job.leaseExpiresAt));assert.equal((await models.POIRevision.findById(f.r.revisionId)).editVersion,1);
   await models.LocalizedContent.updateOne({revisionId:f.r.revisionId,languageCode:'en'},{$set:{text:'Changed text'},$inc:{textVersion:1}});
   await assert.rejects(service().resumeUpload(f.job.id,f.input,f.manager,randomUUID()),e=>e.code==='STALE_JOB_INPUT');
  }finally{clock=oldClock;}
