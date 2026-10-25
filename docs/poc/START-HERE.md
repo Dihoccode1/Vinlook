@@ -16,7 +16,7 @@ git fetch origin
 git switch --track origin/codex/poc-demo
 ```
 
-Tú: `git switch -c codex/poc-tu-01-usage`; Hạo: `git switch -c codex/poc-hao-01-tourist`. Với task tiếp theo lấy tên branch trong Issue; mỗi task một PR. Không cùng push `codex/poc-demo`, không làm trên main. Local có thay đổi thì hỏi chủ file/cất bằng commit riêng theo chỉ dẫn, không reset/clean hay ghi đè.
+Tú: `git switch -c codex/poc-tu-01-contracts`; Hạo: `git switch -c codex/poc-hao-01-tourist`. Với task tiếp theo lấy tên branch trong Issue; mỗi task một PR. Không cùng push `codex/poc-demo`, không làm trên main. Local có thay đổi thì hỏi chủ file/cất bằng commit riêng theo chỉ dẫn, không reset/clean hay ghi đè.
 
 ```powershell
 npm ci

@@ -35,4 +35,4 @@ Hai người bắt đầu ngay từ cùng seed; dùng adapter/fixture theo hợp
 3. Ngày2 đầu buổi: tích hợp thật, xử lý lỗi, tiếp tục dữ liệu/review. Tú chuẩn bị Usage/graph/package/deployment artifact; Hạo gắn live adapters/tourist/Admin/monitor/navigation/offline. Mỗi người tiếp tục PR riêng của mình.
 4. Ngày2 cuối buổi: rehearsal cùng thiết bị thật, đo tải/cold start, backup trước thay đổi thật và release nếu toàn checklist đạt. Chưa đủ thì báo `NOT READY` với gap/owner/bằng chứng, xin Duy quyết định; không demo số giả hay publish thiếu.
 
-Xem [truy vết](TRACEABILITY.md), [cách nhận việc với AI](START-HERE.md), [hợp đồng liên nhóm](CONTRACTS.md), [review/merge/nghiệm thu](REVIEW-AND-ACCEPTANCE.md). Issue GitHub là bảng công việc thực; index liên kết sẽ được bổ sung sau khi tạo.
+Xem [truy vết](TRACEABILITY.md), [cách nhận việc với AI](START-HERE.md), [hợp đồng liên nhóm](CONTRACTS.md), [review/merge/nghiệm thu](REVIEW-AND-ACCEPTANCE.md), [Issues được giao](ISSUES.md) và [nhật ký/trạng thái](STATUS.md). Issue GitHub là bảng công việc thực; tracker tổng #81, Tú bắt đầu #70 và Hạo bắt đầu #76.
