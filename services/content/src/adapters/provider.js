@@ -2,6 +2,7 @@ import {hybrid} from './config.js';
 import {requestHash} from '../durability/validation.js';
 export class ProviderFailure extends Error{constructor(code='PROVIDER_OUTCOME_UNKNOWN',diagnosticCategory,validationReason){super(code);this.code=code;if(diagnosticCategory)this.diagnosticCategory=diagnosticCategory;if(validationReason)this.validationReason=validationReason;}}
 const translationReasons=Object.freeze(['blocked','candidate_count','finish_reason','role','part_count','part_shape','inner_json','object_shape','locale','text_shape']);
+const partShapeFields=Object.freeze(['textIsString','signaturePresent','signatureIsString','thoughtPresent','thoughtIsFalse','unknownFieldPresent']);
 export function providerRequest(job){
  const s=job.inputSnapshot;
  if(s.registryVersion!==hybrid.registryVersion||s.execution!=='server_adapter')throw new ProviderFailure('PROVIDER_FAILED');
@@ -28,7 +29,12 @@ export function parseTranslation(data,code){
  if(c[0]?.finishReason!=='STOP')reject('finish_reason');
  if(c[0].content?.role!=='model')reject('role');
  if(c[0].content.parts?.length!==1)reject('part_count');
- const part=c[0].content.parts[0];if(!part||Object.keys(part).some(k=>k!=='text')||typeof part.text!=='string')reject('part_shape');
+ const part=c[0].content.parts[0],isObject=part!==null&&typeof part==='object'&&!Array.isArray(part);
+ const own=key=>isObject&&Object.hasOwn(part,key);
+ const shape={textIsString:isObject&&typeof part.text==='string',signaturePresent:own('thoughtSignature'),signatureIsString:own('thoughtSignature')&&typeof part.thoughtSignature==='string',thoughtPresent:own('thought'),thoughtIsFalse:own('thought')&&part.thought===false,unknownFieldPresent:isObject&&Object.keys(part).some(k=>!['text','thoughtSignature','thought'].includes(k))};
+ if(!shape.textIsString||shape.unknownFieldPresent||(shape.signaturePresent&&!shape.signatureIsString)||(shape.thoughtPresent&&!shape.thoughtIsFalse)){
+  const error=new ProviderFailure(undefined,'translationvalidation','part_shape');error.partShape=shape;throw error;
+ }
  let v;try{v=JSON.parse(part.text);}catch{reject('inner_json');}
  if(!v||Array.isArray(v)||Object.keys(v).sort().join(',')!=='languageCode,text')reject('object_shape');
  if(v.languageCode!==code)reject('locale');
@@ -53,6 +59,7 @@ export function createGeminiProvider(config,{fetchImpl=fetch,logFailure=event=>c
   const category=combined.aborted?(combined.reason?.name==='TimeoutError'?'timeout':'aborted'):allowed.includes(error?.diagnosticCategory)?error.diagnosticCategory:phase;
   const event={event:'gemini_provider_failure',taskType:job.taskType==='translation'?'translation':'audio',category,httpStatus:Number.isInteger(httpStatus)&&httpStatus>=100&&httpStatus<=599?httpStatus:null,jsonContentType:typeof jsonContentType==='boolean'?jsonContentType:null,...(/^[a-f0-9]{24}$/.test(job.id??'')?{jobId:job.id}:{})};
   if(category==='translationvalidation'&&translationReasons.includes(error?.validationReason))event.validationReason=error.validationReason;
+  if(event.validationReason==='part_shape'&&error?.partShape){const shape={};for(const field of partShapeFields)if(typeof error.partShape[field]==='boolean')shape[field]=error.partShape[field];event.partShape=shape;}
   try{logFailure(event);}catch{} // Logging cannot change quota/unknown-outcome behavior.
   throw error instanceof ProviderFailure?error:new ProviderFailure();
  }
