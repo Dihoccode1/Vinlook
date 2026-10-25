@@ -2,6 +2,7 @@ import {loadAdapterConfig,processingManifest,publicationRegistry} from '../adapt
 import {createAdapterModels} from '../adapters/models.js';
 import {createAdapterRunner} from '../adapters/runner.js';
 import {createGeminiProvider} from '../adapters/provider.js';
+import {createTranslationPreflight} from '../adapters/preflight.js';
 import {createTranscoder,verifyBinaries} from '../adapters/transcode.js';
 import mongoose from 'mongoose';
 import {createJobModel} from '../jobs/model.js';
@@ -48,7 +49,7 @@ export async function connectContentRuntime(config){
   const runtime={connection,models,worker:config.worker,publicCursorKey:config.publicCursorKey,authorization:config.authorization,origins:config.origins,now:Date.now,start:()=>sender.start(),async close(){await runtime.adapters?.close();await sender.stop();await connection.close();}};
   if(config.worker){runtime.processingManifest=processingManifest;runtime.publicationRegistry=publicationRegistry;}
   if(config.media){runtime.media=createMediaService(runtime,createCloudinaryAdapter(config.media),{mode:config.mode});runtime.verifyThumbnail=runtime.media.verifyThumbnail;runtime.attachThumbnail=runtime.media.attachThumbnail;}
-  if(config.adapters){await verifyBinaries(config.adapters);runtime.processingManifest=processingManifest;runtime.publicationRegistry=publicationRegistry;runtime.adapters=createAdapterRunner(runtime,config.adapters,{provider:createGeminiProvider(config.adapters),transcode:createTranscoder(config.adapters)});}
+  if(config.adapters){await verifyBinaries(config.adapters);runtime.processingManifest=processingManifest;runtime.publicationRegistry=publicationRegistry;runtime.translationPreflight=createTranslationPreflight(config.adapters);runtime.adapters=createAdapterRunner(runtime,config.adapters,{provider:createGeminiProvider(config.adapters),transcode:createTranscoder(config.adapters)});}
   return runtime;
  }catch{await connection.close().catch(()=>{});throw new Error('Content dependencies unavailable');}
 }
