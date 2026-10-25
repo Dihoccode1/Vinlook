@@ -3,7 +3,7 @@ import {z} from 'zod';
 import {protectedRequest} from '../authorization.js';
 import {parse,objectId,DraftFailure} from '../drafts/validation.js';
 import {uuid} from '../durability/validation.js';
-import {processInput,retryInput,claimInput,attemptInput,resultInput} from './validation.js';
+import {processInput,retryInput,resumeUploadInput,claimInput,attemptInput,resultInput} from './validation.js';
 import {workerPrincipal} from './credentials.js';
 import {createJobService} from './service.js';
 import {readMultipart} from '../media/multipart.js';
@@ -17,6 +17,7 @@ export function jobRouter(runtime){
  const worker=(req,res,next)=>{try{res.locals.worker=workerPrincipal(runtime.worker,req.get('X-Vinlook-Worker-Id'),req.get('X-Vinlook-Worker-Key'),(runtime.now??Date.now)());next();}catch(error){next(error);}};
  router.post('/admin/revisions/:id/process',auth(true),...json,run((req,res)=>service.process(parse(objectId,req.params.id),parse(processInput,req.body),res.locals.principal,parse(uuid,req.get('Idempotency-Key')))));
  router.post('/admin/jobs/:id/retry',auth(true),...json,run((req,res)=>service.retry(parse(objectId,req.params.id),parse(retryInput,req.body),res.locals.principal,parse(uuid,req.get('Idempotency-Key')))));
+ router.post('/admin/jobs/:id/resume-upload',protectedRequest(runtime.authorization,{roles:['Manager'],requireSession:true}),...json,run((req,res)=>service.resumeUpload(parse(objectId,req.params.id),parse(resumeUploadInput,req.body),res.locals.principal,parse(uuid,req.get('Idempotency-Key')))));
  router.get('/admin/jobs',auth(false),run(req=>{const pairs=[...new URL(req.originalUrl,'http://request.invalid').searchParams];if(pairs.length!==1||pairs[0][0]!=='revisionId')throw new DraftFailure('INVALID_INPUT',422);return service.list(parse(objectId,pairs[0][1]));}));
  router.get('/admin/jobs/:id',auth(false),run(req=>service.read(parse(objectId,req.params.id))));
  router.post('/internal/jobs/claim',worker,...json,run((req,res)=>{const input=parse(claimInput,req.body);if(input.workerId!==res.locals.worker.id)throw new DraftFailure('ACCESS_DENIED',403);return service.claim(res.locals.worker,input.capabilities);}));

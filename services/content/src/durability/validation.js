@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const id = z.string().regex(/^[a-f0-9]{24}$/);
 export const uuid = z.uuid().refine(v => v === v.toLowerCase());
 export const utc = z.string().refine(v => { try { return new Date(v).toISOString() === v; } catch { return false; } });
-export const operations = ['poi.create', 'revision.draft', 'revision.process', 'job.retry', 'revision.publish', 'poi.delete', 'poi.restore'];
+export const operations = ['poi.create', 'revision.draft', 'revision.process', 'job.retry', 'job.upload_resume', 'revision.publish', 'poi.delete', 'poi.restore'];
 export const actions = ['poi.create', 'poi.update', 'poi.delete', 'poi.restore', 'revision.submit', 'revision.return', 'revision.publish', 'content.review', 'job.create', 'job.retry', 'job.complete'];
 const codes = ['VALIDATION_FAILED', 'CONFLICT', 'DEPENDENCY_UNAVAILABLE', 'PROCESSING_FAILED'];
 export const eventSchema = z.strictObject({ eventId: uuid, actorId: id, workSessionId: id, action: z.enum(actions), poiId: id,
@@ -13,7 +13,7 @@ export const eventSchema = z.strictObject({ eventId: uuid, actorId: id, workSess
 export const resultSchema = z.strictObject({ data: z.strictObject({ poiId: id.optional(), revisionId: id.optional(),
   jobIds: z.array(id).max(32).refine(v => new Set(v).size === v.length).optional(),
   editVersion: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).optional(),
-  status: z.enum(['draft', 'in_review', 'published', 'queued', 'deleted', 'restored']).optional(),
+  status: z.enum(['draft', 'in_review', 'published', 'queued', 'running', 'deleted', 'restored']).optional(),
 }).refine(v => Boolean(v.poiId || v.revisionId || v.jobIds?.length)) });
 export class MutationFailure extends Error {
   constructor(code = 'MUTATION_UNAVAILABLE', status = 503) { super(code); Object.assign(this, { code, status }); }
