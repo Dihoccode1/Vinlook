@@ -78,6 +78,23 @@ export function createJobService(runtime){
    if(!jobs.length)bad('NO_WORK_REQUIRED',409);await touch(state,session);
    return {status:202,body:{data:{poiId:String(state.poi._id),revisionId:id,jobIds:jobs.map(j=>String(j._id)),status:'queued'}},events:[{poiId:String(state.poi._id),action:'job.create',result:{status:'succeeded',errorCode:null}}]};
   },now);},
+  async resumeUpload(id,input,p,key){
+   configured();if(p.account.role!=='Manager'||!p.currentWorkSession)bad('ACCESS_DENIED',403);
+   if(!runtime.worker||!runtime.media||!models.MediaUpload)bad('JOB_CONFIGURATION_UNAVAILABLE');
+   return executeMutation(connection,models,scope(p,'job.upload_resume',key,id,input),async session=>{
+    const job=await Job.findById(id).session(session);if(!job)bad('JOB_NOT_FOUND',404);
+    if(job.status!=='running'||job.taskType!=='audio'||job.inputSnapshot.execution!=='local_worker'||job.attemptId!==input.attemptId||job.leaseOwner!==runtime.worker.id||!job.leaseExpiresAt||+job.leaseExpiresAt>now()||job.retryCount!==0||job.reclaimCount!==0||job.uploadResumedAt!=null||job.acceptedAt||job.resultRef||job.lastResultHash||job.error)bad('UPLOAD_RESUME_NOT_ALLOWED',409);
+    const state=await current(job,session);if(state.rev.editVersion!==input.expectedEditVersion)bad('EDIT_VERSION_CONFLICT',409);
+    const media=await models.MediaUpload.findById(input.mediaIntentId).session(session);
+    if(!media||media.kind!=='audio'||!['uploading','uncertain','verified'].includes(media.status)||media.attachedAt||String(media.jobId)!==id||media.attemptId!==input.attemptId||String(media.poiId)!==String(job.poiId)||String(media.revisionId)!==String(job.revisionId)||media.languageCode!==job.languageCode||media.sourceVersion!==job.inputVersion.sourceVersion||media.textVersion!==job.inputVersion.textVersion||media.registryVersion!==job.inputSnapshot.registryVersion||media.voiceOrModelId!==job.inputSnapshot.modelId||media.format!=='mp3'||media.resourceType!=='video'||!media.sha256||!media.bytes||!media.startedAt||!(media.durationSeconds>=90&&media.durationSeconds<=150))bad('UPLOAD_RESUME_NOT_ALLOWED',409);
+    try{await media.validate();}catch{bad('UPLOAD_RESUME_NOT_ALLOWED',409);}
+    const resumedAt=new Date(now()),expiresAt=new Date(+resumedAt+300000);
+    const changed=await Job.updateOne({_id:job._id,status:'running',attemptId:input.attemptId,leaseOwner:runtime.worker.id,leaseExpiresAt:job.leaseExpiresAt,uploadResumedAt:null,retryCount:0,reclaimCount:0},{$set:{leaseExpiresAt:expiresAt,uploadResumedAt:resumedAt}},{session});
+    if(changed.modifiedCount!==1)bad('UPLOAD_RESUME_NOT_ALLOWED',409);
+    await touch(state,session);
+    return{status:200,body:{data:{poiId:String(job.poiId),revisionId:String(job.revisionId),jobIds:[id],editVersion:state.rev.editVersion,status:'running'}},events:[{poiId:String(job.poiId),action:'job.retry',reason:'resume-upload: '+input.reason,result:{status:'succeeded',errorCode:null}}]};
+   },now);
+  },
   async retry(id,input,p,key){configured();return executeMutation(connection,models,scope(p,'job.retry',key,id,input),async session=>{
    const job=await Job.findById(id).session(session);if(!job)bad('JOB_NOT_FOUND',404);if(!['failed','waiting_quota'].includes(job.status))bad('JOB_NOT_RETRYABLE',409);
    if(job.error==='PROVIDER_OUTCOME_UNKNOWN'&&!input.acknowledgeProviderResend)bad('PROVIDER_RETRY_CONFIRMATION_REQUIRED',409);

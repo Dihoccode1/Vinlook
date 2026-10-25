@@ -177,6 +177,58 @@ test('process and retry outbox failure roll back durable jobs and counters; resu
  try{assert.equal((await request('/admin/jobs/'+job.id+'/retry','POST',{expectedEditVersion:2},{'Idempotency-Key':randomUUID()})).status,503);}finally{models.AuditOutbox.create=original;}
  assert.equal(JSON.stringify(await models.ProcessingJob.findById(job.id).lean()),before);assert.equal((await models.POIRevision.findById(r.revisionId)).editVersion,2);
 });
+async function resumableUpload(){
+ const r=await draft();await processJobs(r);const job=await claim(),mediaIntentId=await audioIntent(job);assert.equal((await workerUpload(job,mediaIntentId)).status,201);
+ await models.MediaUpload.updateOne({_id:mediaIntentId},{$set:{status:'uncertain',safeErrorCode:'DEPENDENCY_UNAVAILABLE'}});
+ return{r,job,input:{expectedEditVersion:1,attemptId:job.attemptId,mediaIntentId,reason:'Recover known upload'},manager:{...principal,account:{...principal.account,role:'Manager'}}};
+}
+
+test('Manager resumes original upload exactly once; replay is stable and reconcile/result never reuploads',async()=>{
+ const f=await resumableUpload(),uuid=randomUUID(),oldClock=clock,uploads=uploadCalls;
+ assert.equal((await request('/admin/jobs/'+f.job.id+'/resume-upload','POST',f.input,{'Idempotency-Key':uuid})).status,403);
+ clock+=300001;
+ try{
+  const first=await service().resumeUpload(f.job.id,f.input,f.manager,uuid);assert.equal(first.status,200);assert.equal(first.body.data.editVersion,2);
+  const stored=await models.ProcessingJob.findById(f.job.id);assert.ok(stored.uploadResumedAt);assert.equal(stored.attemptId,f.job.attemptId);assert.equal(+stored.leaseExpiresAt,clock+300000);
+  assert.deepEqual((await service().resumeUpload(f.job.id,f.input,f.manager,uuid)).body,first.body);
+  assert.equal(+(await models.ProcessingJob.findById(f.job.id)).leaseExpiresAt,+stored.leaseExpiresAt);
+  await assert.rejects(service().resumeUpload(f.job.id,{...f.input,reason:'Changed'},f.manager,uuid),e=>e.code==='IDEMPOTENCY_CONFLICT');
+  await assert.rejects(service().resumeUpload(f.job.id,{...f.input,expectedEditVersion:2},f.manager,randomUUID()),e=>e.code==='UPLOAD_RESUME_NOT_ALLOWED');
+  const audit=await models.AuditOutbox.findOne({'payload.poiId':f.r.poiId,'payload.action':'job.retry'});assert.equal(audit.payload.reason,'resume-upload: Recover known upload');
+  assert.equal((await worker('/'+f.job.id+'/media-intents/'+f.input.mediaIntentId+'/reconcile',{})).status,200);
+  assert.equal((await result(f.job,{status:'succeeded',mediaIntentId:f.input.mediaIntentId})).status,200);
+  assert.equal(uploadCalls,uploads);assert.ok((await models.MediaUpload.findById(f.input.mediaIntentId)).attachedAt);
+  assert.ok((await models.LocalizedContent.findOne({revisionId:f.r.revisionId,languageCode:'en'})).audioAsset);
+ }finally{clock=oldClock;}
+});
+
+test('resume rejects live/reclaimed/retried/stale/foreign media states and audit failure rolls back lease',async()=>{
+ const f=await resumableUpload(),oldClock=clock;
+ await assert.rejects(service().resumeUpload(f.job.id,f.input,f.manager,randomUUID()),e=>e.code==='UPLOAD_RESUME_NOT_ALLOWED');
+ clock+=300001;
+ try{
+  await assert.rejects(service().resumeUpload(f.job.id,{...f.input,attemptId:randomUUID()},f.manager,randomUUID()),e=>e.code==='UPLOAD_RESUME_NOT_ALLOWED');
+  await assert.rejects(service().resumeUpload(f.job.id,{...f.input,mediaIntentId:String(new mongoose.Types.ObjectId())},f.manager,randomUUID()),e=>e.code==='UPLOAD_RESUME_NOT_ALLOWED');
+  await assert.rejects(service().resumeUpload(f.job.id,{...f.input,expectedEditVersion:9},f.manager,randomUUID()),e=>e.code==='EDIT_VERSION_CONFLICT');
+  for(const field of ['reclaimCount','retryCount']){await models.ProcessingJob.updateOne({_id:f.job.id},{$set:{[field]:1}});await assert.rejects(service().resumeUpload(f.job.id,f.input,f.manager,randomUUID()),e=>e.code==='UPLOAD_RESUME_NOT_ALLOWED');await models.ProcessingJob.updateOne({_id:f.job.id},{$set:{[field]:0}});}
+  const original=models.AuditOutbox.create;models.AuditOutbox.create=async()=>{throw Error('synthetic resume audit failure');};
+  try{await assert.rejects(service().resumeUpload(f.job.id,f.input,f.manager,randomUUID()));}finally{models.AuditOutbox.create=original;}
+  const stored=await models.ProcessingJob.findById(f.job.id);assert.equal(stored.uploadResumedAt,null);assert.equal(+stored.leaseExpiresAt,+new Date(f.job.leaseExpiresAt));assert.equal((await models.POIRevision.findById(f.r.revisionId)).editVersion,1);
+  await models.LocalizedContent.updateOne({revisionId:f.r.revisionId,languageCode:'en'},{$set:{text:'Changed text'},$inc:{textVersion:1}});
+  await assert.rejects(service().resumeUpload(f.job.id,f.input,f.manager,randomUUID()),e=>e.code==='STALE_JOB_INPUT');
+ }finally{clock=oldClock;}
+});
+
+test('concurrent Manager recovery and expired worker claim cannot accept two attempts',async()=>{
+ const f=await resumableUpload(),oldClock=clock;clock+=300001;
+ try{
+  const outcomes=await Promise.allSettled([service().resumeUpload(f.job.id,f.input,f.manager,randomUUID()),service().claim(local,['en'])]);
+  const stored=await models.ProcessingJob.findById(f.job.id);
+  if(stored.uploadResumedAt){assert.equal(stored.attemptId,f.job.attemptId);assert.equal(stored.reclaimCount,0);assert.equal(outcomes[1].status,'fulfilled');assert.equal(outcomes[1].value.job,null);}
+  else{assert.notEqual(stored.attemptId,f.job.attemptId);assert.equal(stored.reclaimCount,1);assert.equal(outcomes[0].status,'rejected');}
+ }finally{clock=oldClock;}
+});
+
 test('in_review and deleted parents reject late output without mutating locale or receipt',async()=>{
  for(const state of ['in_review','deleted']){
   const r=await draft();await processJobs(r);const job=await claim();

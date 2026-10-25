@@ -10,6 +10,7 @@ export const manifestSchema=z.strictObject({registryVersion:z.string().regex(/^[
 export function manifest(value){const r=manifestSchema.safeParse(value);if(!r.success)return null;for(const entry of Object.values(r.data.languages)){Object.freeze(entry.audio);if(entry.translation)Object.freeze(entry.translation);Object.freeze(entry);}Object.freeze(r.data.languages);return Object.freeze(r.data);}
 export const processInput=z.strictObject({expectedEditVersion:version,languages:z.array(z.enum(languageCodes)).min(1).max(16).refine(v=>new Set(v).size===v.length).optional()});
 export const retryInput=z.strictObject({expectedEditVersion:version,acknowledgeProviderResend:z.literal(true).optional()});
+export const resumeUploadInput=z.strictObject({expectedEditVersion:version,attemptId:uuid,mediaIntentId:objectId,reason:z.string().trim().min(1).max(485).refine(v=>!/[\x00-\x1f\x7f]/.test(v))});
 export const claimInput=z.strictObject({workerId:identifier,capabilities:z.array(z.enum(languageCodes)).min(1).max(16).refine(v=>new Set(v).size===v.length)});
 export const attemptInput=z.strictObject({attemptId:uuid});
 export const resultInput=z.strictObject({attemptId:uuid,inputVersion,outcome:z.union([

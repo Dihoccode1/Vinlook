@@ -4,7 +4,7 @@ import {randomBytes,randomUUID} from 'node:crypto';
 import mongoose from 'mongoose';
 import {requestHash} from '../src/durability/validation.js';
 import {createJobModel} from '../src/jobs/model.js';
-import {manifest,claimInput,resultInput,processInput} from '../src/jobs/validation.js';
+import {manifest,claimInput,resultInput,processInput,resumeUploadInput} from '../src/jobs/validation.js';
 import {workerConfig,workerPrincipal} from '../src/jobs/credentials.js';
 import {languageCodes} from '../src/models/index.js';
 const key=()=>randomBytes(32).toString('base64url');
@@ -12,6 +12,11 @@ test('Process accepts an explicit unique locale subset and preserves omitted sel
  assert.deepEqual(processInput.parse({expectedEditVersion:0}),{expectedEditVersion:0});
  assert.deepEqual(processInput.parse({expectedEditVersion:0,languages:['en']}),{expectedEditVersion:0,languages:['en']});
  for(const languages of [[],['en','en'],['unknown'],null,Array(17).fill('en')])assert.equal(processInput.safeParse({expectedEditVersion:0,languages}).success,false);
+});
+test('upload resume input binds exact attempt/media/version and a bounded audit reason',()=>{
+ const input={expectedEditVersion:1,attemptId:randomUUID(),mediaIntentId:'a'.repeat(24),reason:' Resume known asset '};
+ assert.equal(resumeUploadInput.parse(input).reason,'Resume known asset');
+ for(const patch of [{reason:''},{reason:'x'.repeat(486)},{reason:'bad\nreason'},{attemptId:'bad'},{mediaIntentId:'bad'},{force:true}])assert.equal(resumeUploadInput.safeParse({...input,...patch}).success,false);
 });
 export const registry=()=>({registryVersion:'fixture-v1',languages:Object.fromEntries(languageCodes.map(c=>[c,{audio:{execution:'local_worker',modelId:'synthetic-audio'},translation:c==='en'?null:{execution:'server_adapter',modelId:'synthetic-translation'}}]))});
 test('strict manifest captures all16 execution/model routes, excludes English translation and freezes copy',()=>{
