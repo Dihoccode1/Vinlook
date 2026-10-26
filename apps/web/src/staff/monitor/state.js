@@ -40,7 +40,10 @@ export function createMonitor({api,now=Date.now,schedule=setInterval,cancel=clea
       if(results.some(r=>r.status==='rejected'&&[401,403].includes(r.reason?.status)))throw Object.assign(Error(),{status:401});
       const [summary,health,jobs]=results;
       if(summary.status==='fulfilled'){
-        const safe=monitorSummary(summary.value),fresh=[safe.refreshedAt,safe.asOf].every(time=>now()-Date.parse(time)>=0&&now()-Date.parse(time)<=30000);
+        // Server and browser clocks can differ slightly. Keep the 30s age limit,
+        // permit at most 10s ahead, and never accept an inverted server timeline.
+        const safe=monitorSummary(summary.value),receivedAt=now(),fresh=Date.parse(safe.asOf)<=Date.parse(safe.refreshedAt)
+          &&[safe.refreshedAt,safe.asOf].every(time=>receivedAt-Date.parse(time)>=-10000&&receivedAt-Date.parse(time)<=30000);
         emit({summary:safe,status:fresh?'fresh':'stale',lastSuccessAt:new Date(now()).toISOString(),error:fresh?null:'SAMPLE_STALE'});
       }else emit({status:state.summary?'stale':'unavailable',error:'SUMMARY_UNAVAILABLE'});
       emit({health:monitorHealth(health.status==='fulfilled'?health.value:null),jobs:monitorJobs(jobs.status==='fulfilled'?jobs.value:null)});

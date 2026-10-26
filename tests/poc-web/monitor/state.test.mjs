@@ -10,6 +10,13 @@ test('old or future sample time is stale even when the refresh timestamp looks c
   }
 });
 
+test('small server clock skew stays fresh, but old data and large skew remain stale',async()=>{
+  for(const [serverTime,expected] of [[5338,'fresh'],[10000,'fresh'],[10001,'stale'],[-30001,'stale']]){
+    const api={authorize:async()=>({account:{role:'Manager',status:'active'}}),summary:async()=>summary(serverTime),health:async()=>({}),jobs:async()=>({})};
+    const store=createMonitor({api,now:()=>0});await store.refresh();assert.equal(store.getSnapshot().status,expected);
+  }
+});
+
 test('returning to the tab refreshes immediately despite an old hung request; old response cannot overwrite new sample',async()=>{
   let active=true,resolve,calls=0;
   const api={authorize:async()=>({account:{role:'Manager',status:'active'}}),summary:()=>++calls===1?new Promise(done=>resolve=done):Promise.resolve({...summary(0),onlineVisitors:7}),health:async()=>({}),jobs:async()=>({})};
