@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import mongoose from 'mongoose';
 import { createUsageModels } from '../src/models.js';
 import { applyUsageTestCatalog, verifyUsageCatalog, catalogFingerprint } from '../src/catalog.js';
+import { planCatalog, applyCatalog } from '../src/catalog-operator.js';
 import { createMongoUsageStore } from '../src/mongo-store.js';
 import { createUsageService } from '../src/domain.js';
 import { languageCodes } from '../src/policy.js';
@@ -27,6 +28,15 @@ test('Usage real disposable Mongo replica-set and HTTP acceptance', { timeout: 1
   await connection.asPromise(); t.after(() => connection.close());
   assert.equal((await connection.db.listCollections().toArray()).length, 0); // Abort if this is not a fresh fixture DB.
   await applyUsageTestCatalog(connection, catalogFingerprint);
+  await t.test('production catalog utility on a second fresh disposable database', async () => {
+    const operator = connection.useDb('vinlook_usage', { useCache: true });
+    assert.equal((await operator.db.listCollections().toArray()).length, 0);
+    assert.equal((await planCatalog(operator)).operations.length, 6);
+    await assert.rejects(applyCatalog(operator, 'wrong'));
+    assert.equal((await applyCatalog(operator, `vinlook_usage ${catalogFingerprint}`)).completed, 6);
+    assert.equal((await planCatalog(operator)).complete, true);
+    assert.equal((await applyCatalog(operator, `vinlook_usage ${catalogFingerprint}`)).completed, 0);
+  });
   const models = createUsageModels(connection);
   const reset = async () => { assert.equal(connection.name, 'vinlook_usage_poc_test'); await models.Presence.deleteMany({}); await models.Listening.deleteMany({}); };
   const makeService = (selectedModels = models, admit = async () => true) => createUsageService({
