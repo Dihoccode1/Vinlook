@@ -1,5 +1,17 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {createNavigation} from '../../../apps/web/src/navigation/controller.js';
 const flush=()=>new Promise(r=>setImmediate(r)),destination={poiId:'fixture-poi',revisionId:'fixture-revision',graphVersion:'fixture-graph',entrance:[106.71,10.7]};
+test('explicit Retry replaces a failed Worker without automatically repeating the calculation',async()=>{
+  let fix,created=0,calls=0,terminated=0;
+  const nav=createNavigation({workerFactory:()=>{
+    const instance=++created;
+    return {calculate:async({token})=>{calls++;if(instance===1)throw Object.assign(Error(),{code:'CALCULATION_FAILED'});return {...token,geometry:[[106.7,10.7],[106.71,10.7]]};},
+      terminate(){terminated++;if(instance===1)throw Error('already failed');}};
+  },geolocation:{watchPosition:fn=>{fix=fn;return 1;},clearWatch(){}},uuid:()=>`request-${calls}`,maxRoutePoints:20,maxCalculations:10});
+  nav.start(destination);fix({timestamp:1,coords:{longitude:106.7,latitude:10.7,accuracy:5}});await flush();
+  assert.equal(nav.snapshot().status,'route_unavailable');assert.equal(nav.snapshot().inflight,null);
+  assert.equal(created,1);assert.equal(calls,1);assert.equal(terminated,1);
+  await nav.retry();assert.equal(created,2);assert.equal(calls,2);assert.equal(nav.snapshot().status,'navigating');nav.stop();
+});
 test('foreground GPS loss retains route; stop/withdraw cancels worker; late result ignored; arrival no autoplay',async()=>{
   let onFix,onError,terminated=0,clear=0,resolve,visible=true,n=0,token;
   const nav=createNavigation({workerFactory:()=>({calculate:args=>{token=args.token;return new Promise(r=>resolve=r);},terminate:()=>terminated++}),geolocation:{watchPosition:(fix,error)=>{onFix=fix;onError=error;return 1;},clearWatch:()=>clear++},visible:()=>visible,uuid:()=>String(++n),now:()=>n,maxRoutePoints:20,maxCalculations:10});
