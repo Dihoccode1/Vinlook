@@ -1,4 +1,6 @@
-import {lazy,Suspense,useEffect,useRef,useState} from 'react';
+import {lazy,Suspense,useEffect,useMemo,useRef,useState} from 'react';
+import {NavigationPanel} from '../navigation/NavigationPanel.jsx';
+import {createTouristNavigation} from '../navigation/runtime.js';
 import {LanguageSelector} from '../i18n/LanguageSelector.jsx';
 import {useLocale,useTouristTranslation} from '../i18n/provider.jsx';
 import {createPlayer} from './player.js';
@@ -11,11 +13,14 @@ function DefaultMap(props){return props.styleUrl?<Suspense fallback={<p role="st
 const emptyPage={items:[],nextCursor:null,snapshotId:null};
 const unavailableUsage=Object.fromEntries(['presence','start','heartbeat','end'].map(k=>[k,()=>Promise.reject(Error('USAGE_BRIDGE_PENDING'))]));
 function Picture({src,alt,className=''}){const [failed,setFailed]=useState(false);useEffect(()=>setFailed(false),[src]);return failed?<div className={'picture-fallback '+className} aria-label={alt}>◇</div>:<img className={className} src={src} alt={alt} loading="lazy" onError={()=>setFailed(true)}/>;}
-export function TouristApp({content,mapStyleUrl=null,usage=null,MapComponent=DefaultMap}){
+export function TouristApp({content,mapStyleUrl=null,usage=null,routing=null,MapComponent=DefaultMap}){
  const t=useTouristTranslation(),locale=useLocale(),copy=touristCopy(locale.locale);
  const [page,setPage]=useState(emptyPage),[status,setStatus]=useState('loading'),[query,setQuery]=useState(''),[mode,setMode]=useState('all');
  const [reload,setReload]=useState(0),[selectedId,setSelectedId]=useState(null),[detail,setDetail]=useState(null),[detailStatus,setDetailStatus]=useState('idle');
  const [position,setPosition]=useState(null),[gpsStatus,setGpsStatus]=useState('idle'),[playback,setPlayback]=useState({state:'idle',item:null}),[time,setTime]=useState(0);
+ const [navigationState,setNavigationState]=useState(null);
+ const navigation=useMemo(()=>routing?createTouristNavigation(routing,setNavigationState):null,[routing]);
+ useEffect(()=>()=>navigation?.stop(),[navigation]);
  const player=useRef(null),geoRequest=useRef(0),loadGeneration=useRef(0),moreAbort=useRef(null);
  useEffect(()=>{
   const media=new Audio();media.preload='none';
@@ -67,12 +72,12 @@ export function TouristApp({content,mapStyleUrl=null,usage=null,MapComponent=Def
    {page.nextCursor&&<button className="tour-retry" onClick={()=>void more()} disabled={status!=='ready'}>{status==='more'?t('common.loading'):copy.more}</button>}
    <footer className="tour-list-footer"><span className="status-dot" aria-hidden="true"/> {copy.guides} · Vinlook</footer>
   </section>
-  <section className="tour-map-panel" aria-label={t('map.title')}><MapComponent styleUrl={mapStyleUrl} items={page.items} selectedId={selectedId} position={position} onSelect={setSelectedId} labels={{...copy,map:t('map.title'),error:t('common.error'),retry:t('common.retry')}}/>
+  <section className="tour-map-panel" aria-label={t('map.title')}><MapComponent styleUrl={mapStyleUrl} items={page.items} selectedId={selectedId} position={navigationState?.latestFix?{lon:navigationState.latestFix.position[0],lat:navigationState.latestFix.position[1]}:position} route={navigationState?.route?.geometry??null} onSelect={setSelectedId} labels={{...copy,map:t('map.title'),error:t('common.error'),retry:t('common.retry')}}/>
    <div className="map-caption" dir="ltr"><span className="status-dot"/> HO CHI MINH CITY <span>10.7769° N · 106.7009° E</span></div>
    <button className="locate-control" onClick={locate} disabled={gpsStatus==='loading'} aria-label={t('map.locateMe')}>◎</button>
    {selectedId&&<section className="poi-detail" aria-label={t('poi.details')}><button className="detail-close" aria-label={t('common.close')} onClick={()=>setSelectedId(null)}>×</button>
     {detailStatus==='loading'&&<p role="status">{t('common.loading')}</p>}{detailStatus==='error'&&<div role="alert"><p>{copy.connectError}</p><button onClick={()=>setReload(x=>x+1)}>{t('common.retry')}</button></div>}
-    {detail&&<><Picture className="detail-picture" src={detail.thumbnail.url} alt={detail.nameEN}/><div className="detail-body"><p className="tour-eyebrow">{copy.guides} · {formatTime(detail.audio.durationSeconds)}</p><h2>{detail.nameEN}</h2><button className="listen-button" onClick={()=>void player.current?.play(detail)}>▶ {t('audio.play')}</button><h3>{t('poi.description')}</h3><p className="detail-text">{detail.text}</p></div></>}
+    {detail&&<><Picture className="detail-picture" src={detail.thumbnail.url} alt={detail.nameEN}/><div className="detail-body"><p className="tour-eyebrow">{copy.guides} · {formatTime(detail.audio.durationSeconds)}</p><h2>{detail.nameEN}</h2><button className="listen-button" onClick={()=>void player.current?.play(detail)}>▶ {t('audio.play')}</button><NavigationPanel controller={navigation} destination={routing?{poiId:detail.id,revisionId:detail.revisionId,graphVersion:routing.graphVersion,entrance:detail.entrance.coordinates}:null} name={detail.nameEN}/><h3>{t('poi.description')}</h3><p className="detail-text">{detail.text}</p></div></>}
    </section>}
   </section></div>
   {playback.item&&<section className="tour-mini-player" aria-label={copy.guides}><div className="mini-title"><span className="sound-glyph" aria-hidden="true">▂▅▇▃</span><div><strong>{playback.item.nameEN}</strong><span>{playback.item.languageCode} · {copy.guides}</span></div></div>

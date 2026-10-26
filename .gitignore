@@ -43,3 +43,4 @@ docs/setup/*.png
 *.pth
 *.dump
 .bootstrap-review/
+apps/web/public/routing/

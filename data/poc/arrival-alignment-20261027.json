@@ -1,0 +1,187 @@
+{
+  "kind": "desktop_graph_alignment_only_not_fieldwork_or_human_approval",
+  "graphVersion": "hcmc-20261027-v1",
+  "rows": [
+    {
+      "poiRef": "POI-001",
+      "point": [
+        106.6969924,
+        10.7757289
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:329878185:3:b"
+      }
+    },
+    {
+      "poiRef": "POI-002",
+      "point": [
+        106.6986582,
+        10.7796304
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:802069425:2:b"
+      }
+    },
+    {
+      "poiRef": "POI-003",
+      "point": [
+        106.6997862,
+        10.7795569
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:801950746:0:b"
+      }
+    },
+    {
+      "poiRef": "POI-004",
+      "point": [
+        106.7027044,
+        10.7762613
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:1119254704:14:b"
+      }
+    },
+    {
+      "poiRef": "POI-005",
+      "point": [
+        106.7059279,
+        10.7681049
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:1536298183:1:b"
+      }
+    },
+    {
+      "poiRef": "POI-006",
+      "point": [
+        106.6926671,
+        10.7791297
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:1570599657:1:b"
+      }
+    },
+    {
+      "poiRef": "POI-007",
+      "point": [
+        106.7041462,
+        10.7880479
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:465161872:2:b"
+      }
+    },
+    {
+      "poiRef": "POI-008",
+      "point": [
+        106.6994909,
+        10.7700174
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:802157424:1:b"
+      }
+    },
+    {
+      "poiRef": "POI-009",
+      "point": [
+        106.7222692,
+        10.7948169
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:889445086:34:b"
+      }
+    },
+    {
+      "poiRef": "POI-010",
+      "point": [
+        106.7045926,
+        10.7716479
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:804073930:16:b"
+      }
+    },
+    {
+      "poiRef": "POI-011",
+      "point": [
+        106.7055883,
+        10.7867994
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:1544382384:6:b"
+      }
+    },
+    {
+      "poiRef": "POI-012",
+      "point": [
+        106.7037473,
+        10.7738256
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:1550324378:0:b"
+      }
+    },
+    {
+      "poiRef": "POI-013",
+      "point": [
+        106.691924,
+        10.7664802
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:1237832393:0:b"
+      }
+    },
+    {
+      "poiRef": "POI-014",
+      "point": [
+        106.4664005,
+        11.1411929
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:564325161:1:b"
+      }
+    },
+    {
+      "poiRef": "POI-015",
+      "point": [
+        106.6614755,
+        10.7529634
+      ],
+      "withinTwoMeters": true,
+      "best": {
+        "distanceMeters": 0,
+        "edgeId": "w:1468659814:32:b"
+      }
+    }
+  ],
+  "aligned": 15
+}
