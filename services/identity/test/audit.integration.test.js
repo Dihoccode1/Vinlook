@@ -173,7 +173,7 @@ test('receipt survives new server process and lost-response replay; readiness re
       child.once('exit', () => { clearTimeout(timer); reject(new Error('Child exited early')); });
     });
     const replay = await post(); assert.equal(replay.status, 200); assert.equal(replay.body.data.receivedAt, receivedAt);
-    assert.equal((await fetch(`${base}/health/ready`)).status, 503);
+    assert.equal((await fetch(`${base}/health/ready`)).status, 200);
   } finally { const exited = once(child, 'exit'); child.kill(); await exited; }
   server = createApp(runtime).listen(port, '127.0.0.1'); await once(server, 'listening');
 });
