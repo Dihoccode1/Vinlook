@@ -20,3 +20,31 @@ test('quota and unapproved manifest fail closed; complete withdrawal only; no cl
   let hidden=[];await assert.rejects(store.withdraw({complete:false,poiIds:[]},ids=>hidden=ids),{code:'WITHDRAWAL_INCOMPLETE'});assert.deepEqual(hidden,[]);
   await store.withdraw({complete:true,snapshotId:'fixture',poiIds:['000000000000000000000001']},ids=>hidden=ids);assert.equal(hidden.length,1);
 });
+
+test('browser estimate/persistence refusal and broken UI callbacks do not prevent verified activation',async()=>{
+  const f=await fixture(),changes=[];
+  const store=createPackageStore({...f,manifestAdapter:async d=>d,fetchFile:async()=>bytes,estimate:async()=>{throw Error();},persist:async()=>{throw Error();},onChange(){throw Error('render');}});
+  const unsubscribe=store.subscribe(()=>changes.push(store.getSnapshot()));store.subscribe(()=>{throw Error('listener');});
+  await store.download(f.descriptor('optional-hints'));assert.equal(store.getSnapshot().status,'ready');
+  assert.equal(changes[0].persistent,false);assert.equal(changes.at(-1).verifiedBytes,bytes.byteLength);
+  assert.equal((await store.reopen()).status,'ready');unsubscribe();
+});
+
+test('corrupt active metadata cannot be Ready and reopening storage errors fail safely',async()=>{
+  const f=await fixture();f.shell.isReady=async()=>true;
+  for(const value of [{packageVersion:'bad',files:[]},{packageVersion:'',files:f.descriptor('a').files},{packageVersion:'bad',files:[null]}]){
+    await f.storage.activate(value);const store=createPackageStore({...f,manifestAdapter:async d=>d,fetchFile:async()=>bytes});
+    assert.equal((await store.reopen()).status,'incomplete');assert.equal(store.getSnapshot().error,'LOCAL_DATA_MISSING');
+  }
+  f.storage.active=async()=>{throw Error('IDB unavailable');};
+  const store=createPackageStore({...f});assert.equal((await store.reopen()).status,'incomplete');
+});
+
+test('verified bytes are monotonic and concurrent reopen cannot overwrite an active download',async()=>{
+  const f=await fixture();let resolve;
+  const store=createPackageStore({...f,manifestAdapter:async d=>d,fetchFile:()=>new Promise(done=>resolve=done)});
+  const pending=store.download(f.descriptor('progress'));await new Promise(done=>setImmediate(done));
+  assert.equal(store.getSnapshot().status,'downloading');assert.equal(store.getSnapshot().verifiedBytes,0);
+  await assert.rejects(store.reopen(),{code:'DOWNLOAD_IN_PROGRESS'});resolve(bytes);await pending;
+  assert.equal(store.getSnapshot().verifiedBytes,bytes.byteLength);assert.equal(store.getSnapshot().status,'ready');
+});

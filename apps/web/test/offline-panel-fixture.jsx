@@ -1,0 +1,14 @@
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import {OfflinePanel} from '../src/offline/OfflinePanel.jsx';
+import {LocaleProvider} from '../src/i18n/provider.jsx';
+import {openOfflineStorage} from '../src/offline/indexed-db.js';
+import {createPackageStore,sha256} from '../src/offline/package-store.js';
+import '../src/styles.css';
+if(!import.meta.env.DEV)throw Error('FIXTURE_FORBIDDEN');
+const storage=await openOfflineStorage(),bytes=new TextEncoder().encode('LABELLED PANEL BYTES — NOT MAP OR AUDIO').buffer;
+const manifest={packageVersion:'fixture-panel-v1',files:[{id:'fixture-panel',byteLength:bytes.byteLength,sha256:await sha256(bytes)}]};
+const shell={prepare:async()=>{},markReady:async version=>(await caches.open('fixture-panel')).put('/fixture-panel-ready',new Response(version)),isReady:async version=>{const response=await(await caches.open('fixture-panel')).match('/fixture-panel-ready');return response?await response.text()===version:false;}};
+window.offlinePanelFixture={storage,release:null};
+const store=createPackageStore({storage,shell,manifestAdapter:async d=>d,fetchFile:async()=>{await new Promise(done=>window.offlinePanelFixture.release=done);return bytes;},persist:async()=>false});
+createRoot(document.getElementById('root')).render(<LocaleProvider><aside style={{background:'#fff1bd',padding:16}}>LOCAL OFFLINE PANEL FIXTURE — NOT A COMPLETE GUIDE. Synthetic file, no map/audio/graph/service worker.</aside><main style={{maxWidth:560,padding:20,margin:'auto'}}><OfflinePanel store={store} manifest={manifest}/></main></LocaleProvider>);
