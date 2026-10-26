@@ -1,4 +1,5 @@
 import {adapterRouter} from '../adapters/router.js';
+import {monitoringRouter} from '../monitoring.js';
 import express from 'express';
 import {mediaRouter} from '../media/router.js';
 import {jobRouter} from '../jobs/router.js';
@@ -13,6 +14,7 @@ import {DraftFailure,parse,objectId,createInput,cloneInput,patchInput,languageIn
 const messages={ADAPTER_BUSY:'An adapter job is already running',PROVIDER_RETRY_CONFIRMATION_REQUIRED:'The previous provider outcome is unknown; explicitly confirm a new provider request',ADAPTER_FREE_TIER_REVIEW_REQUIRED:'Review the project free tier before running adapters',POI_NOT_FOUND:'The POI was not found',PUBLIC_CONTENT_UNAVAILABLE:'Public content is temporarily unavailable',PUBLIC_SNAPSHOT_CHANGED:'Public content changed; restart the list',INVALID_CURSOR:'The cursor is invalid',CURSOR_EXPIRED:'The cursor expired; restart the list',POI_ALREADY_DELETED:'The POI is already deleted',POI_NOT_DELETED:'The POI is not deleted',INVALID_INPUT:'Invalid content input',CONTENT_NOT_FOUND:'Content was not found',POI_DELETED:'The POI is deleted',REVISION_NOT_EDITABLE:'The revision is not editable',EDIT_VERSION_CONFLICT:'The content has changed; reload before editing',WORKING_REVISION_EXISTS:'A working revision already exists',NO_PUBLISHED_REVISION:'No published revision exists',VERSION_EXHAUSTED:'The version limit was reached',IDEMPOTENCY_CONFLICT:'The idempotency key conflicts with the request',INVALID_MEDIA_REFERENCE:'The media reference is invalid',MEDIA_VERIFICATION_UNAVAILABLE:'Media verification is unavailable',IDEMPOTENCY_RECONCILIATION_REQUIRED:'The mutation requires reconciliation'};
 export function draftRouter(runtime){
  const router=express.Router();const service=createDraftService(runtime);
+ router.use(monitoringRouter(runtime));
  router.use((req,res,next)=>{
   res.set('Cache-Control','no-store');res.locals.requestId=randomUUID();
   const origin=req.get('Origin');if(origin&&!runtime.origins.includes(origin))return next(new DraftFailure('ACCESS_DENIED',403));

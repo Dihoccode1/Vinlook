@@ -82,7 +82,7 @@ export function createUsageRouter(runtime) {
           send({ asOf: iso(sample.asOf), components: sample.components.map(row => ({ name: row.name, status: row.status,
             checkedAt: iso(row.checkedAt), lastSuccessAt: iso(row.lastSuccessAt), errorCode: row.errorCode === null ? null
               : row.status === 'stale' ? 'SAMPLE_STALE' : row.status === 'unknown' ? 'BRIDGE_PENDING' : 'DEPENDENCY_UNAVAILABLE' })) });
-        } else send({ asOf: iso(runtime.now()), checkedAt: null, lastSuccessAt: null, status: 'unknown', counts: null, errorCode: 'BRIDGE_PENDING' });
+        } else send(runtime.jobs?await runtime.jobs():{ asOf: iso(runtime.now()), checkedAt: null, lastSuccessAt: null, status: 'unknown', counts: null, errorCode: 'BRIDGE_PENDING' });
         return;
       }
       if (!/^application\/json(?:\s*;|$)/i.test(req.get('Content-Type') ?? '')) fail('UNSUPPORTED_MEDIA_TYPE');

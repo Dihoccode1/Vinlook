@@ -9,6 +9,8 @@ import mongoose from 'mongoose';
 import { createUsageModels } from '../src/models.js';
 import { applyUsageTestCatalog, verifyUsageCatalog, catalogFingerprint } from '../src/catalog.js';
 import { planCatalog, applyCatalog } from '../src/catalog-operator.js';
+import { jobSummary } from '../../content/src/monitoring.js';
+import { createJobModel } from '../../content/src/jobs/model.js';
 import { createMongoUsageStore } from '../src/mongo-store.js';
 import { createUsageService } from '../src/domain.js';
 import { languageCodes } from '../src/policy.js';
@@ -28,6 +30,15 @@ test('Usage real disposable Mongo replica-set and HTTP acceptance', { timeout: 1
   await connection.asPromise(); t.after(() => connection.close());
   assert.equal((await connection.db.listCollections().toArray()).length, 0); // Abort if this is not a fresh fixture DB.
   await applyUsageTestCatalog(connection, catalogFingerprint);
+  await t.test('Content-owned snapshot job counts on its own fresh disposable database', async()=>{
+    const content=connection.useDb('vinlook_content_task016',{useCache:true});
+    assert.equal((await content.db.listCollections().toArray()).length,0);
+    await content.db.createCollection('processing_jobs');
+    const jobs=createJobModel(content);
+    await jobs.collection.insertMany([{status:'queued'},{status:'queued'},{status:'running'},{status:'succeeded'},{status:'failed'},{status:'waiting_quota'}]);
+    const sample=await jobSummary({connection:content,models:{ProcessingJob:jobs},now:()=>FIXTURE_EPOCH});
+    assert.deepEqual(sample.counts,{queued:2,running:1,succeeded:1,failed:1,waiting_quota:1});
+  });
   await t.test('production catalog utility on a second fresh disposable database', async () => {
     const operator = connection.useDb('vinlook_usage', { useCache: true });
     assert.equal((await operator.db.listCollections().toArray()).length, 0);
