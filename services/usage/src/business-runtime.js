@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { createContentJobs } from './content-jobs.js';
+import { createContentJobs, createWorkerProbe } from './content-jobs.js';
 import { createUsageModels } from './models.js';
 import { verifyUsageCatalog } from './catalog.js';
 import { createMongoUsageStore } from './mongo-store.js';
@@ -14,13 +14,15 @@ export function assembleUsageRuntime({ connection, config, now = Date.now, model
     if (connection.readyState !== 1) return false;
     try { await connection.db.command({ ping: 1 }, { timeoutMS: 3000 }); return true; } catch { return false; }
   };
+  const jobs=config.contentCallerKey?createContentJobs({origin:config.contentOrigin,key:config.contentCallerKey,fetchImpl,now}):null;
   const sampler = createHealthSampler({ now, probes: {
     identity: createReadinessProbe(config.authorization.baseUrl, { fetchImpl }),
     content: createReadinessProbe(config.contentOrigin, { fetchImpl }), usage: ready,
+    ...(jobs?{worker:createWorkerProbe(jobs)}:{}),
   } });
   return { service: createUsageService({ store, languageCodes, now, verifyPublicPoi: createPublicContentVerifier(config.contentOrigin, { fetchImpl }) }),
     sampler, now, ready, authorization: config.authorization, origins: config.origins,
-    jobs:config.contentCallerKey?createContentJobs({origin:config.contentOrigin,key:config.contentCallerKey,fetchImpl,now}):null,
+    jobs,
     async close() { sampler.close(); await connection.close(); } };
 }
 export async function connectUsageRuntime(config) {

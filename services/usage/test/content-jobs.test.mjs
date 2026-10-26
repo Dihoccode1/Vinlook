@@ -12,10 +12,10 @@ function fixture(){
   return {runtime:{monitoringCallerKey:monitoringKey({CONTENT_USAGE_CALLER_KEY_B64URL:key}),now:()=>epoch,
     connection:{startSession:async()=>session},models:{ProcessingJob:{countDocuments:({status})=>{
       queries.push(status);return {session(value){assert.equal(value,session);return this;},maxTimeMS:async()=>counts[status]};
-    }}}},queries,ended:()=>ended};
+    },findOne:()=>({select(){return this;},sort(){return this;},session(){return this;},maxTimeMS(){return this;},lean:async()=>null})}}},queries,ended:()=>ended};
 }
 test('Content counts all five states in one snapshot and always ends its session',async()=>{
-  const f=fixture();assert.deepEqual(await jobSummary(f.runtime),{asOf:new Date(epoch).toISOString(),counts});
+  const f=fixture();assert.deepEqual(await jobSummary(f.runtime),{asOf:new Date(epoch).toISOString(),counts,worker:{lastObservedAt:null}});
   assert.equal(f.queries.length,5);assert.equal(f.ended(),true);
   f.runtime.models.ProcessingJob.countDocuments=()=>{throw Error('private URI');};
   await assert.rejects(jobSummary(f.runtime));assert.equal(f.ended(),true);

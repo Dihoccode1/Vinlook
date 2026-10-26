@@ -1,4 +1,5 @@
 import {randomUUID} from 'node:crypto';
+import {observeWorker} from './observation.js';
 import {AsyncLocalStorage} from 'node:async_hooks';
 const resultBudgets=new AsyncLocalStorage();
 import {executeMutation} from '../durability/transaction.js';
@@ -117,11 +118,11 @@ export function createJobService(runtime){
     for(const job of candidates){
      try{await current(job,session);}catch(error){if(error.code!=='STALE_JOB_INPUT')throw error;job.status='failed';job.error='STALE_INPUT';await job.save({session});await audit(session,job,true);continue;}
      if(job.status==='running'){if(job.reclaimCount>=3){job.status='failed';job.error='LEASE_RECLAIM_EXHAUSTED';await job.save({session});await audit(session,job,true);continue;}job.reclaimCount++;}
-     job.status='running';job.attemptId=randomUUID();job.leaseOwner=caller.id;job.leaseExpiresAt=new Date(now()+300000);await job.save({session});return {job:{id:String(job._id),taskType:job.taskType,languageCode:job.languageCode,inputVersion:object(job.inputVersion),inputSnapshot:object(job.inputSnapshot),attemptId:job.attemptId,leaseExpiresAt:job.leaseExpiresAt,retryCount:job.retryCount}};
+     job.status='running';job.attemptId=randomUUID();job.leaseOwner=caller.id;job.leaseExpiresAt=new Date(now()+300000);observeWorker(job,caller,now());await job.save({session});return {job:{id:String(job._id),taskType:job.taskType,languageCode:job.languageCode,inputVersion:object(job.inputVersion),inputSnapshot:object(job.inputSnapshot),attemptId:job.attemptId,leaseExpiresAt:job.leaseExpiresAt,retryCount:job.retryCount}};
     }return {job:null};
    };return existingSession?claim(existingSession):transaction(claim);
   },
-  async renew(id,attemptId,caller){configured();return transaction(async session=>{const job=await owned(id,attemptId,caller,session);await current(job,session);job.leaseExpiresAt=new Date(now()+300000);await job.save({session});return {jobId:id,leaseExpiresAt:job.leaseExpiresAt};});},
+  async renew(id,attemptId,caller){configured();return transaction(async session=>{const job=await owned(id,attemptId,caller,session);await current(job,session);job.leaseExpiresAt=new Date(now()+300000);observeWorker(job,caller,now());await job.save({session});return {jobId:id,leaseExpiresAt:job.leaseExpiresAt};});},
   async admit(id,attemptId,caller){configured();const job=await owned(id,attemptId,caller);const state=await current(job);return {job,state};},
   async result(id,input,caller,context){return resultBudgets.run(context,async()=>{configured();
    const hash=requestHash(input),before=await owned(id,input.attemptId,caller,null,false);
@@ -156,7 +157,7 @@ export function createJobService(runtime){
      }
      job.resultRef={localizedContentId:row._id,textVersion:row.textVersion,mediaIntentId:media?.document._id??null};
     }
-    job.status=outcome.status;job.error=outcome.status==='succeeded'?null:outcome.errorCode;job.lastResultHash=hash;job.acceptedAt=new Date(now());await touch(state,session);await job.save({session});await audit(session,job,outcome.status!=='succeeded');
+    job.status=outcome.status;job.error=outcome.status==='succeeded'?null:outcome.errorCode;job.lastResultHash=hash;job.acceptedAt=new Date(now());observeWorker(job,caller,now());await touch(state,session);await job.save({session});await audit(session,job,outcome.status!=='succeeded');
     if(caller.execution==='server_adapter'&&models.ProviderCall){const ledger=await models.ProviderCall.findOne({jobId:job._id,retryCount:job.retryCount}).session(session);if(ledger){if(outcome.status==='succeeded'&&ledger.attemptId!==job.attemptId)bad('STALE_JOB_ATTEMPT',409);ledger.state=outcome.status==='succeeded'?'completed':outcome.errorCode==='PROVIDER_OUTCOME_UNKNOWN'?'uncertain':'failed';ledger.finishedAt=new Date(now());ledger.resultHash=hash;ledger.errorCode=outcome.status==='succeeded'?null:outcome.errorCode;await ledger.save({session});}}
     return receipt(job);
    },context);

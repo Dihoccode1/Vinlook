@@ -19,7 +19,9 @@ export async function jobSummary(runtime) {
         const count=await runtime.models.ProcessingJob.countDocuments({status}).session(session).maxTimeMS(2500);
         if(!Number.isSafeInteger(count)||count<0)throw Error('Unavailable');counts[status]=count;
       }
-      return {asOf:new Date(runtime.now()).toISOString(),counts};
+      const observed=await runtime.models.ProcessingJob.findOne({'inputSnapshot.execution':'local_worker',workerObservedAt:{$type:'date'}})
+        .select({workerObservedAt:1,_id:0}).sort({workerObservedAt:-1}).session(session).maxTimeMS(2500).lean();
+      return {asOf:new Date(runtime.now()).toISOString(),counts,worker:{lastObservedAt:observed?.workerObservedAt?.toISOString()??null}};
     },{readConcern:{level:'snapshot'},readPreference:'primary',timeoutMS:3000});
   }finally{await session.endSession();}
 }

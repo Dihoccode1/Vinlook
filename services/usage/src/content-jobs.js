@@ -3,10 +3,9 @@ const keys=(value,expected)=>value&&typeof value==='object'&&!Array.isArray(valu
   &&Object.keys(value).length===expected.length&&expected.every(key=>Object.hasOwn(value,key));
 /** No JWT, cookies, redirects, retries, DB access or background polling. */
 export function createContentJobs({origin,key,fetchImpl=globalThis.fetch,now=Date.now}){
-  let busy=false;
-  return async()=>{
+  let inflight=null;
+  const read=async()=>{
     const unknown={asOf:new Date(now()).toISOString(),checkedAt:null,lastSuccessAt:null,status:'unavailable',counts:null,errorCode:'DEPENDENCY_UNAVAILABLE'};
-    if(busy)return unknown;busy=true;
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),3000);
     let reader;
     try{
@@ -19,11 +18,22 @@ export function createContentJobs({origin,key,fetchImpl=globalThis.fetch,now=Dat
       const body=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks))),data=body?.data;
       const received=now(),sample=Date.parse(data?.asOf);
       if(!keys(body,['data','requestId'])||typeof body.requestId!=='string'||!/^[a-f0-9-]{36}$/.test(body.requestId)
-        ||!keys(data,['asOf','counts'])||!Number.isFinite(sample)||received-sample>30000||sample-received>10000
+        ||!(keys(data,['asOf','counts'])||keys(data,['asOf','counts','worker']))||!Number.isFinite(sample)||received-sample>30000||sample-received>10000
         ||!keys(data.counts,statuses)||statuses.some(name=>!Number.isSafeInteger(data.counts[name])||data.counts[name]<0))throw Error();
+      const observed=data.worker?.lastObservedAt??null;
+      if(data.worker!==undefined&&(!keys(data.worker,['lastObservedAt'])||observed!==null
+        &&(typeof observed!=='string'||!Number.isFinite(Date.parse(observed))||Date.parse(observed)>sample)))throw Error();
       return {asOf:new Date(received).toISOString(),checkedAt:data.asOf,lastSuccessAt:new Date(received).toISOString(),
-        status:'ok',counts:Object.fromEntries(statuses.map(name=>[name,data.counts[name]])),errorCode:null};
+        status:'ok',counts:Object.fromEntries(statuses.map(name=>[name,data.counts[name]])),workerObservedAt:observed,errorCode:null};
     }catch{return unknown;}
-    finally{clearTimeout(timer);controller.abort();await reader?.cancel().catch(()=>{});busy=false;}
+    finally{clearTimeout(timer);controller.abort();await reader?.cancel().catch(()=>{});}
+  };
+  return ()=>{if(!inflight)inflight=read().finally(()=>{inflight=null;});return inflight;};
+}
+
+export function createWorkerProbe(jobs){
+  return async()=>{const sample=await jobs();
+    if(sample.status!=='ok')return false;
+    return sample.workerObservedAt===null?{healthy:null,observedAt:null}:{healthy:true,observedAt:Date.parse(sample.workerObservedAt)};
   };
 }

@@ -145,7 +145,8 @@ test('worker-only runtime approves verified English with Gemini off but cannot s
 
 test('local capability cannot claim translation; concurrent claims have a single audio winner',async()=>{
  const r=await draft();await processJobs(r);assert.equal(await claim('vi'),null);
- const jobs=await Promise.all([claim(),claim()]);assert.equal(jobs.filter(Boolean).length,1);const job=jobs.find(Boolean);assert.equal(job.taskType,'audio');assert.equal((await worker('/'+job.id+'/renew',{attemptId:job.attemptId})).status,200);
+ const jobs=await Promise.all([claim(),claim()]);assert.equal(jobs.filter(Boolean).length,1);const job=jobs.find(Boolean);assert.equal(job.taskType,'audio');assert.equal(+(await models.ProcessingJob.findById(job.id)).workerObservedAt,clock);assert.equal((await worker('/'+job.id+'/renew',{attemptId:job.attemptId})).status,200);
+ assert.equal(+(await models.ProcessingJob.findById(job.id)).workerObservedAt,clock);
  assert.equal((await worker('/'+job.id+'/renew',{attemptId:randomUUID()})).status,409);
  assert.equal((await worker('/claim',{workerId:'fixture-worker',capabilities:['en']},{'X-Vinlook-Worker-Key':''})).status,401);
 });
