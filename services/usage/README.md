@@ -1,117 +1,135 @@
-# Usage implementation status
+# Usage service
 
-Refs #71. `src/domain.js` and `src/health-sampler.js` implement the independent
-D004/D005/D017 core. They are reusable libraries, not a fixture backend. Constructors
-create no database connection, network request, polling timer or runtime route.
-The existing app still exposes health scaffold only, with readiness503. No visitor
-or monitor business endpoint is mounted by this slice.
+Refs #71/#70, implementation PR93; dependency proposal PR95. The service now has
+Mongo-backed telemetry and protected Monitor HTTP adapters. The unconfigured
+process keeps the health scaffold (live200/ready503); business routes activate only
+after explicit private config, replica-set connection and exact catalog preflight.
+No automatic collection/index provisioning, production memory fallback, live
+provisioning/deployment or fixture activation exists.
 
-`docs/poc/tu/usage-contract.md` remains PROPOSED. Duy reopened #70; no U1–U4 decision
-was found at implementation start. HTTP wire/errors/CORS/rate limits, schema/catalog,
-capacity strategy and new runtime config remain gated. A merge of the earlier
-contract/fixture PR does not silently supply those decisions. Do not use these
-modules as evidence that the Usage HTTP/database/live task is complete.
+The earlier core-only snapshot is superseded by this implementation candidate.
+At continuation, #70 was closed by Dihoccode1 with all review/merge/acceptance boxes
+checked; the merged U1–U4 document supplies the wire implementation candidate.
+Duy reviews the resulting code and the separate shared dependency/lock proposal
+before merge/release. This does not authorize any live environment operation.
 
-## Lifecycle and counting library
+## Runtime and private configuration
 
-Create `createUsageService({store, verifyPublicPoi, languageCodes, now?})` explicitly.
-The caller supplies the exact 16-code reviewed registry and an admission function
-which returns true only for a verified public POI/locale; false means absent and a
-failure/unknown result stops admission. There is no default synthetic public POI.
-The implementation does not read Content's DB or borrow its dependencies.
+Pinned Node24.18.1/npm11.16.0; Mongoose9.11.3 is the exact version already used by
+Identity/Content, declared independently for Usage in PR95. No version upgrade.
+Consumed names: existing NODE_ENV/HOST/PORT, IDENTITY_BASE_URL,
+USAGE_IDENTITY_SERVICE_KEY_B64URL; business USAGE_MONGODB_URI,
+USAGE_ALLOWED_ORIGINS and CONTENT_BASE_URL. Never print the private config object.
+The Identity caller key stays server-side; visitor/public Content reads carry no JWT.
 
-Methods take strict input objects:
+Mongo URI must select `vinlook_usage`; the isolated test mode permits only loopback
+`vinlook_usage_poc_test`. Production Mongo requires TLS (SRV default or explicit
+tls=true). No TLS bypass options, cross-DB name, unsupported URI options or arbitrary
+HTTP origins are accepted. Public origins are canonical HTTPS; explicit loopback
+HTTP origins are permitted only outside production. Allowed frontend origins are
+exact, never wildcard. Startup errors name fields only or use a fixed message.
 
-| Method | Internal input |
+`connectUsageRuntime` requires a writable replica set and an exact existing
+catalog. It never repairs indexes/validators or drops retained rows. Readiness200
+means this configured Usage catalog/DB passed its checks; monitor component health
+is separate. Background probes are not started. Shutdown closes HTTP and Mongo.
+
+## Telemetry and Monitor API
+
+Paths are prefixed `/api/v1`, no query parameters. Strict JSON bodies, server times
+and `{data,requestId}` / `{error:{code,message,requestId}}`, no-store responses.
+
+| Method/path | Input / permission |
 | --- | --- |
-| presence | browserId |
-| start | browserId, playbackId, poiId, languageCode |
-| heartbeat | browserId, playbackId |
-| end | browserId, playbackId, reason |
-| summary | no visitor input; caller must enforce monitor authorization |
+| POST /presence/heartbeat | `{browserId}`; visitor |
+| POST /listening/start | `{browserId,playbackId,poiId,languageCode}`; visitor |
+| POST /listening/:playbackId/heartbeat | `{browserId}`; visitor |
+| POST /listening/:playbackId/end | `{browserId,reason}`; visitor |
+| GET /monitoring/summary | fresh active Staff/Manager Bearer; no open session needed |
+| GET /monitoring/health | same permission; on-demand component samples |
+| GET /monitoring/jobs | same permission; unknown/null until Content aggregate bridge exists |
 
-These are JavaScript library methods, not an approved HTTP schema. Times are safe
-server epoch milliseconds internally; future approved wire adapters perform ISO
-serialization and fixed HTTP error mapping. Browser/playback IDs are lowercase
-UUIDv4; POI IDs lowercase ObjectId strings. No client clock/IP/GPS/role is accepted.
-Visitor identifiers are self-reported and cannot establish identity or authority.
+browserId/playbackId are lowercase UUIDv4; poiId is lowercase ObjectId; locale is one
+of the exact 16 hybrid-v1 codes. The standalone Usage vocabulary is checked against
+Content's registry in tests; production does not read Content's files or database.
+No IP/GPS/user-agent/client time/account fields are stored. Visitor UUIDs are
+self-reported and cannot establish identity or prove unique humans.
 
-Start counts immediately. Duplicate start does not refresh timestamps or call
-Content again. Conflicting browser/POI/locale reuse fails. End-before-start retains
-a terminal minimal record; late start cannot fill it or resurrect listening. The
-first end time/reason wins; end(A) cannot end a replacement playback(B). Heartbeat
-refreshes only an existing open playback and its browser presence. Pause/Resume
-retain the playback ID and use live heartbeats. No queue for historical heartbeats
-or automatic deletion/retry/cleanup exists here.
+Fresh start verifies the exact existing public Content detail/locale before writing:
+HTTPS/configured origin, fixed GET, 3s whole-request bound, decompressed JSON cap8MiB,
+no credentials/cookies/redirect/retry. A wrong POI/locale/malformed payload fails
+closed;404 becomes POI_NOT_AVAILABLE. Existing duplicate/terminal identities are
+checked before that call. Publication may change afterwards: this is not an atomic
+transaction across services and does not implement withdrawal invalidation.
 
-Summary needs both fresh presence and an open fresh playback, with strict
-lastSeenAt > asOf − 90000ms. Global/per-POI sets deduplicate browser IDs independently;
-the per-POI sum can exceed global. Summary returns no browser/playback lists. Invalid,
-inconsistent, duplicated or future-dated records and dependency failure produce a
-fixed domain error, not truncated/partial counts or a fresh zero. These functions
-do not replace fresh Staff/Manager authorization at the future HTTP boundary.
+Start counts immediately; duplicate start preserves original freshness/time. Pause
+keeps the playback ID and uses live heartbeats. End-before-start stays terminal;
+the first end reason/time wins and end(A) cannot end replacement(B). Start rechecks
+after awaited admission, then writes playback/presence in one Mongo transaction.
+Heartbeat refreshes only an existing open playback. No application write retry,
+history heartbeat queue, TTL or retention deletion is implemented.
 
-## Required durable storage port — not yet implemented
+Summary uses a complete bounded snapshot and strict lastSeenAt > asOf−90000ms,
+requiring fresh presence plus open fresh playback. Distinct browser sets are counted
+globally and per POI; row sums may exceed global. No raw browser/playback list is
+returned. Overflow, DB failure or corrupt state returns503, never a partial count
+or an apparently fresh zero. Dashboard clients retain/label their prior sample on
+failure; server failure does not certify its old counts as fresh.
 
-`store.transact(async tx => result)` must wait for a definite commit before resolving
-and supply these operations inside one atomic transaction:
+## Limits and deployment scope
 
-| Port method | Requirement |
-| --- | --- |
-| getPlayback(playbackId) | canonical private record or null; identity matches key |
-| insertPlayback(record) | unique playback identity; no overwrite |
-| replacePlayback(record) | replace the current conflicting playback atomically |
-| touchPresence(record) | unique browser identity; preserve a monotonic maximum lastSeenAt |
-| snapshot() | one consistent, complete Usage-only presence/playback sample |
+JSON body1024bytes; unsupported encoding rejected. Public attempts:600/minute per
+process and60/minute per valid browser ID, including duplicates. Monitor reads:
+12/minute per freshly authorized account. Inflight10, no HTTP waiting queue;
+in-memory rate maps max4096 buckets, expired-window eviction only.429 has numeric
+Retry-After. Limits are soft single-process mitigation, reset on restart and are
+not IP identity or distributed abuse enforcement. CORS preflight validates exact
+origin/method/headers without DB/auth mutation; cookies are never enabled.
 
-Records at this internal port contain the approved logical fields; dates are epoch
-numbers and model `_id` metadata is mapped by the future adapter. This is not a new
-Mongo schema/catalog declaration. No Mongoose/driver import or cross-service model
-reuse is introduced. Unknown store failures/commit acknowledgements produce a fixed
-error. An explicitly repeated idempotent operation can reconcile retained state;
-the core itself never retries a write.
+Snapshot/admission bounds:1000 active browsers,4000 active playbacks,1000 positive
+POI rows,256KiB response. Mongo operations use snapshot/majority transactions,
+unique IDs and a bounded per-process transaction queue. Snapshot/capacity checks
+fail on overflow. Capacity serialization is per process; hard distributed capacity,
+multi-instance load,50-visitor/p95 and cold starts are not established. Do not infer
+those guarantees from the concurrency identity tests.
 
-The store must serialize conflicting playback/presence writes, including the
-start-versus-end race. The core rechecks identity/terminal state after awaited public
-admission, then writes playback/presence together. The future Mongo adapter needs
-the approved unique indexes/transaction isolation, duplicate-key/write-conflict
-handling and bounded complete snapshot/admission strategy; an async callback alone
-does not provide those guarantees. Capacity/schema strategy remains U3 work. Until
-that exists and passes disposable replica-set tests, no DB durability/concurrency
-or production capacity is established.
+## Catalog and retained data
 
-`test/fixtures/transaction-store.mjs` is an explicit TEST ONLY serialized memory
-model with rollback and lost-ack injection. It is never imported by runtime code.
-Recreating the service against that same object tests logical retained state, not
-a real process restart, Mongo persistence, index, transaction or deployment.
+Two Usage-owned collections: browser_presences and listening_sessions. Validators
+reject unknown fields and illegal start/terminal combinations; unique browserId/
+playbackId and the D005 freshness indexes are exact. Runtime autoCreate/autoIndex
+and buffering are off. `planUsageCatalog` is read-only and produces a public schema
+fingerprint/mismatch summary. `applyUsageTestCatalog` is restricted to a fresh
+loopback `vinlook_usage_poc_test` replica set named vinlook_usage_poc; it creates
+only the expected collections/indexes, never repairs or deletes data.
 
-## Memory-only health sampling
+Production catalog provisioning and rollback need a separate exact approved plan.
+Keep terminal records under the existing retention/backup rules; no automatic TTL
+or cleanup permits an old ID to resurrect. The test harness alone deletes records
+and removes its own disposable labelled container.
 
-`createHealthSampler({probes?, now?})` accepts explicit service-owned probes for
-identity/content/usage/worker. Missing bridges remain unknown. Call `sample()` only
-when a dashboard/release is active; no interval scheduler or keepalive is created.
-Probes run in parallel, share one in-flight refresh, have a 3-second abort deadline
-and cannot refresh more often than 30s. `snapshot()` ages existing observations
-without making requests. A sample is stale at 30s; worker heartbeat evidence is
-stale at 180s even when the probe response itself is fresh.
+## Health and remaining bridges
 
-Service probes return true only after their approved readiness checks succeed;
-liveness alone is insufficient. The worker probe must return exactly
-`{healthy:true, observedAt}` with the actual safe server heartbeat time. There is
-no default network probe or invented worker endpoint. Stalls/failures preserve the
-lastSuccessAt and expose fixed codes. `close()` aborts pending probes and prevents
-further sampling. A newly constructed sampler starts unknown. It supplies no job
-counts; the missing Content-owned aggregate/status contract is still required.
+On-demand memory probes run in parallel with3s abort, shared in-flight refresh and
+30s cadence/freshness. Worker evidence would stale at180s. Real probes query
+Identity/Content `/health/ready` and Usage's own DB; liveness200 is not substituted.
+Missing worker status and Content global-jobs contracts remain unknown/BRIDGE_PENDING,
+with job counts=null. No invented endpoint, cross-DB read, fabricated up/zero or
+keepalive scheduler is added. Cold-start/failure preserves lastSuccessAt and safe
+errors. Current upstream readiness503 remains unavailable even if auth/data work.
 
-## Testing and remaining work
-
-With pinned Node24.18.1/npm11.16.0:
+## Test commands
 
 ```text
 npm run build --workspace=@vinlook/usage
 npm run test:domain --workspace=@vinlook/usage
+npm run test:http --workspace=@vinlook/usage
+npm run test:db --workspace=@vinlook/usage
 ```
 
-See [verification](../../docs/poc/tu/usage-verification.md) for executed evidence,
-limitations and exact decisions still needed. No new env names, dependency, root
-lock, schema/index provisioning or live environment changes are included.
+The DB command requires Docker. It never accepts a URI: it creates one fresh pinned
+Mongo container, validates image/label/loopback port/set/empty test DB, runs real
+transaction/catalog/business HTTP/entrypoint tests, then removes only that container.
+CI runs the same harness. Fixture Identity/Content/public media are synthetic and
+test-only. See [verification](../../docs/poc/tu/usage-verification.md) for actual
+results, exact heads and the difference between local, CI and live evidence.
