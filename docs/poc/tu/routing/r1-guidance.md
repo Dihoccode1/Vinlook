@@ -32,9 +32,18 @@ where `graph` is the verified normalized graph and `config` is
   `entranceToleranceMeters` (config, 0–25 m). Otherwise `SNAP_NOT_FOUND`; there is no
   straight-line join to an entrance.
 - Maneuvers from bearing change at geometry vertices: <30° merged, 30–150° `left`/`right`,
-  >150° `u_turn`. `streetName` is `null` and `MISSING_STREET_NAME` is always set because the
-  normalized graph carries no names yet.
+  >150° `u_turn`. `streetName` is the OSM `name` of the edge leaving the step vertex
+  (importer → CSR → Worker → instruction, e.g. "Turn left onto Lê Lợi"). `MISSING_STREET_NAME`
+  is set only when a non-arrive step has no name.
 - Retryable errors: `GPS_UNCERTAIN`, `SNAP_NOT_FOUND`, `CALCULATION_FAILED`.
+
+## CSR loading
+
+`createRouteWorkerClient` accepts either `graph` (normalized JSON) or `csr: {binary, metadata,
+sha256, profileVersion, bytes, metadataBytes}` from the #104 build. The Worker verifies the
+SHA-256, header/metadata binding and per-edge metric with `decodeCsr` before building the graph;
+any failure is `GRAPH_UNAVAILABLE`. Messages are serialized so routing never sees a half-loaded graph.
+The caller fetches the artifact bytes; hosting/manifest for the real HCMC artifact is still pending.
 
 ## Verification
 
@@ -47,5 +56,8 @@ mismatch and terminate during calculation. No browser, device, Safari or perform
 
 ## Not included
 
-Real HCMC graph/PMTiles/style artifact, street names, CSR decoding inside the Worker,
-app mount, device/GPS/performance acceptance, hosting. #74 stays open.
+Real HCMC graph/PMTiles/style artifact and hosting, app mount, device/GPS/performance acceptance. #74 stays open.
+
+Follow-up (street names + CSR loading): existing 56/56 routing tests pass after the change; no new
+tests were added for it. A one-off local OSM → CSR → Worker run produced
+"Head along Nguyễn Huệ / Turn left onto Lê Lợi / Arrive at the entrance" with no warnings.

@@ -56,14 +56,15 @@ export function createGraph(input, limits) {
     if (!value || !identifier(value.id) || edgeIds.has(value.id) || !ids.has(value.from) || !ids.has(value.to)
       || !Number.isFinite(value.lengthMeters) || value.lengthMeters <= 0 || value.lengthMeters > Number.MAX_SAFE_INTEGER
       || ![true, false, null, undefined].includes(value.walkable)
-      || ![true, false, null, undefined].includes(value.restrictionsResolved)) fail('INVALID_GRAPH');
+      || ![true, false, null, undefined].includes(value.restrictionsResolved)
+      || value.streetName !== undefined && value.streetName !== null && (typeof value.streetName !== 'string' || value.streetName.length > 1024)) fail('INVALID_GRAPH');
     edgeIds.add(value.id);
     const from = ids.get(value.from), to = ids.get(value.to), a = nodes[from], b = nodes[to];
     // Proves the straight-line A* heuristic is a lower bound for this distance-cost graph.
     if (value.lengthMeters < distanceMeters(a.point, b.point)) fail('INVALID_METRIC_EDGE');
     if (!a.passable || !b.passable || value.walkable !== true || value.restrictionsResolved !== true) continue;
     if (Math.abs(a.point[0] - b.point[0]) > 180) fail('UNSUPPORTED_SEGMENT');
-    const edge = Object.freeze({ id: value.id, from, to, cost: value.lengthMeters });
+    const edge = Object.freeze({ id: value.id, from, to, cost: value.lengthMeters, streetName: value.streetName || null });
     const index = edges.length; edges.push(edge); edgeById.set(edge.id, edge); adjacency[from].push(index);
     const x0 = Math.floor(Math.min(a.point[0], b.point[0]) / CELL), x1 = Math.floor(Math.max(a.point[0], b.point[0]) / CELL);
     const y0 = Math.floor(Math.min(a.point[1], b.point[1]) / CELL), y1 = Math.floor(Math.max(a.point[1], b.point[1]) / CELL);
@@ -206,11 +207,14 @@ export function routeSnapped(graph, { start, end, accuracyMeters, verifyConnecto
     node => [...(data.adjacency[node] ?? []).map(index => data.edges[index]), ...(extras.get(node) ?? [])],
     () => 0, data.limits.searchSettled, signal);
   if (result.status !== 'found') return result;
-  const startSnap = result.path[0].startSnap, endSnap = result.path.at(-1).endSnap, geometry = [];
-  const append = p => { const last = geometry.at(-1); if (!last || last[0] !== p[0] || last[1] !== p[1]) geometry.push([...p]); };
-  append(startSnap.point);
-  for (const edge of result.path) if (edge.to < source) append(data.nodes[edge.to].point);
-  append(endSnap.point);
+  const startSnap = result.path[0].startSnap, endSnap = result.path.at(-1).endSnap, geometry = [], segmentNames = [];
+  // segmentNames[k] names the edge arriving at geometry[k]; virtual snap edges inherit their real edge's name.
+  const nameOf = edge => edge.startSnap ? byId.get(edge.startSnap.edgeId).streetName
+    : edge.endSnap ? byId.get(edge.endSnap.edgeId).streetName : edge.streetName;
+  const append = (p, name) => { const last = geometry.at(-1); if (!last || last[0] !== p[0] || last[1] !== p[1]) { geometry.push([...p]); segmentNames.push(name); } };
+  append(startSnap.point, null);
+  for (const edge of result.path) if (edge.to < source) append(data.nodes[edge.to].point, nameOf(edge));
+  append(endSnap.point, nameOf(result.path.at(-1)));
   return { status: 'found', graphDistanceMeters: Math.max(0, result.cost - startSnap.connectorLengthMeters - endSnap.connectorLengthMeters),
-    totalDistanceMeters: result.cost, startSnap, endSnap, geometry, settled: result.settled };
+    totalDistanceMeters: result.cost, startSnap, endSnap, geometry, segmentNames, settled: result.settled };
 }

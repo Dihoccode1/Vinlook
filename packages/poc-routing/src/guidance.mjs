@@ -27,8 +27,11 @@ function bearing(a, b) {
   return Math.atan2(y, x) / rad;
 }
 
-/** English steps derived from route geometry. Straight segments merge; every index is a valid geometry index. */
-export function buildInstructions(geometry, { turnByTurn = true } = {}) {
+/**
+ * English steps derived from route geometry. Straight segments merge; every index is a valid geometry index.
+ * segmentNames[k] names the edge arriving at geometry[k]; a step's street is the edge leaving its vertex.
+ */
+export function buildInstructions(geometry, { turnByTurn = true, segmentNames = [] } = {}) {
   if (!Array.isArray(geometry) || geometry.length < 2 || !geometry.every(validPoint)) fail('INVALID_GEOMETRY');
   const steps = [{ maneuver: 'depart', geometryIndex: 0 }];
   if (turnByTurn) {
@@ -44,9 +47,14 @@ export function buildInstructions(geometry, { turnByTurn = true } = {}) {
   steps.push({ maneuver: 'arrive', geometryIndex: geometry.length - 1 });
   const cumulative = [0];
   for (let index = 1; index < geometry.length; index++) cumulative.push(cumulative[index - 1] + distanceMeters(geometry[index - 1], geometry[index]));
-  return steps.map((step, index) => ({ maneuver: step.maneuver, geometryIndex: step.geometryIndex,
-    distanceMeters: index + 1 < steps.length ? cumulative[steps[index + 1].geometryIndex] - cumulative[step.geometryIndex] : 0,
-    streetName: null, text: TEXT[step.maneuver] }));
+  return steps.map((step, index) => {
+    const name = step.maneuver === 'arrive' ? null : segmentNames[step.geometryIndex + 1] ?? null;
+    const text = name === null ? TEXT[step.maneuver] : step.maneuver === 'depart' ? `Head along ${name}`
+      : step.maneuver === 'u_turn' ? `Make a U-turn onto ${name}` : `${TEXT[step.maneuver]} onto ${name}`;
+    return { maneuver: step.maneuver, geometryIndex: step.geometryIndex,
+      distanceMeters: index + 1 < steps.length ? cumulative[steps[index + 1].geometryIndex] - cumulative[step.geometryIndex] : 0,
+      streetName: name, text };
+  });
 }
 
 /**
@@ -67,12 +75,13 @@ export function calculateGuidance(graph, { position, accuracyMeters, entrance, e
   const result = routeSnapped(graph, { start: position, end: entrance, accuracyMeters, verifyConnector, signal });
   if (result.status !== 'found') fail('NO_ROUTE');
   if (result.startSnap.distanceMeters > accuracyMeters + EPS) unverifiedStart = true;
-  let geometry = result.geometry;
-  if (geometry.length === 1) geometry = [geometry[0], [...geometry[0]]];
+  let geometry = result.geometry, segmentNames = result.segmentNames;
+  if (geometry.length === 1) { geometry = [geometry[0], [...geometry[0]]]; segmentNames = [null, segmentNames[0]]; }
   if (geometry.length > maxResultPoints) fail('CALCULATION_FAILED');
-  const warnings = ['MISSING_STREET_NAME'];
-  if (unverifiedStart) warnings.unshift('UNVERIFIED_CONNECTOR');
-  return { geometry, distanceMeters: result.graphDistanceMeters,
-    instructions: buildInstructions(geometry, { turnByTurn: !unverifiedStart }),
+  const instructions = buildInstructions(geometry, { turnByTurn: !unverifiedStart, segmentNames });
+  const warnings = [];
+  if (unverifiedStart) warnings.push('UNVERIFIED_CONNECTOR');
+  if (instructions.some(step => step.maneuver !== 'arrive' && step.streetName === null)) warnings.push('MISSING_STREET_NAME');
+  return { geometry, distanceMeters: result.graphDistanceMeters, instructions,
     snappedStart: [...result.startSnap.point], snappedEnd: [...result.endSnap.point], warnings };
 }

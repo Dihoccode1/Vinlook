@@ -1,6 +1,6 @@
 import { RoutingFailure, validPoint } from './core.mjs';
 import { exactKeys, copyWorkerGraph } from './worker-runtime.mjs';
-import { ROUTE_PROTOCOL, validateRouteConfig, validRouteRequest } from './route-worker-runtime.mjs';
+import { ROUTE_PROTOCOL, validateRouteConfig, validRouteRequest, validCsrSource } from './route-worker-runtime.mjs';
 import { R1_SCHEMA_VERSION, R1_ERROR_CODES, R1_WARNINGS } from './guidance.mjs';
 const failure = code => new RoutingFailure(code);
 const MANEUVERS = new Set(['depart', 'continue', 'left', 'right', 'u_turn', 'arrive']);
@@ -10,13 +10,19 @@ const resultKeys = ['protocol', 'type', 'requestId', 'graphVersion', 'destinatio
 /**
  * Drop-in for the web navigation controller's workerFactory(): calculate({token,position,accuracyMeters,destination})
  * and terminate(). Terminate physically stops the synchronous Worker; a new client reloads the graph.
+ * Pass either a normalized `graph` or `csr` artifact bytes ({binary, metadata, sha256, profileVersion, bytes, metadataBytes});
+ * CSR is checksum-verified and decoded inside the Worker.
  */
-export function createRouteWorkerClient({ graph, config, timeoutMilliseconds, workerFactory = () =>
+export function createRouteWorkerClient({ graph, csr, config, timeoutMilliseconds, workerFactory = () =>
   new Worker(new URL('./route-worker.mjs', import.meta.url), { type: 'module' }) } = {}) {
   validateRouteConfig(config);
   if (!Number.isSafeInteger(timeoutMilliseconds) || timeoutMilliseconds < 1 || timeoutMilliseconds > 60000
-    || typeof workerFactory !== 'function') throw failure('INVALID_WORKER_CONFIG');
-  const pinned = { ...config, limits: { ...config.limits } }, input = copyWorkerGraph(graph, config.limits);
+    || typeof workerFactory !== 'function' || (graph === undefined) === (csr === undefined)) throw failure('INVALID_WORKER_CONFIG');
+  if (csr !== undefined && !validCsrSource(csr)) throw failure('INVALID_WORKER_CONFIG');
+  const pinned = { ...config, limits: { ...config.limits } };
+  // Copies keep caller mutations out; CSR bytes are copied so the caller's buffers are never transferred or detached.
+  const source = graph !== undefined ? { graph: copyWorkerGraph(graph, config.limits) }
+    : { csr: { ...csr, binary: csr.binary.slice(), metadata: csr.metadata.slice() } };
   let worker = null, detach = null, loaded = false, terminated = false, pending = null, loads = 0;
   function stop(code) {
     terminated = true; loaded = false;
@@ -89,7 +95,7 @@ export function createRouteWorkerClient({ graph, config, timeoutMilliseconds, wo
       ensureWorker();
       if (!loaded) {
         await exchange({ type: 'LOAD_GRAPH', requestId: `load:${++loads}`, graphVersion: pinned.graphVersion,
-          schemaVersion: R1_SCHEMA_VERSION, config: pinned, graph: input }, 'load');
+          schemaVersion: R1_SCHEMA_VERSION, config: pinned, ...source }, 'load');
         loaded = true;
       }
       const route = await exchange({ type: 'CALCULATE_ROUTE', ...request }, 'route');
