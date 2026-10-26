@@ -6,12 +6,14 @@
   "scripts": {
     "start": "node --env-file-if-exists=.env src/server.js",
     "dev": "node --watch --env-file-if-exists=.env src/server.js",
-    "build": "node --check src/app.js && node --check src/config.js && node --check src/server.js && node --check src/authorization.js && node --check src/domain.js && node --check src/health-sampler.js",
-    "test:domain": "node --test test/domain.test.mjs test/health-sampler.test.mjs"
+    "build": "node --check src/app.js && node --check src/config.js && node --check src/server.js && node --check src/authorization.js && node --check src/domain.js && node --check src/health-sampler.js && node --check src/policy.js && node --check src/models.js && node --check src/catalog.js && node --check src/mongo-store.js && node --check src/public-content.js && node --check src/business-config.js && node --check src/business-runtime.js && node --check src/http.js",
+    "test:domain": "node --test test/domain.test.mjs test/health-sampler.test.mjs",
+    "test:http": "node --test test/http.test.mjs test/models-config.test.mjs",
+    "test:db": "node scripts/test-mongo.mjs"
   },
   "dependencies": {
     "express": "5.3.0",
-       "mongoose": "9.11.3",
+    "mongoose": "9.11.3",
     "zod": "4.6.7"
   }
 }

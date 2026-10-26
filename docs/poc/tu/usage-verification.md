@@ -1,116 +1,128 @@
-# TU02 independent lifecycle/counting and health core
+# TU02 Usage HTTP and Mongo implementation verification
 
-Refs #71; gate #70. Branch `codex/poc-tu-02-usage`, base integration
-`b6f5d0e7a363bdfb6dddd6a8d6876f73ea4f3718`. Prepared 26 October 2026 (UTC+7).
-Ownership: services/usage/** and this document only. Exact final head, remote file
-comparison and actual CI observations are recorded in the PR/issue handoff.
+Refs #71/#70; follow-up to merged core PR93 and dependency/lock PR95. Prepared
+26 October 2026 (UTC+7). Exact final heads, remote blobs and observed CI outcomes
+are recorded in the GitHub handoff; this file never predicts a pending CI pass.
 
-Before publication the integration branch advanced with PR89/90/92. The working
-branch fast-forwarded without conflict to
-`811c8e40f05c18701080bebaa786543aa3607d4e`; the complete module suite was rerun on
-that updated base. Other lanes' files were preserved and are not part of this PR.
+## Continuation and review basis
 
-## Gate found at start
+The first PR93 head `e8ffb75d81ae56b506f8956825a8ec0c4383ecc9` contained only the
+independent lifecycle/counting and health libraries. At the next continuation,
+#70 was closed and its human review/merge/acceptance checkboxes were all checked.
+The issue event records Dihoccode1 closing it at 13:09:09 UTC on26October. We used
+the merged U1–U4 document for the implementation candidate requested by Tú; this
+does not invent an explicit A/B comment or authorize live environment changes.
+Duy reviews the actual API/catalog/dependency code before integration/release.
 
-Duy reopened #70 at 13:03:14 UTC / 20:03:14 UTC+7 on 26 October. Its merged
-usage-contract.md still labels U1–U4 PROPOSED and explicitly gates endpoint/schema
-implementation; no approval/amendment decision was found in #70 comments or PR83
-review/comments at inspection. This slice implements the independent, already
-approved D004/D005/D017 semantics. It does not mount new routes, declare schemas or
-silently treat the merged fixture PR as U1–U4 acceptance. #71 remains open.
+Shared dependency handling is isolated in PR95:
+`d5ce6fed3a3e0f94aa420a3090f0da846a669482` adds only mongoose9.11.3 to the Usage
+manifest and workspace lock entry. That exact version/resolution was already used
+by Content/Identity. No upgrade or new resolved package. It was merged locally into
+the implementation branch for testing; Duy decides the shared integration order.
+The package JSON merge conflict was resolved by retaining the core scripts and
+the declared dependency. Duy subsequently merged PR95 and PR93, including his
+package JSON correction. The follow-up branch merged integration
+`ab2c12f` (PR94/96 web work included) and preserved Duy's dependency/lock contents;
+only its own Usage build/test scripts were retained from the implementation.
+There is no root lock or web source change in the follow-up diff.
 
-Usage package currently owns Express/Zod only. A Mongo driver is not declared;
-Mongoose9.11.3 is already pinned by Content/Identity but cannot be borrowed as an
-undeclared Usage dependency. Duy must decide dependency/catalog details and own
-the shared root lock integration before the durable adapter work. This PR changes
-Usage package scripts only; no dependency/root lock is edited. Local Docker client
-was available but its daemon pipe was unavailable; no local Mongo test was run.
+## Implemented paths
 
-## Implemented code
+- Strict Usage-owned Mongoose schemas and Mongo validators for the two collections;
+  exact unique/freshness indexes, no TTL/auto-create/index/buffering. Read-only
+  catalog plan/fingerprint and startup verification reject mismatches. Test apply
+  is restricted to a fresh loopback named replica set; production provisioning is
+  a separate reviewed operation.
+- Mongo transaction store with consistent bounded active snapshots, unique durable
+  identity, atomic playback/presence writes, terminal recheck, snapshot/majority
+  isolation and bounded per-process transaction queue. No application write retry
+  or retained-record deletion. Capacity serialization is single-process; no hard
+  distributed-capacity/p95 claim.
+- All seven U1 route families: telemetry and fresh Staff/Manager monitor reads with
+  no work-session requirement. Strict bodies/path IDs/locales, no queries, safe
+  JSON envelopes,1KiB body,256KiB response, exact CORS/no cookies and versioned
+  browser/global/account/in-flight limits. Public Content admission is fixed-route,
+  bounded3s/8MiB, no JWT/redirect/retry, bound to exact POI/locale.
+- Optional private business config/bootstrap requires Usage DB, writable replica
+  set and exact existing catalog. Unconfigured scaffold stays live200/ready503.
+  Configured runtime closes Mongo on startup/listen failure and shutdown; no live
+  config/env was changed. Production TLS/host/origin validation is explicit.
+- Health samples are on-demand memory only. Probes use service-owned readiness and
+  Usage's own DB; missing global-jobs/worker bridge remains unknown with counts=null.
+  No liveness shortcut, fake zero/up, cross-DB read or keepalive scheduler.
 
-`domain.js`: strict internal visitor inputs and server times; separate atomic store
-port; presence/start/heartbeat/end; duplicate and identity checks before public
-admission; recheck after awaiting admission; terminal end-before-start; first end
-wins; no automatic write retries or retention cleanup; fresh distinct global/per-POI
-counting at one cutoff. Corrupt/unknown store state fails rather than returning zero.
+Code/operator port details and limitations are in
+[services/usage/README.md](../../../services/usage/README.md).
 
-`health-sampler.js`: demand-driven memory samples, unknown missing bridges, parallel
-3-second bounded probes, one refresh shared by callers, 30s cadence/freshness and
-180s worker evidence freshness. Abort/close, clock regression, raw response/error
-redaction and last-success preservation are tested. No timers run between samples,
-no dependency credential/probe is loaded and no HTTP endpoint is introduced.
+## Executed local evidence
 
-Store port/probe requirements and factory usage are in
-[services/usage/README.md](../../../services/usage/README.md). The atomic storage
-model is test-only and cannot be a runtime fallback.
+Pinned Node24.18.1/npm11.16.0, no system runtime changes. The local Docker client
+exists but its daemon pipe was unavailable; **no local Mongo test was counted**.
 
-## Executed evidence
-
-Pinned Node24.18.1/npm11.16.0, built-ins and existing workspace dependencies only.
-
-| Check | Observation |
+| Check | Actual observation |
 | --- | --- |
-| New lifecycle/counting domain tests | 17/17 PASS |
-| New health-sampler tests | 8/8 PASS; real 3s timeout/abort path, no network |
-| New suites combined | 25/25 PASS, none skipped |
-| Usage workspace build | PASS, includes syntax checks for both new source modules |
-| Existing runtime/authorization HTTP regressions | 20/20 PASS, controlled loopback; not new Usage route acceptance |
-| Available Usage/routing/Content-tool suites on original base | 99/99 PASS across 10 files, none skipped |
-| Same module discovery after PR89/90/92 integration | 101/101 PASS; 11 files include the merged readiness suite |
-| Public Content inventory reproducibility | PASS, 240 metadata rows, no fresh live verification |
-| Merged Content readiness report | PASS, repository-only, no live execution |
-| Deterministic lifecycle cross-check | 600 generated events compared with the existing independent semantic oracle |
-| Concurrent starts | 40 same-ID starts produce one retained playback in the serialized transaction model; conflicting-owner race has one winner |
-| Start/end interleaving | End commits while start waits on admission; post-admission recheck preserves the tombstone |
-| Fault injection | Rollback before commit; lost acknowledgement after commit; explicit duplicate start preserves original timestamps |
-| Payload/clock/snapshot failures | No state creation from malformed/extra/IP/GPS/client-time inputs; corrupt or future snapshots fail without partial counts |
+| Original core suites |25/25 PASS (17 lifecycle/counting,8 memory-health), none skipped |
+| Original full module discovery after integration |101/101 PASS before the new HTTP/schema work |
+| First HTTP suite |9/9 PASS; actual Usage/Identity/Content HTTP over temporary127.0.0.1 listeners; Usage store is a labelled memory transaction fixture |
+| First schema/config/catalog units |3/3 PASS, disconnected model/config and read-only catalog model |
+| First Usage non-DB combined run |37/37 PASS before the additional transport timeout/stream-cap regression |
+| Actionlint1.7.12 |PASS for changed PoC backend workflow; optional shellcheck/pyflakes disabled |
+| Final local workspace build |PASS across web/Identity/Content/Usage |
+| Final runtime/authorization regression |20/20 PASS, controlled loopback |
+| Final available module discovery |114/114 PASS, none skipped; includes38 Usage implementation tests plus existing fixture/routing/Content-tool suites |
 
-The package JSON was normalized to LF after the whitespace check flagged CR on the
-edited script lines; the final whitespace scan passes. No test failed.
-Current app/authorization behavior is deliberately
-unchanged; passing existing HTTP authorization tests does not mean the new domain
-library is mounted behind those guards.
+Actual Mongo/CI results are recorded in the handoff after observation. The new
+transport regression tests a real3s deadline even when an injected fetch ignores
+abort, bounded streamed bytes and error redaction. These tests do not prove a real
+TLS handshake or live caller-key/account acceptance.
 
-Reproduction:
+The HTTP suites cover distinct browser/multitab/per-POI cardinality, server90s,
+heartbeat/Pause semantics, terminal/duplicate/conflicting playback, all admission
+failures,401/403/503, malformed/oversized/encoded/extra-field bodies, query/method/
+route/CORS/preflight handling,60/600/12 windows and ten-in-flight rejection. Tests
+use synthetic identities/public text/media and never a runtime fixture fallback.
+The 600-event oracle, concurrent40 starts, rollback/lost-ack and stale worker cases
+remain part of the independent core suite.
 
-```powershell
+## New real-Mongo CI harness — results observed separately
+
+`services/usage/scripts/test-mongo.mjs` creates a uniquely named container from the
+same pinned Mongo digest as baseline CI,768MiB/one CPU, dynamic127.0.0.1 port and
+explicit test label. It initializes vinlook_usage_poc, then passes only its name to
+the test. The test verifies image/label/running/port/set/empty exact test DB before
+catalog apply or record cleanup. It accepts no arbitrary URI; secrets/live env are
+not inherited by the child. Finally only that created container is removed.
+
+The suite exercises real validators/unique indexes/no TTL; same-ID starts across
+two store instances; end during admission; a real transaction rollback on presence
+failure; active snapshot overflow; full Usage HTTP backed by Mongo with fixture
+Identity/Content; missing-index fail-closed behavior; the actual configured server
+entrypoint/HTTP/readiness/graceful exit; and real disconnected DB503. Until its run
+passes, code inspection/unit results are not claimed as database acceptance.
+
+The PoC workflow now runs that suite as a separate required step before image
+checks. Existing Identity/Content Mongo regressions remain separate evidence.
+Actual image smoke without business env still tests the scaffold; the DB harness's
+configured child tests the business startup path. No live hosted deployment implied.
+
+## Reproduce and remaining acceptance
+
+```text
 npm run build --workspace=@vinlook/usage
 npm run test:domain --workspace=@vinlook/usage
+npm run test:http --workspace=@vinlook/usage
+npm run test:db --workspace=@vinlook/usage
 node --test tests/authorization.test.mjs tests/runtime-health.test.mjs
-$moduleTests = Get-ChildItem services/usage/test,packages/poc-routing/test,scripts/poc/content/test -Recurse -File | Where-Object { $_.Name -match '\.test\.(mjs|js)$' -and $_.Name -notmatch '\.integration\.test\.' } | ForEach-Object FullName
-node --test $moduleTests
-node scripts/poc/content/cli.mjs inventory --check
 ```
 
-## Model/test versus real acceptance
+The DB command needs Docker and creates its own fixture. Never substitute Atlas
+or a shared container. Production catalog apply/backup/restore/deploy needs an exact
+separate Duy-approved plan. No live login, Atlas/provider/model/media/worker change,
+real multidevice/load/cold-start/p95 or backup/restore acceptance performed. No
+screenshot/video applies to the backend slice.
 
-Lifecycle code is actual reusable implementation; its store and public admission
-dependencies are injected and replaced only in tests. The test store serializes
-and clones memory. It does not prove Mongo transaction/index behavior, snapshot
-capacity, retained history, process restart durability, actual HTTP admission or
-multi-instance races. Health tests use trusted synthetic probes; no real service,
-worker heartbeat or global jobs aggregate was read.
-
-No Usage business endpoint, Mongo schema/index/catalog/apply, live account/login,
-production CORS/rate limiting, cloud/Atlas/provider, real multidevice, deployment,
-load/p95 or retention/backup/restore acceptance was performed. Existing disposable
-Identity/Content regression CI is distinct from an as-yet absent Usage Mongo suite.
-No screenshot/video applies to the library slice. No env names/migrations added.
-
-## Decisions and next implementation sequence
-
-1. Duy approves/amends U1–U4 in #70, including complete summary and health/jobs wire,
-   source admission, strict bounds, capacity/concurrency, CORS/errors/config.
-2. Duy selects the Usage-owned Mongo library/pin and root-lock integration, then
-   confirms explicit collections/validators/index catalog and provisioning policy.
-3. Build a real store adapter and guarded disposable replica-set suite; exercise
-   same-ID races, end-before-start, atomic presence/playback, rollback and DB-down.
-4. Mount the approved visitor and monitor routes with existing fresh Identity
-   Staff/Manager guard (no work-session requirement), bounded input/rate/CORS and
-   exact public Content admission. Run real loopback Usage HTTP and RBAC tests.
-5. Implement health/jobs only with approved service-owned status bridges. Missing
-   global jobs or worker samples remain unknown/null; never read another DB or
-   fabricate zero/up. Live catalog/deploy changes need a separate approved plan.
-
-This PR is the first independent code slice, not completion of #71. The issue's
-full implementation, real DB/HTTP/RBAC, review/merge and live AC boxes stay unticked.
+Remaining owner bridge: Content global job counts and worker status. The authorized
+jobs route deliberately reports unknown/null/BRIDGE_PENDING, and the worker health
+component unknown. Upstream readiness503 stays unavailable. These unfinished live
+bridges and release acceptance prevent declaring the whole #71 complete. Duy reviews
+the new follow-up PR; no automatic merge, shared live provisioning or issue closure.
