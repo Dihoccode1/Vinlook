@@ -36,6 +36,8 @@ node --test tests/poc-web/tourist-production.browser.mjs
 
 Browser tests intercept style/HTTP/media only inside isolated test contexts; normal App does not contain these fixtures. The quoted local style URL is not a real style artifact and must not be deployed. Initial browser run was blocked by sandbox loopback; unchanged run outside sandbox reached app. Found/fixed MapLibre6 namespace/worker integration before final passes. An initial retry test raced query reload; reordered it and now awaits exact response locale/map-ready before screenshots. No physical phone or live audio quality acceptance implied.
 
+Final visual QA caught lazy MapLibre CSS overriding the canvas positioning/height and native controls intercepting the location button. Added stronger canvas dimensions/marker-inside-map assertions and explicit canvas size/stacking contexts; GPS test uses real clicks, no force-click bypass. These fixes are included in the final commit and browser rerun evidence.
+
 ## Completion boundaries
 
 This PR completes the independently implementable UI wiring for #76. Keep Issue open: real PMTiles/style/coverage from Tú, published15POI/240pairs, native language review, approved Usage HTTP bridge, exact CORS/hosted config, real-device/live audio/GPS performance and deploy acceptance remain. Routing/offline package and navigation controls belong to #79; do not add fake directions/download buttons here. Duy reviews/merges into codex/poc-demo; do not merge main or close original backlog.
