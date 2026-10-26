@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 1,
+  "evidenceMode": "repository_only_not_live_acceptance",
+  "registry": {
+    "path": "services/content/src/adapters/hybrid-v1.json",
+    "version": "vinlook-hybrid-v1",
+    "documentSha256LF": "c88e817e537ffe964c2d5134c454c1c5e488b153d00d2b93b7d8b775a4961ed8",
+    "locales": [
+      "ar",
+      "ar-EG",
+      "bn",
+      "de",
+      "en",
+      "es",
+      "fr",
+      "hi",
+      "id",
+      "ja",
+      "pcm",
+      "pt-PT",
+      "ru",
+      "ur",
+      "vi",
+      "zh-Hant"
+    ]
+  },
+  "summary": {
+    "pois": 15,
+    "pairs": 240,
+    "historicalApprovalReports": 3,
+    "livePairsVerifiedByThisInventory": 0,
+    "translationTasksIfAllMissing": 225,
+    "serverAudioTasksIfAllMissing": 60,
+    "localAudioTasksIfAllMissing": 180
+  },
+  "historicalReport": {
+    "source": "https://github.com/Dihoccode1/Vinlook/issues/73",
+    "poiRef": "POI-001",
+    "sourceVersionReported": 1,
+    "localesReportedApproved": [
+      "en",
+      "vi",
+      "zh-Hant"
+    ],
+    "disposition": "preserve_and_revalidate_privately_before_any_action_not_current_acceptance"
+  },
+  "unresolved": [
+    "LIVE_STATE_NOT_READ",
+    "THUMBNAIL_LICENSE_NOT_VERIFIED",
+    "ARRIVAL_ACCEPTANCE_NOT_REVALIDATED",
+    "LOCALE_HUMAN_REVIEW_NOT_REVALIDATED"
+  ],
+  "pois": [
+    {
+      "poiRef": "POI-001",
+      "nameEN": "Independence Palace",
+      "narrationSha256": "c4ca799f87ee8aa3734b3eb6d49917b3930ed62a767d9fc1b0a35e102f90440b",
+      "words": 248,
+      "sourceFile": "docs/content/poi-001-005-scripts-en.md",
+      "sourceDocumentSha256LF": "5beac30705d65d247333adf04230920423c31d6e57c1525ac634ba732b75124e",
+      "sourceReviewFile": "docs/content/poi-001-005-source-review.md",
+      "sourceReviewSha256LF": "fe167bc325a50b3a9da041db18fc39cb7327f7b8ecf970d5f5ad812a1103b90f",
+      "repositoryEditorialStatement": "editorial_source_accepted_audio_review_pending",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-002",
+      "nameEN": "Notre-Dame Cathedral Basilica of Saigon",
+      "narrationSha256": "856849c023e96251de2812a30067221f32cc7ef55d20e9d7375ea50f894d403e",
+      "words": 238,
+      "sourceFile": "docs/content/poi-001-005-scripts-en.md",
+      "sourceDocumentSha256LF": "5beac30705d65d247333adf04230920423c31d6e57c1525ac634ba732b75124e",
+      "sourceReviewFile": "docs/content/poi-001-005-source-review.md",
+      "sourceReviewSha256LF": "fe167bc325a50b3a9da041db18fc39cb7327f7b8ecf970d5f5ad812a1103b90f",
+      "repositoryEditorialStatement": "editorial_source_accepted_audio_review_pending",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-003",
+      "nameEN": "Saigon Central Post Office",
+      "narrationSha256": "68c54fa162809aa20432ae1d71a3663ab4f71b19327067ef7207a11c2038de97",
+      "words": 236,
+      "sourceFile": "docs/content/poi-001-005-scripts-en.md",
+      "sourceDocumentSha256LF": "5beac30705d65d247333adf04230920423c31d6e57c1525ac634ba732b75124e",
+      "sourceReviewFile": "docs/content/poi-001-005-source-review.md",
+      "sourceReviewSha256LF": "fe167bc325a50b3a9da041db18fc39cb7327f7b8ecf970d5f5ad812a1103b90f",
+      "repositoryEditorialStatement": "editorial_source_accepted_audio_review_pending",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-004",
+      "nameEN": "Ho Chi Minh City Opera House",
+      "narrationSha256": "b13ac27dafab1f54fc4d214458d35266378010a32604cc87d43853b236abf416",
+      "words": 238,
+      "sourceFile": "docs/content/poi-001-005-scripts-en.md",
+      "sourceDocumentSha256LF": "5beac30705d65d247333adf04230920423c31d6e57c1525ac634ba732b75124e",
+      "sourceReviewFile": "docs/content/poi-001-005-source-review.md",
+      "sourceReviewSha256LF": "fe167bc325a50b3a9da041db18fc39cb7327f7b8ecf970d5f5ad812a1103b90f",
+      "repositoryEditorialStatement": "editorial_source_accepted_audio_review_pending",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-005",
+      "nameEN": "Nha Rong Wharf",
+      "narrationSha256": "3c19e786dc7740a1ce6414d074105901dc89307d8d6436ec6021d41198fba34c",
+      "words": 249,
+      "sourceFile": "docs/content/poi-001-005-scripts-en.md",
+      "sourceDocumentSha256LF": "5beac30705d65d247333adf04230920423c31d6e57c1525ac634ba732b75124e",
+      "sourceReviewFile": "docs/content/poi-001-005-source-review.md",
+      "sourceReviewSha256LF": "fe167bc325a50b3a9da041db18fc39cb7327f7b8ecf970d5f5ad812a1103b90f",
+      "repositoryEditorialStatement": "editorial_source_accepted_audio_review_pending",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-006",
+      "nameEN": "War Remnants Museum",
+      "narrationSha256": "747b18e1cce280cc50dd5cb6db5f92854cb2c336866a9b7bbc0ec952f774ff23",
+      "words": 229,
+      "sourceFile": "docs/content/poi-006-010-scripts-en.md",
+      "sourceDocumentSha256LF": "8822f146a0c00fb95ed0c666f53aabe6acf0d3ba4d5aae53e81caeebe9c12f90",
+      "sourceReviewFile": "docs/content/poi-006-010-source-review.md",
+      "sourceReviewSha256LF": "ca29447b48d741374b46991d4bce875b954fb085fd55c28e2ee9ec26010f066a",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-007",
+      "nameEN": "Ho Chi Minh City History Museum",
+      "narrationSha256": "555c11f612d75ac7f18ac83b35092ca5fa648e9c07199f173a04d7b715855cb2",
+      "words": 226,
+      "sourceFile": "docs/content/poi-006-010-scripts-en.md",
+      "sourceDocumentSha256LF": "8822f146a0c00fb95ed0c666f53aabe6acf0d3ba4d5aae53e81caeebe9c12f90",
+      "sourceReviewFile": "docs/content/poi-006-010-source-review.md",
+      "sourceReviewSha256LF": "ca29447b48d741374b46991d4bce875b954fb085fd55c28e2ee9ec26010f066a",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-008",
+      "nameEN": "Ho Chi Minh City Fine Arts Museum",
+      "narrationSha256": "ab3c4e888b68d33edb84a5d62c23c34b12a3e54cb1301c68d4c8465aed97893e",
+      "words": 228,
+      "sourceFile": "docs/content/poi-006-010-scripts-en.md",
+      "sourceDocumentSha256LF": "8822f146a0c00fb95ed0c666f53aabe6acf0d3ba4d5aae53e81caeebe9c12f90",
+      "sourceReviewFile": "docs/content/poi-006-010-source-review.md",
+      "sourceReviewSha256LF": "ca29447b48d741374b46991d4bce875b954fb085fd55c28e2ee9ec26010f066a",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-009",
+      "nameEN": "Landmark 81",
+      "narrationSha256": "dc24936e6eae3ad7af980fc20e5183cb09292abf0037f3cc9a3320a85f317bbc",
+      "words": 229,
+      "sourceFile": "docs/content/poi-006-010-scripts-en.md",
+      "sourceDocumentSha256LF": "8822f146a0c00fb95ed0c666f53aabe6acf0d3ba4d5aae53e81caeebe9c12f90",
+      "sourceReviewFile": "docs/content/poi-006-010-source-review.md",
+      "sourceReviewSha256LF": "ca29447b48d741374b46991d4bce875b954fb085fd55c28e2ee9ec26010f066a",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-010",
+      "nameEN": "Bitexco Financial Tower",
+      "narrationSha256": "e06e6c96d9924a6a6a57f9f2b3648288a0a74fd491aca2c235a1f869085917ad",
+      "words": 231,
+      "sourceFile": "docs/content/poi-006-010-scripts-en.md",
+      "sourceDocumentSha256LF": "8822f146a0c00fb95ed0c666f53aabe6acf0d3ba4d5aae53e81caeebe9c12f90",
+      "sourceReviewFile": "docs/content/poi-006-010-source-review.md",
+      "sourceReviewSha256LF": "ca29447b48d741374b46991d4bce875b954fb085fd55c28e2ee9ec26010f066a",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-011",
+      "nameEN": "Saigon Zoo and Botanical Gardens",
+      "narrationSha256": "9d6322009d0e7de0087c4f10770710710fd36c9d39a92181824b73c5be8de38d",
+      "words": 233,
+      "sourceFile": "docs/content/poi-011-015-scripts-en.md",
+      "sourceDocumentSha256LF": "4290a3c6af32fa9953e2f853dd912bb41fbc39dc72d72b4b112fcc157ba79d9c",
+      "sourceReviewFile": "docs/content/poi-011-015-source-review.md",
+      "sourceReviewSha256LF": "e95bd8d64018c4ae7277ff969d8a22418341e0fb259ce649a3605a3b18c819ba",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-012",
+      "nameEN": "Nguyen Hue Walking Street",
+      "narrationSha256": "f7d3e582cb8106f7a675e5001b2416d03915515a088d5341bab5f22d900fbec9",
+      "words": 235,
+      "sourceFile": "docs/content/poi-011-015-scripts-en.md",
+      "sourceDocumentSha256LF": "4290a3c6af32fa9953e2f853dd912bb41fbc39dc72d72b4b112fcc157ba79d9c",
+      "sourceReviewFile": "docs/content/poi-011-015-source-review.md",
+      "sourceReviewSha256LF": "e95bd8d64018c4ae7277ff969d8a22418341e0fb259ce649a3605a3b18c819ba",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-013",
+      "nameEN": "Bui Vien Walking Street",
+      "narrationSha256": "2da15cf32fc5723d91b44c579652ccc7cc85d5f332065539370c53f29903e2d0",
+      "words": 238,
+      "sourceFile": "docs/content/poi-011-015-scripts-en.md",
+      "sourceDocumentSha256LF": "4290a3c6af32fa9953e2f853dd912bb41fbc39dc72d72b4b112fcc157ba79d9c",
+      "sourceReviewFile": "docs/content/poi-011-015-source-review.md",
+      "sourceReviewSha256LF": "e95bd8d64018c4ae7277ff969d8a22418341e0fb259ce649a3605a3b18c819ba",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-014",
+      "nameEN": "Cu Chi Tunnels at Ben Duoc",
+      "narrationSha256": "dd11f90fe072864b25daabf36631d31baa604713277b2eb355659364ace35a4f",
+      "words": 244,
+      "sourceFile": "docs/content/poi-011-015-scripts-en.md",
+      "sourceDocumentSha256LF": "4290a3c6af32fa9953e2f853dd912bb41fbc39dc72d72b4b112fcc157ba79d9c",
+      "sourceReviewFile": "docs/content/poi-011-015-source-review.md",
+      "sourceReviewSha256LF": "e95bd8d64018c4ae7277ff969d8a22418341e0fb259ce649a3605a3b18c819ba",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    },
+    {
+      "poiRef": "POI-015",
+      "nameEN": "Thien Hau Temple in Cholon",
+      "narrationSha256": "76800ed0af9f9966f26d544622d14fcb6de60276de91a191e27634fc531c2efe",
+      "words": 248,
+      "sourceFile": "docs/content/poi-011-015-scripts-en.md",
+      "sourceDocumentSha256LF": "4290a3c6af32fa9953e2f853dd912bb41fbc39dc72d72b4b112fcc157ba79d9c",
+      "sourceReviewFile": "docs/content/poi-011-015-source-review.md",
+      "sourceReviewSha256LF": "e95bd8d64018c4ae7277ff969d8a22418341e0fb259ce649a3605a3b18c819ba",
+      "repositoryEditorialStatement": "draft_pending_human_review_in_document",
+      "entranceEvidence": {
+        "file": "docs/content/poi-001-015-geography-review.md",
+        "documentSha256LF": "d4fdd378accf887c99314d0c8f41c4f418e15580e903939d16b851a71b5852e1",
+        "status": "desktop_proposal_not_revalidated",
+        "fieldwork": "waived_not_performed"
+      },
+      "attributionEvidence": {
+        "file": "docs/content/poi-001-015-geography-attribution.md",
+        "documentSha256LF": "8c0e0d4ddc1a50f9e84792c60174e101a5981abc4ad1741cb36549ecfaca17d9"
+      },
+      "thumbnail": {
+        "license": null,
+        "provenance": null,
+        "status": "not_verified"
+      }
+    }
+  ],
+  "rows": [
+    {"poiRef":"POI-001","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":true},
+    {"poiRef":"POI-001","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-001","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":true},
+    {"poiRef":"POI-001","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":true},
+    {"poiRef":"POI-002","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-002","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-003","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-004","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-005","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-006","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-007","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-008","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-009","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-010","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-011","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-012","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-013","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-014","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"ar","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ara@afba26a4b470f9ae64aeeea91b99f080dee410de","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"ar-EG","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ar-EG:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"bn","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ben@0da99de6074c8829121cdabfbdba423af18e8e56","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"de","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-deu@5cbe521869fcf9da4b2b3e85d7810e3005a121dc","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"en","translationModel":null,"audioProfile":"facebook/mms-tts-eng@c71de0fe7204c83f1c10820a7d696d0b450048ba","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"es","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-spa@833b96c0278c85cf09776d565ba8f1cb2819f7ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"fr","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-fra@5806d92d6247218c0e81e5f1a7462f6f636f70a2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"hi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-hin@1d83b223ec78e30b944f7d96bd117eb3d7023303","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"id","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-ind@50dc8c10320a328391efaab25e4c629f9bf254ec","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"ja","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:ja:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"pcm","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-pcm@1d0b2f030eed571b27a600ad350e50cebaccea9b","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"pt-PT","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:pt-PT:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"ru","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-rus@a6f0f76c028c49175f42074ee79bd3e17ee1dd47","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"ur","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-urd-script_arabic@4c4f53d52e4f0b40cb8e7f36dcef66a2a73619c5","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"vi","translationModel":"gemini-3.5-flash-lite","audioProfile":"facebook/mms-tts-vie@b58928d033932a49aa8e3d6cf11625b25fe928d2","execution":"local_worker","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false},
+    {"poiRef":"POI-015","languageCode":"zh-Hant","translationModel":"gemini-3.5-flash-lite","audioProfile":"gemini-3.8-flash-tts:Kore:zh-Hant:v1","execution":"server_adapter","liveVerification":"not_checked","textVersion":null,"audioSha256":null,"durationSeconds":null,"historicalApprovalReported":false}
+  ]
+}
