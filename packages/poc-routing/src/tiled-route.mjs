@@ -4,8 +4,9 @@ import {buildInstructions} from './guidance.mjs';
 const fail=code=>{throw new RoutingFailure(code);};
 class Heap{
  values=[];
- push(item){const a=this.values;a.push(item);let i=a.length-1;while(i){const p=(i-1)>>1;if(a[p].cost<=a[i].cost)break;[a[p],a[i]]=[a[i],a[p]];i=p;}}
- pop(){const a=this.values,first=a[0],last=a.pop();if(a.length){a[0]=last;let i=0;for(;;){let c=2*i+1;if(c>=a.length)break;if(c+1<a.length&&a[c+1].cost<a[c].cost)c++;if(a[i].cost<=a[c].cost)break;[a[i],a[c]]=[a[c],a[i]];i=c;}}return first;}
+ less(a,b){return a.priority<b.priority||a.priority===b.priority&&a.id<b.id;}
+ push(item){const a=this.values;a.push(item);let i=a.length-1;while(i){const p=(i-1)>>1;if(!this.less(a[i],a[p]))break;[a[p],a[i]]=[a[i],a[p]];i=p;}}
+ pop(){const a=this.values,first=a[0],last=a.pop();if(a.length){a[0]=last;let i=0;for(;;){let c=2*i+1;if(c>=a.length)break;if(c+1<a.length&&this.less(a[c+1],a[c]))c++;if(!this.less(a[c],a[i]))break;[a[i],a[c]]=[a[c],a[i]];i=c;}}return first;}
 }
 /** Full directed graph search, loading source-owned adjacency only when a node is settled. */
 export async function calculateTiledRoute(store,{position,accuracyMeters,entrance,entranceToleranceMeters,limits,signal}={}){
@@ -30,13 +31,19 @@ export async function calculateTiledRoute(store,{position,accuracyMeters,entranc
  };
  const starts=await snaps(position,false),ends=await snaps(entrance,true);if(!starts.length||!ends.length)fail('SNAP_NOT_FOUND');
  const states=new Map(),goals=new Map(),heap=new Heap(),indexes=new WeakMap();let best=null,relaxations=0,settled=0;
+ // Every non-direct finish passes through an end-edge source (or its terminal
+ // node when fraction=1). Distance to that vertex plus the exact finish cost is
+ // a consistent lower bound: verified graph edges cost at least geodesic distance.
+ const targets=ends.flatMap(end=>[{point:end.from,cost:end.fraction*end.edge[5]+end.distanceMeters},
+  ...(end.fraction===1?[{point:end.to,cost:end.distanceMeters}]:[])]);
+ const heuristic=point=>Math.min(...targets.map(t=>distanceMeters(point,t.point)+t.cost));
  const index=tile=>{let value=indexes.get(tile);if(!value){const nodes=new Map(tile.nodes.map(n=>[n[0],n])),adjacency=new Map();for(const e of tile.edges){if(!adjacency.has(e[1]))adjacency.set(e[1],[]);adjacency.get(e[1]).push(e);}value={nodes,adjacency};indexes.set(tile,value);}return value;};
  const push=(id,point,cost,previous,start,name)=>{
   if(!Number.isFinite(cost)||cost>Number.MAX_SAFE_INTEGER)fail('CALCULATION_FAILED');
   const old=states.get(id);if(old&&(old.point[0]!==point[0]||old.point[1]!==point[1]))fail('GRAPH_INCOMPATIBLE');
   if(old&&old.cost<=cost)return;
   if(!old&&states.size>=limits.states||heap.values.length>=limits.heapEntries)fail('CALCULATION_FAILED');
-  states.set(id,{id,point,cost,previous,start,name,closed:false});heap.push({id,cost});
+  states.set(id,{id,point,cost,previous,start,name,closed:false});heap.push({id,cost,priority:cost+heuristic(point)});
  };
  const consider=(cost,start,end,node=null,direct=false)=>{if(!best||cost<best.cost)best={cost,start,end,node,direct};};
  for(const end of ends){const key=end.edge[1];if(!goals.has(key))goals.set(key,[]);goals.get(key).push({end,cost:end.fraction*end.edge[5]});
@@ -48,7 +55,7 @@ export async function calculateTiledRoute(store,{position,accuracyMeters,entranc
    consider(start.distanceMeters+(end.fraction-start.fraction)*start.edge[5]+end.distanceMeters,start,end,null,true);
  }
  while(heap.values.length){check();const item=heap.pop(),current=states.get(item.id);if(current.closed||current.cost!==item.cost)continue;
-  if(best&&current.cost>best.cost)break;if(++settled>limits.settled)fail('CALCULATION_FAILED');current.closed=true;
+  if(best&&item.priority>best.cost)break;if(++settled>limits.settled)fail('CALCULATION_FAILED');current.closed=true;
   const owner=tileId(current.point,store.degrees);if(!entryIds.has(owner))fail('GRAPH_INCOMPATIBLE');
   const tile=await store.load(owner);check();const indexed=index(tile),resident=indexed.nodes.get(current.id);
   if(!resident||resident[1]!==current.point[0]||resident[2]!==current.point[1])fail('GRAPH_INCOMPATIBLE');

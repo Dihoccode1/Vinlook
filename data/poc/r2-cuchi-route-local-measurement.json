@@ -1,0 +1,16 @@
+{
+  "kind": "actual_hcmc_local_file_long_route_not_field_acceptance",
+  "graphVersion": "hcmc-20261027-v1",
+  "start": [106.6969924, 10.7757289],
+  "end": [106.4664005, 11.1411929],
+  "previousDefaults": {"status":"failed","code":"CALCULATION_FAILED","wallMilliseconds":12057,"requests":460,"cacheBytes":16000000},
+  "astarWithOldCache": {"status":"failed","code":"CALCULATION_FAILED","requests":501,"cacheBytes":16000000},
+  "astarWithLargerCache": {
+    "status":"found","distanceMeters":55575.12712767362,"geometryPoints":1236,
+    "settled":188466,"wallMilliseconds":10126,"requests":369,
+    "cachedTiles":220,"cachedEncodedBytes":31905664,"heapUsedAtEndBytes":355250592
+  },
+  "sample": "Windows Node local-file fetch; no visitor GPS, network or provider calls",
+  "mobileHeapAcceptance":false,
+  "fieldSafetyAcceptance":false
+}

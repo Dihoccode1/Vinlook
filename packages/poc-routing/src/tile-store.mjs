@@ -55,11 +55,11 @@ export async function createTileStore({manifestUrl,manifestSha256,graphVersion,l
     ||tileId(row.slice(1,3),manifest.degrees)!==key||!within(row.slice(1,3)))fail();nodes.set(row[0],row);Object.freeze(row);}
   for(const row of tile.edges){
    if(!Array.isArray(row)||row.length!==7||!id(row[0])||edges.has(row[0])||!nodes.has(row[1])||!id(row[2])||!validPoint(row.slice(3,5))
-    ||!within(row.slice(3,5))||!Number.isFinite(row[5])||row[5]<=0||!(row[6]===null||typeof row[6]==='string'&&row[6].length<=512))fail();
+    ||!within(row.slice(3,5))||!Number.isFinite(row[5])||row[5]<=0||row[5]>Number.MAX_SAFE_INTEGER||!(row[6]===null||typeof row[6]==='string'&&row[6].length<=512))fail();
    const target=nodes.get(row[2]),from=nodes.get(row[1]);
    const targetTile=tileId(row.slice(3,5),manifest.degrees);
    if(target&&(target[1]!==row[3]||target[2]!==row[4])||targetTile===key&&!target||!entries.has(targetTile)
-    ||row[5]+0.01<distanceMeters(from.slice(1,3),row.slice(3,5)))fail();
+    ||row[5]<distanceMeters(from.slice(1,3),row.slice(3,5)))fail();
    edges.add(row[0]);Object.freeze(row);
   }
   Object.freeze(tile.nodes);Object.freeze(tile.edges);Object.freeze(tile);
