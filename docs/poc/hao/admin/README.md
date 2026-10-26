@@ -11,7 +11,7 @@ Implemented against current router/validation: explicit open/reopen/close work s
 ## Actual tests
 
 - `node --test tests/poc-web/admin/admin.test.mjs`:4passed; exact vi/zh-Hant paths, versions/idempotency/multipart/no auto-session,409/401/403 preservation, save/readback, partial/quota jobs,16locale preflight.
-- `node --test tests/poc-web/admin/browser.test.mjs`:1passed on installed Chrome with synthetic transport. Explicit session required, create/readback, Staff cannot publish,409 input preserved, reload logs out. Screenshot `.bootstrap-review/poc-hao-admin-conflict-mobile.png` visually inspected.
+- `node --test tests/poc-web/admin/browser.test.mjs`:2passed on installed Chrome with synthetic transport. Explicit session required, create/readback, Staff cannot publish,409 input preserved, reload logs out. Screenshot `.bootstrap-review/poc-hao-admin-conflict-mobile.png` visually inspected.
 - Existing adapter/lifecycle units:12passed. Workspace build completed successfully. Docker engine check failed separately; no real Mongo/backend integration was run.
 - Initial browser runs failed because the local listener was absent and then a fixture variable shadowed the DOM `document`; fixed and final test passed. These failures are not counted as passes.
 
@@ -23,4 +23,6 @@ Use portable Node24.18.1/npm11.16.0 as in Tourist handoff. `npm run dev --worksp
 
 ## Still pending
 
-Real disposable Mongo + Identity/Content persistence/RBAC integration; actual verified thumbnail/audio/provider-free media fixtures; full Manager browser review/submit/return/publish workflow, dirty-form interactions between non-save actions, reconciliation UI for uncertain uploads, device/keyboard/expiry/timeout testing. Process/retry/upload/publish are user-triggered product actions; the agent has not executed them live. Docker Desktop must be running before guarded backend integration. Current implementation is reviewable, not full #77 acceptance.
+Follow-up: unsaved metadata and unsaved locale text now block unrelated Process/review/submit/publish/upload actions and locale switching until explicitly saved/discarded. Added upload-status/reconciliation/verified-asset attachment controls without auto-resending uncertain uploads. Final browser suite:2passed, including Manager missing16 blocked and dirty metadata preserved; initial exact-label selector failed and was corrected without weakening assertions. Actual backend upload/reconcile behavior still requires disposable integration.
+
+Real disposable Mongo + Identity/Content persistence/RBAC integration; actual verified thumbnail/audio/provider-free media fixtures; full Manager browser review/submit/return/publish workflow, full backend reconciliation of uncertain uploads, device/keyboard/expiry/timeout testing. Process/retry/upload/publish are user-triggered product actions; the agent has not executed them live. Docker Desktop must be running before guarded backend integration. Current implementation is reviewable, not full #77 acceptance.

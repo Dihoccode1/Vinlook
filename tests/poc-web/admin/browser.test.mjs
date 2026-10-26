@@ -14,3 +14,11 @@ test('Staff login requires explicit session; create/readback/version/conflict pr
     await page.screenshot({path:'.bootstrap-review/poc-hao-admin-conflict-mobile.png',fullPage:true});page.on('dialog',d=>d.accept());await page.reload();await page.getByRole('button',{name:'Sign in',exact:true}).waitFor();
   }finally{await browser.close();}
 });
+test('Manager missing16 cannot publish; unsaved metadata blocks processing/review/submit and locale changes',async()=>{
+  const browser=await chromium.launch({channel:'chrome',headless:true}),page=await browser.newPage();
+  try{await page.goto(base+'/test/admin-fixture.html?role=Manager');await page.getByLabel('Email',{exact:true}).fill('fixture@example.test');await page.getByLabel('Password',{exact:true}).fill('synthetic');await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.getByRole('button',{name:'Open / reopen session',exact:true}).click();
+    await page.getByLabel('Name (English)',{exact:true}).fill('Manager fixture');await page.getByLabel('English source',{exact:true}).fill('Synthetic source');await page.getByRole('button',{name:'Create POI',exact:true}).click();await page.getByRole('button',{name:'Publish',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'Publish',exact:true}).isDisabled(),true);
+    await page.getByLabel('Name (English)',{exact:true}).fill('Unsaved metadata');for(const name of ['Process selected locale','Submit for review','Approve exact locale'])assert.equal(await page.getByRole('button',{name,exact:true}).isDisabled(),true);
+    assert.equal(await page.getByRole('combobox').isDisabled(),true);await page.getByRole('button',{name:'Save draft',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('select').disabled);assert.equal(await page.getByRole('button',{name:'Publish',exact:true}).isDisabled(),true);
+  }finally{await browser.close();}
+});

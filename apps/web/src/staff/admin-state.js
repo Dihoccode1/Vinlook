@@ -31,6 +31,7 @@ export function createAdminState(api) {
     refreshAuthority:()=>execute(async()=>set({principal:await api.me()})),
     session:(operation,reason)=>execute(async()=>{if(operation==='open')await api.openSession();else await api.closeSession(state.principal.currentWorkSession.id,reason);set({principal:await api.me()});}),
     read:poiId=>execute(()=>read(poiId)),
+    inspect:fn=>execute(()=>fn(api,state)),
     mutate:fn=>execute(async()=>{
       const principal=await api.me();set({principal});
       if(!principal.currentWorkSession)throw Object.assign(Error('WORK_SESSION_REQUIRED'),{code:'WORK_SESSION_REQUIRED',status:403});
