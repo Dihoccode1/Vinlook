@@ -5,6 +5,40 @@ import {createAdminState,publicationGaps} from '../../../apps/web/src/staff/admi
 import {localeCodes} from '../../../apps/web/src/i18n/locales.js';
 const poi='000000000000000000000001',rev='000000000000000000000002';
 const envelope=data=>new Response(JSON.stringify({data,requestId:'fixture'}));
+const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done;});return {promise,resolve};};
+
+test('logout fences late login and content reads; a new login remains busy until its own response',async()=>{
+  const first=deferred(),second=deferred(),content=deferred();let count=0;
+  const store=createAdminState({login:()=>++count===1?first.promise:second.promise,read:()=>content.promise,logout(){}});
+  const old=store.login('old','');store.logout();const current=store.login('new','');
+  first.resolve({account:{fullName:'old'}});await assert.rejects(old,{code:'REQUEST_CANCELLED'});
+  assert.equal(store.getSnapshot().busy,true);assert.equal(store.getSnapshot().principal,null);
+  second.resolve({account:{fullName:'new'}});await current;
+  const read=store.read(poi);store.logout();content.resolve({poi:{id:poi},workingRevision:{id:rev}});
+  await assert.rejects(read,{code:'REQUEST_CANCELLED'});assert.equal(store.getSnapshot().document,null);
+  assert.equal(store.getSnapshot().error,null);
+});
+
+test('busy mutation rejects without clearing edits; logout during authority check prevents the write',async()=>{
+  const authority=deferred();let writes=0;
+  const store=createAdminState({me:()=>authority.promise,logout(){}});
+  store.setInput({nameEN:'unsaved'});
+  const pending=store.mutate(()=>{writes++;});
+  await assert.rejects(store.mutate(()=>{writes++;}),{code:'OPERATION_IN_PROGRESS'});
+  assert.equal(store.getSnapshot().input.nameEN,'unsaved');
+  store.logout();authority.resolve({currentWorkSession:{id:poi}});
+  await assert.rejects(pending,{code:'REQUEST_CANCELLED'});assert.equal(writes,0);
+});
+
+test('adapter cannot restore a token from a login response received after logout',async()=>{
+  const response=deferred();let calls=0;
+  const api=createAdminAdapter({identityOrigin:'https://identity.example.test',contentOrigin:'https://content.example.test'},
+    {fetcher:()=>{calls++;return response.promise;}});
+  const pending=api.login('fixture@example.test','synthetic');api.logout();
+  response.resolve(envelope({accessToken:'SYNTHETIC-TOKEN'}));
+  await assert.rejects(pending,{code:'REQUEST_CANCELLED'});
+  await assert.rejects(api.me(),{code:'AUTHENTICATION_REQUIRED'});assert.equal(calls,1);
+});
 test('Admin adapter exact vi/zh-Hant path, versions, idempotency, multipart, separate origins and no auto session',async()=>{
   const calls=[];const api=createAdminAdapter({identityOrigin:'https://identity.example.test',contentOrigin:'https://content.example.test'},{fetcher:async(url,init)=>{
     calls.push({url,init});if(url.pathname.endsWith('/login'))return envelope({accessToken:'SYNTHETIC-TOKEN'});
@@ -13,6 +47,7 @@ test('Admin adapter exact vi/zh-Hant path, versions, idempotency, multipart, sep
   await api.login('fixture@example.test','synthetic');assert.equal(calls.length,2);
   for(const code of ['vi','zh-Hant']){await api.saveLocale(rev,code,7,'Fixture text');const c=calls.at(-1);assert.equal(c.url.pathname,`/api/v1/admin/revisions/${rev}/languages/${code}`);assert.deepEqual(JSON.parse(c.init.body),{expectedEditVersion:7,text:'Fixture text'});}
   await api.process(rev,7,['vi'],'00000000-0000-4000-8000-000000000001');assert.equal(calls.at(-1).init.headers['Idempotency-Key'],'00000000-0000-4000-8000-000000000001');
+  await api.runNext('00000000-0000-4000-8000-000000000002');assert.equal(calls.at(-1).url.pathname,'/api/v1/admin/jobs/run-next');assert.deepEqual(JSON.parse(calls.at(-1).init.body),{});assert.equal(calls.at(-1).init.headers['Idempotency-Key'],'00000000-0000-4000-8000-000000000002');
   await api.upload(poi,new Blob(['fixture'],{type:'image/png'}));const c=calls.at(-1);assert.ok(c.init.body instanceof FormData);assert.equal(c.init.headers['Content-Type'],undefined);assert.equal(c.url.origin,'https://content.example.test');
   api.logout();await assert.rejects(api.read(poi),{code:'AUTHENTICATION_REQUIRED'});
 });

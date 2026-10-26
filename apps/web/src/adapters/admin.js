@@ -5,18 +5,20 @@ const locale = value => {if(!isLocale(value))throw new ApiError('INVALID_INPUT')
 // Separate origins, JWT only in this closure. No automatic retry of mutations.
 export function createAdminAdapter({identityOrigin,contentOrigin},options={}) {
   const identity=createTransport(identityOrigin,options),content=createTransport(contentOrigin,{timeoutMs:65000,...options});
-  let token=null;
+  let token=null,generation=0;
   const request=async(transport,path,args={})=>{
     if(!token)throw new ApiError('AUTHENTICATION_REQUIRED',{status:401});
-    try{return await transport(path,{...args,token});}
-    catch(error){if(error.status===401)token=null;throw error;}
+    const epoch=generation;
+    try{const result=await transport(path,{...args,token});if(epoch!==generation)throw new ApiError('REQUEST_CANCELLED');return result;}
+    catch(error){if(error.status===401&&epoch===generation)token=null;throw error;}
   };
   const revision=(value,operation,args)=>request(content,`/api/v1/admin/revisions/${id(value)}${operation}`,args);
   return {
-    async login(email,password){token=null;const data=await identity('/api/v1/auth/login',{method:'POST',body:{email,password}});
+    async login(email,password){const epoch=++generation;token=null;const data=await identity('/api/v1/auth/login',{method:'POST',body:{email,password}});
+      if(epoch!==generation)throw new ApiError('REQUEST_CANCELLED');
       if(!data?.accessToken)throw new ApiError('INVALID_RESPONSE');token=data.accessToken;return this.me();},
     me:()=>request(identity,'/api/v1/me'),
-    logout(){token=null;},
+    logout(){generation++;token=null;},
     openSession:()=>request(identity,'/api/v1/work-sessions/open',{method:'POST',body:{}}),
     closeSession:(sessionId,reason)=>request(identity,`/api/v1/work-sessions/${id(sessionId)}/close`,{method:'POST',body:{reason}}),
     read:poiId=>request(content,`/api/v1/admin/pois/${id(poiId)}`),
@@ -26,6 +28,7 @@ export function createAdminAdapter({identityOrigin,contentOrigin},options={}) {
     saveLocale:(rev,code,expectedEditVersion,text)=>{if(code==='en')throw new ApiError('INVALID_INPUT');return revision(rev,`/languages/${locale(code)}`,{method:'PATCH',body:{expectedEditVersion,text}});},
     process:(rev,expectedEditVersion,languages,key)=>revision(rev,'/process',{method:'POST',body:{expectedEditVersion,languages},idempotencyKey:key}),
     jobs:rev=>request(content,'/api/v1/admin/jobs',{query:{revisionId:id(rev)}}),
+    runNext:key=>request(content,'/api/v1/admin/jobs/run-next',{method:'POST',body:{},idempotencyKey:key}),
     retry:(jobId,expectedEditVersion,key)=>request(content,`/api/v1/admin/jobs/${id(jobId)}/retry`,{method:'POST',body:{expectedEditVersion},idempotencyKey:key}),
     review:(rev,code,body)=>revision(rev,`/languages/${locale(code)}/review`,{method:'POST',body}),
     submit:(rev,expectedEditVersion)=>revision(rev,'/submit',{method:'POST',body:{expectedEditVersion}}),

@@ -22,6 +22,7 @@ const api=createAdminAdapter({identityOrigin:'https://identity.fixture.invalid',
   if(url.pathname.endsWith('/admin/pois')&&init.method==='POST'){fixtureDocument={poi:{id:poi},workingRevision:{...body,id:rev,editVersion:version,status:'draft'},publishedRevision:null,localizedContents:[]};return ok({poiId:poi,revisionId:rev,editVersion:version});}
   if(url.pathname.endsWith(`/admin/pois/${poi}`))return ok(structuredClone(fixtureDocument));
   if(url.pathname.endsWith('/admin/jobs'))return ok({items:[]});
+  if(url.pathname.endsWith('/admin/jobs/run-next'))return ok({jobId:rev,attemptId:poi});
   throw Error('Unexpected fixture operation');
 }});
 createRoot(document.getElementById('root')).render(<><aside style={{background:'#fff1bd',padding:16}}><strong>LOCAL ADMIN FIXTURE — NOT LIVE ACCEPTANCE</strong><p>Transport and persistence are synthetic. No provider, database or real account.</p></aside><Admin api={api}/></>);
