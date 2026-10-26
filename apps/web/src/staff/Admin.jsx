@@ -8,7 +8,8 @@ function runtime(){
   try{return createAdminAdapter({identityOrigin:import.meta.env.VITE_IDENTITY_ORIGIN,contentOrigin:import.meta.env.VITE_CONTENT_ORIGIN});}
   catch{return null;}
 }
-const initial={nameEN:'',sourceTextEN:'',location:{type:'Point',coordinates:[0,0]},entrance:null,thumbnailAsset:null};
+const initial={nameEN:'',sourceTextEN:'',location:{type:'Point',coordinates:[null,null]},entrance:null,thumbnailAsset:null};
+const validPoint=value=>value?.type==='Point'&&Array.isArray(value.coordinates)&&value.coordinates.length===2&&value.coordinates.every(Number.isFinite)&&Math.abs(value.coordinates[0])<=180&&Math.abs(value.coordinates[1])<=90;
 export function Admin({api:provided}){
   const api=useMemo(()=>provided??runtime(),[provided]);
   return <div className="staff" lang="en" dir="ltr">{api?<Editor api={api}/>:<main><h1>Vinlook Staff</h1><p role="alert">Service origins are not configured. Contact the operator.</p></main>}</div>;
@@ -24,7 +25,7 @@ function Editor({api}){
   const editable=canWrite&&(!doc||rev?.status==='draft');
   const manager=principal?.account?.role==='Manager',gaps=publicationGaps(doc);
   const run=async fn=>{try{await fn();}catch{/* centralized safe error in store */}};
-  const change=(field,value)=>{setDirty('metadata');setKey(null);store.setInput({...state.input,[field]:value});};
+  const change=(field,value)=>{setDirty('metadata');setKey(null);store.setInput({...initial,...state.input,[field]:value});};
   useEffect(()=>{setText(row?.text??'');},[row?.text,code]);
   useEffect(()=>{const leave=e=>{if(dirty){e.preventDefault();e.returnValue='';}};window.addEventListener('beforeunload',leave);return()=>window.removeEventListener('beforeunload',leave);},[dirty]);
   const load=()=>{if(dirty&&!window.confirm('Discard unsaved input and load the server version?'))return;void run(async()=>{await store.read(poiId);setDirty(false);setKey(null);setUpload(null);});};
@@ -34,6 +35,7 @@ function Editor({api}){
       <label>Email<input name="email" type="email" autoComplete="username" required/></label><label>Password<input name="password" type="password" autoComplete="current-password" required/></label>
       <button disabled={state.busy}>Sign in</button></form>{state.error&&<p role="alert">{state.error}</p>}</main>;
   const input=state.input??initial;
+  const validCoordinates=validPoint(input.location)&&(input.entrance===null||validPoint(input.entrance));
   return <main><header><h1>Vinlook Staff</h1><p>{principal.account.fullName} · {principal.account.role} · Session: {principal.currentWorkSession?'Open':'Closed'}</p><button onClick={()=>{if(!dirty||window.confirm('Discard unsaved input and sign out?')){store.logout();setDirty(false);}}}>Sign out</button></header>
     <section aria-label="Work session"><button disabled={state.busy} onClick={()=>void run(()=>store.session('open'))}>Open / reopen session</button>
       <label>Close / return / review reason<input value={reason} maxLength={500} onChange={e=>setReason(e.target.value)}/></label>
@@ -46,8 +48,8 @@ function Editor({api}){
     {doc&&!rev&&<button disabled={!canWrite} onClick={()=>void mutate((a,s,k)=>a.clone(s.document.poi.id,s.document.publishedRevision.id,k),{idempotent:true})}>Create draft from published</button>}
     <section aria-label="Draft editor"><h2>Draft</h2><label>Name (English)<input disabled={!editable||dirty==='locale'} value={input.nameEN??''} onChange={e=>change('nameEN',e.target.value)}/></label>
       <label>English source<textarea disabled={!editable||dirty==='locale'} value={input.sourceTextEN??''} onChange={e=>change('sourceTextEN',e.target.value)}/></label>
-      {['location','entrance'].map(field=><fieldset key={field} disabled={!editable||dirty==='locale'}><legend>{field==='location'?'Marker':'Entrance'} · longitude, latitude</legend>{[0,1].map(index=><input key={index} aria-label={`${field} ${index===0?'longitude':'latitude'}`} type="number" step="any" min={index===0?-180:-90} max={index===0?180:90} value={input[field]?.coordinates[index]??''} onChange={e=>{const coordinates=[...(input[field]?.coordinates??[0,0])];coordinates[index]=Number(e.target.value);change(field,{type:'Point',coordinates});}}/>)}</fieldset>)}
-      <button disabled={!editable||dirty==='locale'||!input.nameEN?.trim()||!input.sourceTextEN?.trim()} onClick={()=>void mutate((a,s,k)=>{const changes={nameEN:input.nameEN,sourceTextEN:input.sourceTextEN,location:input.location,entrance:input.entrance,thumbnailAsset:input.thumbnailAsset};return rev?a.save(rev.id,rev.editVersion,changes):a.create(changes,k);},{idempotent:!rev})}>{rev?'Save draft':'Create POI'}</button>
+      {['location','entrance'].map(field=><fieldset key={field} disabled={!editable||dirty==='locale'}><legend>{field==='location'?'Marker':'Entrance'} · longitude, latitude</legend>{[0,1].map(index=><input key={index} aria-label={`${field} ${index===0?'longitude':'latitude'}`} type="number" step="any" min={index===0?-180:-90} max={index===0?180:90} value={input[field]?.coordinates[index]??''} onChange={e=>{const coordinates=[...(input[field]?.coordinates??[null,null])];coordinates[index]=e.target.value===''?null:Number(e.target.value);change(field,field==='entrance'&&coordinates.every(c=>c===null)?null:{type:'Point',coordinates});}}/>)}</fieldset>)}
+      <button disabled={!editable||dirty==='locale'||!validCoordinates||!input.nameEN?.trim()||!input.sourceTextEN?.trim()} onClick={()=>void mutate((a,s,k)=>{const changes={nameEN:input.nameEN,sourceTextEN:input.sourceTextEN,location:input.location,entrance:input.entrance,thumbnailAsset:input.thumbnailAsset};return rev?a.save(rev.id,rev.editVersion,changes):a.create(changes,k);},{idempotent:!rev})}>{rev?'Save draft':'Create POI'}</button>
       <label>Thumbnail (max 2 MiB)<input type="file" accept="image/jpeg,image/png,image/webp" disabled={!editable||dirty||!rev} onChange={e=>{setUpload(e.target.files?.[0]??null);setIntent(null);}}/></label>
       <button disabled={!editable||dirty||!rev||!upload||Boolean(intent)} onClick={()=>void mutate(async(a,s)=>{const current=s.document.workingRevision;const pending=await a.thumbnailIntent(current.id,current.editVersion);setIntent({...pending,revisionId:current.id});const result=await a.upload(pending.intentId,upload);setIntent({...result,revisionId:current.id});if(result.status!=='verified')throw Object.assign(Error(),{code:'MEDIA_VERIFICATION_UNAVAILABLE'});return a.save(current.id,current.editVersion,{thumbnailAsset:result.asset});})}>Upload and attach thumbnail</button>
       {intent&&intent.revisionId===rev?.id&&<section aria-label="Upload recovery"><p>Upload {intent.intentId??intent.id} · {intent.status} — uncertain uploads are not automatically resent.</p>
