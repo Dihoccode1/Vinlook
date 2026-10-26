@@ -50,6 +50,9 @@ export function createHealthSampler({ probes = {}, now = Date.now } = {}) {
     if (name === 'worker') {
       // A fresh HTTP response does not refresh the worker's underlying heartbeat.
       try {
+        if(result&&Object.keys(result).length===2&&result.healthy===null&&result.observedAt===null){
+          states.set(name,{...previous,status:'unknown',checkedAt,observedAt:null,errorCode:'WORKER_NOT_OBSERVED'});return;
+        }
         up = result !== null && typeof result === 'object' && Object.keys(result).length === 2
           && ['healthy', 'observedAt'].every(key => Object.hasOwn(result, key))
           && result.healthy === true && validTime(result.observedAt) && result.observedAt <= checkedAt;
