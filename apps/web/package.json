@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node ../../scripts/check-ui-resources.mjs && vite build",
+    "build": "node ../../scripts/check-ui-resources.mjs && node ../../scripts/poc/routing/prepare-hosted.mjs && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -1,0 +1,13 @@
+{
+  "graphVersion": "hcmc-20261027-v1",
+  "profileVersion": "vn-foot-v1",
+  "archiveUrl": "https://github.com/Dihoccode1/Vinlook/releases/download/poc-hcmc-r2-20261027-v1/hcmc-r2-v1.tar.gz",
+  "archiveBytes": 56629135,
+  "archiveSha256": "595ffc22963d2fcaac2b1c14bd45299f734f2cbdbef16df5539f44c28e4f83e2",
+  "manifestSha256": "735198019bcd4de03776a3b6f4c70fcdf6d31647f37f081e3a6700de3d9735bb",
+  "sourceSnapshot": "https://download.geofabrik.de/asia/vietnam-261025.osm.pbf",
+  "sourceSha256": "ddfad6df8d51a42336c01d199424a2cdfce46bc64eeb1b2f4d53818dd63fead6",
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors; Vietnam extract by Geofabrik",
+  "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/"
+}
