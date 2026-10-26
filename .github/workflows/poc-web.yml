@@ -1,0 +1,41 @@
+name: PoC web foundation
+on:
+  pull_request:
+    branches: [codex/poc-demo]
+    paths: ['apps/web/**', 'tests/poc-web/**', 'docs/poc/hao/**', 'package*.json', '.github/workflows/poc-web.yml']
+  push:
+    branches: [codex/poc-hao-01-tourist]
+    paths: ['apps/web/**', 'tests/poc-web/**', 'docs/poc/hao/**', 'package*.json', '.github/workflows/poc-web.yml']
+permissions:
+  contents: read
+jobs:
+  foundation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # same reviewed pin as backend-checks
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # same reviewed pin as backend-checks
+        with:
+          node-version: '24.18.1'
+          cache: npm
+      - name: Exact runtime and locked install
+        run: |
+          test "$(node --version)" = "v24.18.1"
+          test "$(npm --version)" = "11.16.0"
+          npm ci --no-audit --no-fund
+      - name: Adapter and lifecycle units plus existing locale regression
+        run: |
+          node --test tests/poc-web/adapters.test.mjs tests/poc-web/lifecycle.test.mjs
+          npm run test:ui-locale
+      - name: Production build and independent listeners
+        run: |
+          npm run build
+          npm run check:scaffold
+      - name: Fixture flag must reject production build
+        run: |
+          if VITE_POC_FIXTURE=labelled-local npm run build --workspace=@vinlook/web; then
+            echo "Fixture build unexpectedly succeeded"
+            exit 1
+          fi
