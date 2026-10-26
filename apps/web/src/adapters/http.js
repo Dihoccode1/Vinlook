@@ -20,15 +20,17 @@ export function publicOrigin(value) {
 
 export function createTransport(origin, {fetcher = globalThis.fetch, timeoutMs = 10000} = {}) {
   const base = publicOrigin(origin);
-  return async function request(path, {query = {}, method = 'GET', body, token, signal} = {}) {
+  return async function request(path, {query = {}, method = 'GET', body, form, token, signal, idempotencyKey} = {}) {
     if (!path.startsWith('/api/v1/') || path.includes('?') || path.includes('#')) throw new ApiError('INVALID_API_PATH');
     const url = new URL(path, base);
     for (const [key, value] of Object.entries(query)) if (value !== undefined) url.searchParams.set(key, value);
     const headers = {Accept: 'application/json'};
     if (body !== undefined) headers['Content-Type'] = 'application/json';
     if (token) headers.Authorization = `Bearer ${token}`;
+    if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
+    if (form && body !== undefined) throw new ApiError('INVALID_INPUT');
     try {
-      const response = await fetcher(url, {method, headers, body: body === undefined ? undefined : JSON.stringify(body),
+      const response = await fetcher(url, {method, headers, body: form ?? (body === undefined ? undefined : JSON.stringify(body)),
         signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)]) : AbortSignal.timeout(timeoutMs),
         credentials: 'omit', cache: 'no-store', redirect: 'error'});
       const payload = await response.json().catch(() => null);
