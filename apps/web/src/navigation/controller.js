@@ -6,7 +6,7 @@ export function createNavigation({workerFactory,geolocation,visible=()=>true,uui
   const listeners=new Set();
   const emit=()=>{snapshot={...policy.snapshot(),error};onChange(snapshot);for(const listener of listeners)listener();};
   const clearWatch=()=>{watchEpoch++;if(watch!==null)geolocation.clearWatch(watch);watch=null;};
-  const terminate=()=>{epoch++;worker?.terminate();worker=null;};
+  const terminate=()=>{epoch++;const previous=worker;worker=null;try{previous?.terminate();}catch{/* Never reuse a failed Worker. */}};
   const calculate=async()=>{
     const snapshot=policy.snapshot();
     if(!snapshot.destination||snapshot.inflight||!snapshot.latestFix||!visible())return;
@@ -15,8 +15,8 @@ export function createNavigation({workerFactory,geolocation,visible=()=>true,uui
       const result=await worker.calculate({token,position:snapshot.latestFix.position,accuracyMeters:snapshot.latestFix.accuracyMeters,destination:snapshot.destination});
       if(generation!==epoch)return;
       if(policy.acceptRoute(result))error=null;
-      else{policy.failCalculation(token.requestId);error='GRAPH_INCOMPATIBLE';}
-    }catch(failure){if(generation!==epoch)return;if(token)policy.failCalculation(token.requestId);error=['NO_ROUTE','SNAP_NOT_FOUND','GRAPH_UNAVAILABLE','GRAPH_INCOMPATIBLE'].includes(failure.code)?failure.code:'CALCULATION_FAILED';}
+      else{policy.failCalculation(token.requestId);error='GRAPH_INCOMPATIBLE';terminate();}
+    }catch(failure){if(generation!==epoch)return;if(token)policy.failCalculation(token.requestId);error=['NO_ROUTE','SNAP_NOT_FOUND','GRAPH_UNAVAILABLE','GRAPH_INCOMPATIBLE'].includes(failure.code)?failure.code:'CALCULATION_FAILED';terminate();}
     emit();
   };
   const observe=position=>{
