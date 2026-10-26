@@ -4,7 +4,7 @@ import {partitionGraph} from '../src/tiles.mjs';
 import {calculateTiledRoute} from '../src/tiled-route.mjs';
 import {calculateGuidance} from '../src/guidance.mjs';
 import {createGraph,distanceMeters} from '../src/core.mjs';
-import {p,node,edge,limits as coreLimits} from './core-fixtures.mjs';
+import {p,node,edge,generatedGraph,limits as coreLimits} from './core-fixtures.mjs';
 const limits={snapCandidates:100,settled:100,states:100,relaxations:100,heapEntries:100,resultPoints:100};
 function fixture(disconnected=false){
  const nodes=[node('a',0),node('b',200),node('c',200,200),node('d',400,200)];
@@ -41,4 +41,14 @@ test('bounds search, validates cross-tile resident identity and handles cancella
 test('can arrive at an edge terminal node with no outgoing edges',async()=>{
  const f=fixture();const r=await calculateTiledRoute(f.store,{...f.request,position:p(350,200),entrance:p(400,200)});
  assert.ok(r.distanceMeters>49&&r.distanceMeters<52);assert.deepEqual(r.snappedEnd,p(400,200));
+});
+test('A* terminal heuristic agrees with monolithic snapped routing on directed generated topologies',async()=>{
+ for(let seed=1;seed<=20;seed++){
+  const graph=generatedGraph(seed),degrees=0.001,{tiles}=partitionGraph(graph,{degrees,nodes:100,edges:1000,tiles:100,tileNodes:100,tileEdges:1000});
+  const store={degrees,entries:[...tiles.values()].map(t=>({id:t.id,snapBounds:t.snapBounds})),async load(id){return tiles.get(id);}};
+  const request={position:graph.nodes[0].point,accuracyMeters:5,entrance:graph.nodes.at(-1).point,entranceToleranceMeters:1,limits:{...limits,relaxations:10000,heapEntries:10000}};
+  let expected,actual;try{expected=calculateGuidance(createGraph(graph,coreLimits),{...request,maxResultPoints:100});}catch(e){expected={code:e.code};}
+  try{actual=await calculateTiledRoute(store,request);}catch(e){actual={code:e.code};}
+  assert.equal(actual.code,expected.code,`seed${seed}`);if(!actual.code)assert.ok(Math.abs(actual.distanceMeters-expected.distanceMeters)<1e-5,`seed${seed}`);
+ }
 });

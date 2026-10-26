@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {createTileStore} from '../src/tile-store.mjs';
 import {TILE_FORMAT} from '../src/tiles.mjs';
+import {distanceMeters} from '../src/core.mjs';
 const hash=x=>createHash('sha256').update(x).digest('hex');
 function fixture(change=()=>{}){
  const tiles=[{id:'100_100',nodes:[['a',1.001,1.001,'a']],edges:[['ab','a','b',1.011,1.001,1200,'Street']]},
@@ -39,4 +40,8 @@ test('bounds streamed bytes and request count and refuses unknown tile without f
 test('cache evicts by encoded byte budget and reloads verified data',async()=>{
  const f=fixture(),max=Math.max(...f.manifest.tiles.map(t=>t.bytes));const s=await createTileStore({...f.config,limits:{...f.config.limits,tileBytes:max,cacheBytes:max}});
  await s.load('100_100');await s.load('101_100');assert.equal(s.stats().cachedTiles,1);await s.load('100_100');assert.equal(f.calls.length,4);
+});
+test('rejects even slightly sub-geodesic costs required by the A* lower bound',async()=>{
+ const f=fixture(t=>{t[0].edges[0][5]=distanceMeters([1.001,1.001],[1.011,1.001])-0.001;});
+ const s=await createTileStore(f.config);await assert.rejects(s.load('100_100'),{code:'GRAPH_INCOMPATIBLE'});
 });
