@@ -25,9 +25,9 @@ CI mới phải trigger pull_request với base codex/poc-demo và push branchPo
 
 - [ ]15POI nguồn/tọa độ/entrance/ảnh thật có provenance/license; trường hợp chưa kiểm chứng được nêu đúng disposition.
 - [ ]240cặp đạt nội dung/audio/model/version/thời lượng và humanreview theo cổng public; ít nhất một POI nghe lần lượt đủ16locale trên deploy. Không dùng chung file kháclocale.
-- [ ] Public map/search/nearby/GPS hoạt động mobile+laptop; refusedGPS không phá xem/nghe/tải.
+- [ ] Public map/search/nearby/GPS hoạt động mobile+laptop; refusedGPS không phá xem/nghe online.
 - [ ] Đi bộ thật/tính lại/mấtGPS/no-route/arrival theo D011/012, coverage đúng HCMC hiện tại; không giả tuyến.
-- [ ] Download English full package/manifest/checksum; mấtmạng/đóngmở lại vẫn dùng bản đồ/POI/audio/routing; update lỗi giữ gói cũ; syncxóa đúng.
+- Offline download/package/service worker/reopen/update không thuộc nghiệm thu PoC theo quyết định Duy ngày26/10/2026. Mất mạng phải báo lỗi trung thực; không hứa khả năng dùng offline.
 - [ ] Admin A thao tác thật/persist: login/session/create-edit/upload/Process/job/review/submit/return/publish;409 giữinput,401/403 đúng; public không thấy draft.
 - [ ] Visitor không login; JWT staff chỉ memory; Staff không publish; không có quyền không mở Admin/Monitor/API.
 - [ ] Monitor real multi-device/multitab: cùngbrowser một,hai thiết bị chungIP riêng;Play/Pause/Resume/ended/close/replaced;90s stale/mấtmạng;global+perPOI đúng,refresh30s/asOf/errors.
