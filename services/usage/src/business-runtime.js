@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { createContentJobs } from './content-jobs.js';
 import { createUsageModels } from './models.js';
 import { verifyUsageCatalog } from './catalog.js';
 import { createMongoUsageStore } from './mongo-store.js';
@@ -19,6 +20,7 @@ export function assembleUsageRuntime({ connection, config, now = Date.now, model
   } });
   return { service: createUsageService({ store, languageCodes, now, verifyPublicPoi: createPublicContentVerifier(config.contentOrigin, { fetchImpl }) }),
     sampler, now, ready, authorization: config.authorization, origins: config.origins,
+    jobs:config.contentCallerKey?createContentJobs({origin:config.contentOrigin,key:config.contentCallerKey,fetchImpl,now}):null,
     async close() { sampler.close(); await connection.close(); } };
 }
 export async function connectUsageRuntime(config) {
