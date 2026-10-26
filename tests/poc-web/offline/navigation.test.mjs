@@ -1,5 +1,17 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {createNavigation} from '../../../apps/web/src/navigation/controller.js';
 const flush=()=>new Promise(r=>setImmediate(r)),destination={poiId:'fixture-poi',revisionId:'fixture-revision',graphVersion:'fixture-graph',entrance:[106.71,10.7]};
+test('current Worker instructions reach snapshots defensively and clear when target changes',async()=>{
+  let fix,result;
+  const nav=createNavigation({workerFactory:()=>({calculate:async({token})=>result={...token,geometry:[[106.7,10.7],[106.71,10.7]],distanceMeters:1100,
+    warnings:['MISSING_STREET_NAME'],instructions:[{maneuver:'depart',geometryIndex:0,distanceMeters:1100,text:'Head along a street'},
+      {maneuver:'arrive',geometryIndex:1,distanceMeters:0,text:'Arrive at the entrance'}]},terminate(){}}),
+    geolocation:{watchPosition:fn=>{fix=fn;return 1;},clearWatch(){}},maxRoutePoints:20,maxCalculations:10});
+  nav.start(destination);fix({timestamp:1,coords:{longitude:106.7,latitude:10.7,accuracy:5}});await flush();
+  assert.equal(nav.snapshot().guidance.distanceMeters,1100);result.instructions[0].text='mutated';
+  const copy=nav.snapshot();copy.guidance.instructions[0].text='mutated again';
+  assert.equal(nav.snapshot().guidance.instructions[0].text,'Head along a street');
+  nav.start({...destination,poiId:'next'});assert.equal(nav.snapshot().guidance,null);nav.stop();
+});
 test('explicit Retry replaces a failed Worker without automatically repeating the calculation',async()=>{
   let fix,created=0,calls=0,terminated=0;
   const nav=createNavigation({workerFactory:()=>{
