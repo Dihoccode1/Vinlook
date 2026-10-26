@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { Worker } from 'node:worker_threads';
+import {createHash} from 'node:crypto';
+import {partitionGraph,TILE_FORMAT} from '../src/tiles.mjs';
 import { createRouteWorkerClient } from '../src/route-client.mjs';
 import { calculateGuidance, buildInstructions } from '../src/guidance.mjs';
 import { createNavigationPolicy } from '../src/navigation.mjs';
@@ -13,6 +15,22 @@ const input = () => ({ nodes: [node('a', 0), node('b', 100), node('c', 100, 100)
   edges: [...both('ab', 'a', 'b', 100.5), ...both('bc', 'b', 'c', 100.5), ...both('bd', 'b', 'd', 100.5)] });
 const config = () => ({ graphVersion: 'synthetic-r1-v1', limits: { ...limits }, maxRequests: 50, maxResultPoints: 100, entranceToleranceMeters: 2 });
 const options = extra => ({ position: p(0, 0), accuracyMeters: 10, entrance: p(100, 100), entranceToleranceMeters: 2, maxResultPoints: 100, ...extra });
+test('R2 verified tiles run through the real Worker and existing navigation result contract',async t=>{
+ const {tiles}=partitionGraph(input(),{degrees:0.001,nodes:100,edges:100,tiles:100,tileNodes:100,tileEdges:100});
+ const tileResponses={},sha=x=>createHash('sha256').update(x).digest('hex'),entries=[];
+ for(const tile of tiles.values()){
+  const body=JSON.stringify({format:TILE_FORMAT,graphVersion:config().graphVersion,profileVersion:'vn-foot-v1',id:tile.id,nodes:tile.nodes,edges:tile.edges});
+  tileResponses[`https://fixture.test/tiles/${tile.id}.json`]=body;entries.push({id:tile.id,url:`tiles/${tile.id}.json`,bytes:Buffer.byteLength(body),sha256:sha(body),nodes:tile.nodes.length,edges:tile.edges.length,snapBounds:tile.snapBounds});
+ }
+ const body=JSON.stringify({format:TILE_FORMAT,graphVersion:config().graphVersion,profileVersion:'vn-foot-v1',degrees:0.001,topology:'outgoing-owned-by-source-node',tiles:entries});tileResponses['https://fixture.test/manifest.json']=body;
+ const source={manifestUrl:'https://fixture.test/manifest.json',manifestSha256:sha(body),graphVersion:config().graphVersion,
+  limits:{manifestBytes:10000,tileBytes:10000,cacheBytes:20000,tiles:100,tileNodes:100,tileEdges:100,requests:100,timeoutMilliseconds:1000},
+  searchLimits:{snapCandidates:100,states:100,settled:100,relaxations:1000,heapEntries:1000}};
+ const workers=[],client=createRouteWorkerClient({tiles:source,config:config(),timeoutMilliseconds:5000,workerFactory:realFactory(workers,{tileResponses})});t.after(()=>client.terminate());
+ const destination={poiId:'poi-test',revisionId:'revision-test',graphVersion:config().graphVersion,entrance:p(100,100)};
+ const result=await client.calculate({token:{requestId:'r2-test',poiId:destination.poiId,revisionId:destination.revisionId,graphVersion:destination.graphVersion},position:p(0),accuracyMeters:10,destination});
+ assert.deepEqual(result.instructions.map(s=>s.maneuver),['depart','left','arrive']);assert.ok(Math.abs(result.distanceMeters-201)<1e-6);assert.equal(result.poiId,destination.poiId);
+});
 const code = fn => { try { fn(); } catch (error) { assert.ok(error instanceof RoutingFailure); return error.code; } assert.fail('expected failure'); };
 
 test('guidance snaps GPS and entrance, follows edges and emits left/right turns', () => {
@@ -43,9 +61,9 @@ test('off-graph entrance, far GPS, uncertain GPS and disconnected targets fail w
   assert.equal(code(() => calculateGuidance(island, options({ entrance: p(650) }))), 'NO_ROUTE');
 });
 
-function realFactory(instances) {
+function realFactory(instances,workerData) {
   return () => {
-    const raw = new Worker(new URL('./route-worker-fixture.mjs', import.meta.url));
+    const raw = new Worker(new URL('./route-worker-fixture.mjs', import.meta.url),{workerData});
     const listeners = new Map(), record = { terminated: false }; instances.push(record);
     return {
       addEventListener(type, handler) { const fn = value => handler(type === 'message' ? { data: value } : value); listeners.set(handler, fn); raw.on(type, fn); },

@@ -11,17 +11,18 @@ const resultKeys = ['protocol', 'type', 'requestId', 'graphVersion', 'destinatio
  * Drop-in for the web navigation controller's workerFactory(): calculate({token,position,accuracyMeters,destination})
  * and terminate(). Terminate physically stops the synchronous Worker; a new client reloads the graph.
  * Pass either a normalized `graph` or `csr` artifact bytes ({binary, metadata, sha256, profileVersion, bytes, metadataBytes});
- * CSR is checksum-verified and decoded inside the Worker.
+ * CSR is checksum-verified and decoded inside the Worker. Alternatively pass `tiles` with
+ * manifestUrl/manifestSha256/graphVersion/limits/searchLimits for lazy verified R2 search.
  */
-export function createRouteWorkerClient({ graph, csr, config, timeoutMilliseconds, workerFactory = () =>
+export function createRouteWorkerClient({ graph, csr, tiles, config, timeoutMilliseconds, workerFactory = () =>
   new Worker(new URL('./route-worker.mjs', import.meta.url), { type: 'module' }) } = {}) {
   validateRouteConfig(config);
   if (!Number.isSafeInteger(timeoutMilliseconds) || timeoutMilliseconds < 1 || timeoutMilliseconds > 60000
-    || typeof workerFactory !== 'function' || (graph === undefined) === (csr === undefined)) throw failure('INVALID_WORKER_CONFIG');
+    || typeof workerFactory !== 'function' || [graph,csr,tiles].filter(x=>x!==undefined).length!==1) throw failure('INVALID_WORKER_CONFIG');
   if (csr !== undefined && !validCsrSource(csr)) throw failure('INVALID_WORKER_CONFIG');
   const pinned = { ...config, limits: { ...config.limits } };
   // Copies keep caller mutations out; CSR bytes are copied so the caller's buffers are never transferred or detached.
-  const source = graph !== undefined ? { graph: copyWorkerGraph(graph, config.limits) }
+  const source = tiles !== undefined ? {tiles:structuredClone(tiles)} : graph !== undefined ? { graph: copyWorkerGraph(graph, config.limits) }
     : { csr: { ...csr, binary: csr.binary.slice(), metadata: csr.metadata.slice() } };
   let worker = null, detach = null, loaded = false, terminated = false, pending = null, loads = 0;
   function stop(code) {

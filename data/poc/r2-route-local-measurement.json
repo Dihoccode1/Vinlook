@@ -1,0 +1,18 @@
+{
+  "kind": "actual_osm_local_file_route_not_entrance_acceptance",
+  "graphVersion": "hcmc-20261027-v1",
+  "profileVersion": "vn-foot-v1",
+  "sampleStart": [106.6954237, 10.7752137],
+  "sampleEnd": [106.7050353, 10.7853548],
+  "wallMilliseconds": 256,
+  "distanceMeters": 3209.424738835309,
+  "geometryPoints": 143,
+  "settled": 12817,
+  "responsesIncludingManifest": 18,
+  "cachedTiles": 17,
+  "cachedEncodedBytes": 8262355,
+  "processHeapUsedAtEndBytes": 62294360,
+  "mobileAcceptance": false,
+  "poiEntranceAcceptance": false,
+  "hostedAcceptance": false
+}

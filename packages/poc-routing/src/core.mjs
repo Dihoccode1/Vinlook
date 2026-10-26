@@ -19,7 +19,7 @@ export function distanceMeters(a, b) {
   const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * RAD) * Math.cos(b[1] * RAD) * Math.sin(dLon / 2) ** 2;
   return 2 * R * Math.atan2(Math.sqrt(Math.min(1, Math.max(0, h))), Math.sqrt(Math.max(0, 1 - h)));
 }
-function project(position, a, b) {
+export function project(position, a, b) {
   // Local projection for candidate geometry only; final offsets use great-circle distance.
   const scale = Math.cos(position[1] * RAD), x = lon => (lon - position[0]) * RAD * R * scale;
   const y = lat => (lat - position[1]) * RAD * R;
