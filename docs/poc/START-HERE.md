@@ -1,5 +1,8 @@
 # Nhận việc qua Issue với AI agent
 
+> Current PoC scope,26October2026: online-only by Duy. Offline requirements in historical sections/examples are superseded by [ONLINE-SCOPE.md](ONLINE-SCOPE.md). Full online walking navigation,15POIs/16locales,AdminA and Monitoring remain mandatory.
+
+
 ## Lấy repo an toàn (Tú/Hạo)
 
 Cần Git, GitHub login, Node24.18.1/npm11.16.0, Docker Desktop cho backend. Không gửi password/token/URI vào AI chat. Kiểm tra `git --version`, `node --version`, `npm --version`, `docker version`. Thiếu tool thì dùng nguồn chính thức; không tự đổi lock/version.

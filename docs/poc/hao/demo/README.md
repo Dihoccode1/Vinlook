@@ -23,7 +23,7 @@ Runner detects files present on the checked-out SHA only. Pending Admin/Monitor/
 
 ## Proposed hosting plan — not executed
 
-Vercel Hobby project candidate `vinlook-poc-web`; proposed exact origin `https://vinlook-poc-web.vercel.app` **subject to availability/Duy approval**, not a deployed URL. Root Directory apps/web, Vite output dist, lockfile install from monorepo and exact reviewed merged codex/poc-demo SHA. `apps/web/vercel.json` provides static Vite build and staff deep-link rewrite only; it does not configure Git auto-deploy or authorize release. Duy must ensure hosting cannot bypass checks/gates. No arbitrary source push is authorized to deploy. Real immutable offline artifacts/hosting size/range limits must be measured before upload.
+Vercel Hobby project candidate `vinlook-poc-web`; proposed exact origin `https://vinlook-poc-web.vercel.app` **subject to availability/Duy approval**, not a deployed URL. Root Directory apps/web, Vite output dist, lockfile install from monorepo and exact reviewed merged codex/poc-demo SHA. `apps/web/vercel.json` provides static Vite build and staff deep-link rewrite only; it does not configure Git auto-deploy or authorize release. Duy must ensure hosting cannot bypass checks/gates. No arbitrary source push is authorized to deploy. Offline artifacts and offline reopening are excluded by Duy’s26October scope change; see docs/poc/ONLINE-SCOPE.md.
 
 Frontend public configuration NAMES only: VITE_IDENTITY_ORIGIN, VITE_CONTENT_ORIGIN, VITE_USAGE_ORIGIN. Never service/worker/provider/DB keys. Duy/Tú approve exact candidate origin for all3backend CORS configs using their runbook; do not use wildcard CORS. No change here. Review current official [Vercel configuration](https://vercel.com/docs/project-configuration) and [limits](https://vercel.com/docs/limits) at release; no price/quota constant is changed or claimed.
 
@@ -31,14 +31,14 @@ Frontend public configuration NAMES only: VITE_IDENTITY_ORIGIN, VITE_CONTENT_ORI
 
 1.0:00–1:00 guest map with15published POIs, search, correct thumbnail/text; choose16exact locales, sample actual distinct narration, no autoplay.
 2.1:00–2:00 GPS permission/refusal, valid walking route, off-route reroute, no-GPS/no-route handling; no straight-line route.
-3.2:00–3:00 complete English package/bytes/version, disable both network interfaces, close/reopen, map/search/audio/routing; corrupted update retains old package.
+3.2:00–3:00 online POI search/nearby and narration in selected languages; demonstrate honest connection-error/retry behavior without claiming offline support.
 4.3:00–4:30 existing Staff login, closed session read-only, explicit open, draft save/readback/version409 preserve input; Manager full16review gate; no production provider mutation outside Duy's exact approved plan.
 5.4:30–6:00 two real devices/browser identities, multitab one browser, Play/Pause/Resume/end/close,30s dashboard and90s expiry; force loss and retain stale last-known timestamp.
 6.6:00–7:00 exact build SHA, device/network/warm-cold records, outstanding gates, backup/rollback evidence and Duy decision. A fallback recording must name its last verified SHA/date and be labelled recording, never live.
 
 ## Device evidence protocol / NOT RUN
 
-Record exact merged SHA, URL, browser/OS/device (Android Chrome, iPhone Safari, laptop), UTC+7 time, network/warm-cold condition, expected/actual, screenshot/video link, fixture/live classification and operator/reviewer. Test actual GPS route, offline network-off+reopen and eviction/quota/update interruption; actual16locale narration90–150s and approved media versions. Negative auth/session/RBAC and raw console/network review must not expose passwords/tokens/keys in captured evidence.
+Record exact merged SHA, URL, browser/OS/device (Android Chrome, iPhone Safari, laptop), UTC+7 time, network/warm-cold condition, expected/actual, screenshot/video link, fixture/live classification and operator/reviewer. Test actual online GPS route and clear connection-error/retry behavior; actual16locale narration90–150s and approved media versions. Negative auth/session/RBAC and raw console/network review must not expose passwords/tokens/keys in captured evidence.
 
 50-user load only after Duy-approved exact environment/caps; >=100operations per measured action, errors/timeouts count against completion and p95. Do not treat50desktop contexts as50physical phones or fixture counters as real usage. Record cold separately. No load test run here.
 

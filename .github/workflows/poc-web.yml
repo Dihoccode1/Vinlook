@@ -4,7 +4,7 @@ on:
     branches: [codex/poc-demo]
     paths: ['apps/web/**', 'tests/poc-web/**', 'docs/poc/hao/**', 'package*.json', '.github/workflows/poc-web.yml']
   push:
-    branches: ['codex/poc-hao-*']
+    branches: ['codex/poc-demo', 'codex/poc-hao-*', 'codex/poc-duy-*', 'codex/poc-online-*']
     paths: ['apps/web/**', 'tests/poc-web/**', 'docs/poc/hao/**', 'package*.json', '.github/workflows/poc-web.yml']
 permissions:
   contents: read
