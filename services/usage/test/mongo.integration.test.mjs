@@ -106,12 +106,12 @@ test('Usage real disposable Mongo replica-set and HTTP acceptance', { timeout: 1
     childTest.after(async () => { if (child.exitCode === null && child.signalCode === null) { child.kill('SIGTERM'); await Promise.race([exited, delay(5000)]); if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL'); } });
     let live = false;
     for (let attempt = 0; attempt < 80; attempt++) {
-      try { live = (await fetch(`http://127.0.0.1:${httpPort}/health/ready`, { signal: AbortSignal.timeout(500) })).status === 200; if (live) break; } catch { /* Only this test's child can be starting. */ }
+      try { const ready = await fetch(`http://127.0.0.1:${httpPort}/health/ready`, { signal: AbortSignal.timeout(500) }); live = ready.status === 200; await ready.arrayBuffer(); if (live) break; } catch { /* Only this test's child can be starting. */ }
       if (child.exitCode !== null) break; await delay(100);
     }
     assert.equal(live, true, 'Configured Usage entrypoint did not reach readiness');
     const response = await fetch(`http://127.0.0.1:${httpPort}/api/v1/listening/start`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) });
-    assert.equal(response.status, 200); assert.equal(await models.Listening.countDocuments({}), 1);
+    assert.equal(response.status, 200); await response.json(); assert.equal(await models.Listening.countDocuments({}), 1);
     child.kill('SIGTERM'); const [code, signal] = await exited; assert.equal(code, 0); assert.equal(signal, null);
     assert.equal(output.trim(), 'usage process listening'); assert.equal(errors, ''); await reset();
   });

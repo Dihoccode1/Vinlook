@@ -1,6 +1,6 @@
 # TU02 Usage HTTP and Mongo implementation verification
 
-Refs #71/#70; implementation PR93, dependency/lock proposal PR95. Prepared
+Refs #71/#70; follow-up to merged core PR93 and dependency/lock PR95. Prepared
 26 October 2026 (UTC+7). Exact final heads, remote blobs and observed CI outcomes
 are recorded in the GitHub handoff; this file never predicts a pending CI pass.
 
@@ -20,7 +20,11 @@ manifest and workspace lock entry. That exact version/resolution was already use
 by Content/Identity. No upgrade or new resolved package. It was merged locally into
 the implementation branch for testing; Duy decides the shared integration order.
 The package JSON merge conflict was resolved by retaining the core scripts and
-adding only the declared dependency. Root lock has only the proposed Usage entry.
+the declared dependency. Duy subsequently merged PR95 and PR93, including his
+package JSON correction. The follow-up branch merged integration
+`ab2c12f` (PR94/96 web work included) and preserved Duy's dependency/lock contents;
+only its own Usage build/test scripts were retained from the implementation.
+There is no root lock or web source change in the follow-up diff.
 
 ## Implemented paths
 
@@ -121,4 +125,4 @@ Remaining owner bridge: Content global job counts and worker status. The authori
 jobs route deliberately reports unknown/null/BRIDGE_PENDING, and the worker health
 component unknown. Upstream readiness503 stays unavailable. These unfinished live
 bridges and release acceptance prevent declaring the whole #71 complete. Duy reviews
-PR95 then PR93; no automatic merge, shared live provisioning or issue closure.
+the new follow-up PR; no automatic merge, shared live provisioning or issue closure.

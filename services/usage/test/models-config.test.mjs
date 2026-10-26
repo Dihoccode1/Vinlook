@@ -12,6 +12,7 @@ const time = new Date(FIXTURE_EPOCH);
 
 test('Usage schema is disconnected, strict, no TTL/auto-provision and exactly matches locale registry', async () => {
   const connection = mongoose.createConnection(), models = createUsageModels(connection);
+  assert.equal(createUsageModels(connection).Presence, models.Presence);
   assert.equal(connection.readyState, 0);
   for (const model of Object.values(models)) { assert.equal(model.schema.options.autoCreate, false); assert.equal(model.schema.options.autoIndex, false); assert.equal(model.schema.options.strict, 'throw'); assert.ok(model.schema.indexes().every(([, options]) => options.expireAfterSeconds === undefined)); }
   assert.deepEqual(languageCodes, Object.keys(JSON.parse(readFileSync(new URL('../../content/src/adapters/hybrid-v1.json', import.meta.url), 'utf8')).profiles).sort());

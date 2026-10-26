@@ -1,6 +1,6 @@
 # Usage service
 
-Refs #71/#70, implementation PR93; dependency proposal PR95. The service now has
+Refs #71/#70, follow-up to merged core PR93 and dependency PR95. The service now has
 Mongo-backed telemetry and protected Monitor HTTP adapters. The unconfigured
 process keeps the health scaffold (live200/ready503); business routes activate only
 after explicit private config, replica-set connection and exact catalog preflight.
@@ -10,8 +10,8 @@ provisioning/deployment or fixture activation exists.
 The earlier core-only snapshot is superseded by this implementation candidate.
 At continuation, #70 was closed by Dihoccode1 with all review/merge/acceptance boxes
 checked; the merged U1–U4 document supplies the wire implementation candidate.
-Duy reviews the resulting code and the separate shared dependency/lock proposal
-before merge/release. This does not authorize any live environment operation.
+Duy has merged the core and dependency; this follow-up's HTTP/Mongo code still
+requires review/merge before release. No live environment operation is authorized.
 
 ## Runtime and private configuration
 

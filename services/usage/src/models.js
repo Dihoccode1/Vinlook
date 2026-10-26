@@ -22,7 +22,8 @@ export function createUsageModels(connection) {
     if (this.endedAt === null ? this.endReason !== null : !this.endReason || !finite(this.endedAt) || this.endedAt < this.lastSeenAt) this.invalidate('endedAt', 'Invalid end');
   });
   listening.index({ playbackId: 1 }, { unique: true }); listening.index({ browserId: 1, endedAt: 1, lastSeenAt: 1 });
-  return { Presence: connection.model('UsagePresence', presence), Listening: connection.model('UsageListening', listening) };
+  return { Presence: connection.models.UsagePresence ?? connection.model('UsagePresence', presence),
+    Listening: connection.models.UsageListening ?? connection.model('UsageListening', listening) };
 }
 
 const id = { bsonType: 'string', pattern: uuid.source };
