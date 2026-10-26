@@ -13,7 +13,7 @@ export function MapView({styleUrl,items,selectedId,position,onSelect,labels}){
   if(!styleUrl)return;
   let map;setFailed(false);setLoaded(false);
   try{map=new maplibregl.Map({container:container.current,style:styleUrl,center:[106.7009,10.7769],zoom:12,attributionControl:true});
-   map.addControl(new maplibregl.NavigationControl({showCompass:false}),'bottom-right');
+   map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right');
    map.on('error',()=>setFailed(true));map.once('load',()=>setLoaded(true));instance.current=map;
   }catch{setFailed(true);}
   return()=>{markers.current.forEach(m=>m.remove());markers.current=[];gps.current?.remove();gps.current=null;instance.current=null;map?.remove();};
