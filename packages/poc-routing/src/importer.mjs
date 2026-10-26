@@ -1,7 +1,7 @@
 import { distanceMeters, validPoint } from './core.mjs';
 export const PROFILE_VERSION = 'explicit-foot-review-v1';
 const allow = new Set(['yes', 'designated', 'permissive']);
-const highways = new Set(['footway', 'pedestrian', 'path', 'steps', 'residential', 'living_street', 'service', 'unclassified',
+export const highways = new Set(['footway', 'pedestrian', 'path', 'steps', 'residential', 'living_street', 'service', 'unclassified',
   'tertiary', 'secondary', 'primary', 'cycleway', 'track', 'tertiary_link', 'secondary_link', 'primary_link']);
 const barriers = new Set(['bollard', 'block', 'cycle_barrier', 'kissing_gate', 'gate', 'lift_gate', 'stile']);
 export class BuildFailure extends Error { constructor(code) { super(code); this.code = code; } }
