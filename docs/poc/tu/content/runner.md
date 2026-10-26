@@ -31,6 +31,12 @@ no source page was freshly fetched as part of this offline tooling.
 
 ## Dry-run plan from a private readback
 
+The offline [gap register](readiness.md) shows all 240 POI/locale readback needs,
+source/media gaps and workload ceilings. Generate it with
+`node scripts/poc/content/readiness.mjs`; add `--check` to verify reproducibility.
+The [proposed batch plan](batch-plan.md) separates read-only inventory, admission,
+one pilot and later increments. It is not authorization to run live operations.
+
 CLI exposes only `inventory`, `plan` and `--help`. It has no execute/login/network,
 provider/TTS/worker/upload/retry/submit/publish command and never reads env secrets.
 Use the pinned Node24.18.1/npm11.16.0. JSON readbacks/plan output/receipts must live
