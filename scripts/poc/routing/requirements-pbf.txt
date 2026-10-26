@@ -1,0 +1,3 @@
+# Local data-build venv only. Not installed into application services.
+osmium==4.3.2
+shapely==2.2.0
