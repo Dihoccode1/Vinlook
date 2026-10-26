@@ -26,6 +26,7 @@ export async function createTileStore({manifestUrl,manifestSha256,graphVersion,l
  if(base.protocol!=='https:'||base.username||base.password||base.search||base.hash||!hash(manifestSha256)||!id(graphVersion)
   ||!limits||!['manifestBytes','tileBytes','cacheBytes','tiles','tileNodes','tileEdges','requests','timeoutMilliseconds'].every(k=>positive(limits[k]))
   ||limits.cacheBytes<limits.tileBytes||limits.timeoutMilliseconds>60000||typeof fetcher!=='function')fail();
+ limits=Object.freeze({...limits});
  let requests=0,closed=false,queue=Promise.resolve();const cache=new Map();let cacheBytes=0;
  const get=async(url,expected,cap)=>{if(closed)throw new RoutingFailure('GRAPH_UNAVAILABLE');if(++requests>limits.requests)throw new RoutingFailure('CALCULATION_FAILED');return verifiedJson(url,expected,cap,fetcher,limits.timeoutMilliseconds);};
  const {value:manifest}=await get(base.href,{sha256:manifestSha256},limits.manifestBytes);

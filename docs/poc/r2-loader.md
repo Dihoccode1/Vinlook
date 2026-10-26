@@ -1,4 +1,4 @@
-# R2 verified tile reader
+# R2 verified tile routing
 
 Follow-up to PR121 / Issue74. Duy implements and reviews before merge.
 
@@ -16,13 +16,35 @@ resident edge sources and target coordinates are validated; cross-tile directed
 edges remain intact. Encoded cache bytes are bounded, but this is **not a measured
 JavaScript heap bound**: parsed objects and caller-held tiles also use memory.
 
-This reader does not calculate routes, snap GPS, mount the UI, attest coverage or
-make candidate artifacts production-ready. The remaining route layer must check
-cross-tile target node identities when expanding them, preserve directed topology,
-bound search state, support Worker cancellation and retain the existing entrance
-and connector rules. Hosting and mobile memory acceptance remain open.
+`tiled-route.mjs` snaps against directed edges within50m, admits an end connector
+only within the configured entrance tolerance and searches the full directed graph
+using lazy Dijkstra. It does not restrict the search to a rectangle or the15POIs.
+Outgoing adjacency is loaded from the current node's owner tile. Cross-tile target
+identity/coordinates are verified on expansion. Partial start/end edge costs and
+same-edge routes are supported. State, settled nodes, relaxations, heap entries and
+result points have explicit caps; exhausted budgets fail rather than truncate a
+route or return a false `NO_ROUTE`. Weak-component labels are not used as proof
+of directed reachability. Instructions reuse the current guidance formatter.
 
-Verification: `node --test packages/poc-routing/test/tile-store.test.mjs`.
+The existing route client/Worker accepts one of graph/CSR/tiles. Tile limits and
+search limits are explicit; the normal route result contract, destination/version
+binding, timeout and physical Worker termination are retained. GPS stays inside
+the Worker; tile requests carry tile IDs only. No GPS query or credential is sent.
+
+The UI is not mounted by this change. Coverage acceptance, hosting, mobile memory
+measurements and alignment of all15 approved arrival points remain open.
+
+Verification: `node --test packages/poc-routing/test/tile-store.test.mjs packages/poc-routing/test/tiled-route.test.mjs packages/poc-routing/test/route-worker.test.mjs`.
 Fixtures cover lazy requests, concurrent reuse, unchanged boundary edges, byte
 tampering, incorrect manifest pins, invalid resident sources, streamed byte limits,
-request exhaustion, close and cache eviction. No cloud or database calls.
+request exhaustion, close and cache eviction. Route cases compare against the
+existing monolithic guidance, test disconnected/one-way paths, connector rules,
+budget/cancellation, target identity and a real Node Worker running the browser
+entry with fixture HTTPS responses.14 focused tests pass. No cloud/database calls.
+
+Local-file smoke measurement on the actual HCMC candidate:3,209.42m route,
+143geometry points,12,817settled nodes,18file responses (manifest+17tiles),
+8,262,355cached encoded bytes,256ms on this Windows/Node machine. Process heap
+at the end was62,294,360bytes (not peak). These are selected OSM network nodes,
+not a phone GPS test or approved POI entrance acceptance. See the public measurement
+JSON; no network request was made for this run.
