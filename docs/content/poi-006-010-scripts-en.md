@@ -1,5 +1,8 @@
 # POI-006–010: English narration drafts
 
+> Current decision27October2026: Duy explicitly approved these source texts with the exterior-arrival paragraph below. This supersedes historical pending-source-review statements. Audio, pronunciation/full listening, translations and publication remain unaccepted. Hash-bound approval receipt: data/poc/source-approvals-20261027.json.
+
+
 Issue: [TASK-022 / #45](https://github.com/Dihoccode1/Vinlook/issues/45). Prepared on **24 October 2026 (UTC+7)** with AI assistance. Editorial owner: Tú (`ngoctu0405`). Human reviewer: Duy (`Dihoccode1`).
 
 **Status for all five scripts: `draft / pending Duy review`.** Tú's human factual/language checks, pronunciation and Duy's approval of these new drafts remain pending. These are editorial reference IDs, not database IDs. Evidence, source-access limits and open questions are in [the source review](poi-006-010-source-review.md).
@@ -18,6 +21,8 @@ English name: **War Remnants Museum**.
 
 ### Narration EN
 
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
+
 At the War Remnants Museum, photographs, documents and objects bring the human consequences of conflict into focus. Its predecessor opened on the fourth of September, nineteen seventy-five. The institution adopted its present name in nineteen ninety-five.
 
 The museum describes its work as collecting and preserving evidence of war in Vietnam, while encouraging peace and friendship between peoples. That stated purpose provides context for the exhibitions. The materials are presented from the museum's perspective, and the stories ask visitors to consider both suffering and responsibility.
@@ -30,10 +35,10 @@ Take time to read the context attached to each photograph and object. Consider w
 
 ### Editorial metadata (not spoken)
 
-- Word count: **229**.
-- Estimated duration: **91.6–137.4 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **247**.
+- Estimated duration: **98.8–148.2 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `source approved by Duy; audio pending`.
 - Pronunciation review pending: **Bảo tàng Chứng tích Chiến tranh, Susan Schnall**. No phonetic transcription has been verified.
 - Sources: W6-A, W6-B and W6-C in the source review.
 - Review note: Institutional interpretations and the hat's history are explicitly attributed. No graphic description or current visitor-access promise is included.
@@ -43,6 +48,8 @@ Take time to read the context attached to each photograph and object. Consider w
 English name: **Ho Chi Minh City History Museum**.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 Ho Chi Minh City History Museum brings together two kinds of heritage: its collections and the architecture that shelters them. Founded in nineteen twenty-nine, the institution took its present Vietnamese name in nineteen seventy-nine. Its historical collections trace Vietnam from prehistory to nineteen forty-five, while other displays explore southern Vietnam and neighbouring Asian cultures.
 
@@ -56,10 +63,10 @@ Look beyond a date or the name of a dynasty. Consider the material, the maker an
 
 ### Editorial metadata (not spoken)
 
-- Word count: **226**.
-- Estimated duration: **90.4–135.6 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **244**.
+- Estimated duration: **97.6–146.4 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `source approved by Duy; audio pending`.
 - Pronunciation review pending: **Bảo tàng Lịch sử Thành phố Hồ Chí Minh, Auguste Delaval, Vương Hồng Sển, Gia Định**. No phonetic transcription has been verified.
 - Sources: H7-A and H7-B in the source review.
 - Review note: This is the institution at 2 Nguyễn Bỉnh Khiêm, identified by its own site. It is distinct from the Vietnam National Museum of History in Hanoi and the separate Ho Chi Minh City Museum. The address identifies the institution; it is not an approved navigation entrance.
@@ -69,6 +76,8 @@ Look beyond a date or the name of a dynasty. Consider the material, the maker an
 English name: **Ho Chi Minh City Fine Arts Museum**.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 Ho Chi Minh City Fine Arts Museum offers a way to explore Vietnamese history through images, materials and the choices of artists. The museum was established in nineteen eighty-seven. Its collection brings modern painting into conversation with older forms of sculpture and decorative art.
 
@@ -82,10 +91,10 @@ Look at colour, texture and composition, and consider what draws your attention 
 
 ### Editorial metadata (not spoken)
 
-- Word count: **228**.
-- Estimated duration: **91.2–136.8 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **246**.
+- Estimated duration: **98.4–147.6 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `source approved by Duy; audio pending`.
 - Pronunciation review pending: **Bảo tàng Mỹ thuật Thành phố Hồ Chí Minh, Hứa Bổn Hòa, Gia Định**. No phonetic transcription has been verified.
 - Sources: F8-A and F8-B in the source review.
 - Review note: Establishment in 1987 is sourced separately from public opening. The opening year is omitted. The museum's own visitor page could not be read directly; its indexed text is not treated as full-page verification.
@@ -95,6 +104,8 @@ Look at colour, texture and composition, and consider what draws your attention 
 English name: **Landmark 81**.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 Landmark eighty-one turns a familiar image from Vietnamese life into the outline of a skyscraper. Its cluster of rising forms recalls a bundle of bamboo. In the architect's design account, that image expresses strength gained by bringing individual parts together.
 
@@ -108,10 +119,10 @@ Consider how the design moves between those scales. A skyline landmark is seen f
 
 ### Editorial metadata (not spoken)
 
-- Word count: **229**.
-- Estimated duration: **91.6–137.4 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **247**.
+- Estimated duration: **98.8–148.2 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `source approved by Duy; audio pending`.
 - Pronunciation review pending: **Landmark 81, Atkins, Vingroup**. No phonetic transcription has been verified.
 - Sources: L9-A and L9-B in the source review.
 - Review note: L9-A is an earlier design account with forward-looking plans, used only for design intent. Current rankings, height/floor-area figures, final floor allocations, attraction offerings and admission are not asserted.
@@ -121,6 +132,8 @@ Consider how the design moves between those scales. A skyline landmark is seen f
 English name: **Bitexco Financial Tower**.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 Bitexco Financial Tower gives a modern skyline form to an image drawn from nature. Designed by Carlos Zapata, the sixty-eight-storey building was completed in two thousand and ten. Its developer describes a lotus-inspired design intended to express the energy and aspirations of Vietnam.
 
@@ -134,10 +147,10 @@ Try looking at the building first as a whole, then through one detail: the curve
 
 ### Editorial metadata (not spoken)
 
-- Word count: **231**.
-- Estimated duration: **92.4–138.6 seconds** at the assumed 100–150 words/minute, before additional pauses.
+- Word count: **249**.
+- Estimated duration: **99.6–149.4 seconds** at the assumed 100–150 words/minute, before additional pauses.
 - Duration / audio: `estimated` / `TTS_not_tested`; manual read: not performed.
-- Status: `draft / pending Duy review`.
+- Status: `source approved by Duy; audio pending`.
 - Pronunciation review pending: **Bitexco, Carlos Zapata**. No phonetic transcription has been verified.
 - Sources: B10-A and B10-B in the source review.
 - Review note: The developer's Vietnamese project page was read in full through the browser. The earlier English project URL and tower homepage were not reverified in full. Exact helipad and Skydeck levels, rankings, admission and present services are omitted.

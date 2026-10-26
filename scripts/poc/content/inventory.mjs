@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
@@ -32,6 +32,8 @@ export function extractNarrations(source, expectedStart, expectedEnd) {
 /** Repo evidence only: no live IDs/versions, human approvals or media rights are inferred. */
 export function buildInventory(root = repositoryRoot) {
   const registry = registryAt(root), pois = [];
+  const approvalFile='data/poc/source-approvals-20261027.json';
+  const approvals=existsSync(resolve(root,approvalFile))?JSON.parse(text(root,approvalFile)).rows:[];
   const geography = 'docs/content/poi-001-015-geography-review.md';
   const geographyAttribution = 'docs/content/poi-001-015-geography-attribution.md';
   const geographyHash = sha256(text(root, geography)), attributionHash = sha256(text(root, geographyAttribution));
@@ -40,9 +42,11 @@ export function buildInventory(root = repositoryRoot) {
     const path = `docs/content/poi-${range}-scripts-en.md`, review = `docs/content/poi-${range}-source-review.md`;
     const source = text(root, path);
     for (const item of extractNarrations(source, start, end)) {
+      const approved=approvals.find(row=>row.poiRef===item.poiRef&&row.narrationSha256===item.narrationSha256
+        &&row.reviewer==='Dihoccode1'&&row.approvedDateVN==='2026-10-27'&&row.scope==='english_source_text_with_exterior_arrival_only');
       pois.push({ ...item, sourceFile: path, sourceDocumentSha256LF: sha256(source),
         sourceReviewFile: review, sourceReviewSha256LF: sha256(text(root, review)),
-        repositoryEditorialStatement: start === 1 ? 'editorial_source_accepted_audio_review_pending' : 'draft_pending_human_review_in_document',
+        repositoryEditorialStatement: start === 1||approved ? 'editorial_source_accepted_audio_review_pending' : 'draft_pending_human_review_in_document',
         entranceEvidence: { file: geography, documentSha256LF: geographyHash, status: 'desktop_proposal_not_revalidated', fieldwork: 'waived_not_performed' },
         attributionEvidence: { file: geographyAttribution, documentSha256LF: attributionHash },
         thumbnail: { license: null, provenance: null, status: 'not_verified' } });

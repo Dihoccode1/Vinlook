@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "approval": "explicit_user_decision_in_project_conversation",
+  "rows": [
+    {
+      "poiRef": "POI-006",
+      "narrationSha256": "3156d1889b0fe06e5155fc5c8f2b5638bd6e1ef1a1417d4757afe6ba1bb3ba85",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    },
+    {
+      "poiRef": "POI-007",
+      "narrationSha256": "9538859e7d61ef367012da1c4eb17ff9f3e7bf9ca6f8910b98e5404e7739bd92",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    },
+    {
+      "poiRef": "POI-008",
+      "narrationSha256": "6529a38e51148c308ba0979d8f0591ce463997f0c44534c2d7cf98ee564aac9e",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    },
+    {
+      "poiRef": "POI-009",
+      "narrationSha256": "c7171f2339a03feced8b3d68f3e9b8eebd6e4980a49587ad9331294c7127f248",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    },
+    {
+      "poiRef": "POI-010",
+      "narrationSha256": "59925b0f73ffcb521e44f72556b21cf73891f6e0b4d81eb599e883fc3eec5054",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    },
+    {
+      "poiRef": "POI-011",
+      "narrationSha256": "c8c220dbbe7243fd889ac935bc58b807e85f176df84460b22326fb2a314522b4",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    },
+    {
+      "poiRef": "POI-012",
+      "narrationSha256": "2e23f26539126b4b6a970a11fa252c021fc853d89370aa514fe847b97985482e",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    },
+    {
+      "poiRef": "POI-013",
+      "narrationSha256": "4cff645f0dc2082b1d21f656c31e3b027bfc83db3b22f947d1a949ae6fe672bb",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    },
+    {
+      "poiRef": "POI-014",
+      "narrationSha256": "1b9dbcc2efac13f265fa87023fc104b0476fbae13c2f726fda652264217f4ca9",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    },
+    {
+      "poiRef": "POI-015",
+      "narrationSha256": "731e8995c9159ecd113bcfa34582c076dbe2e24012ac7c26e2ac0702d7d7d3c5",
+      "reviewer": "Dihoccode1",
+      "approvedDateVN": "2026-10-27",
+      "scope": "english_source_text_with_exterior_arrival_only"
+    }
+  ]
+}
