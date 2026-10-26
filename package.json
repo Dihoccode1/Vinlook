@@ -13,6 +13,10 @@
   },
   "packageManager": "npm@11.16.0",
   "scripts": {
+    "lint": "eslint \"apps/web/src/**/*.{js,jsx}\" \"services/*/src/**/*.js\" \"packages/*/src/*.mjs\" --max-warnings 0",
+    "format": "prettier --write \"apps/web/src/**/*.{js,jsx,css}\" \"services/*/src/**/*.js\" \"packages/*/src/*.mjs\" eslint.config.js .prettierrc.json",
+    "format:check": "prettier --check \"apps/web/src/**/*.{js,jsx,css}\" \"services/*/src/**/*.js\" \"packages/*/src/*.mjs\" eslint.config.js .prettierrc.json",
+    "check:code": "npm run lint && npm run format:check",
     "preinstall": "node scripts/check-runtime.mjs",
     "dev": "npm run dev --workspace=@vinlook/web",
     "build": "npm run build --workspaces --if-present",
@@ -50,5 +54,10 @@
     "check:ui-resources": "node scripts/check-ui-resources.mjs",
     "test:ui-locale": "node --test tests/ui-locale.test.mjs",
     "test:ui-locale:browser": "node --test tests/ui-locale.browser.mjs"
+  },
+  "devDependencies": {
+    "eslint": "10.13.0",
+    "globals": "16.5.0",
+    "prettier": "3.6.2"
   }
 }

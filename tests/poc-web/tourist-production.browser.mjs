@@ -30,7 +30,7 @@ test('actual tourist entry renders public list, native map markers, search, POI 
   await page.locator('.tour-map[data-ready="true"]').waitFor();await page.locator('.poi-pin').first().waitFor();assert.equal(await page.locator('.poi-pin').count(),15);
   const mapBox=await page.locator('.tour-map-canvas').boundingBox(),pinBox=await page.locator('.poi-pin').first().boundingBox();assert.ok(mapBox.height>200&&mapBox.width>200);assert.ok(pinBox.x>=mapBox.x&&pinBox.x<mapBox.x+mapBox.width&&pinBox.y>=mapBox.y&&pinBox.y<mapBox.y+mapBox.height);
   assert.equal(await page.evaluate(()=>window.__testPlays),0);
-  await page.locator('.tour-place').first().click();await page.locator('.poi-detail h2').waitFor();assert.equal(await page.evaluate(()=>window.__testPlays),0);
+  await page.locator('.tour-place').first().click();await page.getByRole('heading',{name:'Test public place 01',exact:true}).waitFor();assert.equal(await page.evaluate(()=>window.__testPlays),0);
   await page.locator('.listen-button').click();await page.getByRole('button',{name:'Pause',exact:true}).waitFor();
   await page.getByRole('button',{name:'Pause',exact:true}).click();await page.locator('.mini-play').click();assert.equal(await page.evaluate(()=>window.__testPlays),2);
   await page.locator('#tourist-language').selectOption('vi');await page.waitForFunction(()=>!document.querySelector('.tour-mini-player'));await page.getByRole('button',{name:'Xem địa điểm: Test public place 01',exact:true}).first().waitFor();

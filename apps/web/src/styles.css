@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @theme {
   --color-background: #f8fafc;
   --color-foreground: #0f172a;
@@ -7,10 +7,41 @@
   --color-muted-foreground: #475569;
   --color-border: #cbd5e1;
 }
-:root { font-family: system-ui, sans-serif; color: var(--color-foreground); background: var(--color-background); }
-body { margin: 0; min-width: 320px; }
-main { text-align: start; overflow-wrap: anywhere; }
-.language-control { display: grid; gap: .5rem; min-width: 0; }
-.language-select { width: 100%; min-width: 0; max-width: 100%; padding-block: .75rem; padding-inline: .75rem 2rem; border: 1px solid var(--color-border); border-radius: .75rem; background: var(--color-card); font: inherit; color: inherit; }
-:where(button,select,a):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
-.geography-boundary { direction: ltr; unicode-bidi: isolate; }
+:root {
+  font-family: system-ui, sans-serif;
+  color: var(--color-foreground);
+  background: var(--color-background);
+}
+body {
+  margin: 0;
+  min-width: 320px;
+}
+main {
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.language-control {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.language-select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding-block: 0.75rem;
+  padding-inline: 0.75rem 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: var(--color-card);
+  font: inherit;
+  color: inherit;
+}
+:where(button, select, a):focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+.geography-boundary {
+  direction: ltr;
+  unicode-bidi: isolate;
+}

@@ -1,14 +1,20 @@
 import { z } from 'zod';
 
-const schema = z.object({
-  NODE_ENV: z.enum(['development', 'test', 'production']),
-  HOST: z.string().trim().min(1),
-  PORT: z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(65535)),
-}).superRefine((value, context) => {
-  if (value.NODE_ENV === 'production' && value.HOST !== '0.0.0.0') {
-    context.addIssue({ code: 'custom', path: ['HOST'], message: 'Invalid production host' });
-  }
-});
+const schema = z
+  .object({
+    NODE_ENV: z.enum(['development', 'test', 'production']),
+    HOST: z.string().trim().min(1),
+    PORT: z
+      .string()
+      .regex(/^[0-9]+$/)
+      .transform(Number)
+      .pipe(z.number().int().min(1).max(65535)),
+  })
+  .superRefine((value, context) => {
+    if (value.NODE_ENV === 'production' && value.HOST !== '0.0.0.0') {
+      context.addIssue({ code: 'custom', path: ['HOST'], message: 'Invalid production host' });
+    }
+  });
 
 export class ConfigurationError extends Error {
   constructor(fields) {
@@ -29,8 +35,12 @@ export function loadConfig(environment = process.env) {
     PORT: environment.PORT ?? (production ? undefined : '3001'),
   });
   if (!parsed.success) {
-    const fields = [...new Set(parsed.error.issues.map(issue => String(issue.path[0])))].sort();
+    const fields = [...new Set(parsed.error.issues.map((issue) => String(issue.path[0])))].sort();
     throw new ConfigurationError(fields);
   }
-  return Object.freeze({ mode: parsed.data.NODE_ENV, host: parsed.data.HOST, port: parsed.data.PORT });
+  return Object.freeze({
+    mode: parsed.data.NODE_ENV,
+    host: parsed.data.HOST,
+    port: parsed.data.PORT,
+  });
 }

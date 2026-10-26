@@ -1,0 +1,38 @@
+name: Code quality
+on:
+  pull_request:
+    branches: [main, codex/poc-demo]
+    paths:
+      - 'apps/web/src/**'
+      - 'services/*/src/**'
+      - 'packages/*/src/**'
+      - 'package*.json'
+      - 'eslint.config.js'
+      - '.prettier*'
+      - '.github/workflows/code-quality.yml'
+  push:
+    branches: [main, codex/poc-demo]
+    paths:
+      - 'apps/web/src/**'
+      - 'services/*/src/**'
+      - 'packages/*/src/**'
+      - 'package*.json'
+      - 'eslint.config.js'
+      - '.prettier*'
+      - '.github/workflows/code-quality.yml'
+permissions:
+  contents: read
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.18.1'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check:code

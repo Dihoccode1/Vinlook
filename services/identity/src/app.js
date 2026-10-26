@@ -10,22 +10,43 @@ export function createApp(authRuntime) {
   const app = express();
   app.disable('x-powered-by');
   if (authRuntime) {
-    app.set('trust proxy', authRuntime.config.proxyCidrs.length ? [...authRuntime.config.proxyCidrs] : false);
+    app.set(
+      'trust proxy',
+      authRuntime.config.proxyCidrs.length ? [...authRuntime.config.proxyCidrs] : false,
+    );
     app.use('/api/v1', staffRecoveryRouter(authRuntime));
     app.use('/api/v1/auth', authRouter(authRuntime));
     app.use('/api/v1', auditHistoryRouter(authRuntime));
     app.use('/api/v1/work-sessions', sessionRouter(authRuntime));
-    if (authRuntime.callers) app.use('/api/v1', authorizationRouter(authRuntime, authRuntime.callers));
+    if (authRuntime.callers)
+      app.use('/api/v1', authorizationRouter(authRuntime, authRuntime.callers));
   }
   app.get('/health/live', (_request, response) => {
-    response.set('Cache-Control', 'no-store').json({ data: { status: 'up' }, requestId: randomUUID() });
+    response
+      .set('Cache-Control', 'no-store')
+      .json({ data: { status: 'up' }, requestId: randomUUID() });
   });
   app.get('/health/ready', async (_request, response) => {
-    let ready=false;try{ready=await authRuntime?.ready?.()===true;}catch{/* No dependency details in health output. */}
-    if(ready)return response.set('Cache-Control','no-store').json({data:{status:'ready'},requestId:randomUUID()});
-    response.set('Cache-Control', 'no-store').status(503).json({
-      error: { code: 'DEPENDENCIES_UNVERIFIED', message: 'Service dependencies are not verified', requestId: randomUUID() },
-    });
+    let ready = false;
+    try {
+      ready = (await authRuntime?.ready?.()) === true;
+    } catch {
+      /* No dependency details in health output. */
+    }
+    if (ready)
+      return response
+        .set('Cache-Control', 'no-store')
+        .json({ data: { status: 'ready' }, requestId: randomUUID() });
+    response
+      .set('Cache-Control', 'no-store')
+      .status(503)
+      .json({
+        error: {
+          code: 'DEPENDENCIES_UNVERIFIED',
+          message: 'Service dependencies are not verified',
+          requestId: randomUUID(),
+        },
+      });
   });
   // Unconfigured/unverified runtimes remain unavailable.
   return app;
