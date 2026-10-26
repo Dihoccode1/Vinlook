@@ -1,0 +1,11 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {evaluateRelease,releaseChecks} from './release-gate.mjs';import {findSuites} from './run-tests.mjs';
+test('missing/fixture/wrong SHA and unreviewed evidence cannot pass release completeness',()=>{
+  assert.equal(evaluateRelease(null,'').status,'NOT READY');const result=evaluateRelease({fixture:true,reviewedMergedSha:'a'.repeat(40)},'b'.repeat(40));assert.ok(result.gaps.includes('EXACT_MERGED_SHA_REQUIRED'));assert.ok(result.gaps.includes('REAL_EVIDENCE_REQUIRED'));assert.equal(result.gaps.filter(x=>releaseChecks.includes(x)).length,14);
+});
+test('automated completeness never grants human release authorization',()=>{
+  const sha='a'.repeat(40),syntheticEvidence={fixture:false,reviewedMergedSha:sha,approvedBy:'Dihoccode1',approvalUrl:'https://github.com/Dihoccode1/Vinlook/issues/80#synthetic-test-only',publicOrigin:'https://example.invalid',checks:Object.fromEntries(releaseChecks.map(name=>[name,{status:'PASS',fixture:false,sha,evidence:'https://example.invalid/synthetic-test-only'}]))};
+  assert.equal(evaluateRelease(syntheticEvidence,sha).status,'EVIDENCE COMPLETE — HUMAN RELEASE DECISION REQUIRED');syntheticEvidence.checks.safariDevice.status='NOT RUN';assert.ok(evaluateRelease(syntheticEvidence,sha).gaps.includes('safariDevice'));
+});
+test('suite discovery includes all lane unit tests without accidentally running browser files',async()=>{
+  const units=await findSuites('tests/poc-web','unit'),browsers=await findSuites('tests/poc-web','browser');assert.ok(units.some(path=>path.endsWith('gates.test.mjs')));assert.ok(units.every(path=>!path.endsWith('browser.test.mjs')));assert.ok(browsers.every(path=>path.endsWith('browser.test.mjs')));
+});
