@@ -148,7 +148,7 @@ export class ReceiptJournal {
   }
 }
 
-/** Transport is injected. This slice ships no live HTTP/login/worker/provider adapter or execute CLI. */
+/** Mutating transport is injected. The separate HTTP adapter is read-only; no login/worker/provider or execute CLI. */
 export async function runOnce(plan, { transport, journal, now = Date.now, timeoutMs = 15000 }) {
   try { plan = freeze(structuredClone(plan)); } catch { fail('INVALID_PLAN'); }
   validatePlan(plan);

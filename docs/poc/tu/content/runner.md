@@ -64,11 +64,12 @@ or marked pending/reset by this tool. Pending human quality needs review, not Pr
 ## Guarded library boundary
 
 `preparePlan`, `runOnce` and `ReceiptJournal` are real reusable orchestration code.
-This slice tests runOnce with injected synthetic transports; **no live HTTP/login
-adapter is shipped**. A future separately reviewed adapter must bind exact origin,
-private caller authority, bounded JSON/deadlines, no redirects/retries and honor
-AbortSignal. Hashes are integrity/binding checks, not signatures proving Duy consent.
-Do not use an injected network adapter without an exact approved target/mutation/
+This slice tests runOnce with injected synthetic transports. A separate
+[read-only HTTP adapter](read-only-http.md) now implements the three existing GET
+routes with bounded JSON/deadlines, exact origin, no redirects/retries and native
+AbortSignal. It cannot perform runOnce's POSTs; no mutating HTTP/login adapter or
+execute CLI is shipped. Hashes are integrity/binding checks, not signatures proving
+Duy consent. Do not use a mutating network adapter without an exact approved target/mutation/
 quota/worker-state plan. Even queueing can cause active processors to pick up work.
 
 Before its one permitted POST, runOnce obtains fresh admin readback (and selected
@@ -130,12 +131,12 @@ implemented/approved here. This limitation is independent of Usage contract PR83
 ## Validation and unfinished work
 
 ```text
-node --test scripts/poc/content/test/cli.test.mjs scripts/poc/content/test/inventory.test.mjs scripts/poc/content/test/runner.test.mjs
+node --test scripts/poc/content/test/cli.test.mjs scripts/poc/content/test/inventory.test.mjs scripts/poc/content/test/runner.test.mjs scripts/poc/content/test/read-only-http.test.mjs
 node scripts/poc/content/cli.mjs inventory --check
 ```
 
 See [verification.md](verification.md) for executed results. Full #73 still needs
 private live inventory/POI mapping, source/human language review, licensed thumbnails,
-arrival decisions, reviewed live transport/worker integration, exact quota/call
+arrival decisions, live read verification and reviewed mutation/worker integration, exact quota/call
 approval,240real matching pairs and separate submit/publish authorization. Keep
 #73 open; do not interpret this code/test PR as live batch acceptance.
