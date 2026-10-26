@@ -95,6 +95,23 @@ those guarantees from the concurrency identity tests.
 
 ## Catalog and retained data
 
+### Local production catalog operator
+
+`node --env-file=<private-local-file> services/usage/scripts/catalog.mjs` prints a
+read-only plan. The private file supplies `USAGE_MONGODB_URI` with database path
+`/vinlook_usage`. Keep it outside Git; do not paste the URI into issues or chat.
+Add `--apply` only for an approved live plan, then type the exact database and
+fingerprint shown. There is no unattended apply. The tool adds only missing
+expected collections/indexes, stops on incompatible schema or unexpected objects,
+never repairs/deletes/changes validators, and verifies the final catalog. There
+are two collections and four explicit indexes, without TTL. A partial failure
+reports completed operations: run plan again before considering another apply.
+Collection/index DDL is not one atomic transaction. URI/provider errors are redacted.
+
+This implementation does not authorize Atlas writes or deploy Usage. Production
+provisioning remains a separate exact live plan. The disposable Mongo suite tests
+the same utility in a fresh second database on its own guarded test container.
+
 Two Usage-owned collections: browser_presences and listening_sessions. Validators
 reject unknown fields and illegal start/terminal combinations; unique browserId/
 playbackId and the D005 freshness indexes are exact. Runtime autoCreate/autoIndex
