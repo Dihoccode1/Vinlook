@@ -1,5 +1,8 @@
 # Hợp đồng phối hợp — nguồn sự thật và phần cần Duy chốt
 
+> Current PoC scope,26October2026: online-only by Duy. Offline requirements in historical sections/examples are superseded by [ONLINE-SCOPE.md](ONLINE-SCOPE.md). Full online walking navigation,15POIs/16locales,AdminA and Monitoring remain mandatory.
+
+
 Không tạo gateway/service thứ tư. Identity/Content/Usage tách DB; frontend adapter nhận origins riêng. Code route/schema hiện tại ở seed là chuẩn cho API đã triển khai; D006/D017 là chuẩn hành vi cho phần chưa triển khai. Hai bên giữ mock test riêng, không tự thống nhất khác baseline trong chat cá nhân.
 
 ## Đã chốt và được tái sử dụng ngay

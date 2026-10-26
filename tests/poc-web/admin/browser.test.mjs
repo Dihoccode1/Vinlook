@@ -5,6 +5,19 @@ const {chromium}=await import(pathToFileURL(process.env.VINLOOK_PLAYWRIGHT_MODUL
 const base=process.env.VINLOOK_UI_TEST_ORIGIN??'http://127.0.0.1:5174';
 assert.match(base,/^http:\/\/127\.0\.0\.1:\d+$/);
 
+test('Staff Monitoring opens without a work session and authority loss clears the whole workspace',async()=>{
+  const browser=await chromium.launch({channel:'chrome',headless:true}),page=await browser.newPage({viewport:{width:390,height:844}});
+  try{
+    await page.goto(base+'/test/admin-fixture.html');await page.getByLabel('Email',{exact:true}).fill('fixture@example.test');await page.getByLabel('Password',{exact:true}).fill('synthetic');await page.getByRole('button',{name:'Sign in',exact:true}).click();
+    await page.getByRole('button',{name:'Monitoring',exact:true}).click();await page.getByRole('heading',{name:'Current usage',exact:true}).waitFor();
+    assert.equal(await page.evaluate(()=>window.adminFixture.calls.some(c=>c.path.endsWith('/work-sessions/open'))),false);
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    await page.getByRole('button',{name:'Back to content',exact:true}).click();assert.equal(await page.getByRole('button',{name:'Create POI',exact:true}).isDisabled(),true);
+    await page.getByRole('button',{name:'Monitoring',exact:true}).click();await page.getByRole('heading',{name:'Current usage',exact:true}).waitFor();
+    await page.evaluate(()=>window.adminFixture.monitorDenied=true);await page.getByRole('button',{name:'Refresh now',exact:true}).click();await page.getByRole('button',{name:'Sign in',exact:true}).waitFor();assert.equal(await page.getByRole('region',{name:'Current counts'}).count(),0);
+  }finally{await browser.close();}
+});
+
 test('exact current audio confirmation cancels without write and approves vi/zh-Hant separately; mobile workspace fits',async()=>{
   const browser=await chromium.launch({channel:'chrome',headless:true}),page=await browser.newPage({viewport:{width:390,height:844}});
   try{

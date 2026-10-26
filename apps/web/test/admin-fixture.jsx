@@ -8,11 +8,14 @@ let session=null,fixtureDocument=null,version=0;
 const role=new URL(location.href).searchParams.get('role')==='Manager'?'Manager':'Staff';
 const calls=[];
 window.adminFixture={calls,conflict:false,reviews:[]};
-const api=createAdminAdapter({identityOrigin:'https://identity.fixture.invalid',contentOrigin:'https://content.fixture.invalid'},{fetcher:async(url,init)=>{
+const api=createAdminAdapter({identityOrigin:'https://identity.fixture.invalid',contentOrigin:'https://content.fixture.invalid',usageOrigin:'https://usage.fixture.invalid'},{fetcher:async(url,init)=>{
   calls.push({path:url.pathname,method:init.method});const body=typeof init.body==='string'?JSON.parse(init.body):{};
   const ok=data=>new Response(JSON.stringify({data,requestId:'admin-fixture'}));
   if(url.pathname.endsWith('/auth/login'))return ok({accessToken:'SYNTHETIC-TEST-TOKEN'});
   if(url.pathname.endsWith('/me'))return ok({account:{id:poi,role,status:'active',fullName:'Labelled fixture'},currentWorkSession:session});
+  if(url.pathname==='/api/v1/monitoring/summary'){if(window.adminFixture.monitorDenied)return new Response(JSON.stringify({error:{code:'ACCESS_DENIED'}}),{status:403});const time=new Date().toISOString();return ok({asOf:time,refreshedAt:time,onlineVisitors:2,currentListeners:1,byPoi:[]});}
+  if(url.pathname==='/api/v1/monitoring/health')return ok({components:[]});
+  if(url.pathname==='/api/v1/monitoring/jobs')return ok({status:'unknown',counts:null});
   if(url.pathname.endsWith('/open')){session={id:poi,status:'open'};return ok({session});}
   if(url.pathname.endsWith('/close')){session=null;return ok({session:{id:poi,status:'closed'}});}
   if(url.pathname.endsWith('/review')){const code=url.pathname.split('/').at(-2);window.adminFixture.reviews.push({code,...body});version++;fixtureDocument.workingRevision.editVersion=version;fixtureDocument.localizedContents.find(row=>row.languageCode===code).reviewStatus=body.decision;return ok({poiId:poi});}

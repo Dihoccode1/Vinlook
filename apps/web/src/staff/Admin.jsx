@@ -3,9 +3,10 @@ import {createAdminAdapter} from '../adapters/admin.js';
 import {createAdminState,publicationGaps} from './admin-state.js';
 import {localeCodes} from '../i18n/locales.js';
 import './staff.css';
+import {Monitor} from './monitor/Monitor.jsx';
 
 function runtime(){
-  try{return createAdminAdapter({identityOrigin:import.meta.env.VITE_IDENTITY_ORIGIN,contentOrigin:import.meta.env.VITE_CONTENT_ORIGIN});}
+  try{return createAdminAdapter({identityOrigin:import.meta.env.VITE_IDENTITY_ORIGIN,contentOrigin:import.meta.env.VITE_CONTENT_ORIGIN,usageOrigin:import.meta.env.VITE_USAGE_ORIGIN});}
   catch{return null;}
 }
 const initial={nameEN:'',sourceTextEN:'',location:{type:'Point',coordinates:[0,0]},entrance:null,thumbnailAsset:null};
@@ -20,6 +21,7 @@ function Editor({api}){
   const [key,setKey]=useState(null),[dirty,setDirty]=useState(false),[upload,setUpload]=useState(null);
   const [intent,setIntent]=useState(null);
   const [dispatch,setDispatch]=useState(null);
+  const [view,setView]=useState('content');
   const doc=state.document,rev=doc?.workingRevision,rows=doc?.localizedContents??[],row=rows.find(r=>r.languageCode===code);
   const principal=state.principal,canWrite=Boolean(principal?.currentWorkSession)&&!state.busy&&!state.conflict;
   const editable=canWrite&&(!doc||rev?.status==='draft');
@@ -35,8 +37,9 @@ function Editor({api}){
       <label>Email<input name="email" type="email" autoComplete="username" required/></label><label>Password<input name="password" type="password" autoComplete="current-password" required/></label>
       <button disabled={state.busy}>Sign in</button></form>{state.error&&<p role="alert">{state.error}</p>}</main>;
   const input=state.input??initial;
+  if(view==='monitor')return <><nav className="staff-monitor-nav" aria-label="Staff workspace"><button onClick={()=>setView('content')}>Back to content</button><button onClick={()=>{if(!dirty||window.confirm('Discard unsaved input and sign out?')){store.logout();setView('content');setDirty(false);setDispatch(null);setIntent(null);setUpload(null);}}}>Sign out</button></nav><Monitor api={api.monitor} onUnauthorized={()=>{store.logout();setView('content');setDirty(false);setDispatch(null);setIntent(null);setUpload(null);}}/></>;
   return <main><header className="staff-header"><div><p className="staff-eyebrow">VINLOOK / CONTENT STUDIO</p><h1>Vinlook Staff</h1><p>{principal.account.fullName} · {principal.account.role}</p></div><div className="staff-account"><span className={`staff-badge ${principal.currentWorkSession?'is-open':''}`}>Session: {principal.currentWorkSession?'Open':'Closed'}</span><button className="staff-secondary" onClick={()=>{if(!dirty||window.confirm('Discard unsaved input and sign out?')){store.logout();setDirty(false);setDispatch(null);setIntent(null);setUpload(null);}}}>Sign out</button></div></header>
-    <nav className="staff-nav" aria-label="Content workflow"><a href="#work-session">01 Session</a><a href="#open-poi">02 Open place</a><a href="#draft-editor">03 Draft</a>{rev&&<><a href="#language-review">04 Languages</a><a href="#processing-jobs">05 Jobs</a><a href="#publication">06 Publish</a></>}</nav>
+    <nav className="staff-nav" aria-label="Content workflow"><a href="#work-session">01 Session</a><a href="#open-poi">02 Open place</a><a href="#draft-editor">03 Draft</a>{rev&&<><a href="#language-review">04 Languages</a><a href="#processing-jobs">05 Jobs</a><a href="#publication">06 Publish</a></>}<button className="staff-secondary" disabled={state.busy} onClick={()=>setView('monitor')}>Monitoring</button></nav>
     {dirty&&<p className="staff-notice" role="status">Unsaved {dirty==='locale'?'language text':'draft details'} — save before moving to another step.</p>}
     <section id="work-session" aria-label="Work session"><div><p className="staff-eyebrow">01 / START YOUR DAY</p><h2>Work session</h2><p>Open today’s session to edit content. Closing it keeps your work and records the reason.</p></div><button disabled={state.busy} onClick={()=>void run(()=>store.session('open'))}>Open / reopen session</button>
       <label>Close / return / review reason<input value={reason} maxLength={500} onChange={e=>setReason(e.target.value)}/></label>

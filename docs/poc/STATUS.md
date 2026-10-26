@@ -1,6 +1,13 @@
 # PoC status / journal
 
-26/10/2026 UTC+7 — planning/handoff only, product NOT READY.
+> Current PoC scope,26October2026: online-only by Duy. Offline requirements in historical sections/examples are superseded by [ONLINE-SCOPE.md](ONLINE-SCOPE.md). Full online walking navigation,15POIs/16locales,AdminA and Monitoring remain mandatory.
+
+
+26/10/2026 UTC+7 — current scope ONLINE; product NOT READY until live acceptance.
+
+Current verified integration checkpoint: d2cd31ae915d48a375d91d575314eed7e8ec748d (PR101 merged). Tourist/Admin/Monitoring code and Usage HTTP mapping are integrated;41web units and5Admin/Monitor Chrome fixture tests passed locally on the PR implementation. This is not a new live run. Real map/graph, current content inventory, hosted CORS/Usage readiness and device acceptance remain critical. Offline work is removed from this PoC by Duy's explicit instruction; see ONLINE-SCOPE.md. Web merge-commit CI coverage is corrected in this scope follow-up. Duy owns former Hạo issues76–80; Tú owns backend/data/graph issues.
+
+The following section is historical startup context, not current implementation status:
 
 - Original remote main:43a17696bf515cc1f97fc89138e8927f425efdff (PR69). Local branch unknown: no repository .git here, git parent resolution failed. No local checkout/reset/clean performed, original edits preserved.
 - Separate integration branch codex/poc-demo created from that exact main; documentation seed712a49d88893f9fa205ca150b1a59c5d0083bf00. No main mutation/PoC merge.
