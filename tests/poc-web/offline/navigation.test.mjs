@@ -12,5 +12,22 @@ test('foreground GPS loss retains route; stop/withdraw cancels worker; late resu
 });
 test('mismatched Worker tuple is never rewritten to look current',async()=>{
   let fix;const nav=createNavigation({workerFactory:()=>({calculate:async({token})=>({...token,graphVersion:'wrong',geometry:[[106.7,10.7],[106.71,10.7]]}),terminate(){}}),geolocation:{watchPosition:fn=>{fix=fn;return 1;},clearWatch(){}},maxRoutePoints:20,maxCalculations:10,uuid:()=> 'fixture-request'});
-  nav.start(destination);fix({timestamp:1,coords:{longitude:106.7,latitude:10.7,accuracy:5}});await flush();assert.equal(nav.snapshot().route,null);nav.stop();
+  nav.start(destination);fix({timestamp:1,coords:{longitude:106.7,latitude:10.7,accuracy:5}});await flush();assert.equal(nav.snapshot().route,null);assert.equal(nav.snapshot().inflight,null);assert.equal(nav.snapshot().error,'GRAPH_INCOMPATIBLE');assert.equal(nav.snapshot().status,'route_unavailable');nav.stop();
+});
+
+test('GPS callbacks from a cancelled target cannot navigate or mark arrival on a new target',async()=>{
+  const callbacks=[],errors=[];let calculations=0;
+  const nav=createNavigation({workerFactory:()=>({calculate:async({token})=>{calculations++;return {...token,geometry:[[106.7,10.7],[106.71,10.7]]};},terminate(){}}),
+    geolocation:{watchPosition:(fix,error)=>{callbacks.push(fix);errors.push(error);return callbacks.length;},clearWatch(){}},maxRoutePoints:20,maxCalculations:10,uuid:()=>String(calculations)});
+  nav.start(destination);nav.start({...destination,poiId:'second'});
+  callbacks[0]({timestamp:10,coords:{longitude:106.71,latitude:10.7,accuracy:5}});errors[0]({code:1});await flush();
+  assert.equal(nav.snapshot().status,'loading_graph');assert.equal(nav.snapshot().latestFix,null);assert.equal(calculations,0);
+  callbacks[1]({timestamp:11,coords:{longitude:106.7,latitude:10.7,accuracy:5}});await flush();assert.equal(nav.snapshot().status,'navigating');nav.stop();
+});
+
+test('navigation exposes stable subscribable snapshots and normalizes denied/throwing GPS',()=>{
+  let denied;const nav=createNavigation({workerFactory(){throw Error();},geolocation:{watchPosition:(fix,error)=>{denied=error;return 1;},clearWatch(){}},maxRoutePoints:20,maxCalculations:10});
+  const initial=nav.getSnapshot();assert.equal(nav.getSnapshot(),initial);let updates=0;const unsubscribe=nav.subscribe(()=>updates++);
+  nav.start(destination);denied({code:1});assert.equal(nav.getSnapshot().error,'GPS_PERMISSION_DENIED');assert.ok(updates>=2);unsubscribe();nav.stop();
+  const failing=createNavigation({workerFactory(){},geolocation:{watchPosition(){throw Error('device');}},maxRoutePoints:20,maxCalculations:10});assert.doesNotThrow(()=>failing.start(destination));assert.equal(failing.snapshot().error,'GPS_UNAVAILABLE');
 });
