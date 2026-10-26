@@ -19,6 +19,7 @@ function Editor({api}){
   const [poiId,setPoiId]=useState(''),[code,setCode]=useState('en'),[text,setText]=useState(''),[reason,setReason]=useState('');
   const [key,setKey]=useState(null),[dirty,setDirty]=useState(false),[upload,setUpload]=useState(null);
   const [intent,setIntent]=useState(null);
+  const [dispatch,setDispatch]=useState(null);
   const doc=state.document,rev=doc?.workingRevision,rows=doc?.localizedContents??[],row=rows.find(r=>r.languageCode===code);
   const principal=state.principal,canWrite=Boolean(principal?.currentWorkSession)&&!state.busy&&!state.conflict;
   const editable=canWrite&&(!doc||rev?.status==='draft');
@@ -34,7 +35,7 @@ function Editor({api}){
       <label>Email<input name="email" type="email" autoComplete="username" required/></label><label>Password<input name="password" type="password" autoComplete="current-password" required/></label>
       <button disabled={state.busy}>Sign in</button></form>{state.error&&<p role="alert">{state.error}</p>}</main>;
   const input=state.input??initial;
-  return <main><header><h1>Vinlook Staff</h1><p>{principal.account.fullName} · {principal.account.role} · Session: {principal.currentWorkSession?'Open':'Closed'}</p><button onClick={()=>{if(!dirty||window.confirm('Discard unsaved input and sign out?')){store.logout();setDirty(false);}}}>Sign out</button></header>
+  return <main><header><h1>Vinlook Staff</h1><p>{principal.account.fullName} · {principal.account.role} · Session: {principal.currentWorkSession?'Open':'Closed'}</p><button onClick={()=>{if(!dirty||window.confirm('Discard unsaved input and sign out?')){store.logout();setDirty(false);setDispatch(null);setIntent(null);setUpload(null);}}}>Sign out</button></header>
     <section aria-label="Work session"><button disabled={state.busy} onClick={()=>void run(()=>store.session('open'))}>Open / reopen session</button>
       <label>Close / return / review reason<input value={reason} maxLength={500} onChange={e=>setReason(e.target.value)}/></label>
       <button disabled={!canWrite||!reason.trim()} onClick={()=>void run(()=>store.session('close',reason))}>Close session</button></section>
@@ -65,7 +66,10 @@ function Editor({api}){
       <button disabled={!canWrite||dirty||!row||!reason.trim()} onClick={()=>void mutate(a=>a.review(rev.id,code,{expectedEditVersion:rev.editVersion,expectedTextVersion:row.textVersion,decision:'changes_required',reason}))}>Request changes</button>
       <button disabled={!editable||dirty} onClick={()=>{if(window.confirm(`Queue processing for ${code}? This may consume free provider quota.`))void mutate((a,s,k)=>a.process(rev.id,rev.editVersion,[code],k),{idempotent:true});}}>Process selected locale</button>
     </section>
-    <section aria-label="Jobs"><h2>Jobs</h2><button disabled={state.busy} onClick={()=>void run(()=>store.jobs())}>Refresh jobs</button>{state.jobs.map(job=><article key={job.id}><p>{job.languageCode} · {job.taskType} · {job.status??'unknown'} · {job.safeErrorCode??job.errorCode??'—'}</p><button disabled={!canWrite||dirty||!['failed','waiting_quota'].includes(job.status)} onClick={()=>{if(window.confirm('Retry this job? A provider call may occur. Unknown outcomes require separate operator review.'))void mutate((a,s,k)=>a.retry(job.id,rev.editVersion,k),{idempotent:true});}}>Retry job</button></article>)}</section>
+    <section aria-label="Jobs"><h2>Jobs</h2><p>Processing queues work. Gemini jobs need an explicit dispatch; MMS audio needs the local worker. Refresh to read the current server state.</p>
+      <button disabled={!canWrite||dirty} onClick={()=>{if(window.confirm('Dispatch the next eligible Gemini job across the entire system? It may belong to another POI and consume provider quota. This does not start the local MMS worker.'))void run(async()=>{const result=await store.mutate(a=>a.runNext(crypto.randomUUID()));setDispatch(result);});}}>Dispatch next system Gemini job</button>
+      {dispatch&&<p role="status">Dispatch acknowledged · Job {dispatch.jobId??'none returned'}. Refresh jobs to verify completion.</p>}
+      <button disabled={state.busy} onClick={()=>void run(()=>store.jobs())}>Refresh jobs</button>{state.jobs.map(job=><article key={job.id}><p>{job.languageCode} · {job.taskType} · {job.status??'unknown'} · {job.safeErrorCode??job.errorCode??job.error??'—'}</p><button disabled={!canWrite||dirty||!['failed','waiting_quota'].includes(job.status)||job.error==='PROVIDER_OUTCOME_UNKNOWN'} onClick={()=>{if(window.confirm('Retry this job? A provider call may occur. Unknown outcomes require separate operator review.'))void mutate((a,s,k)=>a.retry(job.id,rev.editVersion,k),{idempotent:true});}}>Retry job</button></article>)}</section>
     <section aria-label="Publication"><h2>Publication</h2><button disabled={!editable||dirty} onClick={()=>void mutate(a=>a.submit(rev.id,rev.editVersion))}>Submit for review</button>
       {manager&&<><button disabled={!canWrite||dirty||rev.status!=='in_review'||!reason.trim()} onClick={()=>void mutate(a=>a.returnDraft(rev.id,rev.editVersion,reason))}>Return to draft</button><ul>{gaps.map(gap=><li key={gap}>{gap}</li>)}</ul>
       <button disabled={!canWrite||dirty||gaps.length>0} onClick={()=>{if(window.confirm('Confirm geography/entrance and publish this exact version after reviewing all 16 locales?'))void mutate((a,s,k)=>a.publish(rev.id,{expectedEditVersion:rev.editVersion,expectedPublishedRevisionId:doc.publishedRevision?.id??null,confirmGeography:true},k),{idempotent:true});}}>Publish</button></>}
