@@ -4,6 +4,28 @@ import {pathToFileURL} from 'node:url';
 const {chromium}=await import(pathToFileURL(process.env.VINLOOK_PLAYWRIGHT_MODULE_PATH).href);
 const base=process.env.VINLOOK_UI_TEST_ORIGIN??'http://127.0.0.1:5174';
 assert.match(base,/^http:\/\/127\.0\.0\.1:\d+$/);
+
+test('exact current audio confirmation cancels without write and approves vi/zh-Hant separately; mobile workspace fits',async()=>{
+  const browser=await chromium.launch({channel:'chrome',headless:true}),page=await browser.newPage({viewport:{width:390,height:844}});
+  try{
+    await page.route('https://media.fixture.invalid/**',route=>route.abort());
+    await page.goto(base+'/test/admin-fixture.html?review=1');
+    await page.getByLabel('Email',{exact:true}).fill('fixture@example.test');await page.getByLabel('Password',{exact:true}).fill('synthetic');await page.getByRole('button',{name:'Sign in',exact:true}).click();
+    await page.getByRole('button',{name:'Open / reopen session',exact:true}).click();await page.getByLabel('Name (English)',{exact:true}).fill('Review fixture');await page.getByLabel('English source',{exact:true}).fill('Synthetic source');await page.getByRole('button',{name:'Create POI',exact:true}).click();
+    await page.getByRole('combobox').waitFor();await page.getByRole('combobox').selectOption('vi');
+    page.once('dialog',dialog=>dialog.dismiss());await page.getByRole('button',{name:'Approve exact locale',exact:true}).click();assert.deepEqual(await page.evaluate(()=>window.adminFixture.reviews),[]);
+    for(const [index,code] of ['vi','zh-Hant'].entries()){
+      await page.getByRole('combobox').selectOption(code);
+      page.once('dialog',dialog=>{assert.ok(dialog.message().includes(`complete ${code} audio (120 seconds)`));assert.ok(dialog.message().includes(`editVersion ${index}`));return dialog.accept();});
+      await page.getByRole('button',{name:'Approve exact locale',exact:true}).click();
+      await page.waitForFunction(count=>window.adminFixture.reviews.length===count,index+1);await page.waitForFunction(()=>!document.querySelector('select').disabled);
+    }
+    const reviews=await page.evaluate(()=>window.adminFixture.reviews);assert.deepEqual(reviews.map(row=>[row.code,row.expectedEditVersion,row.expectedTextVersion]),[['vi',0,1],['zh-Hant',1,1]]);
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    await page.screenshot({path:'.bootstrap-review/issue77-workspace-mobile.png',fullPage:true});
+    await page.setViewportSize({width:1280,height:900});await page.screenshot({path:'.bootstrap-review/issue77-workspace-desktop.png',fullPage:true});
+  }finally{await browser.close();}
+});
 test('Staff login requires explicit session; create/readback/version/conflict preserves input; no publish; reload logs out',async()=>{
   const browser=await chromium.launch({channel:'chrome',headless:true});const page=await browser.newPage({viewport:{width:390,height:844}});
   try{await page.goto(base+'/test/admin-fixture.html');await page.getByLabel('Email',{exact:true}).fill('fixture@example.test');await page.getByLabel('Password',{exact:true}).fill('synthetic');await page.getByRole('button',{name:'Sign in',exact:true}).click();
