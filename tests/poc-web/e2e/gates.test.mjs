@@ -7,5 +7,5 @@ test('automated completeness never grants human release authorization',()=>{
   assert.equal(evaluateRelease(syntheticEvidence,sha).status,'EVIDENCE COMPLETE — HUMAN RELEASE DECISION REQUIRED');syntheticEvidence.checks.safariDevice.status='NOT RUN';assert.ok(evaluateRelease(syntheticEvidence,sha).gaps.includes('safariDevice'));
 });
 test('suite discovery includes all lane unit tests without accidentally running browser files',async()=>{
-  const units=await findSuites('tests/poc-web','unit'),browsers=await findSuites('tests/poc-web','browser');assert.ok(units.some(path=>path.endsWith('gates.test.mjs')));assert.ok(units.every(path=>!path.endsWith('browser.test.mjs')));assert.ok(browsers.every(path=>path.endsWith('browser.test.mjs')));
+  const units=await findSuites('tests/poc-web','unit'),browsers=await findSuites('tests/poc-web','browser');assert.ok(units.some(path=>path.endsWith('gates.test.mjs')));assert.ok(units.every(path=>!path.endsWith('browser.test.mjs')&&!path.endsWith('.browser.mjs')));assert.ok(browsers.some(path=>path.endsWith('admin/browser.test.mjs')||path.endsWith('admin\\browser.test.mjs')));assert.ok(browsers.some(path=>path.endsWith('tourist-production.browser.mjs')));assert.ok(browsers.every(path=>path.endsWith('browser.test.mjs')||path.endsWith('.browser.mjs')));assert.equal(new Set(browsers).size,browsers.length);
 });

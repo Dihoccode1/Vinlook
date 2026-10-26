@@ -1,6 +1,17 @@
 import {readdir} from 'node:fs/promises';import {resolve,basename} from 'node:path';import {pathToFileURL} from 'node:url';import {spawnSync} from 'node:child_process';
 export async function findSuites(root,kind='unit'){
-  const files=[];async function visit(directory){for(const entry of await readdir(directory,{withFileTypes:true})){const path=resolve(directory,entry.name);if(entry.isDirectory())await visit(path);else if(entry.isFile()&&path.endsWith('.test.mjs')&&((basename(path)==='browser.test.mjs')===(kind==='browser')))files.push(path);}}await visit(resolve(root));return files.sort();
+  const files=[];
+  async function visit(directory){
+    for(const entry of await readdir(directory,{withFileTypes:true})){
+      const path=resolve(directory,entry.name);
+      if(entry.isDirectory()){await visit(path);continue;}
+      if(!entry.isFile())continue;
+      const browserSuite=basename(path)==='browser.test.mjs'||path.endsWith('.browser.mjs');
+      const unitSuite=path.endsWith('.test.mjs')&&!browserSuite;
+      if(kind==='browser'?browserSuite:unitSuite)files.push(path);
+    }
+  }
+  await visit(resolve(root));return files.sort();
 }
 if(process.argv[1]&&pathToFileURL(resolve(process.argv[1])).href===import.meta.url){
   const kind=process.argv[2]??'unit';if(!['unit','browser'].includes(kind))throw Error('INVALID_SUITE_KIND');

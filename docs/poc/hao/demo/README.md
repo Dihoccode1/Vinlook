@@ -11,15 +11,15 @@ $env:PATH = (Join-Path (Get-Location) '.tools/node-v24.18.1-win-x64') + ';' + $e
 node tests/poc-web/e2e/run-tests.mjs unit
 npm.cmd run build
 node tests/poc-web/e2e/check-build.mjs
-# Start Vite separately on loopback5174, then:
+# Start Vite separately with the process-local Content/style settings in browser-regression.md, then:
 $env:VINLOOK_PLAYWRIGHT_MODULE_PATH = 'C:/Users/ADMIN/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs'
-$env:VINLOOK_UI_TEST_ORIGIN = 'http://127.0.0.1:5174'
+$env:VINLOOK_UI_TEST_ORIGIN = 'http://127.0.0.1:5176'
 node tests/poc-web/e2e/run-tests.mjs browser
 # Fail-closed evidence completeness check, no deployment:
 node tests/poc-web/e2e/release-gate.mjs <reviewed-evidence-file> <exact-merged-sha>
 ```
 
-Runner detects files present on the checked-out SHA only. Pending Admin/Monitor/Offline PRs must be reviewed/merged and integrated before claiming one combined rehearsal. Browser CI provisioning/pin remains a Duy review item; current CI does not claim browser execution.
+Runner detects files present on the checked-out SHA only. It includes both `browser.test.mjs` and `*.browser.mjs`; follow [the complete browser setup](browser-regression.md) so the actual Tourist App has explicit loopback Content/style configuration. Integrate reviewed PRs before claiming one combined rehearsal. Browser CI provisioning/pin remains a Duy review item; current CI does not claim browser execution.
 
 ## Proposed hosting plan — not executed
 
