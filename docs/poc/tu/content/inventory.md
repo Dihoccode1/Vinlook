@@ -18,25 +18,25 @@ catalog, not actual jobs, provider call budgets, quota fit or completed output.
 | POI-003 | Saigon Central Post Office | 236 | editorial_source_accepted_audio_review_pending |
 | POI-004 | Ho Chi Minh City Opera House | 238 | editorial_source_accepted_audio_review_pending |
 | POI-005 | Nha Rong Wharf | 249 | editorial_source_accepted_audio_review_pending |
-| POI-006 | War Remnants Museum | 229 | draft_pending_human_review_in_document |
-| POI-007 | Ho Chi Minh City History Museum | 226 | draft_pending_human_review_in_document |
-| POI-008 | Ho Chi Minh City Fine Arts Museum | 228 | draft_pending_human_review_in_document |
-| POI-009 | Landmark 81 | 229 | draft_pending_human_review_in_document |
-| POI-010 | Bitexco Financial Tower | 231 | draft_pending_human_review_in_document |
-| POI-011 | Saigon Zoo and Botanical Gardens | 233 | draft_pending_human_review_in_document |
-| POI-012 | Nguyen Hue Walking Street | 235 | draft_pending_human_review_in_document |
-| POI-013 | Bui Vien Walking Street | 238 | draft_pending_human_review_in_document |
-| POI-014 | Cu Chi Tunnels at Ben Duoc | 244 | draft_pending_human_review_in_document |
-| POI-015 | Thien Hau Temple in Cholon | 248 | draft_pending_human_review_in_document |
+| POI-006 | War Remnants Museum | 247 | editorial_source_accepted_audio_review_pending |
+| POI-007 | Ho Chi Minh City History Museum | 244 | editorial_source_accepted_audio_review_pending |
+| POI-008 | Ho Chi Minh City Fine Arts Museum | 246 | editorial_source_accepted_audio_review_pending |
+| POI-009 | Landmark 81 | 247 | editorial_source_accepted_audio_review_pending |
+| POI-010 | Bitexco Financial Tower | 249 | editorial_source_accepted_audio_review_pending |
+| POI-011 | Saigon Zoo and Botanical Gardens | 251 | editorial_source_accepted_audio_review_pending |
+| POI-012 | Nguyen Hue Walking Street | 253 | editorial_source_accepted_audio_review_pending |
+| POI-013 | Bui Vien Walking Street | 256 | editorial_source_accepted_audio_review_pending |
+| POI-014 | Cu Chi Tunnels at Ben Duoc | 262 | editorial_source_accepted_audio_review_pending |
+| POI-015 | Thien Hau Temple in Cholon | 266 | editorial_source_accepted_audio_review_pending |
 
 Source narration/document/review SHA256s, registry profiles, 240 rows and
 geography attribution references are in `data/poc/content-inventory.json`.
 Document hashes normalize CRLF to LF; narration hashes cover only trimmed
 Narration EN paragraphs, not editorial metadata. Rebuild/check is deterministic.
 
-POI006–015 narration sources already exist in the repo, but their document
-approval statements remain pending. A merged file is not silently relabelled
-human accepted. Thumbnail rights/provenance are unknown for all15; no image
+POI006–015 English source approval is recorded by narration hash in
+data/poc/source-approvals-20261027.json after Duy explicitly reviewed them.
+This is not locale/audio/live acceptance. Thumbnail rights/provenance remain unverified; no image
 is selected or downloaded. Arrival references are existing desktop proposals,
 not revalidated entrances. Fieldwork is waived, not performed. Each source
 review retains its original institution links/access limitations; no fresh

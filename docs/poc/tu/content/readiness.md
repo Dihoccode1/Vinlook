@@ -45,16 +45,16 @@ statements, not fresh human approval. Follow the linked source review for each P
 | POI-003 | Saigon Central Post Office | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-001-005-source-review.md) | unverified | review needed |
 | POI-004 | Ho Chi Minh City Opera House | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-001-005-source-review.md) | unverified | review needed |
 | POI-005 | Nha Rong Wharf | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-001-005-source-review.md) | unverified | review needed |
-| POI-006 | War Remnants Museum | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
-| POI-007 | Ho Chi Minh City History Museum | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
-| POI-008 | Ho Chi Minh City Fine Arts Museum | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
-| POI-009 | Landmark 81 | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
-| POI-010 | Bitexco Financial Tower | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
-| POI-011 | Saigon Zoo and Botanical Gardens | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
-| POI-012 | Nguyen Hue Walking Street | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
-| POI-013 | Bui Vien Walking Street | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
-| POI-014 | Cu Chi Tunnels at Ben Duoc | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
-| POI-015 | Thien Hau Temple in Cholon | draft_pending_human_review_in_document | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
+| POI-006 | War Remnants Museum | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
+| POI-007 | Ho Chi Minh City History Museum | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
+| POI-008 | Ho Chi Minh City Fine Arts Museum | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
+| POI-009 | Landmark 81 | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
+| POI-010 | Bitexco Financial Tower | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-006-010-source-review.md) | unverified | review needed |
+| POI-011 | Saigon Zoo and Botanical Gardens | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
+| POI-012 | Nguyen Hue Walking Street | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
+| POI-013 | Bui Vien Walking Street | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
+| POI-014 | Cu Chi Tunnels at Ben Duoc | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
+| POI-015 | Thien Hau Temple in Cholon | editorial_source_accepted_audio_review_pending | [review](../../../../docs/content/poi-011-015-source-review.md) | unverified | review needed |
 
 ## Locale work ceilings — not call quotas or job orders
 

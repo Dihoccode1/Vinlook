@@ -1,5 +1,8 @@
 # English narration drafts — POI-011–015
 
+> Current decision27October2026: Duy explicitly approved these source texts with the exterior-arrival paragraph below. This supersedes historical pending-source-review statements. Audio, pronunciation/full listening, translations and publication remain unaccepted. Hash-bound approval receipt: data/poc/source-approvals-20261027.json.
+
+
 TASK-023 / Issue [47](https://github.com/Dihoccode1/Vinlook/issues/47). Prepared 25 October 2026 (UTC+7), with AI assistance for Duy; human reviewer: Tú. Status: **draft / pending Tu review**. These editorial IDs are not database IDs. Nothing here is published visitor content.
 
 Sources, exclusions and fact mapping: [source review](poi-011-015-source-review.md). Only the paragraphs between `Narration EN` and `Editorial metadata` are narration. Invitations to observe or reflect are editorial framing, not claims of measured visitor experience or current access. This text does not give walking directions.
@@ -9,6 +12,8 @@ Sources, exclusions and fact mapping: [source review](poi-011-015-source-review.
 English name: Saigon Zoo and Botanical Gardens.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 Saigon Zoo and Botanical Gardens brings together two ways of looking at nature: observing animals and discovering plants. Its story began in eighteen sixty-four, when a nursery and animal enclosures were established here. What began as a project in colonial Saigon became part of the city's longer relationship with gardens, scientific study, and public recreation.
 
@@ -22,14 +27,16 @@ You do not need to identify every plant or animal to appreciate that connection.
 
 - Facts: Z1–Z2 in source review; reflective prompts are original editorial framing.
 - Pronunciation: retain Vietnamese spelling `Thảo Cầm Viên Sài Gòn` in metadata. Native pronunciation and final English delivery need Tú's review; no phonetic spelling has been validated.
-- Word count / estimated seconds: **233 words; 93.2–139.8 seconds**.
-- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `draft / pending Tu review`.
+- Word count / estimated seconds: **251 words; 100.4–150.6 seconds**.
+- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `source approved by Duy; audio pending`.
 
 ## POI-012 — Phố đi bộ Nguyễn Huệ
 
 English name: Nguyen Hue Walking Street.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 Nguyen Hue Walking Street offers a view of Ho Chi Minh City through its public spaces. The broad promenade stretches from the City Hall area towards Bach Dang Wharf. Rather than focusing on a single monument, this stop invites you to notice the relationship between the open street and the buildings around it.
 
@@ -43,14 +50,16 @@ For a moment, choose one direction and take in the scene as a whole. Then look a
 
 - Facts: N1–N2; the last paragraph is a suggested observation, not an itinerary or guaranteed sightline.
 - Pronunciation: `Nguyễn Huệ`, `Bạch Đằng`; native reviewer confirmation pending.
-- Word count / estimated seconds: **235 words; 94.0–141.0 seconds**.
-- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `draft / pending Tu review`.
+- Word count / estimated seconds: **253 words; 101.2–151.8 seconds**.
+- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `source approved by Duy; audio pending`.
 
 ## POI-013 — Phố Tây Bùi Viện
 
 English name: Bui Vien Walking Street.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 Bui Vien is associated with a lively side of Ho Chi Minh City's visitor experience. The national tourism authority describes it as a meeting place for backpackers and other people seeking food and entertainment. It became an official walking street in twenty seventeen, adding a formal identity to an area already known to travellers.
 
@@ -64,14 +73,16 @@ As you take in the street, think about the exchanges that make a place memorable
 
 - Facts: B1. Descriptions are attributed to a tourism article, not a real-time guarantee. Observation prompts are editorial; they are not promises of specific businesses, languages or performances.
 - Pronunciation: `Bùi Viện`; native reviewer confirmation pending.
-- Word count / estimated seconds: **238 words; 95.2–142.8 seconds**.
-- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `draft / pending Tu review`.
+- Word count / estimated seconds: **256 words; 102.4–153.6 seconds**.
+- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `source approved by Duy; audio pending`.
 
 ## POI-014 — Địa đạo Củ Chi tại Bến Dược
 
 English name: Cu Chi Tunnels at Ben Duoc.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 This stop concerns Ben Duoc, one part of the Cu Chi Tunnels historical site. It is distinct from Ben Dinh, another section of the wider heritage complex. Keeping those names separate helps place this visit within the larger story of Cu Chi.
 
@@ -87,14 +98,16 @@ As you learn about this place, give yourself time to reflect on both resourceful
 
 - Facts: C1. Ben Duoc is the approved destination; no Ben Dinh substitution. Historical account and scope caveat deliberately separated from present visitor access.
 - Pronunciation: `Củ Chi`, `Bến Dược`, `Bến Đình`; native reviewer confirmation pending.
-- Word count / estimated seconds: **244 words; 97.6–146.4 seconds**.
-- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `draft / pending Tu review`.
+- Word count / estimated seconds: **262 words; 104.8–157.2 seconds**.
+- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `source approved by Duy; audio pending`.
 
 ## POI-015 — Chùa Bà Thiên Hậu tại Chợ Lớn
 
 English name: Thien Hau Temple in Cholon.
 
 ### Narration EN
+
+This route ends outside the venue. Entry depends on the venue's visitor rules and any restrictions in effect.
 
 Thien Hau Temple in Cholon introduces a place where religious practice and community heritage meet. This is the temple associated with the Tue Thanh Assembly Hall, not another temple of the same name elsewhere in the city. The city's tourism promotion centre connects it with the Cantonese Chinese community of Cholon.
 
@@ -110,8 +123,8 @@ Let the visit become an opportunity to think about what communities carry with t
 
 - Facts: T1–T2. Religious beliefs are attributed, not asserted as historical proof. Reflective prompts do not grant access or photography permission.
 - Pronunciation: `Thiên Hậu`, `Chợ Lớn`, `Tuệ Thành`; native reviewer confirmation pending.
-- Word count / estimated seconds: **248 words; 99.2–148.8 seconds**.
-- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `draft / pending Tu review`.
+- Word count / estimated seconds: **266 words; 106.4–159.6 seconds**.
+- Timing: `estimated`; audio: `TTS_not_tested`; manual reading: not measured. Status: `source approved by Duy; audio pending`.
 
 ## Timing method and acceptance limits
 
