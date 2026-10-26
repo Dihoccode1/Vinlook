@@ -9,7 +9,8 @@ changed. Duy reviews/merges; #75 remains open for unfinished live acceptance.
 
 - Adds `.github/workflows/poc-backend.yml` alongside the unchanged original workflow.
   PR filter is **base** `codex/poc-demo`; push filter is the integration branch;
-  backend/routing/scripts/tests/package/workflow changes trigger checks. Manual
+  backend/routing/scripts/tests/package/workflow and content metadata/source changes
+  trigger checks (data/poc, docs/content, canonical batch metadata and TU03 docs). Manual
   workflow_dispatch is also available once the workflow is discoverable on GitHub.
 - Pins the same official checkout/setup-node action SHAs and Node24.18.1/npm11.16.0
   used by the baseline. Each job verifies versions and uses npm ci/lockfile.
@@ -18,8 +19,11 @@ changed. Duy reviews/merges; #75 remains open for unfinished live acceptance.
   deploy hooks, paid resources, keepalive, schedule, image registry push or auto-merge.
 - Usage job runs build/syntax, independent scaffold listeners and existing runtime/
   authorization suites. It discovers non-integration `.test.js` and `.test.mjs`
-  under services/usage/test and packages/poc-routing/test. Test failure/timeout
+  under services/usage/test, packages/poc-routing/test and scripts/poc/content/test. Test failure/timeout
   fails the job. Missing suites get an explicit notice/summary, **not a test pass**.
+  When Content tools exist, all three CLI/inventory/runner suites are mandatory,
+  followed by `node scripts/poc/content/cli.mjs inventory --check`; deleting all
+  tests cannot silently turn existing Content tools into an uncovered success.
 - Identity/Content regression jobs reuse their existing syntax/unit runner and
   disposable labelled Mongo replica-set integration runner. Current suites are
   eight Identity + nine Content invocations. Only runner-created temporary Mongo
@@ -64,8 +68,18 @@ is versioned in the workflow, rather than requiring an unpublished script.
 
 Optional module-test discovery deliberately excludes `.integration.test.js/mjs`:
 an integration suite must run through its owning disposable fixture launcher,
-never receive an arbitrary database URI. PR83 is not cherry-picked/merged into
-this branch. After Duy integrates it, its two module test files will be discovered.
+never receive an arbitrary database URI. PR83/85/86 are not cherry-picked/merged
+into this branch. After Duy integrates their code and this workflow, their Usage,
+routing and Content-tool suites are discovered on the actual checked-out commit.
+
+The follow-up discovery change is tested against exact source blobs from PR83
+(`f0a1425f352b08e159f500851459e21c14a9bd1d`), PR85
+(`1e38378265a8b48baaee056d584b2a336a53cfca`) and PR86
+(`738349304a60f4bf3e123bf95f73306b263128cd`) over the same seed in an isolated
+scratch directory: seven test files/64 tests plus inventory --check. These are
+local combined-source compatibility fixtures, not an integration merge or live
+dataset/route acceptance. Baseline PR84 still contains no module suites and reports
+that explicitly; a green baseline CI is not a claim of running the unmerged suites.
 
 ## Observed local evidence, 26 October 2026 UTC+7
 
@@ -79,6 +93,9 @@ this branch. After Duy integrates it, its two module test files will be discover
 | Module discovery, this baseline | Explicit missing-suite notices, zero module files; not labelled 21 tests passed |
 | Forward discovery compatibility | In a scratch directory outside the clone, exact test/fixture blobs from unmerged PR83 head f0a1425f352b08e159f500851459e21c14a9bd1d plus its registry were supplied to the real discovery step: 2 files/21 tests pass. This is a fixture overlay, not a branch merge or approval |
 | Failure propagation | Separate scratch fixture with one intentionally failing test causes discovery step exit1, as expected; failure was not swallowed |
+| Follow-up combined-source check | Exact PR83/85/86 blobs over the seed:7module files/64tests and inventory --check PASS through the actual updated workflow step; no dependency/live/DB/provider operation |
+| Follow-up missing-suite guard | Synthetic Content CLI present but required suites absent: exits1 as expected |
+| Follow-up runner/inventory failures | Separate intentionally failing runner-test fixture and passing-test/failing-inventory fixture each exit1; no false success summary |
 | Local Docker daemon | NOT RUN: docker version cannot reach dockerDesktopLinuxEngine pipe. No local image/integration success claimed; actual Linux CI evidence is recorded in PR/#75 when observed |
 
 Original root dependency/lock, original workflow, Usage/Identity/Content business
@@ -86,6 +103,8 @@ source, shared contracts and Hạo files stay unchanged. Only the five-file CI/i
 documentation inventory is published after staged scope/credential/whitespace scan.
 Tool downloads, temporary overlay/failure fixture, local environment and logs are
 outside Git publication. No screenshots/video apply to this non-UI slice.
+The Content-test follow-up changes only the workflow and this evidence document;
+the Usage image, baseline runtime and original workflow are unchanged.
 
 ## Remaining gates
 

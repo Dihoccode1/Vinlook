@@ -6,6 +6,10 @@ on:
       - services/**
       - packages/poc-routing/**
       - scripts/**
+      - data/poc/**
+      - docs/content/**
+      - docs/planning/task025-batch-plan.json
+      - docs/poc/tu/content/**
       - tests/**
       - package.json
       - package-lock.json
@@ -17,6 +21,10 @@ on:
       - services/**
       - packages/poc-routing/**
       - scripts/**
+      - data/poc/**
+      - docs/content/**
+      - docs/planning/task025-batch-plan.json
+      - docs/poc/tu/content/**
       - tests/**
       - package.json
       - package-lock.json
@@ -52,26 +60,39 @@ jobs:
           npm run build --workspace=@vinlook/usage
           npm run check:scaffold
           node --test tests/runtime-health.test.mjs tests/authorization.test.mjs
-      - name: Run available Usage and routing module tests
+      - name: Run available Usage, routing and content-tool tests
         shell: bash
         run: |
           node --input-type=module <<'NODE'
-          import { readdir, appendFile } from 'node:fs/promises';
+          import { readdir, appendFile, access } from 'node:fs/promises';
           import { spawnSync } from 'node:child_process';
           const files = [];
-          for (const directory of ['services/usage/test', 'packages/poc-routing/test']) {
+          for (const directory of ['services/usage/test', 'packages/poc-routing/test', 'scripts/poc/content/test']) {
             let entries;
             try { entries = await readdir(directory, { recursive: true }); }
             catch (error) { if (error.code !== 'ENOENT') throw error; entries = []; }
-            const found = entries.filter(file => /\.test\.(?:mjs|js)$/.test(file) && !/\.integration\.test\.(?:mjs|js)$/.test(file));
+            const found = entries.map(file => file.replaceAll('\\', '/'))
+              .filter(file => /\.test\.(?:mjs|js)$/.test(file) && !/\.integration\.test\.(?:mjs|js)$/.test(file));
             if (!found.length) console.log(`::notice::No module tests in ${directory} at this commit; not covered by this run`);
             files.push(...found.map(file => `${directory}/${file}`));
           }
           files.sort();
+          let contentPresent = files.some(file => file.startsWith('scripts/poc/content/test/'));
+          try { await access('scripts/poc/content/cli.mjs'); contentPresent = true; }
+          catch (error) { if (error.code !== 'ENOENT') throw error; }
+          if (contentPresent) {
+            const required = ['cli', 'inventory', 'runner'].map(name => `scripts/poc/content/test/${name}.test.mjs`);
+            if (required.some(file => !files.includes(file))) throw new Error('Content tooling is present but a required CLI/inventory/runner test suite is missing');
+          }
           await appendFile(process.env.GITHUB_STEP_SUMMARY, `Module test files discovered: ${files.length}. Missing suites are not a test pass.\nUsage business endpoints/catalog/integration are not established by this packaging job.\n`);
           if (files.length) {
             const child = spawnSync(process.execPath, ['--test', ...files], { stdio: 'inherit', timeout: 180000 });
             if (child.error || child.status !== 0) process.exit(1);
+          }
+          if (contentPresent) {
+            const child = spawnSync(process.execPath, ['scripts/poc/content/cli.mjs', 'inventory', '--check'], { stdio: 'inherit', timeout: 30000 });
+            if (child.error || child.status !== 0) process.exit(1);
+            await appendFile(process.env.GITHUB_STEP_SUMMARY, 'Content CLI/inventory/runner suites and deterministic public inventory check completed successfully. No live pipeline operation was invoked.\n');
           }
           NODE
       - name: Build allowlisted Usage production image
