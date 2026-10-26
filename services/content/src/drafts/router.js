@@ -7,19 +7,9 @@ import { publicRouter } from '../public/router.js';
 import { lifecycleRouter } from '../lifecycle/router.js';
 import { publicationRouter } from '../publication/router.js';
 import { randomUUID } from 'node:crypto';
-import { protectedRequest } from '../authorization.js';
-import { uuid, MutationFailure } from '../durability/validation.js';
-import { createDraftService } from './service.js';
-import {
-  DraftFailure,
-  parse,
-  objectId,
-  createInput,
-  cloneInput,
-  patchInput,
-  languageInput,
-  locale,
-} from './validation.js';
+import { MutationFailure } from '../durability/validation.js';
+import { DraftFailure } from './validation.js';
+import { createPoiRouter } from '../modules/pois/poi.route.js';
 const messages = {
   ADAPTER_BUSY: 'An adapter job is already running',
   PROVIDER_RETRY_CONFIRMATION_REQUIRED:
@@ -47,7 +37,6 @@ const messages = {
 };
 export function draftRouter(runtime) {
   const router = express.Router();
-  const service = createDraftService(runtime);
   router.use(monitoringRouter(runtime));
   router.use((req, res, next) => {
     res.set('Cache-Control', 'no-store');
@@ -78,63 +67,8 @@ export function draftRouter(runtime) {
   router.use(lifecycleRouter(runtime));
   router.use(mediaRouter(runtime));
   router.use(publicationRouter(runtime));
-  const auth = (write) =>
-    protectedRequest(runtime.authorization, { roles: ['Staff', 'Manager'], requireSession: write });
-  const json = [
-    (req, res, next) =>
-      req.is('application/json') ? next() : next(new DraftFailure('UNSUPPORTED_MEDIA_TYPE', 415)),
-    express.json({ limit: 131072, strict: true }),
-  ];
-  const key = (req) => parse(uuid, req.get('Idempotency-Key'));
-  const run = (fn) => async (req, res, next) => {
-    try {
-      const result = await fn(req, res.locals.principal);
-      res.status(result.status).json({ ...result.body, requestId: res.locals.requestId });
-    } catch (error) {
-      next(error);
-    }
-  };
-  router.post(
-    '/admin/pois',
-    auth(true),
-    ...json,
-    run((req, p) => service.create(parse(createInput, req.body), p, key(req))),
-  );
-  router.post(
-    '/admin/pois/:id/draft',
-    auth(true),
-    ...json,
-    run((req, p) =>
-      service.clone(parse(objectId, req.params.id), parse(cloneInput, req.body), p, key(req)),
-    ),
-  );
-  router.patch(
-    '/admin/revisions/:id',
-    auth(true),
-    ...json,
-    run((req, p) => service.patch(parse(objectId, req.params.id), parse(patchInput, req.body), p)),
-  );
-  router.patch(
-    '/admin/revisions/:id/languages/:code',
-    auth(true),
-    ...json,
-    run((req, p) =>
-      service.patch(
-        parse(objectId, req.params.id),
-        parse(languageInput, req.body),
-        p,
-        parse(locale, req.params.code),
-      ),
-    ),
-  );
-  router.get(
-    '/admin/pois/:id',
-    auth(false),
-    run(async (req) => ({
-      status: 200,
-      body: { data: await service.read(parse(objectId, req.params.id)) },
-    })),
-  );
+  // Preserve all sibling routers above; this module owns only the existing five POI routes.
+  router.use(createPoiRouter(runtime));
   router.use((error, req, res, _next) => {
     if (res.headersSent) return;
     let status = 503,

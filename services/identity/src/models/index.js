@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
+import { createStaffAccountSchema } from '../modules/auth/auth.model.js';
+import { schemaOptions as options } from '../utils/schema-options.js';
 
 const { Schema } = mongoose;
 const objectId = Schema.Types.ObjectId;
 const hex64 = /^[0-9a-f]{64}$/;
 const code = /^[A-Za-z0-9_]{1,100}$/;
-const bcrypt12 = /^\$2[aby]\$12\$[./A-Za-z0-9]{53}$/;
 const integer = { validator: Number.isSafeInteger, message: 'Invalid integer' };
 const finiteDate = {
   validator: (value) => value == null || Number.isFinite(value.getTime()),
@@ -14,23 +15,6 @@ const date = (required = false) => ({ type: Date, required, validate: finiteDate
 const nullableId = () => ({ type: objectId, default: null });
 const alias = () => ({ type: String, trim: true, minlength: 1, maxlength: 100, default: null });
 
-function options(collection, hidden = []) {
-  const transform = (_document, result) => {
-    for (const field of hidden) delete result[field];
-    return result;
-  };
-  return {
-    collection,
-    strict: 'throw',
-    autoCreate: false,
-    autoIndex: false,
-    bufferCommands: false,
-    versionKey: false,
-    toJSON: { transform },
-    toObject: { transform },
-  };
-}
-
 function calendarDay(value) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const parsed = new Date(`${value}T00:00:00.000Z`);
@@ -39,33 +23,7 @@ function calendarDay(value) {
 
 /** Service-owned schemas; compiling these models never opens a connection or creates indexes. */
 export function createIdentitySchemas() {
-  const StaffAccount = new Schema(
-    {
-      fullName: {
-        type: String,
-        required: true,
-        trim: true,
-        validate: {
-          validator: (value) => [...value].length >= 1 && [...value].length <= 100,
-          message: 'Invalid name length',
-        },
-      },
-      email: {
-        type: String,
-        required: true,
-        trim: true,
-        lowercase: true,
-        maxlength: 254,
-        match: /^[^@\s]+@[^@\s]+$/u,
-      },
-      passwordHash: { type: String, required: true, match: bcrypt12, select: false },
-      role: { type: String, required: true, enum: ['Staff', 'Manager'] },
-      status: { type: String, required: true, enum: ['pending', 'active', 'locked'] },
-      authVersion: { type: Number, required: true, min: 0, validate: integer },
-    },
-    { ...options('staff_accounts', ['passwordHash']), timestamps: true },
-  );
-  StaffAccount.index({ email: 1 }, { unique: true });
+  const StaffAccount = createStaffAccountSchema();
 
   const WorkSession = new Schema(
     {

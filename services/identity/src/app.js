@@ -1,6 +1,6 @@
 import express from 'express';
 import { randomUUID } from 'node:crypto';
-import { authRouter } from './auth/router.js';
+import { authRouter } from './modules/auth/auth.route.js';
 import { authorizationRouter } from './authorization.js';
 import { sessionRouter } from './session-router.js';
 import { auditHistoryRouter } from './audit-history.js';

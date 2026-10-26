@@ -1,7 +1,7 @@
 import { pathToFileURL } from 'node:url';
 import { createApp } from './app.js';
-import { loadContentConfig, connectContentRuntime } from './drafts/runtime.js';
-import { loadConfig, ConfigurationError } from './config.js';
+import { loadContentConfig, connectContentRuntime } from './config/database.js';
+import { loadConfig, ConfigurationError } from './config/env.js';
 
 export function startServer(config = loadConfig(), runtime) {
   return createApp(runtime).listen(config.port, config.host);

@@ -1,8 +1,8 @@
 import { pathToFileURL } from 'node:url';
 import { createApp } from './app.js';
-import { loadConfig, ConfigurationError } from './config.js';
+import { loadConfig, ConfigurationError } from './config/env.js';
 import { loadAuthConfig, AuthConfigurationError } from './auth/config.js';
-import { connectAuthRuntime } from './auth/runtime.js';
+import { connectAuthRuntime } from './config/database.js';
 import { loadServiceCredentials } from './authorization.js';
 
 export async function startServer(config = loadConfig(), authConfig = loadAuthConfig(config.mode)) {
