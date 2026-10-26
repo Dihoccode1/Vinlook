@@ -1,10 +1,10 @@
-name: PoC web foundation
+name: PoC web checks
 on:
   pull_request:
     branches: [codex/poc-demo]
     paths: ['apps/web/**', 'tests/poc-web/**', 'docs/poc/hao/**', 'package*.json', '.github/workflows/poc-web.yml']
   push:
-    branches: [codex/poc-hao-01-tourist]
+    branches: ['codex/poc-hao-*']
     paths: ['apps/web/**', 'tests/poc-web/**', 'docs/poc/hao/**', 'package*.json', '.github/workflows/poc-web.yml']
 permissions:
   contents: read
@@ -27,12 +27,13 @@ jobs:
           npm ci --no-audit --no-fund
       - name: Adapter and lifecycle units plus existing locale regression
         run: |
-          node --test tests/poc-web/adapters.test.mjs tests/poc-web/lifecycle.test.mjs
+          node tests/poc-web/e2e/run-tests.mjs unit
           npm run test:ui-locale
       - name: Production build and independent listeners
         run: |
           npm run build
           npm run check:scaffold
+          node tests/poc-web/e2e/check-build.mjs
       - name: Fixture flag must reject production build
         run: |
           if VITE_POC_FIXTURE=labelled-local npm run build --workspace=@vinlook/web; then
