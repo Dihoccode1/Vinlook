@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+.bootstrap-review/
+apps/web/public/routing/
+apps/web/public/credits/
+apps/web/src/i18n/resources/
+data/
+package-lock.json
