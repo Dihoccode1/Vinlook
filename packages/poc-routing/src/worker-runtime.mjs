@@ -23,9 +23,10 @@ export function copyWorkerGraph(input, limits) {
     return { id: node.id, point: [...node.point], passable: node.passable };
   }), edges: input.edges.map(edge => {
     if (![edge?.id, edge?.from, edge?.to].every(opaqueId) || !Number.isFinite(edge.lengthMeters)
-      || ![true, false, null, undefined].includes(edge.walkable) || ![true, false, null, undefined].includes(edge.restrictionsResolved)) fail('INVALID_GRAPH');
+      || ![true, false, null, undefined].includes(edge.walkable) || ![true, false, null, undefined].includes(edge.restrictionsResolved)
+      || edge.streetName !== undefined && edge.streetName !== null && (typeof edge.streetName !== 'string' || edge.streetName.length > 1024)) fail('INVALID_GRAPH');
     return { id: edge.id, from: edge.from, to: edge.to, lengthMeters: edge.lengthMeters,
-      walkable: edge.walkable, restrictionsResolved: edge.restrictionsResolved };
+      walkable: edge.walkable, restrictionsResolved: edge.restrictionsResolved, streetName: edge.streetName ?? null };
   }) };
 }
 const safeCodes = new Set(['INVALID_GRAPH_BUDGET', 'INVALID_GRAPH', 'INVALID_METRIC_EDGE', 'UNSUPPORTED_SEGMENT',
