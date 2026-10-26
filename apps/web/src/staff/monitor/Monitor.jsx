@@ -1,13 +1,14 @@
 import {useEffect,useMemo,useSyncExternalStore} from 'react';
 import {createMonitor} from './state.js';
 import './monitor.css';
-export function Monitor({api}){
-  return <div className="monitor" lang="en" dir="ltr">{api?<Dashboard api={api}/>:<main><p className="monitor-eyebrow">VINLOOK / OPERATIONS</p><h1>Monitoring unavailable</h1><p>Approved Usage HTTP bridge is pending. Sign in through the staff host when integration is ready.</p></main>}</div>;
+export function Monitor({api,onUnauthorized}){
+  return <div className="monitor" lang="en" dir="ltr">{api?<Dashboard api={api} onUnauthorized={onUnauthorized}/>:<main><p className="monitor-eyebrow">VINLOOK / OPERATIONS</p><h1>Monitoring unavailable</h1><p>Usage service origin is not configured. Contact the operator.</p></main>}</div>;
 }
-function Dashboard({api}){
+function Dashboard({api,onUnauthorized}){
   const store=useMemo(()=>createMonitor({api,visible:()=>document.visibilityState==='visible'}),[api]);
   const state=useSyncExternalStore(store.subscribe,store.getSnapshot);
   useEffect(()=>{store.start();const changed=()=>store.visibilityChanged();document.addEventListener('visibilitychange',changed);return()=>{store.stop();document.removeEventListener('visibilitychange',changed);};},[store]);
+  useEffect(()=>{if(state.status==='unauthorized')onUnauthorized?.();},[state.status,onUnauthorized]);
   if(!state.authorized)return <main><p className="monitor-eyebrow">VINLOOK / OPERATIONS</p><h1>Monitoring</h1><p role="status">{state.status==='unauthorized'?'Sign in with an active Staff or Manager account.':state.status==='unavailable'?'Service unavailable; no verified counts.':'Checking current authority…'}</p></main>;
   return <main><header className="monitor-header"><div><p className="monitor-eyebrow">VINLOOK / OPERATIONS</p><h1>Current usage</h1><p>System-wide activity · refreshes every 30 seconds while visible</p></div><button onClick={()=>void store.refresh()}>Refresh now</button></header>
     <p className={`monitor-status ${state.status==='fresh'?'is-fresh':''}`} role="status">{state.status} · {state.error??'Verified sample'}</p>

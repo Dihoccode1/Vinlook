@@ -3,7 +3,7 @@ import {isLocale} from '../i18n/locales.js';
 const id = value => {if(!/^[a-f0-9]{24}$/.test(value??''))throw new ApiError('INVALID_INPUT');return value;};
 const locale = value => {if(!isLocale(value))throw new ApiError('INVALID_INPUT');return value;};
 // Separate origins, JWT only in this closure. No automatic retry of mutations.
-export function createAdminAdapter({identityOrigin,contentOrigin},options={}) {
+export function createAdminAdapter({identityOrigin,contentOrigin,usageOrigin},options={}) {
   const identity=createTransport(identityOrigin,options),content=createTransport(contentOrigin,{timeoutMs:65000,...options});
   let token=null,generation=0;
   const request=async(transport,path,args={})=>{
@@ -13,7 +13,14 @@ export function createAdminAdapter({identityOrigin,contentOrigin},options={}) {
     catch(error){if(error.status===401&&epoch===generation)token=null;throw error;}
   };
   const revision=(value,operation,args)=>request(content,`/api/v1/admin/revisions/${id(value)}${operation}`,args);
+  let usage=null;try{if(usageOrigin)usage=createTransport(usageOrigin,options);}catch{/* Admin content tools remain usable without Monitoring config. */}
   return {
+    monitor:usage?{
+      authorize:()=>request(identity,'/api/v1/me'),
+      summary:()=>request(usage,'/api/v1/monitoring/summary'),
+      health:()=>request(usage,'/api/v1/monitoring/health'),
+      jobs:()=>request(usage,'/api/v1/monitoring/jobs'),
+    }:null,
     async login(email,password){const epoch=++generation;token=null;const data=await identity('/api/v1/auth/login',{method:'POST',body:{email,password}});
       if(epoch!==generation)throw new ApiError('REQUEST_CANCELLED');
       if(!data?.accessToken)throw new ApiError('INVALID_RESPONSE');token=data.accessToken;return this.me();},
