@@ -1,0 +1,12 @@
+{
+  "source": "https://download.geofabrik.de/asia/vietnam-latest.osm.pbf",
+  "finalUrl": "https://download.geofabrik.de/asia/vietnam-261025.osm.pbf",
+  "startedAt": "2026-10-26T17:20:08.810Z",
+  "finishedAt": "2026-10-26T17:20:56.505Z",
+  "lastModified": "Mon, 26 Oct 2026 00:14:03 GMT",
+  "bytes": 331590326,
+  "sha256": "ddfad6df8d51a42336c01d199424a2cdfce46bc64eeb1b2f4d53818dd63fead6",
+  "md5": "cd128585774ee4e3ff8c3bc33649cd60",
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors"
+}

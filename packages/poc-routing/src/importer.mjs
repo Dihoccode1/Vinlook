@@ -1,5 +1,6 @@
 import { distanceMeters, validPoint } from './core.mjs';
 export const PROFILE_VERSION = 'explicit-foot-review-v1';
+export const COUNTRY_PROFILE_VERSION = 'vn-foot-v1';
 const allow = new Set(['yes', 'designated', 'permissive']);
 export const highways = new Set(['footway', 'pedestrian', 'path', 'steps', 'residential', 'living_street', 'service', 'unclassified',
   'tertiary', 'secondary', 'primary', 'cycleway', 'track', 'tertiary_link', 'secondary_link', 'primary_link']);
@@ -29,11 +30,12 @@ function nodePassable(value) {
   if (value.barrier && value.barrier !== 'no') return barriers.has(value.barrier) && allow.has(value.foot);
   return true; // Way permission is checked separately; absent barriers are not field verification.
 }
-function directions(value) {
+function directions(value,profileVersion) {
   if (!highways.has(value.highway)) return { reason: 'UNSUPPORTED_HIGHWAY' };
   if (uncertain(value) || value.area === 'yes' || value.route === 'ferry' || value.ford && value.ford !== 'no'
     || value.conveying && value.conveying !== 'no') return { reason: 'UNRESOLVED_CONDITION' };
-  if (!allow.has(value.foot ?? value.access)) return { reason: 'FOOT_PERMISSION_NOT_EXPLICIT' };
+  const permission=value.foot??value.access;
+  if (!allow.has(permission)&&!(permission===undefined&&profileVersion===COUNTRY_PROFILE_VERSION)) return { reason: 'FOOT_PERMISSION_NOT_EXPLICIT' };
   let forward = true, backward = true;
   if (value['oneway:foot'] !== undefined) {
     if (!['yes', 'no', '-1'].includes(value['oneway:foot'])) return { reason: 'UNRESOLVED_DIRECTION' };
@@ -48,7 +50,8 @@ function directions(value) {
 }
 
 /** Complete normalized OSM JSON extract, not PBF/Overpass decoding or country-default access. */
-export function importOsm(document, limits) {
+export function importOsm(document, limits, {profileVersion=PROFILE_VERSION}={}) {
+  if(![PROFILE_VERSION,COUNTRY_PROFILE_VERSION].includes(profileVersion))buildFail('INVALID_FOOT_PROFILE');
   const fields = ['nodes', 'ways', 'relations', 'edges', 'tags', 'wayRefs', 'relationMembers', 'totalRefs'];
   if (!limits || fields.some(key => !positive(limits[key])) || !document || document.complete !== true
     || !Array.isArray(document.nodes) || !Array.isArray(document.ways) || !Array.isArray(document.relations)
@@ -88,7 +91,7 @@ export function importOsm(document, limits) {
   const reject = reason => { excluded[reason] = (excluded[reason] ?? 0) + 1; };
   for (const [id, way] of [...ways].sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) {
     if (blockedWays.has(id)) { reject('RESTRICTION_QUARANTINE'); continue; }
-    const policy = directions(way.tags); if (policy.reason) { reject(policy.reason); continue; }
+    const policy = directions(way.tags,profileVersion); if (policy.reason) { reject(policy.reason); continue; }
     for (let index = 1; index < way.refs.length; index++) {
       const a = nodes.get(way.refs[index - 1]), b = nodes.get(way.refs[index]);
       if (!a.passable || !b.passable) { reject('BLOCKED_NODE_SEGMENT'); continue; }
@@ -109,7 +112,7 @@ export function importOsm(document, limits) {
   const sizes = new Map(); for (let index = 0; index < parents.length; index++) { const id = root(index); sizes.set(id, (sizes.get(id) ?? 0) + 1); }
   let largestWeakComponentNodes = 0; for (const size of sizes.values()) largestWeakComponentNodes = Math.max(largestWeakComponentNodes, size);
   return { graph: { nodes: sortedNodes, edges },
-    report: { profileVersion: PROFILE_VERSION, inputNodes: nodes.size, inputWays: ways.size, inputRelations: relations.size,
+    report: { profileVersion, inputNodes: nodes.size, inputWays: ways.size, inputRelations: relations.size,
       admittedDirectedEdges: edges.length, quarantinedWays: blockedWays.size, quarantinedNodes: blockedNodes.size,
       zeroSegments, weakComponentCount: sizes.size, largestWeakComponentNodes, isolatedNodes: nodes.size - linked.size,
       excluded: Object.fromEntries(Object.entries(excluded).sort()), coverageVerified: false, releaseReady: false } };
