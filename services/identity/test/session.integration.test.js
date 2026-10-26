@@ -156,7 +156,7 @@ test('new Identity process reconciles persisted stale records before accepting H
       child.once('exit', () => { clearTimeout(timer); reject(new Error('Child exited before startup')); });
     });
     assert.equal((await models.WorkSession.findById(stale._id)).closedAt.toISOString(), '2026-10-21T17:00:00.000Z');
-    assert.equal((await fetch(`${base}/health/ready`)).status, 503);
+    assert.equal((await fetch(`${base}/health/ready`)).status, 200);
   } finally { const exited = once(child, 'exit'); child.kill(); await exited; }
   server = createApp(runtime).listen(port, '127.0.0.1'); await once(server, 'listening');
 });

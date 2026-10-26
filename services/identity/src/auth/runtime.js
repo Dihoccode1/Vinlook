@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { createReadiness } from '../readiness.js';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'node:crypto';
 import { createIdentityModels } from '../models/index.js';
@@ -37,6 +38,6 @@ export async function connectAuthRuntime(config) {
     await connection.asPromise();
     const runtime = await createAuthRuntime(createIdentityModels(connection), config);
     await reconcileSessions(runtime.models, runtime.now());
-    return { ...runtime, close: () => connection.close() };
+    return { ...runtime, ready:createReadiness(connection), close: () => connection.close() };
   } catch { await connection.close().catch(() => {}); throw new Error('Identity dependencies unavailable'); }
 }

@@ -20,11 +20,13 @@ export function createApp(authRuntime) {
   app.get('/health/live', (_request, response) => {
     response.set('Cache-Control', 'no-store').json({ data: { status: 'up' }, requestId: randomUUID() });
   });
-  app.get('/health/ready', (_request, response) => {
+  app.get('/health/ready', async (_request, response) => {
+    let ready=false;try{ready=await authRuntime?.ready?.()===true;}catch{/* No dependency details in health output. */}
+    if(ready)return response.set('Cache-Control','no-store').json({data:{status:'ready'},requestId:randomUUID()});
     response.set('Cache-Control', 'no-store').status(503).json({
       error: { code: 'DEPENDENCIES_UNVERIFIED', message: 'Service dependencies are not verified', requestId: randomUUID() },
     });
   });
-  // Protected monitoring and business APIs are intentionally not implemented.
+  // Unconfigured/unverified runtimes remain unavailable.
   return app;
 }

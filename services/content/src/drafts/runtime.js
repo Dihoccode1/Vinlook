@@ -1,5 +1,6 @@
 import {loadAdapterConfig,processingManifest,publicationRegistry} from '../adapters/config.js';
 import {monitoringKey} from '../monitoring.js';
+import {createReadiness} from '../readiness.js';
 import {createAdapterModels} from '../adapters/models.js';
 import {createAdapterRunner} from '../adapters/runner.js';
 import {createGeminiProvider} from '../adapters/provider.js';
@@ -53,6 +54,7 @@ export async function connectContentRuntime(config){
   if(config.worker){runtime.processingManifest=processingManifest;runtime.publicationRegistry=publicationRegistry;}
   if(config.media){runtime.media=createMediaService(runtime,createCloudinaryAdapter(config.media),{mode:config.mode});runtime.verifyThumbnail=runtime.media.verifyThumbnail;runtime.attachThumbnail=runtime.media.attachThumbnail;}
   if(config.adapters){await verifyBinaries(config.adapters);runtime.processingManifest=processingManifest;runtime.publicationRegistry=publicationRegistry;runtime.translationPreflight=createTranslationPreflight(config.adapters);runtime.adapters=createAdapterRunner(runtime,config.adapters,{provider:createGeminiProvider(config.adapters),transcode:createTranscoder(config.adapters)});}
+  runtime.ready=createReadiness(connection);
   return runtime;
  }catch{await connection.close().catch(()=>{});throw new Error('Content dependencies unavailable');}
 }

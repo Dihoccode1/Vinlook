@@ -221,7 +221,7 @@ test('exhausted reset budget survives new server process and DB failure fails cl
       child.once('error', e => { clearTimeout(timer); reject(e); }); child.once('exit', () => { clearTimeout(timer); reject(new Error('Child exited early')); });
     });
     assert.equal((await reset(target, key())).status, 429);
-    assert.equal((await fetch(`${base}/health/ready`)).status, 503);
+    assert.equal((await fetch(`${base}/health/ready`)).status, 200);
   } finally { const exited = once(child, 'exit'); child.kill(); await exited; }
   server = createApp(runtime).listen(port, '127.0.0.1'); await once(server, 'listening');
   await connection.close();
