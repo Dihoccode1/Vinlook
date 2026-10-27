@@ -38,6 +38,7 @@
     "imageUnavailable": "Image indisponible."
   },
   "navigation": {
+    "locationHelp": "Autorisez la localisation pour ce site et activez les services de localisation de votre appareil, puis réessayez. Le trajet à pied exige une précision de 50 m ou mieux. Si votre ordinateur ne le permet pas, essayez un téléphone avec GPS.",
     "walkTo": "Aller à pied à {{name}}",
     "directions": "Itinéraire à pied",
     "calculating": "Calcul de l’itinéraire…",

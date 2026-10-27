@@ -38,6 +38,7 @@
     "imageUnavailable": "Bild nicht verfügbar."
   },
   "navigation": {
+    "locationHelp": "Erlauben Sie den Standortzugriff für diese Website und aktivieren Sie die Ortungsdienste Ihres Geräts. Versuchen Sie es erneut. Fußwege erfordern eine Genauigkeit von höchstens 50 m. Falls Ihr Computer das nicht liefert, versuchen Sie es mit einem GPS-fähigen Telefon.",
     "walkTo": "Zu Fuß zu {{name}}",
     "directions": "Wegbeschreibung zu Fuß",
     "calculating": "Route wird berechnet…",

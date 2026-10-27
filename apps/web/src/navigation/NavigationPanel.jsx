@@ -1,5 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react';
 import { useTouristTranslation } from '../i18n/provider.jsx';
+import './navigation.css';
 export function NavigationPanel({ controller, destination, name }) {
   const t = useTouristTranslation();
   if (!controller || !destination)
@@ -27,6 +28,7 @@ function ActiveNavigation({ controller, destination, name }) {
     [controller, destination.poiId, destination.revisionId, destination.graphVersion],
   );
   const active = Boolean(state.destination),
+    gpsBlocked = ['gps_unavailable', 'gps_uncertain'].includes(state.status),
     calculating = ['calculating', 'loading_graph'].includes(state.status);
   const message =
     state.error === 'GPS_PERMISSION_DENIED'
@@ -38,11 +40,14 @@ function ActiveNavigation({ controller, destination, name }) {
           ? 'navigation.arrive'
           : state.status === 'route_unavailable' || state.error
             ? 'navigation.noRoute'
-            : calculating
-              ? 'navigation.calculating'
-              : 'navigation.directions';
+            : calculating && !state.latestFix
+              ? 'map.locateMe'
+              : calculating
+                ? 'navigation.calculating'
+                : 'navigation.directions';
   return (
     <section
+      className="walking-navigation"
       aria-label={t('navigation.directions')}
       style={{
         padding: 16,
@@ -54,6 +59,7 @@ function ActiveNavigation({ controller, destination, name }) {
     >
       <h2>{t('navigation.directions')}</h2>
       <p role="status">{t(message)}</p>
+      {gpsBlocked && <p className="walking-location-help">{t('navigation.locationHelp')}</p>}
       {!active && (
         <button onClick={() => controller.start(destination)}>
           {t('navigation.walkTo', { name })}
@@ -62,7 +68,7 @@ function ActiveNavigation({ controller, destination, name }) {
       {active && (
         <>
           <p>{name}</p>
-          {state.status === 'route_unavailable' && (
+          {(state.status === 'route_unavailable' || gpsBlocked) && (
             <button onClick={() => void controller.retry()}>{t('common.retry')}</button>
           )}
           <button onClick={() => controller.stop()}>{t('common.cancel')}</button>

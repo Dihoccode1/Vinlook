@@ -38,6 +38,7 @@
     "imageUnavailable": "Không có hình ảnh."
   },
   "navigation": {
+    "locationHelp": "Cho phép trang web truy cập vị trí và bật dịch vụ vị trí trên thiết bị, rồi thử lại. Chỉ đường đi bộ cần vị trí có sai số không quá 50 m. Nếu máy tính không cung cấp được, hãy thử trên điện thoại có GPS.",
     "walkTo": "Đi bộ đến {{name}}",
     "directions": "Chỉ đường đi bộ",
     "calculating": "Đang tính lộ trình…",

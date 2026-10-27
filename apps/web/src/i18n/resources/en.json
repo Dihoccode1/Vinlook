@@ -38,6 +38,7 @@
     "imageUnavailable": "Image unavailable."
   },
   "navigation": {
+    "locationHelp": "Allow location access for this site and turn on device location services, then try again. Walking directions need a position accurate to 50 m or better. If your computer cannot provide it, try a GPS-enabled phone.",
     "walkTo": "Walk to {{name}}",
     "directions": "Walking directions",
     "calculating": "Calculating route…",

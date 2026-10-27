@@ -38,6 +38,7 @@
     "imageUnavailable": "Gambar tidak tersedia."
   },
   "navigation": {
+    "locationHelp": "Izinkan akses lokasi untuk situs ini dan aktifkan layanan lokasi perangkat, lalu coba lagi. Rute jalan kaki memerlukan akurasi 50 m atau lebih baik. Jika komputer tidak dapat menyediakannya, coba ponsel dengan GPS.",
     "walkTo": "Berjalan ke {{name}}",
     "directions": "Petunjuk jalan kaki",
     "calculating": "Menghitung rute…",

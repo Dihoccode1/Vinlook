@@ -4,7 +4,7 @@
   "locales": {
     "en": {
       "file": "resources/en.json",
-      "sha256": "366d921d6eddaeb8916d6ada71437ac2bbcc59060feedcbd37f336c8107c1bf7",
+      "sha256": "632206d1734a2815f3e22c0cc0c741ef203f56979820a37854a79a3fe3ba7a21",
       "review": {
         "status": "pending",
         "source": "English reference copy"
@@ -12,7 +12,7 @@
     },
     "zh-Hant": {
       "file": "resources/zh-Hant.json",
-      "sha256": "4dcd05ecd8dcf64838809964258a137a06b377e33fc937ed9d6c86647b590385",
+      "sha256": "e07d8a3ca460471eb7e70b70c4eec60a309d78ae28d5941d5dfca3f9476c3cf6",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -20,7 +20,7 @@
     },
     "hi": {
       "file": "resources/hi.json",
-      "sha256": "e207e16f3f4202946c24f52fe804f3ffc384b307aed99bc5b1f8675706f0f645",
+      "sha256": "e01d348431e8fb6b3ae9d203326978c936c5a7e2c70a137910aac204421d621e",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -28,7 +28,7 @@
     },
     "es": {
       "file": "resources/es.json",
-      "sha256": "8f9c590b0efc9b41e22a3ebf2c8c53efe3b3e817954982a39356f20b6e5eaa18",
+      "sha256": "79eee1dd7d9c10e69d9e2ebe3d75b1bcb878d8589623bebfc2fe57a5103bbd11",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -36,7 +36,7 @@
     },
     "ar": {
       "file": "resources/ar.json",
-      "sha256": "280a51d74b4962d3afc1ad9bf09c45fed95e434069db6657c6241eb4f058292a",
+      "sha256": "6ac30d11153911c7c7ca429ef89bf4f326ca2414ddfe6dd7ef72cc2f468ae742",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -44,7 +44,7 @@
     },
     "fr": {
       "file": "resources/fr.json",
-      "sha256": "09ea2e04a169d8019b331f39b7f1eb445a94d86ae916be0476472c270f994190",
+      "sha256": "5e904e4030c78a915b89bfdd2c391217363f57413e010e41c943355796bb0a96",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -52,7 +52,7 @@
     },
     "bn": {
       "file": "resources/bn.json",
-      "sha256": "9ea1545eb71d5d461f091fcbbebc2dd4b5e4bfa6ba0af0f7ba308077c023f4c8",
+      "sha256": "d929ec854f8e8b5654b6a29c090b02aba1bd865a800aa64329f0692611fcca54",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -60,7 +60,7 @@
     },
     "pt-PT": {
       "file": "resources/pt-PT.json",
-      "sha256": "3b6d932d7c748fc2ae78e24d0e598a80e40ff399fd2fb0fcac55f5ce2f1a035a",
+      "sha256": "31af548c8b7b0bdc4fc495ba3d1ef34b1ab0116d1146a9bd03aa17a2db30f6a3",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -68,7 +68,7 @@
     },
     "id": {
       "file": "resources/id.json",
-      "sha256": "37a9f367a0e3cb8009b67eaa600d966f07dde0fa4bbfeda5df438c41a7abcdcd",
+      "sha256": "4a9a01e2ec286c4b4155806f13917018680b4b39cc6be5b1be93b35eadf2365f",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -76,7 +76,7 @@
     },
     "ur": {
       "file": "resources/ur.json",
-      "sha256": "683c1331f1c7b40c3a5bb0b1604f1d7b25609445409fc1011fbb42edaa9f2f31",
+      "sha256": "63641a0cbf1b9a0b4075223ec9a363705633cd2d99b596c5465d7056cc47c25b",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -84,7 +84,7 @@
     },
     "ru": {
       "file": "resources/ru.json",
-      "sha256": "5bf363fac3a2b884f9b45e6b747c29da77e61b67707e3501fb4dd371d1fcdfff",
+      "sha256": "31e2fdc9bf87c007f2480252ff43a62f6d72581bcb6e13501a680f8e5bc214de",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -92,7 +92,7 @@
     },
     "de": {
       "file": "resources/de.json",
-      "sha256": "16be6044a2dd6877550a2a8c2a44649480dfcf31d1d65ae016f9e2b33c86470a",
+      "sha256": "1b5b98a81868c0ba1a2ec229dde198ffb3508379ea783228a4404c65bb653f2f",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -100,7 +100,7 @@
     },
     "ja": {
       "file": "resources/ja.json",
-      "sha256": "e8d08f288ed73d33855bcbfb0246a66156f2487e335adf52d6b9a0de2e42757d",
+      "sha256": "0a2d9e157fb50edf9a40f2607c3b6bf03fd0796720e874c922a6edd4413c2201",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -108,7 +108,7 @@
     },
     "pcm": {
       "file": "resources/pcm.json",
-      "sha256": "8e8a035510bed39cec629887f57760466cf549e12d964a773435b5feaf3c9a7a",
+      "sha256": "52bdb962c47fb56cfdf2740468e69afd23298c2a8660f6c216141b103963ef45",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -116,7 +116,7 @@
     },
     "ar-EG": {
       "file": "resources/ar-EG.json",
-      "sha256": "4d6ef637af815108e1d9d5962548fbeb88db7da5d5a4a6ffffb4f9fdd8e65614",
+      "sha256": "73b791c1c88a7895cdf008654b0d737097566dec5fd7777f73187ef087c8a687",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
@@ -124,7 +124,7 @@
     },
     "vi": {
       "file": "resources/vi.json",
-      "sha256": "41a51814f31ad0b20d8094e980e5c709d388d9f86736934d269806b8a5e5f0d8",
+      "sha256": "dd32c4b42f6817230754fac22900bacacab0bda36fe967bd165bde92fe1f944f",
       "review": {
         "status": "pending",
         "source": "assistant-authored draft; native review pending"
