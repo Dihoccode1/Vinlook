@@ -9,6 +9,7 @@ before(async()=>{browser=await chromium.launch({channel:'chrome',headless:true,a
 const dto=(i,locale)=>({id:i.toString(16).padStart(24,'0'),revisionId:(i+100).toString(16).padStart(24,'0'),nameEN:`Test public place ${String(i).padStart(2,'0')}`,location:{type:'Point',coordinates:[106.7+i/500,10.77]},entrance:{type:'Point',coordinates:[106.7+i/500,10.77]},thumbnail:{url:'https://fixture.invalid/image.png'},languageCode:locale,text:`[SYNTHETIC TEST ONLY · ${locale}] Narration`,audio:{url:`https://fixture.invalid/${i}/${locale}.mp3`,durationSeconds:120}});
 async function setup({scenario='ready',gps='denied'}={}){
  const context=await browser.newContext({viewport:{width:390,height:844}}),state={scenario,requests:[]};
+ await context.addInitScript(()=>Object.defineProperty(HTMLMediaElement.prototype,'duration',{configurable:true,get:()=>120}));
  await context.addInitScript(({gps})=>{window.__testPlays=0;HTMLMediaElement.prototype.play=function(){window.__testPlays++;window.__testMedia=this;return Promise.resolve();};HTMLMediaElement.prototype.pause=function(){};HTMLMediaElement.prototype.load=function(){};
  navigator.geolocation.getCurrentPosition=gps==='denied'?(_ok,error)=>error({code:1}):ok=>ok({coords:{longitude:106.7,latitude:10.77}});},{gps});
  await context.route('**/api/v1/**',async route=>{const u=new URL(route.request().url());state.requests.push(u);const locale=u.searchParams.get('language')??'en';
@@ -22,6 +23,7 @@ async function setup({scenario='ready',gps='denied'}={}){
  });
  await context.route('**/style.json',r=>r.fulfill({json:{version:8,sources:{},layers:[{id:'test-background',type:'background',paint:{'background-color':'#e6eddf'}}]}}));
  await context.route('https://fixture.invalid/**',r=>r.fulfill({status:404,body:'test asset unavailable'}));
+ await context.route('https://fixture.invalid/image.png',r=>r.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120"><rect width="160" height="120" fill="#d8e7e8"/><rect y="86" width="160" height="34" fill="#90b48c"/><path d="M20 40H140V90H20Z" fill="#f3eee0"/><path d="M14 35H146V43H14Z" fill="#587c74"/><path d="M35 52V78M55 52V78M75 52V78M95 52V78M115 52V78" stroke="#587c74" stroke-width="7"/><text x="5" y="114" font-size="9" fill="#193d31">SYNTHETIC TEST IMAGE</text></svg>'}));
  const page=await context.newPage();page.on('console',m=>{if(m.type()==='error'&&process.env.DEBUG_TOURIST_TEST)console.log(m.text().slice(0,600));});await page.goto(base);return{context,page,state};
 }
 test('actual tourist entry renders public list, native map markers, search, POI and player without autoplay',async()=>{
@@ -32,7 +34,24 @@ test('actual tourist entry renders public list, native map markers, search, POI 
   assert.equal(await page.evaluate(()=>window.__testPlays),0);
   await page.locator('.tour-place').first().click();await page.getByRole('heading',{name:'Test public place 01',exact:true}).waitFor();assert.equal(await page.evaluate(()=>window.__testPlays),0);
   await page.locator('.listen-button').click();await page.getByRole('button',{name:'Pause',exact:true}).waitFor();
+  await page.locator('.tour-mini-player img.mini-picture').waitFor();
+  assert.equal(await page.locator('.tour-mini-player img.mini-picture').getAttribute('src'),'https://fixture.invalid/image.png');
+  await page.getByRole('button',{name:'+10 s',exact:true}).click();
+  assert.equal(await page.evaluate(()=>window.__testMedia.currentTime),10);
+  assert.match(await page.locator('.mini-progress').textContent(),/0:10/);
   await page.getByRole('button',{name:'Pause',exact:true}).click();await page.locator('.mini-play').click();assert.equal(await page.evaluate(()=>window.__testPlays),2);
+  await page.getByRole('button',{name:'−10 s',exact:true}).click();
+  assert.equal(await page.evaluate(()=>window.__testMedia.currentTime),0);
+  await mkdir('.bootstrap-review',{recursive:true});
+  for(const width of [320,390,1280]){
+   await page.setViewportSize({width,height:844});
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   const controls=await page.locator('.mini-controls').boundingBox(),progress=await page.locator('.mini-progress').boundingBox();
+   assert.ok(controls.x+controls.width<=progress.x+1);
+   assert.ok(await page.locator('.mini-progress').isVisible());
+   await page.screenshot({path:`.bootstrap-review/mini-player-redesign-${width}.png`,fullPage:false});
+   await page.locator('.tour-mini-player').screenshot({path:`.bootstrap-review/mini-player-card-${width}.png`});
+  }
   await page.locator('#tourist-language').selectOption('vi');await page.waitForFunction(()=>!document.querySelector('.tour-mini-player'));await page.getByRole('button',{name:'Xem địa điểm: Test public place 01',exact:true}).first().waitFor();
   await page.getByRole('textbox',{name:'Tìm địa điểm'}).fill('place 15');await page.waitForFunction(()=>document.querySelectorAll('.tour-place').length===1);
   assert.equal(await page.locator('.tour-place strong').textContent(),'Test public place 15');assert.ok(state.requests.every(u=>!u.pathname.includes('/admin/')));

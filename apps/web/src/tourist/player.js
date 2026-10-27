@@ -65,6 +65,23 @@ export function createPlayer({ media, telemetry, onChange = () => {} }) {
         emit();
       }
     },
+    seekBy(seconds) {
+      if (
+        !['playing', 'paused'].includes(state) ||
+        !Number.isFinite(seconds) ||
+        !Number.isFinite(media.currentTime) ||
+        !Number.isFinite(media.duration) ||
+        media.duration <= 0
+      )
+        return false;
+      try {
+        media.currentTime = Math.max(0, Math.min(media.duration, media.currentTime + seconds));
+        emit();
+        return true;
+      } catch {
+        return false;
+      }
+    },
     close,
     localeChanged(locale) {
       if (item && item.languageCode !== locale) close();
