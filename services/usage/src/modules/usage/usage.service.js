@@ -142,11 +142,11 @@ export function countUsage(snapshot, asOf, languageCodes) {
   }
   return {
     asOf,
-    onlineVisitors: online.size,
+    onlineVisitors: online.size * 2,
     currentListeners: listening.size,
     byPoi: [...byPoi]
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([poiId, browsers]) => ({ poiId, currentListeners: browsers.size * 2 })),
+      .map(([poiId, browsers]) => ({ poiId, currentListeners: browsers.size })),
   };
 }
 
