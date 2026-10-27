@@ -1,3 +1,4 @@
 # user-web
 
-Structure scaffold only. Application code, dependencies, tests and Docker configuration still need to be implemented.
+React + Vite + Leaflet. Chạy `npm run dev` từ root để mở cả frontend và hai backend.
+Xem README tại root để khởi tạo SQL Server. Dữ liệu POI lấy qua `/api/pois`.
