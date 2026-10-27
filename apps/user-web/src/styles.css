@@ -2,3 +2,106 @@
 
 :root{font-family:'Be Vietnam Pro',sans-serif;color:#223c32;background:#f7f8f4;font-synthesis:none;font-weight:400}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #d58a48;outline-offset:3px}.app{display:grid;grid-template-columns:410px 1fr;height:100dvh}.sidebar{padding:30px 28px 20px;display:flex;flex-direction:column;min-height:0;background:#fbfcf8;z-index:500;box-shadow:4px 0 24px #1230210c}.brand{display:flex;gap:11px;align-items:center}.brand-icon{display:grid;place-items:center;background:#174c3c;color:white;border-radius:13px;width:43px;height:43px;font-weight:800;font-size:24px}.brand h1{font-size:28px;letter-spacing:-1.5px;margin:0;line-height:1}.brand h1 span{color:#d78642}.brand p{font-size:8px;letter-spacing:2px;margin:7px 0 0}.intro{margin:35px 0 26px}.eyebrow{font-size:9px;letter-spacing:1.8px;font-weight:700;color:#798d7b}.intro h2{font-size:31px;line-height:1.35;letter-spacing:-1px;margin:10px 0 12px;font-weight:600}.intro p{font-size:12px;color:#778179;line-height:1.8;margin:0}.search-label{font-size:11px;font-weight:600;margin-bottom:10px}input{width:100%;padding:14px;border:1px solid #dce3d9;border-radius:10px;background:white;font-size:12px;color:#223c32}.filters{display:flex;gap:7px;margin:14px 0 26px;flex-wrap:wrap}.filters button{border:1px solid #dce3d9;background:transparent;border-radius:22px;font-size:10px;padding:8px 12px;color:#5a6b60}.filters button.active{background:#174c3c;border-color:#174c3c;color:white}.list-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.list-heading h3{font-size:12px;margin:0}.list-heading>span{font-size:10px;color:#7e8980}.results{flex:1;overflow:auto;min-height:90px}.poi-card{width:100%;display:flex;align-items:center;gap:13px;text-align:left;background:transparent;border:1px solid transparent;border-bottom-color:#e7ebe3;padding:20px 8px;border-radius:9px;color:inherit}.poi-card:hover,.poi-card.selected{background:#edf2e9;border-color:#d9e4d2}.poi-number{font-size:13px;color:#9aa792;align-self:flex-start;padding-top:3px}.poi-content{display:flex;flex-direction:column;gap:7px;flex:1}.category{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#81936f}.poi-content strong{font-size:13px;font-weight:600}.address{font-size:10px;color:#7d857d;line-height:1.6}.arrow{color:#809374;font-size:18px}.state{padding:20px 4px;font-size:12px;line-height:1.9;color:#788478}.state.error{color:#9d4c37}.state button,.pagination button{padding:8px 13px;border:1px solid #d0d9ca;border-radius:7px;background:#fff;color:#174c3c;font-size:11px}footer{margin-top:16px;padding-top:17px;border-top:1px solid #e4e9df;font-size:8px;letter-spacing:1.5px;display:flex;justify-content:space-between;color:#87947f}footer span{letter-spacing:0}.map-panel{position:relative;min-width:0}.map{height:100%;width:100%;background:#e9eddf}.map-badge{position:absolute;top:25px;left:25px;z-index:450;display:flex;align-items:center;gap:10px;background:#fffffff2;box-shadow:0 4px 20px #16342613;border-radius:9px;padding:14px 18px;font-size:11px;font-weight:600}.live-dot{height:7px;width:7px;border-radius:50%;background:#789765}.badge-country{font-size:8px;color:#8a9387;border-left:1px solid #dce1d7;padding-left:12px;letter-spacing:1px}.detail{position:absolute;bottom:30px;left:25px;right:75px;z-index:450;background:#fffef9;border:1px solid #e2e5d8;border-radius:15px;padding:25px;max-width:480px;box-shadow:0 12px 40px #12302120}.detail h2{font-size:22px;margin:10px 25px 12px 0}.detail p{font-size:12px;line-height:1.9;color:#6b796c}.detail .detail-address{border-top:1px solid #e8ecdf;padding-top:12px;font-size:11px}.coordinates{font-size:9px;letter-spacing:1px;color:#9b9f8f}.close{position:absolute;right:16px;top:14px;border:0;background:transparent;font-size:25px;color:#8c9785}.pagination{display:flex;align-items:center;justify-content:space-between;font-size:10px;padding-top:12px}.pagination button:disabled{opacity:.4;cursor:default}.leaflet-container{font-family:inherit}.leaflet-tooltip{font-size:11px;padding:7px 10px}
 @media(max-width:760px){.app{grid-template-columns:1fr;grid-template-rows:52dvh 48dvh;height:auto;min-height:100dvh}.sidebar{padding:18px;grid-row:2;overflow:auto}.map-panel{grid-row:1}.intro{margin:20px 0 15px}.intro h2{font-size:24px}.intro h2 br{display:none}.intro p,.brand p{display:none}.brand h1{font-size:23px}.brand-icon{width:35px;height:35px;font-size:20px}.filters{margin-bottom:16px}.results{min-height:160px;flex:none}.map-badge{top:15px;left:15px;padding:11px;font-size:10px}.badge-country{display:none}.detail{left:15px;bottom:18px;right:55px;padding:18px}.detail h2{font-size:18px}.detail p{font-size:11px}footer{margin-bottom:8px}}
+
+.location-controls {
+  position: absolute;
+  z-index: 450;
+  top: 86px;
+  right: 24px;
+  width: min(285px, calc(100% - 48px));
+  padding: 17px;
+  border: 1px solid #e2e5d8;
+  border-radius: 12px;
+  background: #fffef9f5;
+  box-shadow: 0 8px 25px #12302118;
+}
+
+.view-tabs { display: flex; margin-top: 23px; border-bottom: 1px solid #e0e6db; }
+.view-tabs button { flex: 1; padding: 12px 8px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #86907f; font-size: 11px; }
+.view-tabs button[aria-pressed=true] { border-bottom-color: #174c3c; color: #174c3c; font-weight: 700; }
+.sidebar .intro { margin-top: 23px; }
+.route-planner { flex: 1; min-height: 0; overflow: auto; padding: 25px 3px 20px 0; }
+.route-planner h2 { font-size: 26px; font-weight: 600; letter-spacing: -.7px; line-height: 1.4; margin: 10px 0 24px; }
+.route-planner > label { display: block; font-size: 11px; font-weight: 600; margin-bottom: 9px; }
+.route-planner select { width: 100%; padding: 13px 10px; border: 1px solid #dce3d9; border-radius: 9px; background: #fff; color: #223c32; font: inherit; font-size: 11px; }
+.route-stops-heading { display: flex; align-items: center; justify-content: space-between; margin-top: 24px; }
+.vehicle-options { display: flex; gap: 6px; margin-top: 12px; }
+.vehicle-options button { flex: 1; border: 1px solid #dce3d9; border-radius: 8px; padding: 11px 7px; background: #fff; color: #71816a; font: inherit; font-size: 11px; }
+.vehicle-options button[aria-pressed=true] { background: #174c3c; border-color: #174c3c; color: #fff; }
+.route-planner h2.route-destination-title { font-size: 23px; margin-bottom: 18px; }
+.route-quick-summary { padding: 13px; margin-top: 13px; border-radius: 9px; background: #edf2e6; }
+.route-quick-summary > span { display: block; font-size: 9px; color: #7b8870; margin-bottom: 9px; }
+.route-quick-summary .route-summary strong { font-size: 23px; }
+.route-quick-summary .route-summary span { font-size: 12px; }
+.transit-fallback { display: inline-block; color: #174c3c; font-size: 11px; line-height: 1.8; margin-top: 8px; }
+.bus-step { display: flex; flex-direction: column; gap: 4px; padding: 9px; background: #edf2e7; border-radius: 6px; margin-top: 6px; font-size: 10px; }
+.route-stops-heading h3 { font-size: 12px; }
+.route-stops-heading button { border: 0; background: transparent; color: #174c3c; font-size: 10px; padding: 8px; }
+.route-stops { list-style: none; padding: 0; margin: 5px 0 18px; }
+.route-stops > li { display: flex; align-items: center; gap: 9px; padding: 12px 0; border-bottom: 1px solid #e1e7dc; }
+.route-stop-number { display: grid; place-items: center; width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; background: #e5ecde; color: #174c3c; font-size: 10px; }
+.route-stop-name { flex: 1; font-size: 11px; line-height: 1.7; }
+.route-stop-actions { display: flex; gap: 2px; }
+.route-stop-actions button { border: 0; border-radius: 4px; padding: 6px; background: #edf2e7; color: #597052; }
+.route-stop-actions button:disabled { opacity: .3; cursor: default; }
+.route-hint, .route-sharing, .route-attribution { font-size: 10px; color: #7b8875; line-height: 1.8; }
+.route-sharing { font-size: 9px; margin-top: 18px; }
+.route-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.route-buttons button, .poi-route-actions button { padding: 11px 13px; background: #fff; color: #174c3c; border: 1px solid #cfd9c6; border-radius: 8px; font: inherit; font-size: 10px; }
+.route-buttons .route-calculate, .poi-route-actions button:first-child { background: #174c3c; border-color: #174c3c; color: white; }
+.route-buttons button:disabled, .poi-route-actions button:disabled { opacity: .5; cursor: default; }
+.route-error { font-size: 11px; line-height: 1.8; color: #9d4c37; padding: 12px; background: #fcf1e9; border-radius: 8px; }
+.route-result { margin-top: 25px; border-top: 1px solid #dce4d5; padding-top: 20px; }
+.route-summary { display: flex; justify-content: space-between; align-items: center; color: #174c3c; }
+.route-summary strong { font-size: 25px; font-weight: 600; }
+.route-summary span { font-size: 15px; }
+.route-result details { margin-top: 15px; border-top: 1px solid #e1e7dc; padding-top: 14px; }
+.route-result summary { cursor: pointer; font-size: 11px; line-height: 1.8; font-weight: 600; }
+.route-result summary > span { color: #839279; font-size: 10px; margin-left: 8px; font-weight: 400; }
+.route-instructions { padding-left: 22px; font-size: 11px; line-height: 1.8; color: #5e7158; }
+.route-instructions li { padding: 9px 0; border-bottom: 1px solid #e9ede4; }
+.route-instructions small { display: block; color: #8c9983; font-size: 10px; }
+.poi-route-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+@media(max-width:760px) {
+  .view-tabs { margin-top: 13px; }
+  .route-planner { overflow: visible; padding-top: 18px; }
+  .route-planner h2 { font-size: 23px; }
+}
+
+.poi-list-photo { width: 64px; height: 64px; flex: 0 0 64px; border-radius: 10px; object-fit: cover; background: #e9eee2; }
+.poi-photo-icon { background: transparent; border: 0; }
+.poi-photo-pin { box-sizing: border-box; width: 64px; height: 64px; position: relative; padding: 0; overflow: hidden; border: 3px solid #fffef9; border-radius: 15px; background: #fffef9; box-shadow: 0 3px 12px #16342655; }
+/* Leaflet resets marker images to width:auto; override that rule specifically. */
+.leaflet-container .leaflet-marker-pane .poi-photo-pin > img { display: block; width: 100%; height: 100%; border-radius: 11px; object-fit: cover; }
+.poi-photo-pin.is-selected { border-color: #d97732; }
+.poi-photo-icon:focus-visible { outline: 3px solid #174c3c; outline-offset: 5px; border-radius: 15px; }
+.detail.photo-detail { padding: 0; overflow: auto; max-height: calc(100% - 100px); }
+.poi-detail-photo { width: 100%; height: 155px; display: block; object-fit: cover; background: #e9eee2; }
+.detail-body { padding: 20px 24px; }
+.photo-detail .close { z-index: 1; width: 28px; height: 28px; display: grid; place-items: center; background: #fffffff0; border-radius: 50%; color: #344c3f; line-height: 1; }
+.detail .photo-credit { font-size: 9px; line-height: 1.7; margin: 12px 0 0; color: #84907b; }
+.photo-credit a { color: inherit; text-underline-offset: 2px; }
+@media(max-width:760px) {
+  .detail.photo-detail { max-height: calc(100% - 235px); min-height: 120px; }
+  .poi-detail-photo { height: 100px; }
+  .detail-body { padding: 15px; }
+  .poi-list-photo { width: 56px; height: 56px; flex-basis: 56px; }
+}
+.location-title { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.location-dot { width: 7px; height: 7px; border-radius: 50%; background: #a9b2a3; }
+.location-dot.enabled { background: #2477d5; box-shadow: 0 0 0 3px #2477d519; }
+.location-mode { margin-left: auto; font-size: 9px; letter-spacing: 1px; color: #899580; }
+.location-status p { margin: 12px 0; font-size: 11px; line-height: 1.8; color: #687763; }
+.location-status span { color: #85917f; font-size: 10px; }
+.location-status .location-error { color: #9d4c37; }
+.location-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.location-actions button { border: 1px solid #d0d9ca; border-radius: 7px; padding: 9px 11px; background: white; color: #174c3c; font-size: 10px; }
+.location-actions button.location-locate { background: #174c3c; color: white; border-color: #174c3c; }
+.location-actions button[aria-pressed=true] { color: #2469ad; background: #edf5ff; border-color: #c2d9f1; }
+.location-actions button:disabled { opacity: .5; cursor: default; }
+.location-note { font-size: 9px; color: #909b89; margin: 12px 0 0; line-height: 1.6; }
+@media(max-width:760px) {
+  .location-controls { top: 65px; right: 15px; width: 240px; max-width: calc(100% - 30px); padding: 12px; }
+  .location-status p { margin: 8px 0; font-size: 10px; }
+  .location-note { display: none; }
+}

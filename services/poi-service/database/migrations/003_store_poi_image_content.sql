@@ -1,0 +1,10 @@
+CREATE TABLE dbo.PoiImages (
+    PoiId UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_PoiImages PRIMARY KEY,
+    Content VARBINARY(MAX) NOT NULL,
+    ContentType VARCHAR(30) NOT NULL,
+    Sha256 CHAR(64) NOT NULL,
+    UpdatedAt DATETIME2 NOT NULL CONSTRAINT DF_PoiImages_Updated DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_PoiImages_Pois FOREIGN KEY (PoiId) REFERENCES dbo.Pois(Id) ON DELETE CASCADE,
+    CONSTRAINT CK_PoiImages_Size CHECK (DATALENGTH(Content) BETWEEN 1 AND 5242880),
+    CONSTRAINT CK_PoiImages_ContentType CHECK (ContentType IN ('image/jpeg', 'image/png', 'image/webp'))
+);

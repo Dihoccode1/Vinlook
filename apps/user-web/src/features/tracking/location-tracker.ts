@@ -1,0 +1,92 @@
+export interface LocationFix {
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  timestamp: number;
+}
+
+export interface TrackingSnapshot {
+  status: 'idle' | 'locating' | 'tracking' | 'error';
+  active: boolean;
+  position: LocationFix | null;
+  error: string | null;
+}
+
+export interface LocationEnvironment {
+  secureContext: boolean;
+  geolocation?: Pick<Geolocation, 'watchPosition' | 'clearWatch'>;
+}
+
+const initial: TrackingSnapshot = { status: 'idle', active: false, position: null, error: null };
+
+export function createLocationTracker(environment: LocationEnvironment) {
+  let snapshot = initial;
+  let generation = 0;
+  let watchId: number | undefined;
+  const listeners = new Set<() => void>();
+
+  function update(next: TrackingSnapshot) {
+    snapshot = next;
+    for (const listener of listeners) listener();
+  }
+
+  function clear() {
+    generation++;
+    if (watchId !== undefined) environment.geolocation?.clearWatch(watchId);
+    watchId = undefined;
+  }
+
+  return {
+    getSnapshot: () => snapshot,
+    subscribe(listener: () => void) {
+      listeners.add(listener);
+      return () => { listeners.delete(listener); };
+    },
+    start() {
+      if (snapshot.active) return;
+      clear();
+      if (!environment.secureContext || !environment.geolocation) {
+        update({ ...initial, status: 'error', error: !environment.secureContext
+          ? 'Định vị cần HTTPS hoặc localhost. Hãy mở ứng dụng bằng kết nối an toàn.'
+          : 'Trình duyệt này không hỗ trợ định vị.' });
+        return;
+      }
+      const current = generation;
+      update({ ...initial, active: true, status: 'locating' });
+      try {
+        const id = environment.geolocation.watchPosition(position => {
+          if (generation !== current) return;
+          const { latitude, longitude, accuracy } = position.coords;
+          const timestamp = position.timestamp;
+          if (![latitude, longitude, accuracy, timestamp].every(Number.isFinite)
+            || Math.abs(latitude) > 90 || Math.abs(longitude) > 180 || accuracy < 0 || timestamp < 0) {
+            update({ ...snapshot, status: 'error', error: 'Dữ liệu vị trí chưa hợp lệ. Đang chờ cập nhật GPS mới.' });
+            return;
+          }
+          if (snapshot.position && timestamp < snapshot.position.timestamp) return;
+          update({ status: 'tracking', active: true, position: { latitude, longitude, accuracy, timestamp }, error: null });
+        }, error => {
+          if (generation !== current) return;
+          if (error.code === 1) {
+            clear();
+            update({ ...initial, status: 'error', error: 'Quyền vị trí đã bị từ chối. Hãy cho phép vị trí trong cài đặt trình duyệt rồi thử lại.' });
+          } else {
+            update({ ...snapshot, status: 'error', error: error.code === 3
+              ? 'Chưa lấy được vị trí trong thời gian chờ. GPS vẫn đang thử cập nhật.'
+              : 'Tạm thời không xác định được vị trí. Kiểm tra GPS hoặc kết nối của thiết bị.' });
+          }
+        }, { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 });
+        // Covers permission callbacks that complete before watchPosition returns.
+        if (generation !== current) environment.geolocation.clearWatch(id);
+        else watchId = id;
+      } catch {
+        clear();
+        update({ ...initial, status: 'error', error: 'Không thể bật định vị. Kiểm tra quyền vị trí của trình duyệt.' });
+      }
+    },
+    stop() {
+      clear();
+      update(initial);
+    },
+  };
+}

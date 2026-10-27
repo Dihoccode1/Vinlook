@@ -10,7 +10,7 @@
   "private": true,
   "scripts": {
     "db:up": "docker compose --env-file .env -f infrastructure/docker/compose.yml up -d --wait",
-    "dev": "concurrently -k -n poi,gateway,web \"npm run dev -w @tourism/poi-service\" \"npm run dev -w @tourism/api-gateway\" \"npm run dev -w @tourism/user-web\"",
+    "dev": "concurrently -k -n poi,gateway,navigation,web \"npm run dev -w @tourism/poi-service\" \"npm run dev -w @tourism/api-gateway\" \"npm run dev -w @tourism/navigation-service\" \"npm run dev -w @tourism/user-web\"",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "db:migrate": "npm run db:migrate -w @tourism/poi-service",
     "test": "npm run test --workspaces --if-present",

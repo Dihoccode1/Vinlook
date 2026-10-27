@@ -8,6 +8,10 @@ export interface Poi {
   longitude: number;
   category: string;
   sourceLanguage: string;
+  imageUrl: string | null;
+  imageCredit: string | null;
+  imageSourceUrl: string | null;
+  imageLicenseUrl: string | null;
 }
 
 export interface PoiPage {

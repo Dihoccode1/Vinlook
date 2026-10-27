@@ -32,6 +32,23 @@ export function createApp(repository: PoiRepository = poiRepository) {
     }
     res.json(await repository.list(query.data));
   });
+  app.get('/pois/:id/image', async (req, res) => {
+    const id = z.string().uuid().safeParse(req.params.id);
+    if (!id.success) {
+      res.status(400).json({ error: { code: 'INVALID_ID', message: 'POI id must be a UUID' } });
+      return;
+    }
+    const image = await repository.findImage(id.data);
+    if (!image) {
+      res.status(404).json({ error: { code: 'IMAGE_NOT_FOUND', message: 'POI image not found' } });
+      return;
+    }
+    res.set({
+      'Content-Type': image.contentType,
+      'Cache-Control': 'public, max-age=300',
+      ETag: `"${image.sha256}"`,
+    }).send(image.content);
+  });
   app.get('/pois/:id', async (req, res) => {
     const id = z.string().uuid().safeParse(req.params.id);
     if (!id.success) {

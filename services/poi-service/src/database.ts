@@ -1,5 +1,6 @@
 import { readFile, readdir } from 'node:fs/promises';
 import sql from 'mssql';
+import { createHash } from 'node:crypto';
 import { config } from './config/index.js';
 
 async function main() {
@@ -19,6 +20,28 @@ async function main() {
   try {
     if (command === 'seed') {
       await pool.request().batch(await readFile(new URL('../database/seeds/pois.sql', import.meta.url), 'utf8'));
+      for (const fixture of [
+        { slug: 'cho-ben-thanh', file: 'ben-thanh.jpg' },
+        { slug: 'dinh-doc-lap', file: 'independence-palace.jpg' },
+        { slug: 'buu-dien-trung-tam', file: 'central-post-office.jpg' },
+      ]) {
+        const content = await readFile(new URL(`../database/seeds/images/${fixture.file}`, import.meta.url));
+        if (content.length > 5242880 || content[0] !== 0xff || content[1] !== 0xd8 || content[2] !== 0xff) {
+          throw new Error(`Invalid JPEG fixture: ${fixture.file}`);
+        }
+        await pool.request()
+          .input('slug', sql.NVarChar(160), fixture.slug)
+          .input('legacy', sql.NVarChar(2048), `/images/pois/${fixture.file}`)
+          .input('content', sql.VarBinary(sql.MAX), content)
+          .input('hash', sql.Char(64), createHash('sha256').update(content).digest('hex'))
+          .query(`INSERT INTO dbo.PoiImages (PoiId, Content, ContentType, Sha256)
+            SELECT p.Id, @content, 'image/jpeg', @hash FROM dbo.Pois p
+            WHERE p.Slug = @slug AND (p.ImageUrl = @legacy OR p.ImageUrl IS NULL)
+              AND NOT EXISTS (SELECT 1 FROM dbo.PoiImages WHERE PoiId = p.Id);
+            UPDATE p SET ImageUrl = '/api/pois/' + CONVERT(VARCHAR(36), p.Id) + '/image'
+            FROM dbo.Pois p INNER JOIN dbo.PoiImages i ON i.PoiId = p.Id
+            WHERE p.Slug = @slug AND (p.ImageUrl = @legacy OR p.ImageUrl IS NULL);`);
+      }
       console.log('Development POIs seeded');
       return;
     }
