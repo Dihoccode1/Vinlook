@@ -126,7 +126,7 @@ export function createNavigation({
           error = failure?.code === 1 ? 'GPS_PERMISSION_DENIED' : 'GPS_UNAVAILABLE';
           emit();
         },
-        { enableHighAccuracy: true },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
       );
     } catch {
       policy.gpsLost();
@@ -179,6 +179,12 @@ export function createNavigation({
     },
     retry() {
       error = null;
+      if (['gps_unavailable', 'gps_uncertain'].includes(policy.snapshot().status)) {
+        clearWatch();
+        startWatch();
+        emit();
+        return;
+      }
       return calculate();
     },
   };

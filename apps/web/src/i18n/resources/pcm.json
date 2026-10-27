@@ -38,6 +38,7 @@
     "imageUnavailable": "Picture no dey available."
   },
   "navigation": {
+    "locationHelp": "Allow this site to use your location and turn on location for your device, then try again. Walking direction need location wey accurate reach 50 m or better. If computer no fit provide am, try phone wey get GPS.",
     "walkTo": "Waka go {{name}}",
     "directions": "Road direction to waka",
     "calculating": "We dey find road…",
