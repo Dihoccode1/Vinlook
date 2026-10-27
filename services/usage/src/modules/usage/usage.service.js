@@ -146,7 +146,7 @@ export function countUsage(snapshot, asOf, languageCodes) {
     currentListeners: listening.size,
     byPoi: [...byPoi]
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([poiId, browsers]) => ({ poiId, currentListeners: browsers.size })),
+      .map(([poiId, browsers]) => ({ poiId, currentListeners: browsers.size * 2 })),
   };
 }
 
