@@ -3,6 +3,7 @@ import type { ErrorRequestHandler } from 'express';
 import helmet from 'helmet';
 import { z } from 'zod';
 import { poiRepository, type PoiRepository } from './modules/pois/poi.repository.js';
+import { adminRoutes } from './modules/admin/admin.routes.js';
 
 const querySchema = z.object({
   q: z.string().trim().max(200).default(''),
@@ -15,6 +16,7 @@ export function createApp(repository: PoiRepository = poiRepository) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
+  app.use('/admin', adminRoutes());
   app.get('/health/live', (_req, res) => res.json({ status: 'ok', service: 'poi-service' }));
   app.get('/health/ready', async (_req, res) => {
     try {

@@ -10,13 +10,14 @@
   "private": true,
   "scripts": {
     "db:up": "docker compose --env-file .env -f infrastructure/docker/compose.yml up -d --wait",
-    "dev": "concurrently -k -n poi,gateway,navigation,web \"npm run dev -w @tourism/poi-service\" \"npm run dev -w @tourism/api-gateway\" \"npm run dev -w @tourism/navigation-service\" \"npm run dev -w @tourism/user-web\"",
+    "dev": "concurrently -k -n poi,gateway,navigation,translation,web,admin \"npm run dev -w @tourism/poi-service\" \"npm run dev -w @tourism/api-gateway\" \"npm run dev -w @tourism/navigation-service\" \"npm run dev -w @tourism/translation-service\" \"npm run dev -w @tourism/user-web\" \"npm run dev -w @tourism/admin-web\"",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "db:migrate": "npm run db:migrate -w @tourism/poi-service",
+    "db:migrate": "npm run db:migrate -w @tourism/poi-service && npm run db:migrate -w @tourism/translation-service",
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "db:down": "docker compose --env-file .env -f infrastructure/docker/compose.yml down",
-    "db:seed": "npm run db:seed -w @tourism/poi-service"
+    "db:seed": "npm run db:seed -w @tourism/poi-service",
+    "audio:prepare-defaults": "npm run content:prepare -w @tourism/translation-service -- vi en zh-CN"
   },
   "engines": {
     "node": ">=22.12.0"

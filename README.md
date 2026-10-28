@@ -63,13 +63,14 @@ Theo dõi hoạt động khi trang đang mở; chưa hỗ trợ theo dõi nền 
 ## Chỉ đường
 
 Chọn POI → **Chỉ đường tới đây**: tự tính tuyến và vẽ lên bản đồ, mặc định ô tô; nếu chưa có GPS sẽ xin quyền và chờ vị trí mới.
-Có lựa chọn **Ô tô / Xe máy / Bus** ngay dưới điểm xuất phát; đổi phương tiện hoặc điểm xuất phát tự tính lại. Nút Tính lại tuyến dùng để thử lại khi cần.
+Có lựa chọn **Ô tô / Xe máy / Đi bộ** ngay dưới điểm xuất phát; đổi phương tiện hoặc điểm xuất phát tự tính lại. Nút Tính lại tuyến dùng để thử lại khi cần.
 Valhalla dùng `shortest=true` và `disable_hierarchy_pruning=true` để tối ưu quãng đường ô tô/xe máy qua các POI theo thứ tự đã chọn.
-Xe máy dùng costing `motor_scooter`. Bus là xe buýt công cộng (`multimodal` + transit), không dùng costing `bus` của xe vận tải.
-Bus hỗ trợ một điểm đến, lịch trình, tên tuyến và trạm lên/xuống khi provider có dữ liệu GTFS. Provider công cộng hiện chưa trả được tuyến bus cho hành trình mẫu tại TP.HCM; khi không tìm thấy có link mở gợi ý phương tiện công cộng trên Google Maps.
-`VALHALLA_TRANSIT_BASE_URL` cho phép dùng một provider Valhalla có dữ liệu GTFS riêng. Không tạo dữ liệu tuyến/trạm giả khi thiếu dữ liệu.
+Xe máy dùng costing `motor_scooter`, đi bộ dùng `pedestrian` và tối ưu khoảng cách theo quyền truy cập dành cho người đi bộ. Tuyến đi bộ hiển thị bằng đường nét đứt màu tím, kèm thời gian đi bộ dự kiến.
 Có thể chọn một POI làm xuất phát để lập kế hoạch mà không dùng GPS.
-Ô tô/xe máy hỗ trợ tối đa 9 điểm dừng, có nút đổi thứ tự. Thay đổi điểm xuất phát hoặc điểm dừng sẽ hủy tuyến cũ và tự tính lại.
+Cả ba phương tiện hỗ trợ tối đa 9 điểm dừng, có nút đổi thứ tự. Thay đổi điểm xuất phát hoặc điểm dừng sẽ hủy tuyến cũ và tự tính lại.
+Nút **Sắp xếp lộ trình** mở bảng đổi thứ tự bằng kéo thả, chọn vị trí, nút lên/xuống hoặc đảo thứ tự. Bấm **Áp dụng & vẽ đường** để tính và vẽ lại một lần; Hủy giữ nguyên tuyến. Điểm xuất phát và phương tiện được giữ nguyên.
+Sau khi áp dụng, bản đồ vẽ lần lượt **A → 1 → 2…**, từng chặng theo hình dạng đường từ API, có màu và mũi tên riêng cùng số trên ảnh POI. Nút **Vẽ đường theo lộ trình** cho phép yêu cầu vẽ lại toàn bộ tuyến.
+Khi các chặng trùng đường, màu và mũi tên của chặng đi trước được ưu tiên nằm trên: chặng 1 → chặng 2 → chặng 3…
 Thời gian là ước tính, chưa tính giao thông trực tiếp; tuyến không tự cập nhật khi di chuyển.
 Khi chọn GPS, cần fix mới trong vòng 30 giây. Khi phiên GPS kết thúc, tuyến dùng GPS làm xuất phát được xóa.
 Tọa độ được gửi tới Valhalla khi yêu cầu chỉ đường hoặc thay đổi lộ trình/phương tiện; không lưu hành trình ở backend. GPS cập nhật thường xuyên không tự tạo thêm request tính tuyến.
@@ -103,3 +104,9 @@ Dữ liệu seed là dữ liệu phát triển; cần duyệt nội dung và t�
 - Leaflet: https://leafletjs.com/examples/quick-start/
 - Vite dev proxy: https://vite.dev/config/server-options#server-proxy
 - Geolocation watch/clear: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/watchPosition
+# Dịch POI tự động
+
+Chọn ngôn ngữ câu chuyện trong chi tiết POI để dịch từ một nội dung gốc sang 15 ngôn ngữ khác qua API. Cache bản dịch lưu trong SQL Server `TranslationDb`, tự làm mới khi nội dung gốc thay đổi. Xem [API và cách chạy dịch vụ dịch](docs/api/translations.md).
+
+
+Thiết kế dữ liệu và sơ đồ quan hệ cập nhật: [ERD Vinlook](docs/erd.md).

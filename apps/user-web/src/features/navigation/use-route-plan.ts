@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Poi } from '../../types/poi';
 import type { LocationFix } from '../tracking/location-tracker';
-import type { Coordinate, PlannedRoute, VehicleProfile } from './types';
-import { calculateRoute, RouteClientError } from '../../services/routes';
+import type { PlannedRoute, VehicleProfile } from './types';
+import { calculateRoute } from '../../services/routes';
 
 export function useRoutePlan(pois: Poi[], gps: { active: boolean; position: LocationFix | null; stale: boolean; error?: string | null; start: () => void }) {
   const [stops, setStops] = useState<Poi[]>([]);
@@ -10,11 +10,9 @@ export function useRoutePlan(pois: Poi[], gps: { active: boolean; position: Loca
   const [route, setRoute] = useState<PlannedRoute | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [errorCode, setErrorCode] = useState('');
   const [waitingForGps, setWaitingForGps] = useState(false);
   const [profile, setVehicle] = useState<VehicleProfile>('driving');
   const [pending, setPending] = useState<{ id: number; stops: Poi[]; originId: string; profile: VehicleProfile } | null>(null);
-  const [lastWaypoints, setLastWaypoints] = useState<Coordinate[]>([]);
   const request = useRef<AbortController | null>(null);
   const sequence = useRef(0);
   const executed = useRef(-1);
@@ -22,7 +20,7 @@ export function useRoutePlan(pois: Poi[], gps: { active: boolean; position: Loca
   function invalidate() {
     request.current?.abort();
     request.current = null;
-    setPending(null); setRoute(null); setError(''); setErrorCode(''); setLoading(false); setWaitingForGps(false);
+    setPending(null); setRoute(null); setError(''); setLoading(false); setWaitingForGps(false);
   }
   useEffect(() => () => request.current?.abort(), []);
   function queue(nextStops: Poi[], nextProfile = profile, nextOrigin = originId) {
@@ -51,15 +49,13 @@ export function useRoutePlan(pois: Poi[], gps: { active: boolean; position: Loca
     setWaitingForGps(false); setError(''); setLoading(true);
     const controller = new AbortController(); request.current = controller;
     const waypoints = [origin, ...pending.stops].map(p => ({ latitude: p.latitude, longitude: p.longitude }));
-    setLastWaypoints(waypoints);
     const originLabel = pending.originId === 'gps' ? 'Vị trí GPS của bạn' : (origin as Poi).name;
     const calculatedAt = Date.now();
     void calculateRoute(waypoints, controller.signal, pending.profile).then(data => {
-      if (!controller.signal.aborted) setRoute({ ...data, originLabel, calculatedAt });
+      if (!controller.signal.aborted) setRoute({ ...data, originLabel, calculatedAt, stopIds: pending.stops.map(poi => poi.id) });
     }).catch((failure: unknown) => {
       if (!controller.signal.aborted) {
         setError(failure instanceof Error ? failure.message : 'Không thể tính đường.');
-        setErrorCode(failure instanceof RouteClientError ? failure.code : 'UNKNOWN');
       }
     }).finally(() => {
       if (!controller.signal.aborted) { setLoading(false); request.current = null; }
@@ -82,15 +78,16 @@ export function useRoutePlan(pois: Poi[], gps: { active: boolean; position: Loca
     [next[index], next[target]] = [next[target], next[index]];
     setStops(next); queue(next);
   }
-  let transitFallbackUrl: string | null = null;
-  if (profile === 'bus' && lastWaypoints.length === 2 && ['NO_TRANSIT_ROUTE', 'PROVIDER_UNAVAILABLE', 'PROVIDER_TIMEOUT'].includes(errorCode)) {
-    const [origin, destination] = lastWaypoints;
-    const url = new URL('https://www.google.com/maps/dir/');
-    url.search = new URLSearchParams({ api: '1', origin: `${origin.latitude},${origin.longitude}`, destination: `${destination.latitude},${destination.longitude}`, travelmode: 'transit' }).toString();
-    transitFallbackUrl = url.href;
+  function reorderStops(ids: string[]) {
+    const byId = new Map(stops.map(poi => [poi.id, poi]));
+    if (ids.length !== stops.length || new Set(ids).size !== stops.length || ids.some(id => !byId.has(id))) return false;
+    if (ids.every((id, index) => stops[index].id === id)) return true;
+    const next = ids.map(id => byId.get(id)!);
+    setStops(next); queue(next);
+    return true;
   }
   return {
-    stops, originId, route, loading, error, waitingForGps, profile, transitFallbackUrl, addStop, removeStop, moveStop,
+    stops, originId, route, loading, error, waitingForGps, profile, addStop, removeStop, moveStop, reorderStops,
     calculate() { queue(stops); },
     setProfile(next: VehicleProfile) { setVehicle(next); queue(stops, next); },
     setOriginId(id: string) { setOrigin(id); queue(stops, profile, id); },

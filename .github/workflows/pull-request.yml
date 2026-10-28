@@ -23,6 +23,7 @@ jobs:
     env:
       SQLSERVER_PASSWORD: CiOnly_StrongPass123!
       SQLSERVER_DATABASE: PoiIntegrationDb
+      TRANSLATION_DATABASE: TranslationIntegrationDb
       SQLSERVER_TRUST_CERTIFICATE: "true"
     services:
       sqlserver:
@@ -52,3 +53,4 @@ jobs:
       - run: npm run db:seed
       - run: npm run db:seed
       - run: npm run test:integration -w @tourism/poi-service
+      - run: npm run test:integration -w @tourism/translation-service

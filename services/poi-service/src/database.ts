@@ -20,6 +20,7 @@ async function main() {
   try {
     if (command === 'seed') {
       await pool.request().batch(await readFile(new URL('../database/seeds/pois.sql', import.meta.url), 'utf8'));
+      await pool.request().batch(await readFile(new URL('../database/seeds/narrations.sql', import.meta.url), 'utf8'));
       for (const fixture of [
         { slug: 'cho-ben-thanh', file: 'ben-thanh.jpg' },
         { slug: 'dinh-doc-lap', file: 'independence-palace.jpg' },
@@ -69,6 +70,14 @@ async function main() {
         await tx.rollback();
         throw error;
       }
+    }
+    // Seed only when absent: rerunning migrations must never reset a password.
+    const passwordHash = process.env.ADMIN_PASSWORD_HASH;
+    if (passwordHash && /^[a-f0-9]{32}:[a-f0-9]{128}$/i.test(passwordHash)) {
+      await pool.request().input('username', sql.NVarChar(100), process.env.ADMIN_USERNAME ?? 'admin')
+        .input('hash', sql.VarChar(200), passwordHash).query(`
+          IF NOT EXISTS (SELECT 1 FROM dbo.Users WHERE Username=@username)
+            INSERT INTO dbo.Users(Username,PasswordHash,FullName) VALUES(@username,@hash,N'Quản trị viên Vinlook');`);
     }
   } finally { await pool.close(); }
 }

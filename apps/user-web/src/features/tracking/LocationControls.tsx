@@ -6,17 +6,13 @@ interface Props extends TrackingSnapshot {
 }
 
 export function LocationControls({ status, active, position, stale, error, onLocate }: Props) {
-  return <section className="location-controls" aria-label="Định vị của bạn">
-    <div className="location-title"><span className={`location-dot ${active && !stale && position ? 'enabled' : ''}`} /><strong>Vị trí của bạn</strong><span className="location-mode">GPS</span></div>
-    <div className="location-status" role="status">
-      {error ? <p className="location-error">{error}</p>
-        : status === 'locating' ? <p>Đang xin quyền và chờ vị trí từ thiết bị…</p>
-          : position ? <p>{stale ? 'Vị trí cũ · đang chờ cập nhật' : 'Đang cập nhật vị trí'}<br /><span>Sai số khoảng {Math.round(position.accuracy)} m · Lúc {new Date(position.timestamp).toLocaleTimeString('vi-VN')}</span></p>
-            : <p>Bấm “Về vị trí của tôi” để xác định vị trí trên bản đồ.</p>}
-    </div>
-    <div className="location-actions">
-      <button className="location-locate" onClick={onLocate}>Về vị trí của tôi</button>
-    </div>
-    <p className="location-note">Sau khi cấp quyền, GPS được giữ đến khi đóng tab.</p>
+  const message = error ? 'Chưa lấy được GPS · Thử lại' : status === 'locating' ? 'Đang tìm vị trí…' : stale && position ? 'Vị trí cần cập nhật' : '';
+  return <section className="location-controls location-compact" aria-label="Định vị của bạn">
+    <button className="location-locate" onClick={onLocate} title={error || 'Về vị trí của tôi'}>
+      <span className="location-target" aria-hidden="true">⌖</span>
+      <span>Về vị trí của tôi</span>
+      <span className={`location-dot ${active && !stale && position ? 'enabled' : ''}`} aria-hidden="true"/>
+    </button>
+    {message && <span className={`location-compact-status${error ? ' has-error' : ''}`} role={error ? 'alert' : 'status'} aria-label={error || undefined}>{message}</span>}
   </section>;
 }

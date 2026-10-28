@@ -8,7 +8,7 @@ const waypoints = [{ latitude: 10.7725, longitude: 106.698 }, { latitude: 10.777
 export const route: RouteResult = {
   profile: 'driving', provider: 'Valhalla', optimization: 'shortest', distance: 1200, duration: 300,
   geometry: { type: 'LineString', coordinates: [[106.698, 10.7725], [106.6953, 10.777]] },
-  legs: [{ distance: 1200, duration: 300, steps: [{ instruction: 'Đến điểm dừng', distance: 0, duration: 0, location: [106.6953, 10.777] }] }],
+  legs: [{ distance: 1200, duration: 300, geometry: { type: 'LineString', coordinates: [[106.698, 10.7725], [106.6953, 10.777]] }, steps: [{ instruction: 'Đến điểm dừng', distance: 0, duration: 0, location: [106.6953, 10.777] }] }],
 };
 
 test('validates ordered waypoints and supplies default driving profile', async () => {
@@ -22,7 +22,7 @@ test('validates ordered waypoints and supplies default driving profile', async (
 test('invalid coordinates, point counts and unknown profile never reach the provider', async () => {
   let calls = 0;
   const app = createApp({ async calculate() { calls++; return route; } });
-  for (const body of [{ waypoints: [] }, { waypoints: [waypoints[0]] }, { waypoints: Array(11).fill(waypoints[0]) }, { waypoints: [{ latitude: 91, longitude: 0 }, waypoints[0]] }, { waypoints: [{ latitude: '10', longitude: 0 }, waypoints[0]] }, { waypoints, profile: 'walking' }, { waypoints, url: 'http://evil.test' }]) {
+  for (const body of [{ waypoints: [] }, { waypoints: [waypoints[0]] }, { waypoints: Array(11).fill(waypoints[0]) }, { waypoints: [{ latitude: 91, longitude: 0 }, waypoints[0]] }, { waypoints: [{ latitude: '10', longitude: 0 }, waypoints[0]] }, { waypoints, profile: 'bus' }, { waypoints, url: 'http://evil.test' }]) {
     assert.equal((await request(app).post('/routes').send(body)).status, 400);
   }
   assert.equal(calls, 0);

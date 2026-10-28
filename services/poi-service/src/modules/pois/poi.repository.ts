@@ -6,6 +6,7 @@ export interface Poi {
   slug: string;
   name: string;
   description: string;
+  visitorDescription?: string;
   address: string;
   latitude: number;
   longitude: number;
@@ -27,7 +28,7 @@ export interface PoiRepository {
   ready(): Promise<void>;
 }
 
-const columns = `Id AS id, Slug AS slug, Name AS name, Description AS description, Address AS address,
+const columns = `Id AS id, Slug AS slug, Name AS name, Description AS description, VisitorDescription AS visitorDescription, Address AS address,
   Latitude AS latitude, Longitude AS longitude, Category AS category, SourceLanguage AS sourceLanguage,
   CASE WHEN EXISTS (SELECT 1 FROM dbo.PoiImages WHERE PoiId = dbo.Pois.Id)
     THEN '/api/pois/' + CONVERT(VARCHAR(36), Id) + '/image' ELSE ImageUrl END AS imageUrl,

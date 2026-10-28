@@ -24,7 +24,7 @@ export function createApp(provider: RouteProvider = createValhallaProvider()) {
   app.use((_req, res) => res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Route not found' } }));
   const errors: ErrorRequestHandler = (error, _req, res, _next) => {
     if (error instanceof RoutingError) {
-      const status = ['NO_ROUTE', 'NO_TRANSIT_ROUTE', 'BUS_SINGLE_DESTINATION'].includes(error.code) ? 422 : error.code === 'PROVIDER_TIMEOUT' ? 504 : 502;
+      const status = error.code === 'NO_ROUTE' ? 422 : error.code === 'PROVIDER_TIMEOUT' ? 504 : 502;
       res.status(status).json({ error: { code: error.code, message: 'Unable to calculate route' } });
       return;
     }

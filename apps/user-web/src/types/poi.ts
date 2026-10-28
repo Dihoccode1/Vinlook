@@ -3,6 +3,7 @@ export interface Poi {
   slug: string;
   name: string;
   description: string;
+  visitorDescription?: string;
   address: string;
   latitude: number;
   longitude: number;

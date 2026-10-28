@@ -48,3 +48,48 @@ test('provider connection failures and timeouts are mapped to stable errors', as
     await assert.rejects(provider.calculate(input), (failure: unknown) => failure instanceof RoutingError && failure.code === code);
   }
 });
+
+test('walking and motorbike use distinct access models and preserve their profile', async () => {
+  for (const [profile, costing] of [['walking', 'pedestrian'], ['motorcycle', 'motor_scooter']] as const) {
+    const provider = createValhallaProvider('https://routing.example.test', async (_url, options) => {
+      const body = JSON.parse(options?.body as string);
+      assert.equal(body.costing, costing);
+      assert.equal(body.costing_options[costing].shortest, true);
+      assert.equal(body.costing_options.auto, undefined);
+      return Response.json(response);
+    });
+    const route = await provider.calculate({ ...input, profile });
+    assert.equal(route.profile, profile);
+    assert.equal(route.optimization, 'shortest');
+  }
+});
+
+test('each itinerary leg keeps its own road bends in the requested stop order', async () => {
+  const first = [[106.698, 10.7725], [106.696, 10.774], [106.6953, 10.777]];
+  const second = [[106.6953, 10.777], [106.697, 10.78], [106.6999, 10.7799]];
+  const provider = createValhallaProvider('https://routing.example.test', async (_url, options) => {
+    const body = JSON.parse(options?.body as string);
+    assert.deepEqual(body.locations.map((point: {lat:number;lon:number}) => [point.lon, point.lat]), [first[0], first.at(-1), second.at(-1)]);
+    return Response.json({ code: 'Ok', routes: [{ distance: 2400, duration: 600,
+      geometry: { type: 'LineString', coordinates: [...first, ...second.slice(1)] },
+      legs: [
+        { distance: 1200, duration: 300, steps: [
+          { ...response.routes[0].legs[0].steps[0], geometry: { type: 'LineString', coordinates: first.slice(0, 2) } },
+          { ...response.routes[0].legs[0].steps[1], geometry: { type: 'LineString', coordinates: first.slice(1) } },
+        ] },
+        { distance: 1200, duration: 300, steps: [{ ...response.routes[0].legs[0].steps[0], geometry: { type: 'LineString', coordinates: second } }] },
+      ],
+    }] });
+  });
+  const route = await provider.calculate({ ...input, waypoints: [...input.waypoints, { latitude: 10.7799, longitude: 106.6999 }] });
+  assert.deepEqual(route.legs[0].geometry.coordinates, first);
+  assert.deepEqual(route.legs[1].geometry.coordinates, second);
+});
+
+test('missing per-leg geometry cannot substitute the entire route into every leg', async () => {
+  const provider = createValhallaProvider('https://routing.example.test', async () => Response.json({
+    ...response, routes: [{ ...response.routes[0], legs: [response.routes[0].legs[0], response.routes[0].legs[0]] }],
+  }));
+  await assert.rejects(provider.calculate({ ...input, waypoints: [...input.waypoints, { latitude: 10.7799, longitude: 106.6999 }] }),
+    (error: unknown) => error instanceof RoutingError && error.code === 'INVALID_PROVIDER_RESPONSE');
+});

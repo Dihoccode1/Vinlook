@@ -4,7 +4,9 @@ import 'leaflet/dist/leaflet.css';
 import type { Poi } from '../../types/poi';
 import type { LocationFix } from '../tracking/location-tracker';
 import { placeholderImage, poiImageUrl } from '../poi/image-url';
-import type { PlannedRoute } from '../navigation/types';
+import type { PlannedRoute, VehicleProfile } from '../navigation/types';
+import { routeLegColor } from '../navigation/route-colors';
+import { MapCredits } from './MapCredits';
 
 interface Props {
   pois: Poi[];
@@ -16,9 +18,11 @@ interface Props {
   locationFocus: number;
   onManualMove: () => void;
   route: PlannedRoute | null;
+  itinerary: Poi[];
+  profile: VehicleProfile;
 }
 
-export function PoiMap({ pois, selected, onSelect, position, stale, following, locationFocus, onManualMove, route }: Props) {
+export function PoiMap({ pois, selected, onSelect, position, stale, following, locationFocus, onManualMove, route, itinerary, profile }: Props) {
   const element = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const markers = useRef<L.LayerGroup | null>(null);
@@ -27,27 +31,30 @@ export function PoiMap({ pois, selected, onSelect, position, stale, following, l
 
   useEffect(() => {
     if (!element.current) return;
-    const instance = L.map(element.current, { zoomControl: false }).setView([10.777, 106.698], 15);
+    const instance = L.map(element.current, { zoomControl: false, attributionControl: false }).setView([10.777, 106.698], 15);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     }).addTo(instance);
     L.control.zoom({ position: 'bottomright' }).addTo(instance);
-    instance.attributionControl.addAttribution('<a href="/images/pois/ATTRIBUTION.md" target="_blank" rel="noopener noreferrer">Ảnh POI: Riza, P. Hughes, Prenn · CC</a>');
     map.current = instance;
     markers.current = L.layerGroup().addTo(instance);
     locationLayer.current = L.layerGroup().addTo(instance);
     routeLayer.current = L.layerGroup().addTo(instance);
-    return () => { instance.remove(); map.current = null; markers.current = null; locationLayer.current = null; routeLayer.current = null; };
+    const resize = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => instance.invalidateSize({ pan: false })) : null;
+    resize?.observe(element.current);
+    return () => { resize?.disconnect(); instance.remove(); map.current = null; markers.current = null; locationLayer.current = null; routeLayer.current = null; };
   }, []);
 
   useEffect(() => {
     const layer = markers.current;
     if (!layer) return;
     layer.clearLayers();
+    const stopIds = route?.stopIds ?? itinerary.map(poi => poi.id);
     for (const poi of pois) {
+      const stopIndex = stopIds.indexOf(poi.id);
       const label = document.createElement('span');
-      label.textContent = poi.name;
+      label.textContent = stopIndex >= 0 ? `Điểm ${stopIndex + 1}: ${poi.name}` : poi.name;
       const element = document.createElement('div');
       element.className = `poi-photo-pin ${poi.id === selected?.id ? 'is-selected' : ''}`;
       const photo = document.createElement('img');
@@ -57,16 +64,22 @@ export function PoiMap({ pois, selected, onSelect, position, stale, following, l
       photo.decoding = 'async';
       photo.addEventListener('error', () => { photo.src = placeholderImage; }, { once: true });
       element.appendChild(photo);
+      if (stopIndex >= 0) {
+        const badge = document.createElement('span');
+        badge.className = 'poi-stop-badge'; badge.textContent = String(stopIndex + 1);
+        badge.style.backgroundColor = routeLegColor(profile, stopIndex);
+        element.appendChild(badge);
+      }
       const marker = L.marker([poi.latitude, poi.longitude], {
         icon: L.divIcon({ html: element, className: 'poi-photo-icon', iconSize: [64, 64], iconAnchor: [32, 64], tooltipAnchor: [0, -64] }),
-        title: poi.name,
+        title: label.textContent,
         alt: `Xem ${poi.name}`,
         riseOnHover: true,
         zIndexOffset: poi.id === selected?.id ? 1000 : 0,
       });
       marker.bindTooltip(label).on('click', () => onSelect(poi)).addTo(layer);
     }
-  }, [pois, selected, onSelect]);
+  }, [pois, selected, onSelect, itinerary, profile, route]);
 
   useEffect(() => {
     const instance = map.current;
@@ -113,14 +126,52 @@ export function PoiMap({ pois, selected, onSelect, position, stale, following, l
     if (!layer || !instance) return;
     layer.clearLayers();
     if (!route) return;
-    const points: L.LatLngExpression[] = route.geometry.coordinates.map(([longitude, latitude]) => [latitude, longitude]);
-    const color = route.profile === 'motorcycle' ? '#20855b' : route.profile === 'bus' ? '#7950b5' : '#2677ce';
-    L.polyline(points, { color: '#ffffff', weight: 9, opacity: 0.9, interactive: false }).addTo(layer);
-    const line = L.polyline(points, { color, weight: 5, opacity: 1, interactive: false }).addTo(layer);
-    L.circleMarker(points[0], { radius: 6, color: '#fff', weight: 2, fillColor: color, fillOpacity: 1 }).bindTooltip('Điểm xuất phát của tuyến').addTo(layer);
-    instance.stop();
-    instance.fitBounds(line.getBounds(), { paddingTopLeft: [45, 95], paddingBottomRight: [45, 45], maxZoom: 16 });
-  }, [route]);
+    const bounds = L.latLngBounds([]);
+    // SVG paints later paths above earlier ones. Draw the last leg first so
+    // earlier itinerary legs (including their white casing) win on overlaps.
+    route.legs.map((leg, index) => ({ leg, index })).reverse().forEach(({ leg, index }) => {
+      // Road geometry comes from the provider for this leg, never straight POI-to-POI lines.
+      const coordinates = leg.geometry?.coordinates ?? (route.legs.length === 1 ? route.geometry.coordinates : []);
+      if (coordinates.length < 2) return;
+      const points = coordinates.map(([longitude, latitude]) => L.latLng(latitude, longitude));
+      points.forEach(point => bounds.extend(point));
+      const color = routeLegColor(route.profile, index);
+      L.polyline(points, { color: '#fff', weight: 10, opacity: 0.95, interactive: false }).addTo(layer);
+      const tooltip = document.createElement('span');
+      const destination = itinerary.find(poi => poi.id === route.stopIds?.[index])?.name ?? `Điểm ${index + 1}`;
+      tooltip.textContent = `Chặng ${index + 1}: ${index === 0 ? 'A' : index} → ${index + 1} · ${destination}`;
+      L.polyline(points, { color, weight: 5, opacity: 1, dashArray: route.profile === 'walking' ? '7 8' : undefined }).bindTooltip(tooltip).addTo(layer);
 
-  return <div ref={element} className="map" aria-label="Bản đồ các địa điểm tại Thành phố Hồ Chí Minh" />;
+      const lengths = points.slice(1).map((point, i) => point.distanceTo(points[i]));
+      const total = lengths.reduce((sum, length) => sum + length, 0);
+      for (const fraction of [0.35, 0.72]) {
+        let remaining = total * fraction;
+        for (let i = 0; i < lengths.length; i++) {
+          if (remaining > lengths[i]) { remaining -= lengths[i]; continue; }
+          if (lengths[i] < 1) continue;
+          const ratio = remaining / lengths[i];
+          const from = points[i], to = points[i + 1];
+          const position = L.latLng(from.lat + (to.lat - from.lat) * ratio, from.lng + (to.lng - from.lng) * ratio);
+          const delta = instance.project(to, 16).subtract(instance.project(from, 16));
+          const arrow = document.createElement('span');
+          arrow.className = 'route-direction-arrow'; arrow.textContent = '➤'; arrow.style.color = color;
+          arrow.style.transform = `rotate(${Math.atan2(delta.y, delta.x) * 180 / Math.PI}deg)`;
+          L.marker(position, { icon: L.divIcon({ html: arrow, className: 'route-arrow-icon', iconSize: [24, 24], iconAnchor: [12, 12] }), zIndexOffset: (route.legs.length - index) * 100, interactive: false, keyboard: false }).addTo(layer);
+          break;
+        }
+      }
+      if (index === 0) {
+        const origin = document.createElement('span'); origin.className = 'route-origin-pin'; origin.textContent = 'A';
+        L.marker(points[0], { icon: L.divIcon({ html: origin, className: 'route-origin-icon', iconSize: [27, 27], iconAnchor: [13, 13] }), title: `A: ${route.originLabel}` }).bindTooltip(`Xuất phát: ${route.originLabel}`).addTo(layer);
+      }
+    });
+    if (!bounds.isValid()) return;
+    instance.stop();
+    const mobile = window.innerWidth <= 760;
+    instance.fitBounds(bounds, { paddingTopLeft: [mobile ? 35 : 55, mobile ? 175 : 250], paddingBottomRight: [mobile ? 45 : 300, mobile ? instance.getSize().y * 0.25 + 75 : 55], maxZoom: 16 });
+  }, [route, itinerary]);
+
+  return <><div ref={element} className="map" aria-label="Bản đồ các địa điểm tại Thành phố Hồ Chí Minh" /><MapCredits/>
+    {route && <aside className="route-map-legend" aria-label="Thứ tự đường đi"><strong>Xuất phát A → {route.legs.map((_, index) => index + 1).join(' → ')}</strong><ol>{route.legs.map((_, index) => <li key={index}><span style={{ backgroundColor: routeLegColor(route.profile, index) }}>{index + 1}</span>{itinerary.find(poi => poi.id === route.stopIds?.[index])?.name ?? `Điểm ${index + 1}`}</li>)}</ol></aside>}
+  </>;
 }

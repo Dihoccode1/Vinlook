@@ -5,6 +5,23 @@ import request from 'supertest';
 import { createApp } from '../../src/app.js';
 import { createApp as createPoiApp } from '../../../poi-service/src/app.js';
 import { createApp as createNavigationApp } from '../../../navigation-service/src/app.js';
+import { createApp as createTranslationApp } from '../../../translation-service/src/app.js';
+
+test('gateway forwards language catalog and translation POST before read-only POI routes', async () => {
+  const id = '11111111-1111-4111-8111-111111111111';
+  const upstream = createTranslationApp({ ready: async () => {}, get: async (poiId, language) => {
+    assert.equal(poiId, id); assert.equal(language, 'en');
+    return { data: { poiId, language, sourceLanguage: 'vi', sourceHash: 'a'.repeat(64), name: 'Market', description: 'A market', provider: 'test', translatedAt: new Date().toISOString() }, original: false, fromCache: true };
+  } }).listen(0, '127.0.0.1');
+  await new Promise<void>(resolve => upstream.once('listening', resolve));
+  try {
+    const app = createApp(undefined, undefined, `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
+    assert.equal((await request(app).get('/api/languages').expect(200)).body.data.length, 16);
+    const response = await request(app).post(`/api/pois/${id}/translation`).send({ language: 'en' }).expect(200);
+    assert.equal(response.body.fromCache, true); assert.equal(response.headers['cache-control'], 'no-store');
+    await request(app).post(`/api/pois/${id}/translation`).send({ language: 'xx' }).expect(400);
+  } finally { await new Promise<void>((resolve, reject) => upstream.close(error => error ? reject(error) : resolve())); }
+});
 
 test('gateway forwards POI search, status and errors through real HTTP', async () => {
   const upstream = createPoiApp({
@@ -61,7 +78,7 @@ test('gateway forwards route requests and validation errors over HTTP', async ()
     assert.deepEqual(input.waypoints, waypoints);
     return { profile: 'driving', provider: 'Valhalla', optimization: 'shortest', distance: 500, duration: 100,
       geometry: { type: 'LineString', coordinates: [[106.69, 10.77], [106.7, 10.78]] },
-      legs: [{ distance: 500, duration: 100, steps: [] }],
+      legs: [{ distance: 500, duration: 100, geometry: { type: 'LineString', coordinates: [[106.69, 10.77], [106.7, 10.78]] }, steps: [] }],
     };
   } }).listen(0, '127.0.0.1');
   await new Promise<void>(resolve => upstream.once('listening', resolve));

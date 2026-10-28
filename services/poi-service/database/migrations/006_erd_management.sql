@@ -1,0 +1,67 @@
+CREATE TABLE dbo.Users (
+  Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Users PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
+  Username NVARCHAR(100) NOT NULL CONSTRAINT UQ_Users_Username UNIQUE,
+  PasswordHash VARCHAR(200) NOT NULL,
+  FullName NVARCHAR(200) NOT NULL,
+  Role VARCHAR(20) NOT NULL DEFAULT 'admin' CONSTRAINT CK_Users_Role CHECK (Role IN ('admin','editor')),
+  Status VARCHAR(20) NOT NULL DEFAULT 'active' CONSTRAINT CK_Users_Status CHECK (Status IN ('active','disabled')),
+  CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+CREATE TABLE dbo.AdminSessions (
+  TokenHash CHAR(64) NOT NULL CONSTRAINT PK_AdminSessions PRIMARY KEY,
+  UserId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_AdminSessions_Users REFERENCES dbo.Users(Id),
+  CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+  ExpiresAt DATETIME2 NOT NULL,
+  RevokedAt DATETIME2 NULL
+);
+CREATE INDEX IX_AdminSessions_User ON dbo.AdminSessions(UserId, ExpiresAt);
+ALTER TABLE dbo.Pois ADD CreatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Pois_CreatedBy REFERENCES dbo.Users(Id),
+  UpdatedBy UNIQUEIDENTIFIER NULL CONSTRAINT FK_Pois_UpdatedBy REFERENCES dbo.Users(Id);
+
+CREATE TABLE dbo.VisitSessions (
+  Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_VisitSessions PRIMARY KEY,
+  StartedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+  LastSeenAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+  EndedAt DATETIME2 NULL,
+  PreferredLanguage VARCHAR(10) NULL
+);
+CREATE TABLE dbo.Routes (
+  Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Routes PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
+  SessionId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_Routes_Sessions REFERENCES dbo.VisitSessions(Id),
+  Name NVARCHAR(200) NOT NULL,
+  Vehicle VARCHAR(20) NOT NULL CONSTRAINT CK_Routes_Vehicle CHECK (Vehicle IN ('driving','motorcycle','walking')),
+  OriginLatitude FLOAT NOT NULL CONSTRAINT CK_Routes_Lat CHECK (OriginLatitude BETWEEN -90 AND 90),
+  OriginLongitude FLOAT NOT NULL CONSTRAINT CK_Routes_Lon CHECK (OriginLongitude BETWEEN -180 AND 180),
+  DistanceMeters FLOAT NULL CONSTRAINT CK_Routes_Distance CHECK (DistanceMeters >= 0),
+  DurationSeconds FLOAT NULL CONSTRAINT CK_Routes_Duration CHECK (DurationSeconds >= 0),
+  Status VARCHAR(20) NOT NULL DEFAULT 'planned' CONSTRAINT CK_Routes_Status CHECK (Status IN ('planned','active','completed','cancelled')),
+  CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+  UpdatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+CREATE TABLE dbo.RouteStops (
+  RouteId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_RouteStops_Routes REFERENCES dbo.Routes(Id) ON DELETE CASCADE,
+  StopOrder INT NOT NULL CONSTRAINT CK_RouteStops_Order CHECK (StopOrder >= 1),
+  PoiId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_RouteStops_Pois REFERENCES dbo.Pois(Id),
+  CONSTRAINT PK_RouteStops PRIMARY KEY(RouteId, StopOrder)
+);
+CREATE INDEX IX_RouteStops_Poi ON dbo.RouteStops(PoiId);
+CREATE TABLE dbo.UsageEvents (
+  Id BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_UsageEvents PRIMARY KEY,
+  SessionId UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_UsageEvents_Sessions REFERENCES dbo.VisitSessions(Id),
+  PoiId UNIQUEIDENTIFIER NULL CONSTRAINT FK_UsageEvents_Pois REFERENCES dbo.Pois(Id),
+  EventType VARCHAR(30) NOT NULL CONSTRAINT CK_UsageEvents_Type CHECK (EventType IN ('poi_view','audio_start','audio_pause','audio_end','route_created')),
+  LanguageCode VARCHAR(10) NULL,
+  OccurredAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+CREATE INDEX IX_UsageEvents_Time ON dbo.UsageEvents(OccurredAt, EventType);
+CREATE TABLE dbo.SystemLogs (
+  Id BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_SystemLogs PRIMARY KEY,
+  UserId UNIQUEIDENTIFIER NULL CONSTRAINT FK_SystemLogs_Users REFERENCES dbo.Users(Id),
+  PoiId UNIQUEIDENTIFIER NULL CONSTRAINT FK_SystemLogs_Pois REFERENCES dbo.Pois(Id),
+  Component NVARCHAR(100) NOT NULL,
+  Level VARCHAR(10) NOT NULL CONSTRAINT CK_SystemLogs_Level CHECK (Level IN ('info','warning','error')),
+  Action VARCHAR(50) NULL,
+  Message NVARCHAR(2000) NOT NULL,
+  OccurredAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+CREATE INDEX IX_SystemLogs_Time ON dbo.SystemLogs(OccurredAt, Level);
