@@ -24,7 +24,7 @@ export function useTouristPlayback(usage, locale) {
       telemetry,
       onChange: (s) => {
         setPlayback(s);
-        if (s.state === 'idle') setTime(0);
+        setTime(s.state === 'idle' ? 0 : media.currentTime);
       },
     });
     player.current = p;
