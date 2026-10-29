@@ -1,7 +1,7 @@
 /** Translated from the existing five-paragraph Vietnamese narration, without rewriting it. */
-export const benThanhTranslations = {
+export const ben_thanh_translations = {
   slug: 'cho-ben-thanh',
-  sourceHash: '975bf96f7dbd6aaffbc7e57104ee607320ffc58dd43bf707f316f8b9d697d5a6',
+  source_hash: '975bf96f7dbd6aaffbc7e57104ee607320ffc58dd43bf707f316f8b9d697d5a6',
   translations: {
     ko: { name: '벤탄 시장', description: `안녕하세요. 지금 우리는 호찌민시 중심부를 여행할 때 자주 찾는 벤탄 시장에 잠시 멈춰 있습니다. 둘러보기 전에 차도를 피해 안전한 곳에 서서 통행로를 비워 주세요. 주변의 일상을 몇 분 동안 관찰한 뒤 방문을 이어 가도 좋습니다.
 

@@ -3,16 +3,16 @@ export interface Poi {
   slug: string;
   name: string;
   description: string;
-  visitorDescription?: string;
+  visitor_description?: string;
   address: string;
   latitude: number;
   longitude: number;
   category: string;
-  sourceLanguage: string;
-  imageUrl: string | null;
-  imageCredit: string | null;
-  imageSourceUrl: string | null;
-  imageLicenseUrl: string | null;
+  source_language: string;
+  image_url: string | null;
+  image_credit: string | null;
+  image_source_url: string | null;
+  image_license_url: string | null;
 }
 
 export interface PoiPage {

@@ -1,14 +1,14 @@
 import sql from 'mssql';
 
-export interface AdminUser { id: string; username: string; passwordHash: string }
+export interface AdminUser { id: string; username: string; password_hash: string; role: 'admin' | 'staff' }
 export interface AuthStore {
-  findUser(username: string): Promise<AdminUser | undefined>;
-  createSession(hash: string, user: AdminUser, expires: Date): Promise<void>;
-  findSession(hash: string): Promise<AdminUser | undefined>;
-  revokeSession(hash: string): Promise<void>;
+  find_user(username: string): Promise<AdminUser | undefined>;
+  create_session(hash: string, user: AdminUser, expires: Date): Promise<void>;
+  find_session(hash: string): Promise<AdminUser | undefined>;
+  revoke_session(hash: string): Promise<void>;
 }
 let pending: Promise<sql.ConnectionPool> | undefined;
-export function authPool() {
+export function auth_pool() {
   pending ??= new sql.ConnectionPool({
     server: process.env.SQLSERVER_HOST ?? 'localhost', port: Number(process.env.SQLSERVER_PORT ?? 1433),
     database: process.env.SQLSERVER_DATABASE ?? 'PoiDb', user: process.env.SQLSERVER_USER ?? 'sa', password: process.env.SQLSERVER_PASSWORD ?? '',
@@ -17,29 +17,29 @@ export function authPool() {
   }).connect().then(pool => { pool.on('error', () => console.error('Admin database connection error')); return pool; }).catch(error => { pending = undefined; throw error; });
   return pending;
 }
-const fields = 'u.Id AS id, u.Username AS username, u.PasswordHash AS passwordHash';
-export const sqlAuthStore: AuthStore = {
-  async findUser(username) {
-    const pool = await authPool();
-    return (await pool.request().input('username', sql.NVarChar(100), username).query<AdminUser>(`SELECT ${fields} FROM dbo.Users u WHERE u.Username=@username AND u.Status='active' AND u.Role='admin'`)).recordset[0];
+const fields = 'u.id AS id, u.username AS username, u.password_hash AS password_hash, u.role AS role';
+export const sql_auth_store: AuthStore = {
+  async find_user(username) {
+    const pool = await auth_pool();
+    return (await pool.request().input('username', sql.NVarChar(100), username).query<AdminUser>(`SELECT ${fields} FROM dbo.users u WHERE u.username=@username AND u.status='active' AND u.role IN ('admin','staff')`)).recordset[0];
   },
-  async createSession(hash, user, expires) {
-    const pool = await authPool();
+  async create_session(hash, user, expires) {
+    const pool = await auth_pool();
     await pool.request().input('hash', sql.Char(64), hash).input('user', sql.UniqueIdentifier, user.id).input('expires', sql.DateTime2, expires).query(`
       SET XACT_ABORT ON; BEGIN TRANSACTION;
-      INSERT INTO dbo.AdminSessions(TokenHash,UserId,ExpiresAt) VALUES(@hash,@user,@expires);
-      INSERT INTO dbo.SystemLogs(UserId,Component,Level,Action,Message) VALUES(@user,N'admin-auth','info','login',N'Đăng nhập quản trị thành công.');
+      INSERT INTO dbo.admin_sessions(token_hash,user_id,expires_at) VALUES(@hash,@user,@expires);
+      INSERT INTO dbo.system_logs(user_id,component,level,action,message) VALUES(@user,N'admin-auth','info','login',N'Đăng nhập quản trị thành công.');
       COMMIT TRANSACTION;`);
   },
-  async findSession(hash) {
-    const pool = await authPool();
-    return (await pool.request().input('hash', sql.Char(64), hash).query<AdminUser>(`SELECT ${fields} FROM dbo.AdminSessions s JOIN dbo.Users u ON u.Id=s.UserId
-      WHERE s.TokenHash=@hash AND s.ExpiresAt>SYSUTCDATETIME() AND s.RevokedAt IS NULL AND u.Status='active' AND u.Role='admin'`)).recordset[0];
+  async find_session(hash) {
+    const pool = await auth_pool();
+    return (await pool.request().input('hash', sql.Char(64), hash).query<AdminUser>(`SELECT ${fields} FROM dbo.admin_sessions s JOIN dbo.users u ON u.id=s.user_id
+      WHERE s.token_hash=@hash AND s.expires_at>SYSUTCDATETIME() AND s.revoked_at IS NULL AND u.status='active' AND u.role IN ('admin','staff')`)).recordset[0];
   },
-  async revokeSession(hash) {
-    const pool = await authPool();
-    await pool.request().input('hash', sql.Char(64), hash).query(`UPDATE dbo.AdminSessions SET RevokedAt=SYSUTCDATETIME() WHERE TokenHash=@hash AND RevokedAt IS NULL;
-      IF @@ROWCOUNT>0 INSERT INTO dbo.SystemLogs(UserId,Component,Level,Action,Message)
-        SELECT UserId,N'admin-auth','info','logout',N'Đăng xuất quản trị.' FROM dbo.AdminSessions WHERE TokenHash=@hash;`);
+  async revoke_session(hash) {
+    const pool = await auth_pool();
+    await pool.request().input('hash', sql.Char(64), hash).query(`UPDATE dbo.admin_sessions SET revoked_at=SYSUTCDATETIME() WHERE token_hash=@hash AND revoked_at IS NULL;
+      IF @@ROWCOUNT>0 INSERT INTO dbo.system_logs(user_id,component,level,action,message)
+        SELECT user_id,N'admin-auth','info','logout',N'Đăng xuất quản trị.' FROM dbo.admin_sessions WHERE token_hash=@hash;`);
   },
 };

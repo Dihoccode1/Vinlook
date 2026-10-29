@@ -2,26 +2,26 @@ import { useEffect, useState } from 'react';
 import { api } from './api';
 import { ActivityChart, type ActivitySample } from './ActivityChart';
 
-interface Snapshot { checkedAt: string; uptimeSeconds: number; services: { id: string; name: string; status: 'healthy' | 'unavailable' | 'unreachable'; latencyMs: number | null; database: string | null }[] }
-const statusNames = { healthy: 'Hoạt động', unavailable: 'Chưa sẵn sàng', unreachable: 'Không kết nối được' };
+interface Snapshot { checked_at: string; uptime_seconds: number; services: { id: string; name: string; status: 'healthy' | 'unavailable' | 'unreachable'; latency_ms: number | null; database: string | null }[] }
+const status_names = { healthy: 'Hoạt động', unavailable: 'Chưa sẵn sàng', unreachable: 'Không kết nối được' };
 export function MonitorDashboard() {
-  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
-  const [error, setError] = useState('');
-  const [refresh, setRefresh] = useState(0);
-  const [activity, setActivity] = useState<{ visitors: number; listeners: number } | null>(null);
-  const [samples, setSamples] = useState<ActivitySample[]>([]);
+  const [snapshot, set_snapshot] = useState<Snapshot | null>(null);
+  const [error, set_error] = useState('');
+  const [refresh, set_refresh] = useState(0);
+  const [activity, set_activity] = useState<{ visitors: number; listeners: number } | null>(null);
+  const [samples, set_samples] = useState<ActivitySample[]>([]);
   useEffect(() => {
     const controller = new AbortController(); let pending = false;
     function record(activity: { visitors: number; listeners: number } | null) {
       if (controller.signal.aborted) return;
-      setActivity(activity);
+      set_activity(activity);
       const time = Date.now();
-      setSamples(previous => [...previous.filter(point => point.time > time - 300000), { time, visitors: activity?.visitors ?? null, listeners: activity?.listeners ?? null }].slice(-120));
+      set_samples(previous => [...previous.filter(point => point.time > time - 300000), { time, visitors: activity?.visitors ?? null, listeners: activity?.listeners ?? null }].slice(-120));
     }
     async function poll() {
       if (pending) return; pending = true;
       await Promise.allSettled([
-        api<{ data: Snapshot }>('/monitor', { signal: controller.signal }).then(result => { if (!controller.signal.aborted) { setSnapshot(result.data); setError(''); } }).catch(() => { if (!controller.signal.aborted) setError('Không cập nhật được trạng thái. Dữ liệu bên dưới là lần kiểm tra gần nhất.'); }),
+        api<{ data: Snapshot }>('/monitor', { signal: controller.signal }).then(result => { if (!controller.signal.aborted) { set_snapshot(result.data); set_error(''); } }).catch(() => { if (!controller.signal.aborted) set_error('Không cập nhật được trạng thái. Dữ liệu bên dưới là lần kiểm tra gần nhất.'); }),
         api<{ data: { visitors: number; listeners: number } }>('/activity', { signal: controller.signal }).then(result => record(result.data)).catch(() => record(null)),
       ]);
       pending = false;
@@ -38,8 +38,8 @@ export function MonitorDashboard() {
       <article><div className="metric-label">Đang lắng nghe</div><strong>{activity?.listeners ?? '—'}</strong><p>Phiên đang phát thuyết minh</p></article>
     </section>
     <ActivityChart samples={samples}/>
-    <section className="panel"><div className="panel-title"><div><h2>Trạng thái hệ thống</h2><p>{snapshot ? `Kiểm tra lúc ${new Date(snapshot.checkedAt).toLocaleTimeString('vi-VN')} · Gateway chạy ${Math.floor(snapshot.uptimeSeconds / 60)} phút` : 'Đang kiểm tra các service…'}</p></div><button onClick={() => setRefresh(value => value + 1)}>↻ Làm mới</button></div>
-      <div className="table-wrap"><table><thead><tr><th>Dịch vụ</th><th>Trạng thái</th><th>Phản hồi</th><th>Cơ sở dữ liệu</th></tr></thead><tbody>{snapshot?.services.map(service => <tr key={service.id}><td><strong>{service.name}</strong><small className="monitor-service-id">{service.id}</small></td><td><span className={`monitor-status ${error ? 'stale' : service.status}`}>{error ? 'Chưa cập nhật' : statusNames[service.status]}</span></td><td>{service.latencyMs === null ? '—' : `${service.latencyMs} ms`}</td><td>{service.database ? `${service.database} · ${error ? 'Chưa cập nhật' : service.status === 'healthy' ? 'Đã kết nối' : 'Chưa xác nhận'}` : '—'}</td></tr>)}</tbody></table></div>
+    <section className="panel"><div className="panel-title"><div><h2>Trạng thái hệ thống</h2><p>{snapshot ? `Kiểm tra lúc ${new Date(snapshot.checked_at).toLocaleTimeString('vi-VN')} · Gateway chạy ${Math.floor(snapshot.uptime_seconds / 60)} phút` : 'Đang kiểm tra các service…'}</p></div><button onClick={() => set_refresh(value => value + 1)}>↻ Làm mới</button></div>
+      <div className="table-wrap"><table><thead><tr><th>Dịch vụ</th><th>Trạng thái</th><th>Phản hồi</th><th>Cơ sở dữ liệu</th></tr></thead><tbody>{snapshot?.services.map(service => <tr key={service.id}><td><strong>{service.name}</strong><small className="monitor-service-id">{service.id}</small></td><td data-label="Trạng thái"><span className={`monitor-status ${error ? 'stale' : service.status}`}>{error ? 'Chưa cập nhật' : status_names[service.status]}</span></td><td data-label="Phản hồi">{service.latency_ms === null ? '—' : `${service.latency_ms} ms`}</td><td data-label="Cơ sở dữ liệu">{service.database ? `${service.database} · ${error ? 'Chưa cập nhật' : service.status === 'healthy' ? 'Đã kết nối' : 'Chưa xác nhận'}` : '—'}</td></tr>)}</tbody></table></div>
       <p className="chart-note">POI và dịch thuật kiểm tra kết nối SQL Server qua readiness. Trạng thái tìm đường chỉ xác nhận service đang chạy, chưa kiểm tra API bản đồ hay hạn mức dịch vụ AI.</p>
     </section>
     <p className="chart-note">Lượt truy cập tính theo phiên tab đang hoạt động. Số liệu trực tiếp được làm mới mỗi 5 giây.</p>

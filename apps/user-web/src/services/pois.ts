@@ -6,14 +6,14 @@ async function get<T>(url: string, signal: AbortSignal): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export function listPois(q: string, category: string, page: number, signal: AbortSignal) {
+export function list_pois(q: string, category: string, page: number, signal: AbortSignal) {
   const query = new URLSearchParams({ q, page: String(page), limit: '20' });
   if (category) query.set('category', category);
   return get<PoiPage>(`/api/pois?${query}`, signal);
 }
 
 // Map pins must never depend on the exploration/search page or its GPS radius.
-export async function listAllPois(signal: AbortSignal): Promise<Poi[]> {
+export async function list_all_pois(signal: AbortSignal): Promise<Poi[]> {
   const limit = 100;
   const first = await get<PoiPage>(`/api/pois?page=1&limit=${limit}`, signal);
   const catalog = new Map(first.data.map(poi => [poi.id, poi]));
@@ -25,6 +25,6 @@ export async function listAllPois(signal: AbortSignal): Promise<Poi[]> {
   return [...catalog.values()];
 }
 
-export function getPoi(id: string, signal: AbortSignal) {
+export function get_poi(id: string, signal: AbortSignal) {
   return get<{ data: Poi }>(`/api/pois/${encodeURIComponent(id)}`, signal);
 }

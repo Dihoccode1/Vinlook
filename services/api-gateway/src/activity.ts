@@ -2,7 +2,7 @@ import { Router, json } from 'express';
 import { timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 
-export function createActivityTracker(now = Date.now) {
+export function create_activity_tracker(now = Date.now) {
   const sessions = new Map<string, { sequence: number; active: boolean; listening: boolean; seen: number }>();
   function prune() { for (const [id, session] of sessions) if (now() - session.seen > 45000) sessions.delete(id); }
   return {
@@ -15,7 +15,7 @@ export function createActivityTracker(now = Date.now) {
     snapshot() { prune(); const active = [...sessions.values()].filter(session => session.active); return { visitors: active.length, listeners: active.filter(session => session.listening).length }; },
   };
 }
-export function activityRoutes(key = process.env.ADMIN_API_KEY, tracker = createActivityTracker()) {
+export function activity_routes(key = process.env.ADMIN_API_KEY, tracker = create_activity_tracker()) {
   const router = Router();
   router.post('/activity/heartbeat', json({ limit: '1kb' }), (req, res) => {
     const input = z.object({ id:z.string().uuid(), sequence:z.number().int().min(0).max(Number.MAX_SAFE_INTEGER), active:z.boolean(), listening:z.boolean() }).strict().safeParse(req.body);

@@ -1,17 +1,17 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import { getBrowserLocationSession } from './location-session';
+import { get_browser_location_session } from './location-session';
 
-export function useLocation() {
-  const [tracker] = useState(getBrowserLocationSession);
-  const snapshot = useSyncExternalStore(tracker.subscribe, tracker.getSnapshot);
-  const [now, setNow] = useState(Date.now);
+export function use_location() {
+  const [tracker] = useState(get_browser_location_session);
+  const snapshot = useSyncExternalStore(tracker.subscribe, tracker.get_snapshot);
+  const [now, set_now] = useState(Date.now);
 
   // Component changes must not tear down a watch owned by the browser tab.
   useEffect(() => { void tracker.resume(); }, [tracker]);
   useEffect(() => {
     if (!snapshot.active) return;
-    setNow(Date.now());
-    const timer = window.setInterval(() => setNow(Date.now()), 5000);
+    set_now(Date.now());
+    const timer = window.setInterval(() => set_now(Date.now()), 5000);
     return () => window.clearInterval(timer);
   }, [snapshot.active]);
 

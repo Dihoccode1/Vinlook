@@ -1,6 +1,6 @@
-export const editorialProvider = 'Codex editorial';
+export const editorial_provider = 'Codex editorial';
 // Coordinates are representative map pins, not surveyed entrances.
-export const saigonPois = [
+export const saigon_pois = [
   { slug: 'nha-tho-duc-ba', name: 'Nhà thờ Đức Bà Sài Gòn', address: '1 Công xã Paris, TP. Hồ Chí Minh', latitude: 10.7798, longitude: 106.6990, category: 'architecture' },
   { slug: 'nha-hat-thanh-pho', name: 'Nhà hát Thành phố Hồ Chí Minh', address: '7 Công trường Lam Sơn, TP. Hồ Chí Minh', latitude: 10.7767, longitude: 106.7031, category: 'architecture' },
   { slug: 'tru-so-ubnd-thanh-pho', name: 'Trụ sở UBND Thành phố Hồ Chí Minh', address: '86 Lê Thánh Tôn, TP. Hồ Chí Minh', latitude: 10.7766, longitude: 106.7009, category: 'architecture' },

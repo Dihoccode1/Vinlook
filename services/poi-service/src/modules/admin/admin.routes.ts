@@ -1,11 +1,11 @@
 import { Router, json, type ErrorRequestHandler } from 'express';
 import { randomUUID, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
-import { adminRepository, type AdminRepository } from './admin.repository.js';
-import { adminPoiSchema, adminQuerySchema, decodeAdminImage } from './admin.schema.js';
-import { lookupAddress, type AddressLookup } from './geocode.js';
+import { admin_repository, type AdminRepository } from './admin.repository.js';
+import { admin_poi_schema, admin_query_schema, decode_admin_image } from './admin.schema.js';
+import { lookup_address, type AddressLookup } from './geocode.js';
 
-export function adminRoutes(repository: AdminRepository = adminRepository, key = process.env.ADMIN_API_KEY, geocode: AddressLookup = lookupAddress) {
+export function admin_routes(repository: AdminRepository = admin_repository, key = process.env.ADMIN_API_KEY, geocode: AddressLookup = lookup_address) {
   const router = Router();
   router.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-store');
@@ -25,7 +25,7 @@ export function adminRoutes(repository: AdminRepository = adminRepository, key =
   });
   router.get('/stats', async (_req, res) => res.json({ data: await repository.stats() }));
   router.get('/pois', async (req, res) => {
-    const query = adminQuerySchema.safeParse(req.query);
+    const query = admin_query_schema.safeParse(req.query);
     if (!query.success) { res.status(400).json({ error: { code: 'INVALID_QUERY' } }); return; }
     res.json(await repository.list(query.data));
   });
@@ -37,17 +37,17 @@ export function adminRoutes(repository: AdminRepository = adminRepository, key =
     res.json({ data: poi });
   });
   router.post('/pois', async (req, res) => {
-    const input = adminPoiSchema.safeParse(req.body);
+    const input = admin_poi_schema.safeParse(req.body);
     if (!input.success) { res.status(400).json({ error: { code: 'INVALID_POI', message: 'Kiểm tra lại thông tin địa điểm.' } }); return; }
-    decodeAdminImage(input.data);
+    decode_admin_image(input.data);
     const id = randomUUID(); const actor = z.string().uuid().safeParse(req.get('x-admin-user-id'));
     await repository.save(id, input.data, true, actor.success ? actor.data : undefined);
     res.status(201).json({ data: await repository.find(id) });
   });
   router.put('/pois/:id', async (req, res) => {
-    const id = z.string().uuid().safeParse(req.params.id); const input = adminPoiSchema.safeParse(req.body);
-    if (!id.success || !input.success || !input.data.updatedAt) { res.status(400).json({ error: { code: 'INVALID_POI', message: 'Kiểm tra lại thông tin và phiên bản địa điểm.' } }); return; }
-    decodeAdminImage(input.data);
+    const id = z.string().uuid().safeParse(req.params.id); const input = admin_poi_schema.safeParse(req.body);
+    if (!id.success || !input.success || !input.data.updated_at) { res.status(400).json({ error: { code: 'INVALID_POI', message: 'Kiểm tra lại thông tin và phiên bản địa điểm.' } }); return; }
+    decode_admin_image(input.data);
     const actor = z.string().uuid().safeParse(req.get('x-admin-user-id'));
     if (!await repository.save(id.data, input.data, false, actor.success ? actor.data : undefined)) { res.status(409).json({ error: { code: 'POI_CHANGED', message: 'Dữ liệu đã thay đổi. Hãy tải lại trước khi sửa.' } }); return; }
     res.json({ data: await repository.find(id.data) });

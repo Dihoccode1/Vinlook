@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { TranslationError, type TranslationProvider } from '../modules/translations/types.js';
 
 /** Limit is UTF-8 bytes, not JS character count. Preserve code points and paragraph boundaries. */
-export function splitForTranslation(text: string, limit = 500): string[] {
+export function split_for_translation(text: string, limit = 500): string[] {
   const result: string[] = [];
   let chunk = '';
   for (const token of text.match(/\n+|[^\S\n]+|[^\s]+/gu) ?? []) {
@@ -18,12 +18,12 @@ export function splitForTranslation(text: string, limit = 500): string[] {
   return result;
 }
 const schema = z.object({ responseStatus: z.coerce.number(), responseData: z.object({ translatedText: z.string().trim().min(1) }).optional(), quotaFinished: z.boolean().optional() });
-export function createMyMemoryProvider(fetcher: typeof fetch = fetch): TranslationProvider {
+export function create_my_memory_provider(fetcher: typeof fetch = fetch): TranslationProvider {
   return { name: 'MyMemory', async translate(text, source, target) {
     if (!text.trim()) return text;
     const signal = AbortSignal.timeout(20000);
     const translated: string[] = [];
-    for (const chunk of splitForTranslation(text)) {
+    for (const chunk of split_for_translation(text)) {
       if (/^\n+$/u.test(chunk)) { translated.push(chunk); continue; }
       const url = new URL('https://api.mymemory.translated.net/get');
       url.search = new URLSearchParams({ q: chunk, langpair: `${source}|${target}`, mt: '1' }).toString();

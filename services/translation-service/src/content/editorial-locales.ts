@@ -8,7 +8,7 @@ interface Locale {
 }
 
 /** Original, reusable visitor guidance; not a historical account or a quotation. */
-export const editorialLocales: Record<string, Locale> = {
+export const editorial_locales: Record<string, Locale> = {
   vi: {
     welcome: 'Chào bạn, chào mừng đến với', location: 'Điểm dừng nằm tại',
     market: 'Đây là điểm dừng để tìm hiểu không gian chợ và nhịp sống mua bán. Hãy chú ý cách các quầy hàng sắp xếp sản phẩm, những màu sắc đặt cạnh nhau và âm thanh của các cuộc trò chuyện. Nếu muốn mua hàng, bạn nên hỏi giá, số lượng và cách thanh toán trước khi quyết định. Với món ăn, hãy hỏi thành phần nếu bạn có dị ứng.',
@@ -123,8 +123,8 @@ export const editorialLocales: Record<string, Locale> = {
   },
 };
 
-export function renderEditorial(poi: { name: string; address: string; category: 'market' | 'history' | 'architecture' }, language: string) {
-  const locale = editorialLocales[language];
+export function render_editorial(poi: { name: string; address: string; category: 'market' | 'history' | 'architecture' }, language: string) {
+  const locale = editorial_locales[language];
   if (!locale) throw new Error(`Missing editorial locale: ${language}`);
   return `${locale.welcome} ${poi.name}. ${locale.location}: ${poi.address}.\n\n${locale[poi.category]}\n\n${locale.story}`.replaceAll('\\n', '\n');
 }

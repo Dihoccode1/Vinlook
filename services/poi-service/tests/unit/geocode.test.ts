@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createAddressLookup } from '../../src/modules/admin/geocode.js';
+import { create_address_lookup } from '../../src/modules/admin/geocode.js';
 const feature = (name: string, coordinates: unknown[], housenumber?: string) => ({ properties: { name, countrycode: 'VN', housenumber }, geometry: { type: 'Point', coordinates } });
 test('geocoding validates coordinates and caches normalized addresses', async () => {
   let calls = 0;
-  const lookup = createAddressLookup(async (url, init) => {
+  const lookup = create_address_lookup(async (url, init) => {
     calls++;
     assert.equal(new URL(String(url)).searchParams.get('countrycode'), 'VN');
     assert.match(String((init?.headers as Record<string,string>)['User-Agent']), /Vinlook/);
@@ -16,7 +16,7 @@ test('geocoding validates coordinates and caches normalized addresses', async ()
 });
 test('changing house number uses a distinct query and never accepts a street or another number', async () => {
   const queries: string[] = [];
-  const lookup = createAddressLookup(async url => {
+  const lookup = create_address_lookup(async url => {
     queries.push(new URL(String(url)).searchParams.get('q')!);
     return Response.json({ features: [feature('Street', [106.7, 10.77]), feature('Building', [106.71, 10.78], '135')] });
   });
@@ -25,7 +25,7 @@ test('changing house number uses a distinct query and never accepts a street or 
   assert.equal(queries.length, 2);
 });
 test('upstream failures release the request lock', async () => {
-  const lookup = createAddressLookup(async () => Response.json({}, { status: 429 }));
+  const lookup = create_address_lookup(async () => Response.json({}, { status: 429 }));
   await assert.rejects(lookup('Địa chỉ thử'), /GEOCODE_UNAVAILABLE/);
   await assert.rejects(lookup('Địa chỉ khác'), /GEOCODE_UNAVAILABLE/);
 });
@@ -33,7 +33,7 @@ test('upstream failures release the request lock', async () => {
 test('concurrent lookups share identical requests and serialize a changed address', async () => {
   const queries: string[] = []; let active = 0; let peak = 0;
   const starts: number[] = [];
-  const lookup = createAddressLookup(async url => {
+  const lookup = create_address_lookup(async url => {
     const address = new URL(String(url)).searchParams.get('q')!;
     queries.push(address); starts.push(Date.now()); active++; peak = Math.max(peak, active);
     await new Promise(resolve => setTimeout(resolve, 30)); active--;

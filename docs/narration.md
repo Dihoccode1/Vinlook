@@ -1,6 +1,6 @@
 # Thuyết minh bằng Gemini TTS
 
-Nút Nghe thuyết minh gọi POST /api/pois/:id/narration với JSON { "language": "vi" }. Backend lấy nội dung POI gốc hoặc bản dịch, gọi Gemini TTS và trả audio/wav. Giao diện phát HTML Audio, hỗ trợ tạm dừng, tiếp tục và dừng. Đổi POI, đóng chi tiết hoặc đổi ngôn ngữ sẽ dừng audio và hủy request phía client. Request Google đang chạy có thể hoàn tất để lưu cache.
+Nút Nghe thuyết minh gọi POST /api/pois/:id/narration với JSON { "language": "vi" }. Backend lấy nội dung POI gốc hoặc bản dịch, gọi Gemini TTS và trả audio/wav. Giao diện phát HTML audio, hỗ trợ tạm dừng, tiếp tục và dừng. Đổi POI, đóng chi tiết hoặc đổi ngôn ngữ sẽ dừng audio và hủy request phía client. Request Google đang chạy có thể hoàn tất để lưu cache.
 
 Cấu hình .env backend, sau đó khởi động lại translation service:
 
@@ -17,7 +17,7 @@ Tạo key ở Google AI Studio, bảo đảm project có quyền truy cập mode
 
 API dùng https://generativelanguage.googleapis.com/v1beta/interactions, trả WAV mono 24 kHz. Hướng dẫn chính thức: https://ai.google.dev/gemini-api/docs/speech-generation . Thiếu key trả 503, quota/bận trả 429, timeout trả 504, lỗi provider trả 502. Tạo audio tối đa 120 giây; Gateway cho 175 giây gồm cả dịch.
 
-Cache audio trong RAM translation service, giới hạn 32 MB và hai tác vụ tạo audio đồng thời; lớp RAM mất khi restart. Khóa cache gồm POI, ngôn ngữ, nội dung, model và giọng. Cùng yêu cầu đang chạy dùng chung tác vụ. Audio WAV lưu trong SQL Server tại TranslationDb.dbo.PoiNarrations (VARBINARY(MAX)). Mỗi POI và ngôn ngữ giữ một bản mới nhất; hash nội dung/model/giọng/phong cách quyết định có tái sử dụng được hay không. Cache RAM là lớp tăng tốc; restart backend vẫn đọc audio từ SQL. Cache văn bản cũng ở SQL Server.
+Cache audio trong RAM translation service, giới hạn 32 MB và hai tác vụ tạo audio đồng thời; lớp RAM mất khi restart. Khóa cache gồm POI, ngôn ngữ, nội dung, model và giọng. Cùng yêu cầu đang chạy dùng chung tác vụ. audio WAV lưu trong SQL Server tại TranslationDb.dbo.poi_narrations (VARBINARY(MAX)). Mỗi POI và ngôn ngữ giữ một bản mới nhất; hash nội dung/model/giọng/phong cách quyết định có tái sử dụng được hay không. Cache RAM là lớp tăng tốc; restart backend vẫn đọc audio từ SQL. Cache văn bản cũng ở SQL Server.
 
 Ba bài mẫu hướng tới 2–3 phút, thời lượng thực tế tùy kết quả Gemini. Sau khi có key cần kiểm tra nghe và thời lượng thực tế. Unit test dùng WAV giả, không gọi Google hoặc tiêu quota. Kiểm tra thủ công: nghe, tạm dừng, tiếp tục, dừng, chuyển POI/ngôn ngữ, kiểm tra thiếu key và lỗi dịch.
 
@@ -32,7 +32,7 @@ Tác vụ chuẩn bị tiếp tục qua các ngôn ngữ dịch lỗi để vẫ
 
 ## File audio tạo sẵn (không có trang quản lý)
 
-Audio WAV lưu tại `services/translation-service/storage/narrations/<POI UUID>/<language>-<content hash>.wav`, đồng thời lưu trong SQL Server như trước. Cache tìm bản đã lưu theo nội dung, ngôn ngữ, model, giọng và phong cách; có bản phù hợp thì không gọi Gemini lại. Ngôn ngữ khách tạo lần đầu cũng được lưu cả file và database. Ghi file qua file tạm rồi rename để tránh đọc trúng file đang viết.
+audio WAV lưu tại `services/translation-service/storage/narrations/<POI UUID>/<language>-<content hash>.wav`, đồng thời lưu trong SQL Server như trước. Cache tìm bản đã lưu theo nội dung, ngôn ngữ, model, giọng và phong cách; có bản phù hợp thì không gọi Gemini lại. Ngôn ngữ khách tạo lần đầu cũng được lưu cả file và database. Ghi file qua file tạm rồi rename để tránh đọc trúng file đang viết.
 
 `npm run audio:prepare-defaults` chuẩn bị Việt, Anh, Trung (vi, en, zh-CN) cho các POI đã xuất bản; giữ lại bản đã có và dừng nếu TTS hết quota. `npm run audio:export-files -w @tourism/translation-service` xuất các audio có sẵn trong SQL thành WAV mà không gọi API. Folder WAV không commit lên Git. Bản đã xuất vẫn tồn tại khi đóng tab hoặc restart process; SQL là bản lưu dùng chung, file là bản local được tái sử dụng hoặc phục hồi SQL khi thiếu.
 

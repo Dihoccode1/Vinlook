@@ -2,14 +2,14 @@ import { z } from 'zod';
 import { TranslationError, type TranslationProvider } from '../modules/translations/types.js';
 
 const schema = z.object({ data: z.object({ translations: z.array(z.object({ translatedText: z.string().min(1) })).length(1) }) });
-export function createGoogleTranslateProvider(apiKey = process.env.GOOGLE_TRANSLATE_API_KEY, fetcher: typeof fetch = fetch): TranslationProvider {
+export function create_google_translate_provider(api_key = process.env.GOOGLE_TRANSLATE_API_KEY, fetcher: typeof fetch = fetch): TranslationProvider {
   return { name: 'Google Cloud Translation', async translate(text, source, target) {
     if (!text.trim()) return text;
-    if (!apiKey?.trim()) throw new TranslationError('PROVIDER_NOT_CONFIGURED');
+    if (!api_key?.trim()) throw new TranslationError('PROVIDER_NOT_CONFIGURED');
     const signal = AbortSignal.timeout(20000);
     try {
       const response = await fetcher('https://translation.googleapis.com/language/translate/v2', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': apiKey },
+        method: 'POST', headers: { 'content-Type': 'application/json', 'X-Goog-Api-Key': api_key },
         body: JSON.stringify({ q: text, source, target, format: 'text' }), signal, redirect: 'error',
       });
       if (response.status === 429) throw new TranslationError('PROVIDER_QUOTA');

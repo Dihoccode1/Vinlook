@@ -9,3 +9,4 @@ coverage/
 .DS_Store
 Thumbs.db
 services/translation-service/storage/narrations/
+.local-backups/

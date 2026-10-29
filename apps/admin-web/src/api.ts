@@ -1,10 +1,10 @@
 export interface Poi {
-  visitorDescription?: string;
+  visitor_description?: string;
   id: string; name: string; slug: string; description: string; address: string; category: string;
-  latitude: number; longitude: number; sourceLanguage: string; isPublished: boolean; updatedAt: string;
-  imageUrl: string | null; imageCredit: string | null; imageSourceUrl: string | null; imageLicenseUrl: string | null;
+  latitude: number; longitude: number; source_language: string; is_published: boolean; updated_at: string;
+  image_url: string | null; image_credit: string | null; image_source_url: string | null; image_license_url: string | null;
 }
-export interface Stats { total: number; published: number; drafts: number; withImages: number; categories: { category: string; total: number }[] }
+export interface Stats { total: number; published: number; drafts: number; with_images: number; categories: { category: string; total: number }[] }
 export const categories: Record<string, string> = { market: 'Chợ & mua sắm', history: 'Lịch sử & bảo tàng', architecture: 'Kiến trúc & văn hóa' };
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;

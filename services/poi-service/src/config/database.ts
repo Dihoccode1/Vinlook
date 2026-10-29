@@ -3,7 +3,7 @@ import { config } from './index.js';
 
 let pending: Promise<sql.ConnectionPool> | undefined;
 
-export function getPool(): Promise<sql.ConnectionPool> {
+export function get_pool(): Promise<sql.ConnectionPool> {
   if (!config.database.password) throw new Error('SQLSERVER_PASSWORD is required');
   pending ??= new sql.ConnectionPool(config.database).connect().then(pool => {
     pool.on('error', () => console.error('SQL Server pool error'));
@@ -15,7 +15,7 @@ export function getPool(): Promise<sql.ConnectionPool> {
   return pending;
 }
 
-export async function closePool(): Promise<void> {
+export async function close_pool(): Promise<void> {
   if (pending) await (await pending).close();
   pending = undefined;
 }

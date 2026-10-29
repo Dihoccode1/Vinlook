@@ -1,34 +1,34 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { setListening } from '../../services/activity';
+import { set_listening } from '../../services/activity';
 
-export function NarrationPlayer({ poiId, text, language, disabled, languageControl }: { poiId: string; text: string; language: string; disabled: boolean; languageControl: ReactNode }) {
-  const [state, setState] = useState<'idle' | 'loading' | 'ready' | 'playing' | 'paused'>('idle');
-  const [error, setError] = useState('');
+export function NarrationPlayer({ poi_id: poi_id, text, language, disabled, language_control: language_control }: { poi_id: string; text: string; language: string; disabled: boolean; language_control: ReactNode }) {
+  const [state, set_state] = useState<'idle' | 'loading' | 'ready' | 'playing' | 'paused'>('idle');
+  const [error, set_error] = useState('');
   const audio = useRef<HTMLAudioElement | null>(null);
   const controller = useRef<AbortController | null>(null);
-  const objectUrl = useRef<string | null>(null);
-  const activityId = useRef(crypto.randomUUID());
+  const object_url = useRef<string | null>(null);
+  const activity_id = useRef(crypto.randomUUID());
   useEffect(() => {
-    setState('idle'); setError('');
+    set_state('idle'); set_error('');
     return () => {
-      setListening(activityId.current, false);
+      set_listening(activity_id.current, false);
       controller.current?.abort(); controller.current = null;
       if (audio.current) { audio.current.onplaying = null; audio.current.onpause = null; audio.current.onended = null; audio.current.onerror = null; audio.current.pause(); audio.current.removeAttribute('src'); audio.current.load(); audio.current = null; }
-      if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
-      objectUrl.current = null;
+      if (object_url.current) URL.revokeObjectURL(object_url.current);
+      object_url.current = null;
     };
-  }, [poiId, text, language, disabled]);
+  }, [poi_id, text, language, disabled]);
   async function play() {
     if (disabled || state === 'loading') return;
-    if (state === 'playing') { audio.current?.pause(); setState('paused'); return; }
-    setError('');
+    if (state === 'playing') { audio.current?.pause(); set_state('paused'); return; }
+    set_error('');
     const request = new AbortController(); controller.current = request;
     try {
       if (!audio.current) {
-        setState('loading');
-        const response = await fetch(`/api/pois/${encodeURIComponent(poiId)}/narration`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ language }), signal: request.signal,
+        set_state('loading');
+        const response = await fetch(`/api/pois/${encodeURIComponent(poi_id)}/narration`, {
+          method: 'POST', headers: { 'content-Type': 'application/json' }, body: JSON.stringify({ language }), signal: request.signal,
         });
         if (!response.ok) {
           const body = await response.json();
@@ -36,32 +36,32 @@ export function NarrationPlayer({ poiId, text, language, disabled, languageContr
         }
         const blob = await response.blob();
         if (request.signal.aborted) return;
-        objectUrl.current = URL.createObjectURL(blob);
-        const player = new Audio(objectUrl.current); audio.current = player;
-        player.onplaying = () => { setListening(activityId.current,true); setState('playing'); };
-        player.onpause = () => { setListening(activityId.current,false); setState(previous=>previous==='playing'?'paused':previous); };
-        player.onended = () => { setListening(activityId.current,false); setState('ready'); };
-        player.onerror = () => { setListening(activityId.current,false); setState('ready'); setError('Không phát được âm thanh. Vui lòng thử lại.'); };
+        object_url.current = URL.createObjectURL(blob);
+        const player = new Audio(object_url.current); audio.current = player;
+        player.onplaying = () => { set_listening(activity_id.current,true); set_state('playing'); };
+        player.onpause = () => { set_listening(activity_id.current,false); set_state(previous=>previous==='playing'?'paused':previous); };
+        player.onended = () => { set_listening(activity_id.current,false); set_state('ready'); };
+        player.onerror = () => { set_listening(activity_id.current,false); set_state('ready'); set_error('Không phát được âm thanh. Vui lòng thử lại.'); };
       }
       await audio.current!.play();
-      if (!request.signal.aborted) setState('playing');
+      if (!request.signal.aborted) set_state('playing');
     } catch (failure) {
       if (request.signal.aborted) return;
-      setState(audio.current ? 'ready' : 'idle');
-      setError(failure instanceof DOMException && failure.name === 'NotAllowedError' ? 'Âm thanh đã sẵn sàng. Nhấn nghe lần nữa để phát.' : failure instanceof Error ? failure.message : 'Không thể tải thuyết minh.');
+      set_state(audio.current ? 'ready' : 'idle');
+      set_error(failure instanceof DOMException && failure.name === 'NotAllowedError' ? 'Âm thanh đã sẵn sàng. Nhấn nghe lần nữa để phát.' : failure instanceof Error ? failure.message : 'Không thể tải thuyết minh.');
     }
   }
   function stop() {
     controller.current?.abort();
     if (audio.current) { audio.current.pause(); audio.current.currentTime = 0; }
-    setState(audio.current ? 'ready' : 'idle'); setError('');
+    set_state(audio.current ? 'ready' : 'idle'); set_error('');
   }
   return <section className="narration-player" aria-label="Thuyết minh địa điểm" aria-busy={state === 'loading'}>
     <div className="narration-actions">
       <button className="narration-play" disabled={disabled || state === 'loading'} onClick={() => void play()}>
         {state === 'loading' ? 'Đang tạo giọng đọc…' : state === 'playing' ? '⏸ Tạm dừng' : state === 'paused' ? '▶ Tiếp tục' : '▶ Nghe thuyết minh'}
       </button>
-      {languageControl}
+      {language_control}
       {['loading', 'playing', 'paused'].includes(state) && <button className="narration-stop" onClick={stop}>Dừng</button>}
     </div>
     <small role="status">{state === 'loading' ? 'Đang chuẩn bị câu chuyện cho bạn. Lần đầu có thể cần chờ một chút.' : disabled ? 'Chờ bản dịch để nghe theo ngôn ngữ đã chọn.' : 'Chọn ngôn ngữ rồi nhấn “Nghe thuyết minh” để khám phá câu chuyện nơi đây.'}</small>

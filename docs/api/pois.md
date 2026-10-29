@@ -19,11 +19,11 @@ Tìm theo tên hoặc địa chỉ. Chỉ trả POI được xuất bản.
     "latitude": 10.7725,
     "longitude": 106.698,
     "category": "market",
-    "sourceLanguage": "vi",
-    "imageUrl": "/api/pois/11111111-1111-4111-8111-111111111111/image",
-    "imageCredit": "Riza · CC BY 2.0",
-    "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:Ben_Thanh_market_2.jpg",
-    "imageLicenseUrl": "https://creativecommons.org/licenses/by/2.0/"
+    "source_language": "vi",
+    "image_url": "/api/pois/11111111-1111-4111-8111-111111111111/image",
+    "image_credit": "Riza · CC BY 2.0",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Ben_Thanh_market_2.jpg",
+    "image_license_url": "https://creativecommons.org/licenses/by/2.0/"
   }],
   "pagination": { "page": 1, "limit": 20, "total": 3 }
 }
@@ -40,7 +40,7 @@ Gateway trả 502 khi không liên lạc được upstream. Các method ghi chư
 
 ## GET /pois/:id/image
 
-Trả bytes ảnh gốc từ `PoiDb.dbo.PoiImages.Content` (VARBINARY(MAX)), cùng Content-Type, ETag và Cache-Control.
+Trả bytes ảnh gốc từ `PoiDb.dbo.poi_images.content` (VARBINARY(MAX)), cùng content-Type, ETag và Cache-Control.
 Gateway chuyển tiếp nguyên bytes; không dùng JSON/base64 cho nội dung ảnh.
 Nếu `If-None-Match` trùng ETag thì trả 304. UUID sai trả 400, POI chưa xuất bản hoặc chưa có ảnh trả 404.
 Hiện hỗ trợ một ảnh chính trên mỗi POI, tối đa 5 MiB, JPEG/PNG/WebP.

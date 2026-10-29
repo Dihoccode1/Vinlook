@@ -9,4 +9,4 @@ export const languages = [
   { code: 'ar', name: 'العربية' }, { code: 'hi', name: 'हिन्दी' },
 ] as const;
 export type LanguageCode = typeof languages[number]['code'];
-export function supportsLanguage(value: string): value is LanguageCode { return languages.some(language => language.code === value); }
+export function supports_language(value: string): value is LanguageCode { return languages.some(language => language.code === value); }

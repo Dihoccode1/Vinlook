@@ -1,16 +1,16 @@
 import { Router, json } from 'express';
 import { randomBytes, createHash, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
-import { sqlAuthStore, type AuthStore } from './auth-store.js';
+import { sql_auth_store, type AuthStore } from './auth-store.js';
 
 const derive = promisify(scrypt);
-const cookieName = 'vinlook_admin';
+const cookie_name = 'vinlook_admin';
 const ttl = 8 * 60 * 60 * 1000;
-export function adminAuth(options = { username: process.env.ADMIN_USERNAME ?? 'admin', passwordHash: process.env.ADMIN_PASSWORD_HASH ?? '', key: process.env.ADMIN_API_KEY ?? '' }, store: AuthStore = sqlAuthStore) {
+export function admin_auth(options = { username: process.env.ADMIN_USERNAME ?? 'admin', password_hash: process.env.ADMIN_PASSWORD_HASH ?? '', key: process.env.ADMIN_API_KEY ?? '' }, store: AuthStore = sql_auth_store) {
   const router = Router();
   const attempts = new Map<string, { count: number; until: number }>();
   const secure = process.env.NODE_ENV === 'production';
-  const tokenHash = (value: string) => createHash('sha256').update(value).digest('hex');
+  const token_hash = (value: string) => createHash('sha256').update(value).digest('hex');
   function prune() {
     for (const [ip, attempt] of attempts) if (attempt.until <= Date.now()) attempts.delete(ip);
   }
@@ -31,30 +31,36 @@ export function adminAuth(options = { username: process.env.ADMIN_USERNAME ?? 'a
     if (!attempt && attempts.size >= 1024) { res.status(429).json({ error: { message: 'Vui lòng thử lại sau.' } }); return; }
     // Count before awaiting password verification, including simultaneous requests.
     attempts.set(ip, { count: (attempt?.count ?? 0) + 1, until: attempt?.until ?? Date.now() + 900000 });
-    const user = await store.findUser(username);
-    const [salt, expected] = (user?.passwordHash ?? `${'0'.repeat(32)}:${'0'.repeat(128)}`).split(':');
+    const user = await store.find_user(username);
+    const [salt, expected] = (user?.password_hash ?? `${'0'.repeat(32)}:${'0'.repeat(128)}`).split(':');
     if (!salt || !expected || !/^[a-f0-9]{128}$/i.test(expected)) { res.status(503).json({ error: { message: 'Cấu hình tài khoản không hợp lệ.' } }); return; }
     const actual = await derive(password, salt!, 64) as Buffer;
     if (!timingSafeEqual(actual, Buffer.from(expected!, 'hex')) || !user) { res.status(401).json({ error: { message: 'Tài khoản hoặc mật khẩu không đúng.' } }); return; }
     attempts.delete(ip);
     const token = randomBytes(32).toString('hex');
-    await store.createSession(tokenHash(token), user, new Date(Date.now() + ttl));
-    res.cookie(cookieName, token, { httpOnly: true, sameSite: 'strict', secure, path: '/api/admin', maxAge: ttl });
-    res.json({ data: { username: user.username } });
+    await store.create_session(token_hash(token), user, new Date(Date.now() + ttl));
+    res.cookie(cookie_name, token, { httpOnly: true, sameSite: 'strict', secure, path: '/api/admin', maxAge: ttl });
+    res.json({ data: { id: user.id, username: user.username, role: user.role } });
   });
   router.use(async (req, res, next) => {
     prune();
     // Never accept a shared API key supplied by the browser or a dev proxy.
     delete req.headers['x-admin-key'];
     delete req.headers['x-admin-user-id'];
-    const token = (req.get('cookie') ?? '').split(';').map(item => item.trim()).find(item => item.startsWith(`${cookieName}=`))?.slice(cookieName.length + 1) ?? '';
-    const hash = tokenHash(token);
-    const user = token ? await store.findSession(hash) : undefined;
+    const token = (req.get('cookie') ?? '').split(';').map(item => item.trim()).find(item => item.startsWith(`${cookie_name}=`))?.slice(cookie_name.length + 1) ?? '';
+    const hash = token_hash(token);
+    const user = token ? await store.find_session(hash) : undefined;
     if (!user) { res.status(401).json({ error: { code: 'LOGIN_REQUIRED', message: 'Vui lòng đăng nhập quản trị.' } }); return; }
     if (req.path === '/auth/logout' && req.method === 'POST') {
-      await store.revokeSession(hash); res.clearCookie(cookieName, { httpOnly: true, sameSite: 'strict', secure, path: '/api/admin' }); res.status(204).end(); return;
+      await store.revoke_session(hash); res.clearCookie(cookie_name, { httpOnly: true, sameSite: 'strict', secure, path: '/api/admin' }); res.status(204).end(); return;
     }
-    if (req.path === '/auth/session' && req.method === 'GET') { res.json({ data: { username: user.username } }); return; }
+    if (req.path === '/auth/session' && req.method === 'GET') { res.json({ data: { id: user.id, username: user.username, role: user.role } }); return; }
+    // Staff may use only overview and POI tools, including direct API requests.
+    const staff_path = /^\/(stats|activity|geocode|pois(?:\/[^/]+(?:\/image)?)?)\/?$/.test(req.path);
+    if (user.role !== 'admin' && !(user.role === 'staff' && staff_path)) {
+      res.status(403).json({ error: { message: 'Bạn không có quyền truy cập chức năng này.' } }); return;
+    }
+    res.locals.adminUser = user;
     req.headers['x-admin-key'] = options.key;
     req.headers['x-admin-user-id'] = user.id;
     next();

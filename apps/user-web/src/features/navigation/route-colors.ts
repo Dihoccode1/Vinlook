@@ -5,4 +5,4 @@ const colors: Record<VehicleProfile, string[]> = {
   motorcycle: ['#20855b', '#377db5', '#cf7a26', '#9760b2', '#b45372', '#607d35'],
   walking: ['#7950b5', '#d17b25', '#1d8e80', '#377db5', '#b45372', '#607d35'],
 };
-export function routeLegColor(profile: VehicleProfile, index: number) { return colors[profile][index % colors[profile].length]; }
+export function route_leg_color(profile: VehicleProfile, index: number) { return colors[profile][index % colors[profile].length]; }

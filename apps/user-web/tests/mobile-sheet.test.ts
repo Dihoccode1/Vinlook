@@ -8,7 +8,7 @@ import { MobileSheet, type MobileSheetHandle } from '../src/features/layout/Mobi
 async function mount(t: TestContext, width = 390) {
   const dom = new JSDOM('<div id="root"></div>', { url: 'http://localhost/' });
   const previous = { window: globalThis.window, document: globalThis.document,
-    reactAct: (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT };
+    react_act: (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT };
   Object.assign(globalThis, { window: dom.window, document: dom.window.document, IS_REACT_ACT_ENVIRONMENT: true });
   Object.defineProperty(dom.window, 'innerWidth', { value: width, configurable: true });
   Object.defineProperty(dom.window, 'innerHeight', { value: 800, configurable: true });
@@ -29,7 +29,7 @@ async function mount(t: TestContext, width = 390) {
   t.after(async () => {
     await act(() => root.unmount());
     assert.equal(app.style.getPropertyValue('--mobile-sheet-height'), '');
-    Object.assign(globalThis, { window: previous.window, document: previous.document, IS_REACT_ACT_ENVIRONMENT: previous.reactAct });
+    Object.assign(globalThis, { window: previous.window, document: previous.document, IS_REACT_ACT_ENVIRONMENT: previous.react_act });
     dom.window.close();
   });
   async function pointer(type: string, y: number, time: number, id = 1, target: HTMLElement = handle) {

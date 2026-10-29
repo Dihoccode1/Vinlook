@@ -9,9 +9,9 @@ const messages: Record<string, string> = {
 
 export class RouteClientError extends Error { constructor(public code: string, message: string) { super(message); } }
 
-export async function calculateRoute(waypoints: Coordinate[], signal: AbortSignal, profile: VehicleProfile = 'driving'): Promise<RouteResult> {
+export async function calculate_route(waypoints: Coordinate[], signal: AbortSignal, profile: VehicleProfile = 'driving'): Promise<RouteResult> {
   const response = await fetch('/api/routes', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    method: 'POST', headers: { 'content-Type': 'application/json' },
     body: JSON.stringify({ profile, optimization: 'shortest', waypoints }), signal,
   });
   const body = await response.json();

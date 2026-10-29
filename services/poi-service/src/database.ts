@@ -35,34 +35,34 @@ async function main() {
           .input('legacy', sql.NVarChar(2048), `/images/pois/${fixture.file}`)
           .input('content', sql.VarBinary(sql.MAX), content)
           .input('hash', sql.Char(64), createHash('sha256').update(content).digest('hex'))
-          .query(`INSERT INTO dbo.PoiImages (PoiId, Content, ContentType, Sha256)
-            SELECT p.Id, @content, 'image/jpeg', @hash FROM dbo.Pois p
-            WHERE p.Slug = @slug AND (p.ImageUrl = @legacy OR p.ImageUrl IS NULL)
-              AND NOT EXISTS (SELECT 1 FROM dbo.PoiImages WHERE PoiId = p.Id);
-            UPDATE p SET ImageUrl = '/api/pois/' + CONVERT(VARCHAR(36), p.Id) + '/image'
-            FROM dbo.Pois p INNER JOIN dbo.PoiImages i ON i.PoiId = p.Id
-            WHERE p.Slug = @slug AND (p.ImageUrl = @legacy OR p.ImageUrl IS NULL);`);
+          .query(`INSERT INTO dbo.poi_images (poi_id, content, content_type, sha256)
+            SELECT p.id, @content, 'image/jpeg', @hash FROM dbo.pois p
+            WHERE p.slug = @slug AND (p.image_url = @legacy OR p.image_url IS NULL)
+              AND NOT EXISTS (SELECT 1 FROM dbo.poi_images WHERE poi_id = p.id);
+            UPDATE p SET image_url = '/api/pois/' + CONVERT(VARCHAR(36), p.id) + '/image'
+            FROM dbo.pois p INNER JOIN dbo.poi_images i ON i.poi_id = p.id
+            WHERE p.slug = @slug AND (p.image_url = @legacy OR p.image_url IS NULL);`);
       }
       console.log('Development POIs seeded');
       return;
     }
-    await pool.request().query(`IF OBJECT_ID(N'dbo.SchemaMigrations', N'U') IS NULL
-      CREATE TABLE dbo.SchemaMigrations (Name NVARCHAR(255) NOT NULL PRIMARY KEY, AppliedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME());`);
+    await pool.request().batch(await readFile(new URL('../../../database/migration-history.sql', import.meta.url), 'utf8'));
     const folder = new URL('../database/migrations/', import.meta.url);
     const files = (await readdir(folder)).filter(name => name.endsWith('.sql')).sort();
     for (const file of files) {
+      if (file.length > 110) throw new Error('Migration filename too long');
       const tx = new sql.Transaction(pool);
       await tx.begin();
       try {
         await new sql.Request(tx).query(`DECLARE @result INT;
-          EXEC @result = sp_getapplock @Resource = N'poi-schema-migrations', @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = 10000;
+          EXEC @result = sp_getapplock @Resource = N'vinlook-schema-migrations', @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = 10000;
           IF @result < 0 THROW 51000, 'Migration lock unavailable', 1;`);
-        const applied = await new sql.Request(tx).input('name', sql.NVarChar(255), file)
-          .query('SELECT Name FROM dbo.SchemaMigrations WHERE Name = @name');
+        const applied = await new sql.Request(tx).input('name', sql.NVarChar(128), `Vinlook.Migration.${file}`)
+          .query('SELECT name FROM sys.extended_properties WHERE class=0 AND name=@name');
         if (!applied.recordset.length) {
           await new sql.Request(tx).batch(await readFile(new URL(file, folder), 'utf8'));
-          await new sql.Request(tx).input('name', sql.NVarChar(255), file)
-            .query('INSERT INTO dbo.SchemaMigrations (Name) VALUES (@name)');
+          await new sql.Request(tx).input('name', sql.NVarChar(128), `Vinlook.Migration.${file}`)
+            .query("DECLARE @stamp NVARCHAR(40)=CONVERT(NVARCHAR(40),SYSUTCDATETIME(),126); EXEC sys.sp_addextendedproperty @name=@name,@value=@stamp;");
           console.log(`Applied ${file}`);
         }
         await tx.commit();
@@ -72,12 +72,12 @@ async function main() {
       }
     }
     // Seed only when absent: rerunning migrations must never reset a password.
-    const passwordHash = process.env.ADMIN_PASSWORD_HASH;
-    if (passwordHash && /^[a-f0-9]{32}:[a-f0-9]{128}$/i.test(passwordHash)) {
+    const password_hash = process.env.ADMIN_PASSWORD_HASH;
+    if (password_hash && /^[a-f0-9]{32}:[a-f0-9]{128}$/i.test(password_hash)) {
       await pool.request().input('username', sql.NVarChar(100), process.env.ADMIN_USERNAME ?? 'admin')
-        .input('hash', sql.VarChar(200), passwordHash).query(`
-          IF NOT EXISTS (SELECT 1 FROM dbo.Users WHERE Username=@username)
-            INSERT INTO dbo.Users(Username,PasswordHash,FullName) VALUES(@username,@hash,N'Quản trị viên Vinlook');`);
+        .input('hash', sql.VarChar(200), password_hash).query(`
+          IF NOT EXISTS (SELECT 1 FROM dbo.users WHERE username=@username)
+            INSERT INTO dbo.users(username,password_hash,full_name) VALUES(@username,@hash,N'Quản trị viên Vinlook');`);
     }
   } finally { await pool.close(); }
 }

@@ -1,6 +1,6 @@
 import { TranslationError } from './types.js';
 
-export async function prepareBatch(ids: string[], languages: string[], actions: {
+export async function prepare_batch(ids: string[], languages: string[], actions: {
   translate(id: string, language: string): Promise<void>;
   narrate?(id: string, language: string): Promise<void>;
   report(message: string): void;
@@ -15,9 +15,9 @@ export async function prepareBatch(ids: string[], languages: string[], actions: 
       actions.report(failures.at(-1)!);
     }
   }
-  let audioReady = 0;
+  let audio_ready = 0;
   if (actions.narrate) for (const { id, language } of ready) {
-    try { await actions.narrate(id, language); audioReady++; }
+    try { await actions.narrate(id, language); audio_ready++; }
     catch (error) {
       const reason = error instanceof TranslationError ? error.code : 'UNEXPECTED_ERROR';
       failures.push(`AUDIO ${id} ${language}: ${reason}`); actions.report(failures.at(-1)!);
@@ -25,5 +25,5 @@ export async function prepareBatch(ids: string[], languages: string[], actions: 
       if (error instanceof TranslationError && ['PROVIDER_QUOTA', 'PROVIDER_NOT_CONFIGURED'].includes(error.code)) break;
     }
   }
-  return { textReady: ready.length, audioReady, total: ids.length * languages.length, failures };
+  return { text_ready: ready.length, audio_ready: audio_ready, total: ids.length * languages.length, failures };
 }

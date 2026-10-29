@@ -1,10 +1,10 @@
 import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import helmet from 'helmet';
-import { createValhallaProvider } from './providers/valhalla.js';
-import { routeRequestSchema, RoutingError, type RouteProvider } from './modules/routes/route.schema.js';
+import { create_valhalla_provider } from './providers/valhalla.js';
+import { route_request_schema, RoutingError, type RouteProvider } from './modules/routes/route.schema.js';
 
-export function createApp(provider: RouteProvider = createValhallaProvider()) {
+export function create_app(provider: RouteProvider = create_valhalla_provider()) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
@@ -14,7 +14,7 @@ export function createApp(provider: RouteProvider = createValhallaProvider()) {
     app.get(path, (_req, res) => res.json({ status: 'ok', service: 'navigation-service' }));
   }
   app.post('/routes', async (req, res) => {
-    const input = routeRequestSchema.safeParse(req.body);
+    const input = route_request_schema.safeParse(req.body);
     if (!input.success) {
       res.status(400).json({ error: { code: 'INVALID_ROUTE', message: 'Provide 2–10 valid waypoints and a supported vehicle' } });
       return;

@@ -4,7 +4,7 @@ Lệnh `npm run content:import-editorial -w @tourism/translation-service` nhập
 
 Nguồn dữ liệu trong `src/content/saigon-pois.ts` và `src/content/editorial-locales.ts`. Mỗi POI mới có một mô tả tiếng Việt và 15 bản dịch: en, fr, de, es, it, pt, ru, ja, ko, zh-CN, th, id, ms, ar, hi. Tên riêng và địa chỉ giữ tiếng Việt để đối chiếu bản đồ. Bài hướng dẫn dùng bố cục chung theo nhóm chợ, bảo tàng và không gian kiến trúc; đây là bản nháp hướng dẫn trải nghiệm, chưa phải bài khảo cứu lịch sử riêng cho từng địa điểm. Thời lượng đọc thực tế phụ thuộc giọng TTS.
 
-POI ghi vào PoiDb.dbo.Pois. Bản dịch ghi vào TranslationDb.dbo.PoiTranslations, Provider = Codex editorial và source hash của nội dung gốc. API dùng bản biên soạn này khi hash khớp mà không gọi lại provider. Nội dung nguồn bị sửa sẽ làm bản dịch cũ không còn hợp lệ như các bản dịch khác.
+POI ghi vào PoiDb.dbo.pois. Bản dịch ghi vào TranslationDb.dbo.poi_translations, provider = Codex editorial và source hash của nội dung gốc. API dùng bản biên soạn này khi hash khớp mà không gọi lại provider. Nội dung nguồn bị sửa sẽ làm bản dịch cũ không còn hợp lệ như các bản dịch khác.
 
 Importer không ghi đè POI hay bản dịch đã có. Nếu trùng slug/ID nhưng nội dung đã khác, importer giữ nguyên dữ liệu và báo tên POI. Chạy lại an toàn: không sinh thêm bản ghi. Ba POI gốc, ảnh và audio hiện có được giữ nguyên. Bộ văn bản này không tự tạo audio. Ảnh cho 17 POI mới đã được bổ sung bằng scripts/poi-photos.mjs và lưu SQL. Có thể chạy content:prepare sau đó nếu cần tạo giọng bằng Gemini.
 
@@ -21,9 +21,9 @@ Mode `prepare` tải bộ ảnh được chọn cụ thể từ Wikimedia Common
 
 `npm run content:complete-translations -w @tourism/translation-service` nhập 7 bản còn thiếu của Chợ Bến Thành và 13 bản của Dinh Độc Lập. Các bản này dịch đầy đủ năm đoạn của bài gốc đang dùng, không thay tiếng Việt. Script kiểm tra hash của cả hai bài trước khi ghi, giữ nguyên bản dịch hợp lệ đã có và kiểm tra coverage theo hash của toàn bộ POI đã xuất bản. Kết quả đã xác nhận: 20 POI, 300 bản dịch hợp lệ, không thiếu ngôn ngữ nào. Tiếng Việt gốc không tính trong 300 bản dịch.
 
-Các bản bổ sung mang Provider Codex editorial và được API trả trực tiếp từ SQL. Chạy lại không ghi thêm hoặc ghi đè bản hợp lệ. Nếu bài gốc bị chỉnh sửa, cần cập nhật nội dung dịch và hash sau khi biên tập, không tự gắn bản dịch cũ vào nội dung mới. Việc nhập văn bản không tạo thêm audio.
+Các bản bổ sung mang provider Codex editorial và được API trả trực tiếp từ SQL. Chạy lại không ghi thêm hoặc ghi đè bản hợp lệ. Nếu bài gốc bị chỉnh sửa, cần cập nhật nội dung dịch và hash sau khi biên tập, không tự gắn bản dịch cũ vào nội dung mới. Việc nhập văn bản không tạo thêm audio.
 
 ## Giới thiệu trên thẻ địa điểm
-`PoiDb.dbo.Pois.VisitorDescription` lưu giới thiệu ngắn độc lập với `Description` (kịch bản thuyết minh). Migration 004 thêm cột; 005 điền giới thiệu cho 20 slug hiện có nếu chưa có nội dung. Không sửa kịch bản gốc, hash bản dịch hoặc audio đã lưu. Admin có hai ô riêng cho giới thiệu và thuyết minh. Thẻ khách chỉ hiện giới thiệu, danh mục, địa chỉ; không render bài đọc, kể cả khi chưa có giới thiệu. Giới thiệu hiện theo ngôn ngữ gốc; lựa chọn ngôn ngữ tiếp tục áp dụng cho tên và audio thuyết minh.
+`PoiDb.dbo.pois.visitor_description` lưu giới thiệu ngắn độc lập với `description` (kịch bản thuyết minh). Migration 004 thêm cột; 005 điền giới thiệu cho 20 slug hiện có nếu chưa có nội dung. Không sửa kịch bản gốc, hash bản dịch hoặc audio đã lưu. Admin có hai ô riêng cho giới thiệu và thuyết minh. Thẻ khách chỉ hiện giới thiệu, danh mục, địa chỉ; không render bài đọc, kể cả khi chưa có giới thiệu. Giới thiệu hiện theo ngôn ngữ gốc; lựa chọn ngôn ngữ tiếp tục áp dụng cho tên và audio thuyết minh.
 
 Nguồn tham khảo biên tập: https://vietnam.travel/places-to-go/southern-vietnam/ho-chi-minh-city/ ; https://vietnam.travel/things-to-do/7-must-see-attractions-hcmc/ ; https://visithcmc.vn/vi/bao-tang-my-thuat-thanh-pho-ho-chi-minh-ve-dep-huyen-bi-say-dam-long-nguoi/ . Nội dung giới thiệu được viết lại ngắn, không ghi giá vé/giờ mở cửa chưa xác minh.

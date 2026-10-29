@@ -1,14 +1,14 @@
 # Dịch tự động nội dung POI
 
-Mỗi POI chỉ lưu một tên, mô tả và `sourceLanguage` gốc trong PoiDb. Translation service lấy nội dung gốc qua POI API; client chỉ gửi ID và ngôn ngữ đích, không gửi nội dung tùy ý.
+Mỗi POI chỉ lưu một tên, mô tả và `source_language` gốc trong PoiDb. Translation service lấy nội dung gốc qua POI API; client chỉ gửi ID và ngôn ngữ đích, không gửi nội dung tùy ý.
 
 - `GET /api/languages`: danh sách 16 ngôn ngữ (tiếng Việt và 15 ngôn ngữ khác).
-- `POST /api/pois/:id/translation`, JSON `{ "language": "en" }`: dịch tên và mô tả. `data` chứa nội dung, provider, sourceHash và translatedAt; `fromCache` cho biết kết quả đã lưu, `original` cho biết trả nguyên bản.
+- `POST /api/pois/:id/translation`, JSON `{ "language": "en" }`: dịch tên và mô tả. `data` chứa nội dung, provider, source_hash và translated_at; `from_cache` cho biết kết quả đã lưu, `original` cho biết trả nguyên bản.
 - Chọn ngôn ngữ nguồn trả nguyên bản, không gọi API dịch.
 
-Cache nằm ở **TranslationDb.dbo.PoiTranslations**, khóa `(PoiId, LanguageCode)`. SHA-256 của ngôn ngữ nguồn, tên và mô tả giúp phát hiện nội dung thay đổi. Cache cũ được thay thế khi có yêu cầu dịch tiếp theo. Các yêu cầu trùng đang chạy trong cùng process dùng chung một lần dịch. Không lưu kết quả lỗi; lỗi hạn mức trả 429, timeout 504 và lỗi provider 502. Giao diện giữ bản gốc và thông báo khi chưa có bản dịch.
+Cache nằm ở **TranslationDb.dbo.poi_translations**, khóa `(poi_id, language_code)`. SHA-256 của ngôn ngữ nguồn, tên và mô tả giúp phát hiện nội dung thay đổi. Cache cũ được thay thế khi có yêu cầu dịch tiếp theo. Các yêu cầu trùng đang chạy trong cùng process dùng chung một lần dịch. Không lưu kết quả lỗi; lỗi hạn mức trả 429, timeout 504 và lỗi provider 502. Giao diện giữ bản gốc và thông báo khi chưa có bản dịch.
 
-Provider cấu hình bằng TRANSLATION_PROVIDER: gemini dùng GEMINI_API_KEY và GEMINI_TRANSLATION_MODEL, google dùng Google Cloud Translation Basic v2 với GOOGLE_TRANSLATE_API_KEY. Cấu hình local hiện dùng Gemini cho cả dịch và TTS. Với lựa chọn google: Backend gọi `POST https://translation.googleapis.com/language/translate/v2` với `format: text`; API key chỉ nằm ở backend. Bản cache của provider cũ không được dùng lại khi đổi provider. Không tự chuyển về MyMemory khi lỗi hoặc thiếu key.
+provider cấu hình bằng TRANSLATION_PROVIDER: gemini dùng GEMINI_API_KEY và GEMINI_TRANSLATION_MODEL, google dùng Google Cloud Translation Basic v2 với GOOGLE_TRANSLATE_API_KEY. Cấu hình local hiện dùng Gemini cho cả dịch và TTS. Với lựa chọn google: Backend gọi `POST https://translation.googleapis.com/language/translate/v2` với `format: text`; API key chỉ nằm ở backend. Bản cache của provider cũ không được dùng lại khi đổi provider. Không tự chuyển về MyMemory khi lỗi hoặc thiếu key.
 
 Cấu hình Google Cloud:
 1. Tạo/chọn project Google Cloud, bật billing và Cloud Translation API theo yêu cầu của Google.
@@ -27,4 +27,4 @@ Kiểm tra SQL: `npm run test:integration -w @tourism/translation-service`. Unit
 
 `TRANSLATION_PROVIDERS=gemini,mymemory` ưu tiên hơn cấu hình provider đơn. Pool chia vòng tròn các yêu cầu; tên và mô tả được dịch song song. Khi một API lỗi/timeout/thiếu key/hết quota, thử provider còn lại; quota cooldown 60 giây, lỗi khác 10 giây. Cả hai lỗi thì trả lỗi, không lưu bản dịch giả. Cooldown chỉ trong process, không tăng hạn mức bên cung cấp.
 
-Cache hợp lệ do một provider trong pool tạo trước đó được dùng lại. Bản dịch mới qua pool ghi Provider là Multi-provider translation vì tên và mô tả có thể do hai API khác nhau tạo. MyMemory miễn phí 5.000 ký tự/ngày, giới hạn 500 byte/request; provider tự tách đoạn. Không dùng email người dùng để tăng quota. Có thể thay mymemory bằng google sau khi cấu hình GOOGLE_TRANSLATE_API_KEY. TTS vẫn do Gemini tạo và lưu riêng.
+Cache hợp lệ do một provider trong pool tạo trước đó được dùng lại. Bản dịch mới qua pool ghi provider là Multi-provider translation vì tên và mô tả có thể do hai API khác nhau tạo. MyMemory miễn phí 5.000 ký tự/ngày, giới hạn 500 byte/request; provider tự tách đoạn. Không dùng email người dùng để tăng quota. Có thể thay mymemory bằng google sau khi cấu hình GOOGLE_TRANSLATE_API_KEY. TTS vẫn do Gemini tạo và lưu riêng.

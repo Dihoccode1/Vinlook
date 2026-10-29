@@ -1,7 +1,7 @@
 -- Short visitor-facing introductions; never replace the narration source.
 -- Only fill empty introductions, preserving any admin-authored content.
-UPDATE p SET VisitorDescription = v.Introduction
-FROM dbo.Pois p INNER JOIN (VALUES
+UPDATE p SET visitor_description = v.Introduction
+FROM dbo.pois p INNER JOIN (VALUES
  (N'cho-ben-thanh', N'Điểm dừng để khám phá không gian chợ, tìm quà lưu niệm và trải nghiệm nhịp mua bán của thành phố. Hãy hỏi giá trước khi mua hàng và giữ đồ dùng cá nhân khi di chuyển trong khu đông người.'),
  (N'dinh-doc-lap', N'Điểm tham quan lịch sử tại trung tâm thành phố. Bạn có thể tìm hiểu không gian di tích qua các khu vực được mở cho khách; hãy xem sơ đồ và hướng dẫn tại điểm đến trước khi bắt đầu.'),
  (N'buu-dien-trung-tam', N'Công trình kiến trúc nằm trong cụm tham quan trung tâm Sài Gòn. Bạn có thể ghé quan sát không gian bưu điện, chụp ảnh và kết hợp khám phá các điểm đến xung quanh.'),
@@ -22,5 +22,5 @@ FROM dbo.Pois p INNER JOIN (VALUES
  (N'duong-sach-nguyen-van-binh', N'Không gian dạo bộ dành cho người yêu sách. Bạn có thể ghé các gian sách, tìm đầu sách yêu thích và xem thông báo sự kiện tại điểm đến.'),
  (N'ben-bach-dang', N'Điểm dừng dạo bộ và ngắm không gian ven sông Sài Gòn. Hãy chú ý thời tiết, giữ khoảng cách an toàn với mép nước và kiểm tra thông tin tại bến nếu muốn sử dụng dịch vụ đường thủy.'),
  (N'chua-giac-lam', N'Điểm đến dành cho hành trình tìm hiểu kiến trúc và văn hóa Phật giáo. Khi tham quan, hãy ăn mặc lịch sự, giữ yên lặng và đi theo lối được hướng dẫn.')
-) v(Slug, Introduction) ON v.Slug = p.Slug
-WHERE p.VisitorDescription = N'';
+) v(slug, Introduction) ON v.slug = p.slug
+WHERE p.visitor_description = N'';

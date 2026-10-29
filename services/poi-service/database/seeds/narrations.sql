@@ -1,6 +1,6 @@
 -- Upgrade only unchanged demo descriptions. Preserve administrator edits.
-UPDATE p SET Description = v.Narration, UpdatedAt = SYSUTCDATETIME()
-FROM dbo.Pois p INNER JOIN (VALUES
+UPDATE p SET description = v.Narration, updated_at = SYSUTCDATETIME()
+FROM dbo.pois p INNER JOIN (VALUES
 (N'cho-ben-thanh', N'Khu chợ nổi tiếng tại trung tâm Thành phố Hồ Chí Minh.', N'Chào bạn, chúng ta đang dừng chân tại Chợ Bến Thành, một điểm đến quen thuộc trong hành trình khám phá trung tâm Thành phố Hồ Chí Minh. Trước khi bắt đầu, hãy đứng ở nơi an toàn, tránh lòng đường và giữ lối đi thông thoáng. Bạn có thể dành ít phút quan sát nhịp sống xung quanh rồi mới tiếp tục tham quan.
 
 Điều thú vị của một khu chợ không chỉ nằm ở những món hàng. Hãy thử lắng nghe tiếng người trò chuyện, tiếng bước chân và những lời mời mua bán. Những âm thanh ấy tạo nên bức tranh sinh hoạt rất riêng. Khi nhìn vào các quầy hàng, bạn có thể chú ý cách người bán sắp xếp sản phẩm, những màu sắc cạnh nhau và cách mỗi gian hàng thu hút người ghé qua. Một chuyến tham quan chậm rãi thường giúp ta nhận ra nhiều chi tiết hơn một lần đi vội.
@@ -28,5 +28,5 @@ Khi bước vào khu vực được phép tham quan, bạn hãy ngẩng nhìn r�
 Một điểm dừng ở bưu điện cũng là lời gợi nhắc về những cách con người giữ liên lạc. Trước khi việc gửi tin nhắn trở nên quen thuộc, một lá thư hay một tấm bưu thiếp thường chứa đựng nhiều chờ đợi. Bạn có thể nghĩ đến một người mình muốn kể về chuyến đi hôm nay. Nếu có dịch vụ phù hợp đang hoạt động, hãy hỏi nhân viên về cách gửi một lời chào bằng thư hoặc bưu thiếp. Kiểm tra giá và thông tin người nhận trước khi sử dụng dịch vụ.
 
 Trong suốt thời gian tham quan, hãy nói vừa đủ nghe, giữ vệ sinh và tôn trọng người đang làm việc. Khi muốn chụp người khác ở cự ly gần, bạn nên hỏi ý kiến trước. Trước lúc rời đi, thử chọn một hình ảnh đại diện cho cảm nhận của bạn về nơi này: một ô cửa, một góc nhìn hay khoảnh khắc ai đó viết lời nhắn. Sau đó, mở lại lộ trình để tìm điểm đến tiếp theo và kiểm tra đường đi thực tế. Mong rằng bạn sẽ mang theo một câu chuyện nhỏ đáng nhớ từ điểm dừng này.')
-) v(Slug, PreviousDescription, Narration) ON p.Slug = v.Slug
-WHERE p.Description = v.PreviousDescription AND p.SourceLanguage = 'vi';
+) v(slug, PreviousDescription, Narration) ON p.slug = v.slug
+WHERE p.description = v.PreviousDescription AND p.source_language = 'vi';

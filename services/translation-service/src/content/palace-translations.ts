@@ -1,7 +1,7 @@
 /** Faithful translations of the existing five-paragraph Vietnamese palace narration. */
-export const palaceTranslations = {
+export const palace_translations = {
   slug: 'dinh-doc-lap',
-  sourceHash: '6f656886e4f42ea0da93b8827f685405dfc1a64756991327075ee9a421ab4493',
+  source_hash: '6f656886e4f42ea0da93b8827f685405dfc1a64756991327075ee9a421ab4493',
   translations: {
     fr: { name: 'Palais de l’Indépendance', description: `Bonjour, notre étape actuelle est le Palais de l’Indépendance. C’est l’occasion de découvrir un lieu lié à l’histoire et d’observer son architecture au cœur de la ville. Avant la visite, consultez les informations à l’entrée concernant les billets, les horaires, les espaces accessibles et les règles en vigueur ce jour-là.
 

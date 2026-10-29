@@ -34,8 +34,8 @@ Mỗi leg còn có `geometry` GeoJSON LineString của riêng chặng đó, ghé
 | 400 | INVALID_ROUTE / INVALID_BODY | Tọa độ, số điểm hoặc JSON sai |
 | 413 | INVALID_BODY | Request lớn hơn 16 KiB |
 | 422 | NO_ROUTE | Không có tuyến hoặc không tìm thấy đường trong bán kính 1 km quanh một điểm |
-| 502 | PROVIDER_UNAVAILABLE / INVALID_PROVIDER_RESPONSE | Provider không khả dụng hoặc dữ liệu không hợp lệ |
-| 504 | PROVIDER_TIMEOUT | Provider quá thời gian chờ 12 giây |
+| 502 | PROVIDER_UNAVAILABLE / INVALID_PROVIDER_RESPONSE | provider không khả dụng hoặc dữ liệu không hợp lệ |
+| 504 | PROVIDER_TIMEOUT | provider quá thời gian chờ 12 giây |
 
 Không lưu request/response tuyến đường trong database hay application log; response dùng `Cache-Control: no-store`.
 Khi người dùng bấm Chỉ đường tới đây hoặc thay đổi phương tiện/lộ trình, tọa độ được gửi tới Valhalla. Nếu chưa có GPS, giao diện tự chờ fix mới trước khi gọi API.
@@ -46,7 +46,7 @@ Khi người dùng bấm Chỉ đường tới đây hoặc thay đổi phương
 Readiness của Navigation Service chỉ xác nhận ứng dụng được cấu hình và đang chạy; không probe dịch vụ Valhalla.
 Gateway readiness hiện kiểm tra POI Service; khi routing lỗi các chức năng POI vẫn sử dụng được.
 
-Provider được cấu hình bởi server, client không được truyền URL provider.
+provider được cấu hình bởi server, client không được truyền URL provider.
 Valhalla công cộng dùng cho bản phát triển; production cần provider/self-host phù hợp chính sách sử dụng và lưu lượng.
 Chưa có traffic trực tiếp, reroute tự động theo GPS hay voice navigation.
 

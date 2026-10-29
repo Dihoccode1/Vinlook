@@ -7,7 +7,7 @@ Monorepo dùng npm workspaces, React + Vite + TypeScript và Node.js + Express +
 - `apps/user-web`: bản đồ Leaflet/OpenStreetMap, tìm kiếm, lọc danh mục, phân trang, chọn marker và xem chi tiết POI.
 - GPS trên trình duyệt: nút Về vị trí của tôi, marker vị trí, vòng sai số, bám theo vị trí và nhận biết vị trí cũ.
 - POI có marker ảnh thu nhỏ, ảnh trong danh sách và thẻ chi tiết; fallback khi thiếu/lỗi ảnh. Ảnh mẫu có nguồn và giấy phép trong `apps/user-web/public/images/pois/ATTRIBUTION.md`.
-- Nội dung ảnh lưu trong bảng `PoiDb.dbo.PoiImages` dạng `VARBINARY(MAX)`; API `/api/pois/:id/image` phục vụ ảnh qua Gateway với ETag/cache. Không cần giữ ảnh trong thư mục frontend để hiển thị.
+- Nội dung ảnh lưu trong bảng `PoiDb.dbo.poi_images` dạng `VARBINARY(MAX)`; API `/api/pois/:id/image` phục vụ ảnh qua Gateway với ETag/cache. Không cần giữ ảnh trong thư mục frontend để hiển thị.
 - `services/poi-service`: API đọc POI từ SQL Server, validation, truy vấn có tham số, health/readiness.
 - `services/api-gateway`: chuyển tiếp API POI và kiểm tra readiness của upstream.
 - `services/navigation-service`: tính tuyến ô tô bằng Valhalla, đi qua tối đa 9 POI và hướng dẫn từng chặng bằng tiếng Việt.

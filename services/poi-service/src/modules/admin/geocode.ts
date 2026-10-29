@@ -3,19 +3,19 @@ export type AddressLookup = (address: string) => Promise<AddressMatch[]>;
 
 // One shared limiter/cache for the local POI service. Multi-instance deployments
 // must use a shared limiter or a dedicated geocoding provider.
-export function createAddressLookup(fetcher: typeof fetch = fetch): AddressLookup {
+export function create_address_lookup(fetcher: typeof fetch = fetch): AddressLookup {
   const cache = new Map<string, { expires: number; data: AddressMatch[] }>();
   const pending = new Map<string, Promise<AddressMatch[]>>();
   let tail: Promise<void> = Promise.resolve();
-  let lastStart = 0;
+  let last_start = 0;
   const execute = async (address: string, key: string): Promise<AddressMatch[]> => {
     const previous = tail;
     let release!: () => void;
     tail = new Promise<void>(resolve => { release = resolve; });
     try {
       await previous;
-      await new Promise(resolve => setTimeout(resolve, Math.max(0, 1000 - (Date.now() - lastStart))));
-      lastStart = Date.now();
+      await new Promise(resolve => setTimeout(resolve, Math.max(0, 1000 - (Date.now() - last_start))));
+      last_start = Date.now();
       const url = new URL(process.env.PHOTON_SEARCH_URL || 'https://photon.komoot.io/api/');
       url.search = new URLSearchParams({ q: address.trim(), limit: '5', countrycode: 'VN' }).toString();
       const response = await fetcher(url, { headers: { 'User-Agent': 'Vinlook/0.1 (https://github.com/Dihoccode1/Vinlook)' }, signal: AbortSignal.timeout(6000), redirect: 'error' });
@@ -23,11 +23,11 @@ export function createAddressLookup(fetcher: typeof fetch = fetch): AddressLooku
       const body = await response.json() as { features?: unknown };
       const rows = body?.features;
       if (!Array.isArray(rows)) throw new Error('GEOCODE_UNAVAILABLE');
-      const houseNumber = address.trim().match(/^(\d+[a-zA-Z]?(?:[\/-]\d+[a-zA-Z]?)*)(?=\s|,|$)/)?.[1]?.toLowerCase();
+      const house_number = address.trim().match(/^(\d+[a-zA-Z]?(?:[\/-]\d+[a-zA-Z]?)*)(?=\s|,|$)/)?.[1]?.toLowerCase();
       const data: AddressMatch[] = rows.flatMap(row => {
         const p = row?.properties, coordinates = row?.geometry?.coordinates;
         if (!p || typeof p.countrycode !== 'string' || p.countrycode.toUpperCase() !== 'VN' || !Array.isArray(coordinates)) return [];
-        if (houseNumber && String(p.housenumber ?? '').toLowerCase() !== houseNumber) return [];
+        if (house_number && String(p.housenumber ?? '').toLowerCase() !== house_number) return [];
         const [longitude, latitude] = coordinates;
         if (typeof latitude !== 'number' || typeof longitude !== 'number') return [];
         const label = [...new Set([p.name, [p.housenumber, p.street].filter(Boolean).join(' '), p.district, p.city, p.state, p.country].filter(value => typeof value === 'string' && value))].join(', ');
@@ -55,4 +55,4 @@ export function createAddressLookup(fetcher: typeof fetch = fetch): AddressLooku
     } finally { pending.delete(key); }
   };
 }
-export const lookupAddress = createAddressLookup();
+export const lookup_address = create_address_lookup();

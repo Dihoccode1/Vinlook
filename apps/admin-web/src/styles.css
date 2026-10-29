@@ -18,3 +18,86 @@
 
 
 .login-page{min-height:100dvh;display:grid;place-items:center;padding:28px;background:radial-gradient(ellipse at top left,#e1ebda,transparent 65%),#f5f7f1}.login-card{width:min(100%,450px);background:#fffefb;border:1px solid #dde5d8;border-radius:20px;padding:40px;box-shadow:0 18px 65px #153f3210}.login-brand{text-decoration:none;font-size:38px;font-weight:700;color:#174c3c;letter-spacing:-1.5px}.login-brand span{color:#d98b45}.login-card .eyebrow{margin:25px 0 10px}.login-card h1{font-size:26px;margin:0 0 12px;line-height:1.4}.login-intro{font-size:14px;color:#768573;margin:0 0 28px}.login-card label{display:block;font-size:14px;font-weight:500;margin:18px 0 8px}.login-card input{width:100%;padding:13px 14px;border:1px solid #d4dfcf;border-radius:9px;background:#fcfdf9;color:#294532;font-size:16px}.login-card form>.primary{width:100%;padding:14px;margin-top:26px;font-size:16px}.login-card .error-banner{margin:16px 0 0}.login-map-link{display:inline-block;margin-top:24px;font-size:13px;text-decoration:none;color:#73896b}.admin-badge button{margin-left:10px;font-size:13px;padding:7px 10px}@media(max-width:520px){.login-card{padding:28px 22px}.admin-badge{gap:5px;font-size:12px}.admin-badge>span{display:none}.topbar{height:auto;min-height:65px;gap:10px;flex-wrap:wrap;padding:10px 0}}
+
+.user-permissions{padding:15px 20px;background:#eaf0df;border:1px solid #dbe5ce;border-radius:10px;margin-bottom:20px}.user-permissions p{margin:5px 0}.user-form{padding:24px;margin-bottom:24px}.user-form h2{margin-top:0}.user-form label{display:grid;gap:8px;margin-bottom:12px}.user-form input,.user-form select{width:100%;padding:11px;border:1px solid #d4dfcf;border-radius:8px;background:#fcfdf9;color:#294532}.user-form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.user-dialog{position:fixed;inset:0;border:1px solid #dce5d7;border-radius:18px;padding:0;width:min(700px,calc(100% - 32px));max-height:calc(100dvh - 64px);margin:32px auto auto;color:#294532;background:#fffefb;box-shadow:0 24px 90px #12302238;overflow:hidden}.user-dialog[open]{animation:user-dialog-drop .24s ease-out}.user-dialog::backdrop{background:#112b2166;backdrop-filter:blur(3px)}.user-dialog .user-form{padding:0;margin:0;display:flex;flex-direction:column;max-height:calc(100dvh - 64px)}.user-dialog-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:24px 28px 20px;border-bottom:1px solid #e4eadc;flex-shrink:0}.user-dialog-header h2{font-size:24px;margin:7px 0 5px;line-height:1.4}.user-dialog-header p{font-size:14px;color:#768573;margin:0}.user-dialog-header .icon-button{flex-shrink:0}.user-dialog-body{overflow-y:auto;overscroll-behavior:contain;padding:24px 28px}.user-dialog .user-form-actions{margin:0;padding:18px 28px;border-top:1px solid #e4eadc;background:#f8faf4;flex-shrink:0}.user-dialog .error-banner{margin:16px 0 0}@keyframes user-dialog-drop{from{opacity:0;transform:translateY(-28px)}to{opacity:1;transform:translateY(0)}}@media(max-width:520px){.user-dialog{width:calc(100% - 20px);margin-top:12px;max-height:calc(100dvh - 24px);border-radius:14px}.user-dialog .user-form{max-height:calc(100dvh - 24px)}.user-dialog-header,.user-dialog-body{padding:20px}.user-dialog .user-form-actions{padding:15px 20px}.user-dialog-header h2{font-size:22px}}@media(prefers-reduced-motion:reduce){.user-dialog[open]{animation:none}}
+.account-greeting{display:flex;flex-direction:column;gap:1px;line-height:1.5}.account-greeting strong{font-size:14px;font-weight:500;color:#385344}.account-greeting small{font-size:12px;color:#768573}
+@media(max-width:760px){body:has(.admin-layout){overflow:hidden}.admin-layout{display:flex;flex-direction:column;height:100dvh;overflow:hidden}.admin-layout>.sidebar{position:relative;top:0;z-index:20;flex-shrink:0;height:auto;box-shadow:0 3px 12px #12302218}.admin-layout>main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}}
+/* Mobile dashboard: fixed navigation, vertical content and readable data cards. */
+@media(max-width:760px){
+  html:has(.admin-layout),body:has(.admin-layout){width:100%;max-width:100%;overflow:hidden}
+  .admin-layout{width:100%;max-width:100%;min-width:0}
+  .admin-layout>main{width:100%;max-width:100%;overflow-x:hidden;padding:0 16px;scrollbar-gutter:stable}
+  .admin-layout>.sidebar{padding:12px 16px;gap:10px}
+  .sidebar .brand{font-size:25px;line-height:1.3}
+  .sidebar nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;margin:0;gap:5px}
+  .sidebar nav button{min-width:0;justify-content:flex-start;font-size:13px;padding:9px 10px;gap:8px;line-height:1.5}
+  .sidebar nav svg{display:block;width:17px;height:17px;flex-shrink:0}
+  .topbar{display:flex;flex-direction:column;align-items:stretch;gap:10px;height:auto;padding:14px 0 0;border:0}
+  .breadcrumb{font-size:12px;color:#81917f;overflow-wrap:anywhere}
+  .breadcrumb .slash{margin:0 7px}
+  .admin-badge{display:flex;width:100%;min-width:0;gap:10px;padding:12px;background:#fffefb;border:1px solid #dfe7d9;border-radius:13px;box-shadow:0 3px 12px #153f3205}
+  .admin-badge>.account-avatar{display:grid;width:38px;height:38px;flex-shrink:0;border-radius:12px;background:#eaf1e3;color:#174c3c}
+  .account-greeting{flex:1;min-width:0;gap:4px}
+  .account-greeting strong{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+  .account-greeting small{font-size:11px;line-height:1.5;color:#5c7956}
+  .admin-badge button{flex-shrink:0;margin:0;padding:9px 10px;min-height:40px;font-size:12px;background:#f4f7ee;border-color:#dce5d2;border-radius:9px}
+  .page-heading{margin:24px 0 20px;min-width:0;gap:16px}
+  .page-heading>div{min-width:0;max-width:100%}.page-heading h1{font-size:27px;overflow-wrap:anywhere}
+  .heading-actions{width:100%;gap:8px;justify-content:flex-start}
+  .heading-actions button{font-size:13px;padding:10px 12px;min-height:42px}.heading-actions a{font-size:12px}
+  .panel,.overview-grid,.monitor-dashboard,.user-management,.metrics{min-width:0;max-width:100%}
+  .panel-title{align-items:flex-start;flex-wrap:wrap;gap:12px}.panel-title>div{min-width:0}.panel-title h2{font-size:17px;overflow-wrap:anywhere}
+  .table-wrap{overflow:visible;padding:0 12px 12px}
+  .table-wrap table{display:block;width:100%;min-width:0}
+  .table-wrap thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+  .table-wrap tbody{display:grid;gap:12px}
+  .table-wrap tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:15px;border:1px solid #e1e8da;border-radius:12px;background:#fffefb;min-width:0}
+  .table-wrap td{display:block;min-width:0;width:auto;padding:0;border:0;font-size:13px;overflow-wrap:anywhere;white-space:normal}
+  .table-wrap td:first-child,.table-wrap td:last-child{grid-column:1/-1}
+  .table-wrap td[data-label]::before{content:attr(data-label);display:block;font-size:11px;color:#87977f;margin-bottom:5px}
+  .table-wrap td:last-child:has(button){padding-top:10px;border-top:1px solid #edf0e7;text-align:right}
+  .table-wrap td:last-child button{padding:9px 12px;min-height:40px;border:1px solid #d8e3d0;background:#eff5e9;border-radius:8px;color:#315b35;font-size:13px}
+  .poi-cell{gap:10px;align-items:flex-start}.poi-cell>div{min-width:0}.poi-cell>img,.poi-cell>.photo-placeholder{width:58px;height:58px;flex-shrink:0}.poi-cell strong{font-size:14px;line-height:1.6}.poi-cell small{font-size:12px;line-height:1.7}
+  .category-tag,.publish-status,.monitor-status{white-space:normal;max-width:100%;font-size:12px}.updated-date{white-space:normal}
+  .monitor-service-id{font-size:12px;overflow-wrap:anywhere}
+  .page-footer{flex-wrap:wrap;gap:8px;font-size:11px}.page-footer>span{font-size:11px;overflow-wrap:anywhere}
+  .table-footer{gap:12px;flex-wrap:wrap;padding:14px 16px}.table-footer>div{flex-wrap:wrap}
+  .filters{min-width:0}.filters .search{min-width:0}.filters select{min-width:0}
+  .user-permissions{font-size:13px;padding:12px 15px}
+  .user-dialog-body,.editor-scroll{overflow-x:hidden}.user-dialog .form-grid{grid-template-columns:1fr}
+  .user-dialog-header>div{min-width:0}.user-dialog-header h2{overflow-wrap:anywhere}
+}
+.back-to-top{position:fixed;right:24px;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:30;display:grid;place-items:center;width:48px;height:48px;padding:0;border:1px solid #2c6652;border-radius:50%;background:#174c3c;color:#fff;box-shadow:0 5px 18px #153f3233}.back-to-top:hover:not(:disabled){background:#24614a;border-color:#24614a}.admin-layout .page-footer{padding-bottom:90px}@media(max-width:760px){.back-to-top{right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px))}}
+.mobile-account{display:none}
+@media(max-width:760px){
+  .desktop-account{display:none}
+  .sidebar>.brand{flex-shrink:0;margin:0}
+  .mobile-account{display:block;flex:1;min-width:0;margin-left:auto}
+  .mobile-account .admin-badge{padding:0;gap:8px;background:transparent;border:0;border-radius:0;box-shadow:none}
+  .mobile-account .account-avatar{display:none}
+  .mobile-account .account-greeting{align-items:flex-end;text-align:right;gap:2px}
+  .mobile-account .account-greeting strong{font-size:12px;color:#fff;line-height:1.5}
+  .mobile-account .account-greeting small{font-size:10px;color:#b6cdb9}
+  .mobile-account .admin-badge button{min-height:38px;padding:8px;font-size:11px;color:#fff;background:#ffffff12;border-color:#ffffff30;white-space:nowrap}
+  .mobile-account .admin-badge button:hover:not(:disabled){background:#ffffff22;border-color:#ffffff50}
+  .topbar{min-height:0;padding:12px 0 0}
+  .sidebar nav{flex-basis:100%}
+}
+@media(max-width:360px){.admin-layout>.sidebar{padding:12px;gap:8px}.sidebar>.brand{font-size:23px}.mobile-account .admin-badge{gap:6px}.mobile-account .account-greeting strong{font-size:11px}.mobile-account .admin-badge button{font-size:10px;padding:7px}}
+.poi-panel .edit-button{display:inline-flex;align-items:center;justify-content:center;border:1px solid #b8ccb0;border-radius:8px;padding:8px 12px;background:#f1f6ec;color:#426a38;font-size:13px;min-height:38px}.poi-panel .edit-button:hover:not(:disabled){background:#e5efdc;border-color:#8fac80}
+.account-actions{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:8px}.account-actions button{white-space:nowrap}.user-management .account-actions .account-lock{background:#fff2ed;border:1px solid #e3bbae;color:#a34f38}.user-management .account-actions .account-lock:hover:not(:disabled){background:#fbe6dd;border-color:#cb907e}.user-management .account-actions .account-unlock{background:#eaf3e5;border:1px solid #b5cea7;color:#426b35}.user-management .account-actions .account-unlock:hover:not(:disabled){background:#dfecd6;border-color:#93b481}@media(max-width:760px){.account-actions{justify-content:flex-end}}
+.user-management .table-wrap th:last-child,.user-management .table-wrap td:last-child{text-align:center}.user-management .account-actions{justify-content:center}
+.user-dialog .password-pair{grid-column:1/-1;grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}.user-dialog .password-pair label{min-width:0}@media(max-width:520px){.user-dialog .password-pair{gap:10px}.user-dialog .password-pair label{font-size:12px}.user-dialog .password-pair input{padding:10px 8px}}
+@media(min-width:761px){.admin-layout .topbar{position:sticky;top:0;z-index:25;background:#f5f7f1;box-shadow:0 4px 12px #153f3208}}
+/* Keep actions above mobile browser chrome; only the middle row can scroll. */
+.editor{overflow:hidden}.editor-header,.editor-footer{flex-shrink:0}.editor-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}.editor-footer{background:#fffefb}
+@media(max-width:760px){
+  .editor{--editor-height:min(var(--editor-visible-height,100svh),100svh);--editor-toolbar-clearance:64px;position:fixed;inset:auto 0;top:calc(var(--editor-visible-top,0px) + 12px + env(safe-area-inset-top,0px));margin:0 auto;width:calc(100% - 24px);height:calc(var(--editor-height) - 24px - var(--editor-toolbar-clearance) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));max-height:calc(var(--editor-height) - 24px - var(--editor-toolbar-clearance) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+  .editor form{display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100%;max-height:100%;min-height:0;overflow:hidden}
+  .editor-header{padding-top:18px;padding-bottom:18px}
+  .editor-scroll{height:100%;min-height:0;scroll-padding-block:16px}
+  .editor input:not([type=checkbox]),.editor select,.editor textarea{font-size:16px}
+  .editor-footer{position:relative;z-index:1;padding:12px 18px;gap:10px;border-top:1px solid #dce5d5;box-shadow:0 -4px 12px #153f3206}
+  .editor-footer button{flex:1;min-height:44px;font-size:14px;padding:10px 12px}
+}

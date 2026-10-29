@@ -13,16 +13,16 @@ export interface TrackingSnapshot {
 }
 
 export interface LocationEnvironment {
-  secureContext: boolean;
+  secure_context: boolean;
   geolocation?: Pick<Geolocation, 'watchPosition' | 'clearWatch'>;
 }
 
 const initial: TrackingSnapshot = { status: 'idle', active: false, position: null, error: null };
 
-export function createLocationTracker(environment: LocationEnvironment) {
+export function create_location_tracker(environment: LocationEnvironment) {
   let snapshot = initial;
   let generation = 0;
-  let watchId: number | undefined;
+  let watch_id: number | undefined;
   const listeners = new Set<() => void>();
 
   function update(next: TrackingSnapshot) {
@@ -32,12 +32,12 @@ export function createLocationTracker(environment: LocationEnvironment) {
 
   function clear() {
     generation++;
-    if (watchId !== undefined) environment.geolocation?.clearWatch(watchId);
-    watchId = undefined;
+    if (watch_id !== undefined) environment.geolocation?.clearWatch(watch_id);
+    watch_id = undefined;
   }
 
   return {
-    getSnapshot: () => snapshot,
+    get_snapshot: () => snapshot,
     subscribe(listener: () => void) {
       listeners.add(listener);
       return () => { listeners.delete(listener); };
@@ -45,8 +45,8 @@ export function createLocationTracker(environment: LocationEnvironment) {
     start() {
       if (snapshot.active) return;
       clear();
-      if (!environment.secureContext || !environment.geolocation) {
-        update({ ...initial, status: 'error', error: !environment.secureContext
+      if (!environment.secure_context || !environment.geolocation) {
+        update({ ...initial, status: 'error', error: !environment.secure_context
           ? 'Định vị cần HTTPS hoặc localhost. Hãy mở ứng dụng bằng kết nối an toàn.'
           : 'Trình duyệt này không hỗ trợ định vị.' });
         return;
@@ -78,7 +78,7 @@ export function createLocationTracker(environment: LocationEnvironment) {
         }, { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 });
         // Covers permission callbacks that complete before watchPosition returns.
         if (generation !== current) environment.geolocation.clearWatch(id);
-        else watchId = id;
+        else watch_id = id;
       } catch {
         clear();
         update({ ...initial, status: 'error', error: 'Không thể bật định vị. Kiểm tra quyền vị trí của trình duyệt.' });

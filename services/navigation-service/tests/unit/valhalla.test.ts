@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createValhallaProvider } from '../../src/providers/valhalla.js';
+import { create_valhalla_provider } from '../../src/providers/valhalla.js';
 import { RoutingError } from '../../src/modules/routes/route.schema.js';
 
 const input = { profile: 'driving' as const, optimization: 'shortest' as const, waypoints: [{ latitude: 10.7725, longitude: 106.698 }, { latitude: 10.777, longitude: 106.6953 }] };
@@ -16,7 +16,7 @@ const response = {
 };
 
 test('Valhalla requests distance-only costing with hierarchy pruning disabled', async () => {
-  const provider = createValhallaProvider('https://routing.example.test', async (url, options) => {
+  const provider = create_valhalla_provider('https://routing.example.test', async (url, options) => {
     const parsed = new URL(String(url));
     assert.equal(parsed.pathname, '/route');
     assert.equal(parsed.search, '');
@@ -37,21 +37,21 @@ test('Valhalla requests distance-only costing with hierarchy pruning disabled', 
 
 test('no-route responses and invalid provider geometry are rejected', async () => {
   for (const [json, code] of [[{ code: 'NoRoute' }, 'NO_ROUTE'], [{ code: 'NoSegment' }, 'NO_ROUTE'], [{ ...response, routes: [] }, 'INVALID_PROVIDER_RESPONSE'], [{ ...response, routes: [{ ...response.routes[0], geometry: { type: 'LineString', coordinates: [[999, 999], [0, 0]] } }] }, 'INVALID_PROVIDER_RESPONSE']] as const) {
-    const provider = createValhallaProvider('https://routing.example.test', async () => Response.json(json));
+    const provider = create_valhalla_provider('https://routing.example.test', async () => Response.json(json));
     await assert.rejects(provider.calculate(input), (error: unknown) => error instanceof RoutingError && error.code === code);
   }
 });
 
 test('provider connection failures and timeouts are mapped to stable errors', async () => {
   for (const [error, code] of [[new Error('private upstream details'), 'PROVIDER_UNAVAILABLE'], [new DOMException('timeout', 'TimeoutError'), 'PROVIDER_TIMEOUT']] as const) {
-    const provider = createValhallaProvider('https://routing.example.test', async () => { throw error; });
+    const provider = create_valhalla_provider('https://routing.example.test', async () => { throw error; });
     await assert.rejects(provider.calculate(input), (failure: unknown) => failure instanceof RoutingError && failure.code === code);
   }
 });
 
 test('walking and motorbike use distinct access models and preserve their profile', async () => {
   for (const [profile, costing] of [['walking', 'pedestrian'], ['motorcycle', 'motor_scooter']] as const) {
-    const provider = createValhallaProvider('https://routing.example.test', async (_url, options) => {
+    const provider = create_valhalla_provider('https://routing.example.test', async (_url, options) => {
       const body = JSON.parse(options?.body as string);
       assert.equal(body.costing, costing);
       assert.equal(body.costing_options[costing].shortest, true);
@@ -67,7 +67,7 @@ test('walking and motorbike use distinct access models and preserve their profil
 test('each itinerary leg keeps its own road bends in the requested stop order', async () => {
   const first = [[106.698, 10.7725], [106.696, 10.774], [106.6953, 10.777]];
   const second = [[106.6953, 10.777], [106.697, 10.78], [106.6999, 10.7799]];
-  const provider = createValhallaProvider('https://routing.example.test', async (_url, options) => {
+  const provider = create_valhalla_provider('https://routing.example.test', async (_url, options) => {
     const body = JSON.parse(options?.body as string);
     assert.deepEqual(body.locations.map((point: {lat:number;lon:number}) => [point.lon, point.lat]), [first[0], first.at(-1), second.at(-1)]);
     return Response.json({ code: 'Ok', routes: [{ distance: 2400, duration: 600,
@@ -87,7 +87,7 @@ test('each itinerary leg keeps its own road bends in the requested stop order', 
 });
 
 test('missing per-leg geometry cannot substitute the entire route into every leg', async () => {
-  const provider = createValhallaProvider('https://routing.example.test', async () => Response.json({
+  const provider = create_valhalla_provider('https://routing.example.test', async () => Response.json({
     ...response, routes: [{ ...response.routes[0], legs: [response.routes[0].legs[0], response.routes[0].legs[0]] }],
   }));
   await assert.rejects(provider.calculate({ ...input, waypoints: [...input.waypoints, { latitude: 10.7799, longitude: 106.6999 }] }),

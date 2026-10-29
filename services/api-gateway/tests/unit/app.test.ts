@@ -2,23 +2,23 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { AddressInfo } from 'node:net';
 import request from 'supertest';
-import { createApp } from '../../src/app.js';
-import { createApp as createPoiApp } from '../../../poi-service/src/app.js';
-import { createApp as createNavigationApp } from '../../../navigation-service/src/app.js';
-import { createApp as createTranslationApp } from '../../../translation-service/src/app.js';
+import { create_app } from '../../src/app.js';
+import { create_app as createPoiApp } from '../../../poi-service/src/app.js';
+import { create_app as createNavigationApp } from '../../../navigation-service/src/app.js';
+import { create_app as createTranslationApp } from '../../../translation-service/src/app.js';
 
 test('gateway forwards language catalog and translation POST before read-only POI routes', async () => {
   const id = '11111111-1111-4111-8111-111111111111';
-  const upstream = createTranslationApp({ ready: async () => {}, get: async (poiId, language) => {
-    assert.equal(poiId, id); assert.equal(language, 'en');
-    return { data: { poiId, language, sourceLanguage: 'vi', sourceHash: 'a'.repeat(64), name: 'Market', description: 'A market', provider: 'test', translatedAt: new Date().toISOString() }, original: false, fromCache: true };
+  const upstream = createTranslationApp({ ready: async () => {}, get: async (poi_id, language) => {
+    assert.equal(poi_id, id); assert.equal(language, 'en');
+    return { data: { poi_id: poi_id, language, source_language: 'vi', source_hash: 'a'.repeat(64), name: 'Market', description: 'A market', provider: 'test', translated_at: new Date().toISOString() }, original: false, from_cache: true };
   } }).listen(0, '127.0.0.1');
   await new Promise<void>(resolve => upstream.once('listening', resolve));
   try {
-    const app = createApp(undefined, undefined, `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
+    const app = create_app(undefined, undefined, `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
     assert.equal((await request(app).get('/api/languages').expect(200)).body.data.length, 16);
     const response = await request(app).post(`/api/pois/${id}/translation`).send({ language: 'en' }).expect(200);
-    assert.equal(response.body.fromCache, true); assert.equal(response.headers['cache-control'], 'no-store');
+    assert.equal(response.body.from_cache, true); assert.equal(response.headers['cache-control'], 'no-store');
     await request(app).post(`/api/pois/${id}/translation`).send({ language: 'xx' }).expect(400);
   } finally { await new Promise<void>((resolve, reject) => upstream.close(error => error ? reject(error) : resolve())); }
 });
@@ -27,7 +27,7 @@ test('gateway forwards POI search, status and errors through real HTTP', async (
   const upstream = createPoiApp({
     async ready() {},
     async find() { return undefined; },
-    async findImage() { return undefined; },
+    async find_image() { return undefined; },
     async list(query) {
       assert.equal(query.q, 'Chợ');
       return { data: [], pagination: { page: 1, limit: 20, total: 0 } };
@@ -35,7 +35,7 @@ test('gateway forwards POI search, status and errors through real HTTP', async (
   }).listen(0, '127.0.0.1');
   await new Promise<void>(resolve => upstream.once('listening', resolve));
   try {
-    const app = createApp(`http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
+    const app = create_app(`http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
     assert.equal((await request(app).get('/api/pois').query({ q: 'Chợ' })).status, 200);
     assert.equal((await request(app).get('/api/pois/bad')).status, 400);
     assert.equal((await request(app).get('/api/pois/44444444-4444-4444-8444-444444444444')).status, 404);
@@ -50,11 +50,11 @@ test('gateway preserves image bytes, content type, ETag and 304 responses', asyn
     async ready() {},
     async find() { return undefined; },
     async list() { return { data: [], pagination: { page: 1, limit: 20, total: 0 } }; },
-    async findImage() { return { content: bytes, contentType: 'image/jpeg', sha256: 'a'.repeat(64) }; },
+    async find_image() { return { content: bytes, content_type: 'image/jpeg', sha256: 'a'.repeat(64) }; },
   }).listen(0, '127.0.0.1');
   await new Promise<void>(resolve => upstream.once('listening', resolve));
   try {
-    const app = createApp(`http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
+    const app = create_app(`http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
     const url = '/api/pois/11111111-1111-4111-8111-111111111111/image';
     const response = await request(app).get(url);
     assert.equal(response.status, 200);
@@ -67,7 +67,7 @@ test('gateway preserves image bytes, content type, ETag and 304 responses', asyn
 });
 
 test('unreachable service returns 502 and gateway readiness returns 503', async () => {
-  const app = createApp('http://127.0.0.1:1');
+  const app = create_app('http://127.0.0.1:1');
   assert.equal((await request(app).get('/api/pois')).status, 502);
   assert.equal((await request(app).get('/health/ready')).status, 503);
 });
@@ -83,7 +83,7 @@ test('gateway forwards route requests and validation errors over HTTP', async ()
   } }).listen(0, '127.0.0.1');
   await new Promise<void>(resolve => upstream.once('listening', resolve));
   try {
-    const app = createApp('http://127.0.0.1:1', `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
+    const app = create_app('http://127.0.0.1:1', `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
     const res = await request(app).post('/api/routes').send({ waypoints });
     assert.equal(res.status, 200);
     assert.equal(res.body.data.distance, 500);
@@ -91,5 +91,5 @@ test('gateway forwards route requests and validation errors over HTTP', async ()
     assert.equal((await request(app).post('/api/routes').send({ waypoints: [] })).status, 400);
     assert.equal((await request(app).post('/api/routes').type('json').send('{')).status, 400);
   } finally { await new Promise<void>((resolve, reject) => upstream.close(error => error ? reject(error) : resolve())); }
-  assert.equal((await request(createApp('http://127.0.0.1:1', 'http://127.0.0.1:1')).post('/api/routes').send({ waypoints })).status, 502);
+  assert.equal((await request(create_app('http://127.0.0.1:1', 'http://127.0.0.1:1')).post('/api/routes').send({ waypoints })).status, 502);
 });

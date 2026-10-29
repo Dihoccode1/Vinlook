@@ -2,21 +2,21 @@ import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import helmet from 'helmet';
 import { z } from 'zod';
-import { poiRepository, type PoiRepository } from './modules/pois/poi.repository.js';
-import { adminRoutes } from './modules/admin/admin.routes.js';
+import { poi_repository, type PoiRepository } from './modules/pois/poi.repository.js';
+import { admin_routes } from './modules/admin/admin.routes.js';
 
-const querySchema = z.object({
+const query_schema = z.object({
   q: z.string().trim().max(200).default(''),
   category: z.string().trim().min(1).max(50).optional(),
   page: z.coerce.number().int().min(1).max(100000).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
 }).strict();
 
-export function createApp(repository: PoiRepository = poiRepository) {
+export function create_app(repository: PoiRepository = poi_repository) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
-  app.use('/admin', adminRoutes());
+  app.use('/admin', admin_routes());
   app.get('/health/live', (_req, res) => res.json({ status: 'ok', service: 'poi-service' }));
   app.get('/health/ready', async (_req, res) => {
     try {
@@ -27,7 +27,7 @@ export function createApp(repository: PoiRepository = poiRepository) {
     }
   });
   app.get('/pois', async (req, res) => {
-    const query = querySchema.safeParse(req.query);
+    const query = query_schema.safeParse(req.query);
     if (!query.success) {
       res.status(400).json({ error: { code: 'INVALID_QUERY', message: 'Invalid search or pagination parameters' } });
       return;
@@ -40,13 +40,13 @@ export function createApp(repository: PoiRepository = poiRepository) {
       res.status(400).json({ error: { code: 'INVALID_ID', message: 'POI id must be a UUID' } });
       return;
     }
-    const image = await repository.findImage(id.data);
+    const image = await repository.find_image(id.data);
     if (!image) {
       res.status(404).json({ error: { code: 'IMAGE_NOT_FOUND', message: 'POI image not found' } });
       return;
     }
     res.set({
-      'Content-Type': image.contentType,
+      'content-Type': image.content_type,
       'Cache-Control': 'public, max-age=300',
       ETag: `"${image.sha256}"`,
     }).send(image.content);
