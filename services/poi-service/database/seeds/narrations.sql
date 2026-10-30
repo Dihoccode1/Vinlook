@@ -1,0 +1,32 @@
+-- Upgrade only unchanged demo descriptions. Preserve administrator edits.
+UPDATE p SET description = v.Narration, updated_at = SYSUTCDATETIME()
+FROM dbo.pois p INNER JOIN (VALUES
+(N'cho-ben-thanh', N'Khu chợ nổi tiếng tại trung tâm Thành phố Hồ Chí Minh.', N'Chào bạn, chúng ta đang dừng chân tại Chợ Bến Thành, một điểm đến quen thuộc trong hành trình khám phá trung tâm Thành phố Hồ Chí Minh. Trước khi bắt đầu, hãy đứng ở nơi an toàn, tránh lòng đường và giữ lối đi thông thoáng. Bạn có thể dành ít phút quan sát nhịp sống xung quanh rồi mới tiếp tục tham quan.
+
+Điều thú vị của một khu chợ không chỉ nằm ở những món hàng. Hãy thử lắng nghe tiếng người trò chuyện, tiếng bước chân và những lời mời mua bán. Những âm thanh ấy tạo nên bức tranh sinh hoạt rất riêng. Khi nhìn vào các quầy hàng, bạn có thể chú ý cách người bán sắp xếp sản phẩm, những màu sắc cạnh nhau và cách mỗi gian hàng thu hút người ghé qua. Một chuyến tham quan chậm rãi thường giúp ta nhận ra nhiều chi tiết hơn một lần đi vội.
+
+Nếu muốn tìm quà lưu niệm, bạn hãy so sánh vài lựa chọn và hỏi rõ giá trước khi quyết định. Trao đổi lịch sự sẽ giúp cuộc mua bán dễ chịu hơn. Với các món ăn, hãy hỏi thành phần nếu bạn có dị ứng hoặc chế độ ăn riêng. Bạn cũng nên lựa chọn theo khẩu vị và khả năng của mình, không cần thử quá nhiều món chỉ trong một lần ghé chợ. Mang theo nước uống và nghỉ khi thấy mệt sẽ giúp hành trình thoải mái hơn.
+
+Đây cũng là dịp quan sát sự gặp gỡ giữa người dân địa phương và khách tham quan. Một lời chào, một câu hỏi ngắn hoặc một nụ cười có thể mở đầu cho cuộc trò chuyện thú vị. Nếu muốn chụp chân dung người bán hay chụp sát bên trong quầy, bạn nên xin phép trước. Hãy giữ đồ cá nhân gọn gàng và tránh dừng lại quá lâu ở những lối đi đông người.
+
+Trước khi rời điểm dừng, bạn có thể chọn một chi tiết mình nhớ nhất: một màu sắc, một hương vị hay một âm thanh. Đó sẽ là dấu ấn riêng của bạn về nơi này. Khi sẵn sàng, hãy mở lộ trình trên bản đồ để xem điểm đến tiếp theo. Kiểm tra hướng đi và tình hình giao thông thực tế trước khi băng qua đường. Chúc bạn có một hành trình khám phá thật nhiều trải nghiệm.'),
+(N'dinh-doc-lap', N'Địa điểm tham quan về lịch sử và kiến trúc.', N'Chào bạn, điểm dừng hiện tại của chúng ta là Dinh Độc Lập. Đây là dịp để dành thời gian tìm hiểu một địa điểm gắn với lịch sử và quan sát không gian kiến trúc ngay giữa thành phố. Trước khi vào tham quan, bạn hãy kiểm tra thông báo tại cổng về vé, giờ mở cửa, khu vực được phép tiếp cận và những quy định đang áp dụng trong ngày.
+
+Bạn có thể bắt đầu trải nghiệm bằng cách đứng yên trong một khoảnh khắc để nhìn tổng thể công trình. Hãy chú ý mối quan hệ giữa mặt đứng, khoảng sân, cây xanh và những lối di chuyển. Thay vì cố ghi nhớ mọi chi tiết ngay lập tức, hãy chọn một yếu tố khiến bạn tò mò nhất. Đó có thể là hình dáng một ô cửa, cách ánh sáng tạo bóng hoặc nhịp điệu của các đường nét kiến trúc. Quan sát từ nhiều góc sẽ mang đến những cảm nhận khác nhau.
+
+Khi đi vào các khu vực trưng bày, hãy dành thời gian đọc bảng giới thiệu tại chỗ. Những thông tin ấy giúp đặt hiện vật và căn phòng vào bối cảnh cụ thể. Bạn có thể tự hỏi không gian này từng phục vụ hoạt động gì, người sử dụng cần di chuyển ra sao và vì sao đồ vật lại được bố trí theo cách ấy. Nếu một chi tiết chưa rõ, hãy ghi lại câu hỏi để tìm hiểu thêm qua tài liệu chính thức hoặc nhân viên hướng dẫn.
+
+Tham quan một địa điểm lịch sử không nhất thiết là ghi nhớ thật nhiều mốc thời gian. Điều quan trọng là hiểu thêm về con người, hoàn cảnh và những thay đổi mà nơi chốn đã chứng kiến. Hãy phân biệt điều bạn quan sát trực tiếp với điều được kể lại trong thuyết minh. Nếu chụp ảnh, bạn nên tuân thủ biển báo và tránh cản lối những người đang tham quan. Không chạm vào hiện vật hoặc đi vào khu vực hạn chế khi chưa được cho phép.
+
+Cuối hành trình, hãy tìm một vị trí được phép nghỉ chân để nhìn lại trải nghiệm của mình. Có chi tiết nào khiến bạn muốn tìm hiểu sâu hơn không? Bạn có thể lưu tên điểm đến để đọc thêm sau chuyến đi. Khi tiếp tục sang POI khác, hãy kiểm tra bản đồ và chọn lối ra phù hợp với hướng di chuyển thực tế. Hy vọng điểm dừng này mang lại cho bạn một khoảng lặng để quan sát và suy ngẫm giữa nhịp sống thành phố.'),
+(N'buu-dien-trung-tam', N'Công trình kiến trúc tại khu vực trung tâm thành phố.', N'Chào bạn, chúng ta đang đến với Bưu điện Trung tâm Sài Gòn. Với điểm dừng này, bạn có thể kết hợp việc quan sát kiến trúc với cảm nhận về một không gian gắn liền với thư từ và sự kết nối. Trước khi bước vào, hãy xem các thông báo hiện hành và chú ý lối đi, vì nơi bạn tham quan có thể đồng thời phục vụ người đến sử dụng dịch vụ.
+
+Hãy bắt đầu từ bên ngoài và dành một chút thời gian nhìn tổng thể mặt tiền. Bạn có thể quan sát cách các ô cửa, đường viền và những mảng màu tạo thành nhịp điệu. Khi thay đổi vị trí đứng, ánh sáng và góc nhìn cũng làm cảm giác về công trình thay đổi. Nếu muốn chụp ảnh, hãy chọn một vị trí an toàn trên khu vực được phép đứng, tránh lùi xuống lòng đường hoặc chắn lối ra vào của người khác.
+
+Khi bước vào khu vực được phép tham quan, bạn hãy ngẩng nhìn rồi quan sát dần xuống các chi tiết ở tầm mắt. Không gian bên trong có thể được cảm nhận qua chiều cao, chiều sâu, ánh sáng và âm thanh. Bạn không cần vội chụp mọi thứ ngay lúc đầu. Một vòng quan sát chậm sẽ giúp chọn được những chi tiết thật sự khiến mình thích thú. Hãy đọc bảng chỉ dẫn để phân biệt khu vực tham quan với nơi đang có giao dịch.
+
+Một điểm dừng ở bưu điện cũng là lời gợi nhắc về những cách con người giữ liên lạc. Trước khi việc gửi tin nhắn trở nên quen thuộc, một lá thư hay một tấm bưu thiếp thường chứa đựng nhiều chờ đợi. Bạn có thể nghĩ đến một người mình muốn kể về chuyến đi hôm nay. Nếu có dịch vụ phù hợp đang hoạt động, hãy hỏi nhân viên về cách gửi một lời chào bằng thư hoặc bưu thiếp. Kiểm tra giá và thông tin người nhận trước khi sử dụng dịch vụ.
+
+Trong suốt thời gian tham quan, hãy nói vừa đủ nghe, giữ vệ sinh và tôn trọng người đang làm việc. Khi muốn chụp người khác ở cự ly gần, bạn nên hỏi ý kiến trước. Trước lúc rời đi, thử chọn một hình ảnh đại diện cho cảm nhận của bạn về nơi này: một ô cửa, một góc nhìn hay khoảnh khắc ai đó viết lời nhắn. Sau đó, mở lại lộ trình để tìm điểm đến tiếp theo và kiểm tra đường đi thực tế. Mong rằng bạn sẽ mang theo một câu chuyện nhỏ đáng nhớ từ điểm dừng này.')
+) v(slug, PreviousDescription, Narration) ON p.slug = v.slug
+WHERE p.description = v.PreviousDescription AND p.source_language = 'vi';

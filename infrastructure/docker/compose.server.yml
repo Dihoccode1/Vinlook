@@ -1,0 +1,122 @@
+# Use together with compose.yml, never alone. Keeps the existing SQL volume.
+x-backend: &backend
+  env_file: ../../.env
+  environment: &environment
+    NODE_ENV: production
+    SQLSERVER_HOST: sqlserver
+    SQLSERVER_PORT: 1433
+    POI_PORT: 4001
+    GATEWAY_PORT: 4000
+    NAVIGATION_PORT: 4002
+    TRANSLATION_PORT: 4003
+    POI_SERVICE_URL: http://poi:4001
+    NAVIGATION_SERVICE_URL: http://navigation:4002
+    TRANSLATION_SERVICE_URL: http://translation:4003
+  restart: unless-stopped
+  init: true
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  migrate:
+    <<: *backend
+    build:
+      context: ../..
+      dockerfile: Dockerfile.backend
+      target: tools
+    user: node
+    restart: "no"
+    depends_on:
+      sqlserver: { condition: service_healthy }
+    volumes:
+      - ../../.local-backups:/app/.local-backups
+      - ../../services/translation-service/storage/narrations:/app/services/translation-service/storage/narrations
+    command: ["sh", "-c", "node --import tsx services/poi-service/src/database.ts migrate && node --import tsx services/translation-service/src/database.ts && node --import tsx database/short-ids.ts"]
+
+  poi:
+    <<: *backend
+    build:
+      context: ../..
+      dockerfile: Dockerfile.backend
+      args: { SERVICE: poi-service }
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4001/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+      start_period: 20s
+
+  navigation:
+    <<: *backend
+    build:
+      context: ../..
+      dockerfile: Dockerfile.backend
+      args: { SERVICE: navigation-service }
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4002/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+
+  translation:
+    <<: *backend
+    build:
+      context: ../..
+      dockerfile: Dockerfile.backend
+      args: { SERVICE: translation-service }
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    volumes:
+      - ../../services/translation-service/storage/narrations:/app/services/translation-service/storage/narrations
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4003/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+      start_period: 20s
+
+  gateway:
+    <<: *backend
+    build:
+      context: ../..
+      dockerfile: Dockerfile.backend
+      args: { SERVICE: api-gateway }
+    depends_on:
+      poi: { condition: service_healthy }
+      navigation: { condition: service_healthy }
+      translation: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+
+  web:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.web
+      args:
+        VITE_PUBLIC_WEB_URL: ${VITE_PUBLIC_WEB_URL:-}
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:80"
+    depends_on:
+      gateway: { condition: service_healthy }
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: [tunnel]
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on:
+      web: { condition: service_healthy }
+    restart: unless-stopped

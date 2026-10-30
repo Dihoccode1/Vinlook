@@ -1,7 +1,0 @@
-FROM node:24.18.1-trixie-slim@sha256:10c950bed4f33b3cedac92b6a46a14f18b8bf4bed18affbf86c871d9bc0d0a91
-# Disposable converter/CI smoke image; not a deployed Content application image.
-WORKDIR /tmp
-RUN apt-get update && apt-get download ffmpeg=7:7.1.5-0+deb13u1 && mv ffmpeg_*.deb pinned-ffmpeg.deb && echo '8669bc77e55393c14e0dd257ba9a916007cb6da0e1074c9b5e1d53812024f2af  pinned-ffmpeg.deb' | sha256sum -c - && apt-get install -y --no-install-recommends ./pinned-ffmpeg.deb && rm -f /tmp/pinned-ffmpeg.deb && rm -rf /var/lib/apt/lists/*
-USER node
-WORKDIR /work
-CMD ["node", "--version"]

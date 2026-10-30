@@ -1,0 +1,56 @@
+name: Validate workspace
+on:
+  pull_request:
+  push:
+    branches: [TEST, main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+  sql-integration:
+    runs-on: ubuntu-latest
+    env:
+      SQLSERVER_PASSWORD: CiOnly_StrongPass123!
+      SQLSERVER_DATABASE: PoiIntegrationDb
+      TRANSLATION_DATABASE: TranslationIntegrationDb
+      SQLSERVER_TRUST_CERTIFICATE: "true"
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_PID: Developer
+          MSSQL_SA_PASSWORD: CiOnly_StrongPass123!
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'CiOnly_StrongPass123!' -C -Q 'SELECT 1' -b -o /dev/null"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=18
+          --health-start-period=30s
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: cp .env.example .env
+      - run: npm run db:migrate
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - run: npm run db:seed
+      - run: npm run test:integration -w @tourism/poi-service
+      - run: npm run test:integration -w @tourism/translation-service

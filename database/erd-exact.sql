@@ -1,0 +1,82 @@
+-- Thiet ke dung 7 bang theo ERD nguoi dung cung cap.
+-- Chay trong mot database rong da duoc chon; khong xoa/doi du lieu hien tai.
+-- string -> NVARCHAR, text -> NVARCHAR(MAX), json -> NVARCHAR(MAX) + ISJSON.
+SET XACT_ABORT ON;
+BEGIN TRANSACTION;
+
+CREATE TABLE dbo.NGUOI_DUNG (
+    id INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_NGUOI_DUNG PRIMARY KEY,
+    ten_dang_nhap NVARCHAR(100) NOT NULL,
+    mat_khau_hash NVARCHAR(255) NOT NULL,
+    ho_ten NVARCHAR(200) NOT NULL,
+    trang_thai NVARCHAR(30) NOT NULL,
+    CONSTRAINT UQ_NGUOI_DUNG_TenDangNhap UNIQUE (ten_dang_nhap)
+);
+
+CREATE TABLE dbo.POI (
+    id INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_POI PRIMARY KEY,
+    nguoi_dung_id INT NOT NULL,
+    ten NVARCHAR(200) NOT NULL,
+    lat FLOAT NOT NULL,
+    lng FLOAT NOT NULL,
+    anh_thumbnail NVARCHAR(2048) NULL,
+    mo_ta_goc NVARCHAR(MAX) NOT NULL,
+    ngon_ngu_goc NVARCHAR(10) NOT NULL,
+    trang_thai NVARCHAR(30) NOT NULL,
+    CONSTRAINT FK_POI_NGUOI_DUNG FOREIGN KEY (nguoi_dung_id) REFERENCES dbo.NGUOI_DUNG(id),
+    CONSTRAINT CK_POI_Lat CHECK (lat BETWEEN -90 AND 90),
+    CONSTRAINT CK_POI_Lng CHECK (lng BETWEEN -180 AND 180)
+);
+
+CREATE TABLE dbo.BAN_DICH (
+    id INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_BAN_DICH PRIMARY KEY,
+    poi_id INT NOT NULL,
+    ngon_ngu NVARCHAR(10) NOT NULL,
+    van_ban NVARCHAR(MAX) NOT NULL,
+    trang_thai NVARCHAR(30) NOT NULL,
+    thoi_diem_cap_nhat DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_BAN_DICH_POI FOREIGN KEY (poi_id) REFERENCES dbo.POI(id)
+);
+
+CREATE TABLE dbo.AUDIO (
+    id INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_AUDIO PRIMARY KEY,
+    poi_id INT NOT NULL,
+    ngon_ngu NVARCHAR(10) NOT NULL,
+    duong_dan_file NVARCHAR(2048) NOT NULL,
+    thoi_luong INT NULL,
+    trang_thai NVARCHAR(30) NOT NULL,
+    CONSTRAINT FK_AUDIO_POI FOREIGN KEY (poi_id) REFERENCES dbo.POI(id),
+    CONSTRAINT CK_AUDIO_ThoiLuong CHECK (thoi_luong >= 0)
+);
+
+CREATE TABLE dbo.SU_KIEN_SU_DUNG (
+    id INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_SU_KIEN_SU_DUNG PRIMARY KEY,
+    poi_id INT NOT NULL,
+    loai_su_kien NVARCHAR(50) NOT NULL,
+    ngon_ngu NVARCHAR(10) NULL,
+    thoi_diem DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_SU_KIEN_SU_DUNG_POI FOREIGN KEY (poi_id) REFERENCES dbo.POI(id)
+);
+
+CREATE TABLE dbo.LO_TRINH (
+    id INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_LO_TRINH PRIMARY KEY,
+    session_id INT NOT NULL,
+    ten NVARCHAR(200) NOT NULL,
+    danh_sach_poi NVARCHAR(MAX) NOT NULL,
+    trang_thai NVARCHAR(30) NOT NULL,
+    CONSTRAINT CK_LO_TRINH_Json CHECK (ISJSON(danh_sach_poi) = 1 AND LEFT(LTRIM(danh_sach_poi),1) = N'[')
+    -- ERD ghi session_id la FK nhung khong co bang session dich.
+    -- Giu dung cot, khong tu y tao bang thu 8 hay gan FK sang NGUOI_DUNG.
+);
+
+CREATE TABLE dbo.NHAT_KY_HE_THONG (
+    id INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_NHAT_KY_HE_THONG PRIMARY KEY,
+    nguoi_dung_id INT NOT NULL,
+    thanh_phan NVARCHAR(100) NOT NULL,
+    muc_do NVARCHAR(20) NOT NULL,
+    thong_diep NVARCHAR(MAX) NOT NULL,
+    thoi_diem DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_NHAT_KY_HE_THONG_NGUOI_DUNG FOREIGN KEY (nguoi_dung_id) REFERENCES dbo.NGUOI_DUNG(id)
+);
+
+COMMIT TRANSACTION;

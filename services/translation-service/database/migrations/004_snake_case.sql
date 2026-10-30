@@ -1,0 +1,31 @@
+-- Rebuild CHECK constraints around column renames; retain enforcement.
+IF EXISTS(SELECT 1 FROM sys.check_constraints WHERE name=N'CK_PoiNarrations_AudioSize') BEGIN IF OBJECT_ID(N'dbo.PoiNarrations') IS NOT NULL ALTER TABLE dbo.PoiNarrations DROP CONSTRAINT [CK_PoiNarrations_AudioSize]; ELSE ALTER TABLE dbo.poi_narrations DROP CONSTRAINT [CK_PoiNarrations_AudioSize]; END;
+IF EXISTS(SELECT 1 FROM sys.check_constraints WHERE name=N'CK_PoiTranslations_Status') BEGIN IF OBJECT_ID(N'dbo.PoiTranslations') IS NOT NULL ALTER TABLE dbo.PoiTranslations DROP CONSTRAINT [CK_PoiTranslations_Status]; ELSE ALTER TABLE dbo.poi_translations DROP CONSTRAINT [CK_PoiTranslations_Status]; END;
+IF EXISTS(SELECT 1 FROM sys.check_constraints WHERE name=N'CK_PoiNarrations_Duration') BEGIN IF OBJECT_ID(N'dbo.PoiNarrations') IS NOT NULL ALTER TABLE dbo.PoiNarrations DROP CONSTRAINT [CK_PoiNarrations_Duration]; ELSE ALTER TABLE dbo.poi_narrations DROP CONSTRAINT [CK_PoiNarrations_Duration]; END;
+IF EXISTS(SELECT 1 FROM sys.check_constraints WHERE name=N'CK_PoiNarrations_Status') BEGIN IF OBJECT_ID(N'dbo.PoiNarrations') IS NOT NULL ALTER TABLE dbo.PoiNarrations DROP CONSTRAINT [CK_PoiNarrations_Status]; ELSE ALTER TABLE dbo.poi_narrations DROP CONSTRAINT [CK_PoiNarrations_Status]; END;
+-- Rename only: existing keys, indexes and binary data are preserved.
+IF EXISTS(SELECT 1 FROM sys.tables WHERE name COLLATE Latin1_General_100_BIN2=N'PoiNarrations') EXEC sys.sp_rename N'dbo.PoiNarrations',N'poi_narrations';
+IF EXISTS(SELECT 1 FROM sys.tables WHERE name COLLATE Latin1_General_100_BIN2=N'PoiTranslations') EXEC sys.sp_rename N'dbo.PoiTranslations',N'poi_translations';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_narrations') AND name COLLATE Latin1_General_100_BIN2=N'PoiId') EXEC sys.sp_rename N'dbo.poi_narrations.PoiId',N'poi_id',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_narrations') AND name COLLATE Latin1_General_100_BIN2=N'LanguageCode') EXEC sys.sp_rename N'dbo.poi_narrations.LanguageCode',N'language_code',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_narrations') AND name COLLATE Latin1_General_100_BIN2=N'ContentHash') EXEC sys.sp_rename N'dbo.poi_narrations.ContentHash',N'content_hash',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_narrations') AND name COLLATE Latin1_General_100_BIN2=N'Audio') EXEC sys.sp_rename N'dbo.poi_narrations.Audio',N'audio',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_narrations') AND name COLLATE Latin1_General_100_BIN2=N'CreatedAt') EXEC sys.sp_rename N'dbo.poi_narrations.CreatedAt',N'created_at',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_narrations') AND name COLLATE Latin1_General_100_BIN2=N'Id') EXEC sys.sp_rename N'dbo.poi_narrations.Id',N'id',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_narrations') AND name COLLATE Latin1_General_100_BIN2=N'FilePath') EXEC sys.sp_rename N'dbo.poi_narrations.FilePath',N'file_path',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_narrations') AND name COLLATE Latin1_General_100_BIN2=N'DurationSeconds') EXEC sys.sp_rename N'dbo.poi_narrations.DurationSeconds',N'duration_seconds',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_narrations') AND name COLLATE Latin1_General_100_BIN2=N'Status') EXEC sys.sp_rename N'dbo.poi_narrations.Status',N'status',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'PoiId') EXEC sys.sp_rename N'dbo.poi_translations.PoiId',N'poi_id',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'LanguageCode') EXEC sys.sp_rename N'dbo.poi_translations.LanguageCode',N'language_code',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'SourceLanguage') EXEC sys.sp_rename N'dbo.poi_translations.SourceLanguage',N'source_language',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'SourceHash') EXEC sys.sp_rename N'dbo.poi_translations.SourceHash',N'source_hash',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'Name') EXEC sys.sp_rename N'dbo.poi_translations.Name',N'name',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'Description') EXEC sys.sp_rename N'dbo.poi_translations.Description',N'description',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'Provider') EXEC sys.sp_rename N'dbo.poi_translations.Provider',N'provider',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'TranslatedAt') EXEC sys.sp_rename N'dbo.poi_translations.TranslatedAt',N'translated_at',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'Id') EXEC sys.sp_rename N'dbo.poi_translations.Id',N'id',N'COLUMN';
+IF EXISTS(SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID(N'dbo.poi_translations') AND name COLLATE Latin1_General_100_BIN2=N'Status') EXEC sys.sp_rename N'dbo.poi_translations.Status',N'status',N'COLUMN';
+ALTER TABLE dbo.poi_narrations WITH CHECK ADD CONSTRAINT [ck_poi_narrations_audio_size] CHECK (datalength([audio])>=(44) AND datalength([audio])<=(21000000));
+ALTER TABLE dbo.poi_translations WITH CHECK ADD CONSTRAINT [ck_poi_translations_status] CHECK ([status]='failed' OR [status]='draft' OR [status]='ready');
+ALTER TABLE dbo.poi_narrations WITH CHECK ADD CONSTRAINT [ck_poi_narrations_duration] CHECK ([duration_seconds]>=(0));
+ALTER TABLE dbo.poi_narrations WITH CHECK ADD CONSTRAINT [ck_poi_narrations_status] CHECK ([status]='failed' OR [status]='draft' OR [status]='ready');

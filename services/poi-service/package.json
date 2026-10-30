@@ -1,0 +1,24 @@
+{
+  "name": "@tourism/poi-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db:migrate": "tsx --env-file=../../.env src/database.ts migrate",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx --test tests/unit/*.test.ts",
+    "dev": "tsx watch --env-file=../../.env src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "db:seed": "tsx --env-file=../../.env src/database.ts seed",
+    "start": "node --env-file=../../.env dist/server.js",
+    "test:integration": "tsx --env-file=../../.env --test tests/integration/*.test.ts",
+    "qr:prepare": "tsx --env-file=../../.env src/prepare-qrs.ts"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "helmet": "^8.3.0",
+    "mssql": "^12.7.13",
+    "zod": "^4.6.7"
+  }
+}
