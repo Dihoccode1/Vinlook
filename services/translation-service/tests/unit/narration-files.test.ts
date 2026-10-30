@@ -27,6 +27,6 @@ test('WAV files survive service restart and restore SQL without generating again
     await assert.rejects(files.find('../escape', 'vi', key), /Invalid narration file key/);
     await assert.rejects(files.save(id, 'vi', key, Buffer.from('invalid')), /Invalid WAV/);
   } finally {
-    await unlink(join(root, id, `vi-${key}.wav`)); await rmdir(join(root, id)); await rmdir(root);
+    await unlink(join(root, id.toLowerCase(), `vi-${key}.wav`)); await rmdir(join(root, id.toLowerCase())); await rmdir(root);
   }
 });
