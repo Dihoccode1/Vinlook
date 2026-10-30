@@ -16,5 +16,5 @@ export function use_location() {
   }, [snapshot.active]);
 
   const stale = snapshot.position !== null && (Math.max(now, Date.now()) - snapshot.position.timestamp > 30000 || snapshot.status !== 'tracking');
-  return { ...snapshot, stale, start: tracker.start, stop: tracker.stop };
+  return { ...snapshot, stale, start: tracker.start, stop: tracker.stop, refresh: tracker.refresh };
 }

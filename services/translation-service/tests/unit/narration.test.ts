@@ -44,7 +44,7 @@ test('narration shares generation, caches audio and invalidates on source change
 });
 test('narration HTTP returns binary WAV and validates ID, language and arbitrary text', async () => {
   const app = create_app(undefined, { get: async () => wav });
-  const url = '/pois/11111111-1111-4111-8111-111111111111/narration';
+  const url = '/pois/POI001/narration';
   const response = await request(app).post(url).send({ language: 'vi' }).expect(200);
   assert.match(response.headers['content-type'], /^audio\/wav/); assert.deepEqual(response.body, wav);
   await request(app).post(url).send({ language: 'xx' }).expect(400);

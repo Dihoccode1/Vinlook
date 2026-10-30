@@ -2,7 +2,7 @@ name: Validate workspace
 on:
   pull_request:
   push:
-    branches: [TEST]
+    branches: [TEST, main]
 permissions:
   contents: read
 jobs:

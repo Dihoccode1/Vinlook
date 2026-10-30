@@ -8,7 +8,7 @@ import { create_app as createNavigationApp } from '../../../navigation-service/s
 import { create_app as createTranslationApp } from '../../../translation-service/src/app.js';
 
 test('gateway forwards language catalog and translation POST before read-only POI routes', async () => {
-  const id = '11111111-1111-4111-8111-111111111111';
+  const id = 'POI001';
   const upstream = createTranslationApp({ ready: async () => {}, get: async (poi_id, language) => {
     assert.equal(poi_id, id); assert.equal(language, 'en');
     return { data: { poi_id: poi_id, language, source_language: 'vi', source_hash: 'a'.repeat(64), name: 'Market', description: 'A market', provider: 'test', translated_at: new Date().toISOString() }, original: false, from_cache: true };
@@ -38,7 +38,7 @@ test('gateway forwards POI search, status and errors through real HTTP', async (
     const app = create_app(`http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
     assert.equal((await request(app).get('/api/pois').query({ q: 'Chợ' })).status, 200);
     assert.equal((await request(app).get('/api/pois/bad')).status, 400);
-    assert.equal((await request(app).get('/api/pois/44444444-4444-4444-8444-444444444444')).status, 404);
+    assert.equal((await request(app).get('/api/pois/POI002')).status, 404);
     assert.equal((await request(app).get('/health/ready')).status, 200);
     assert.equal((await request(app).post('/api/pois')).status, 405);
   } finally { await new Promise<void>((resolve, reject) => upstream.close(error => error ? reject(error) : resolve())); }
@@ -55,7 +55,7 @@ test('gateway preserves image bytes, content type, ETag and 304 responses', asyn
   await new Promise<void>(resolve => upstream.once('listening', resolve));
   try {
     const app = create_app(`http://127.0.0.1:${(upstream.address() as AddressInfo).port}`);
-    const url = '/api/pois/11111111-1111-4111-8111-111111111111/image';
+    const url = '/api/pois/POI001/image';
     const response = await request(app).get(url);
     assert.equal(response.status, 200);
     assert.deepEqual(response.body, bytes);

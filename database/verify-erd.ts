@@ -4,7 +4,7 @@ import sql from 'mssql';
 import {config as poi} from '../services/poi-service/src/config/index.js';
 import {config as translation} from '../services/translation-service/src/config/index.js';
 
-export const expected_poi_tables=['admin_sessions','poi_images','pois','system_logs','usage_events','users','visit_sessions'];
+export const expected_poi_tables=['admin_sessions','poi_images','poi_qr_codes','pois','system_logs','usage_events','users','visit_sessions'];
 export const expected_translation_tables=['poi_narrations','poi_translations'];
 async function main(){
   const manifest=process.argv[2]?JSON.parse(await readFile(process.argv[2],'utf8')):null;
@@ -20,8 +20,15 @@ async function main(){
       }
       const columns=(await pool.request().query('SELECT name FROM sys.columns WHERE object_id IN(SELECT object_id FROM sys.tables WHERE is_ms_shipped=0)')).recordset;
       assert.ok(columns.every(c=>/^[a-z][a-z0-9_]*$/.test(c.name)),'All columns must use snake_case');
+      const legacy_ids=(await pool.request().query('SELECT COUNT(*) AS total FROM sys.columns WHERE system_type_id=36 AND object_id IN(SELECT object_id FROM sys.tables WHERE is_ms_shipped=0)')).recordset[0].total;
+      assert.equal(legacy_ids,0,'Database IDs must use short codes');
+      const entities=config.database===poi.database.database?[['pois','POI'],['users','USR'],['visit_sessions','VST']]:[['poi_translations','TRN'],['poi_narrations','AUD']];
+      for(const [table,prefix] of entities){
+        const ids=(await pool.request().query(`SELECT id FROM dbo.[${table}]`)).recordset;
+        assert.ok(ids.every(row=>new RegExp(`^${prefix}[0-9]{3,20}$`).test(row.id)),`${table}: invalid short ID`);
+      }
       const history=(await pool.request().query("SELECT COUNT(*) AS total FROM sys.extended_properties WHERE class=0 AND name LIKE N'Vinlook.Migration.%'")).recordset[0].total;
-      assert.equal(history,config.database===poi.database.database?9:4);
+      assert.equal(history,config.database===poi.database.database?10:4);
       console.log(JSON.stringify({database:config.database,tables:rows,migrations_in_metadata:history}));
     }finally{await pool.close();}
   }

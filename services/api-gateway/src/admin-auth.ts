@@ -56,7 +56,7 @@ export function admin_auth(options = { username: process.env.ADMIN_USERNAME ?? '
     }
     if (req.path === '/auth/session' && req.method === 'GET') { res.json({ data: { id: user.id, username: user.username, role: user.role } }); return; }
     // Staff may use only overview and POI tools, including direct API requests.
-    const staff_path = /^\/(stats|activity|geocode|pois(?:\/[^/]+(?:\/image)?)?)\/?$/.test(req.path);
+    const staff_path = /^\/(stats|activity|geocode|pois(?:\/[^/]+(?:\/(?:image|qr))?)?)\/?$/.test(req.path);
     if (user.role !== 'admin' && !(user.role === 'staff' && staff_path)) {
       res.status(403).json({ error: { message: 'Bạn không có quyền truy cập chức năng này.' } }); return;
     }

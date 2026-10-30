@@ -28,7 +28,7 @@ export function user_routes() {
   router.patch('/:id/status',async(req,res)=>{
     const id=String(req.params.id).toLowerCase();
     const status=req.body?.status;
-    if(!/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(id)||!['active','disabled'].includes(status)) {res.status(400).json({error:{message:'Trạng thái tài khoản không hợp lệ.'}});return;}
+    if(!/^USR[0-9]{3,20}$/i.test(id)||!['active','disabled'].includes(status)) {res.status(400).json({error:{message:'Trạng thái tài khoản không hợp lệ.'}});return;}
     const actor=(res.locals.adminUser.id as string).toLowerCase();
     const tx=new sql.Transaction(await auth_pool());await tx.begin(sql.ISOLATION_LEVEL.SERIALIZABLE);
     try {
@@ -37,8 +37,8 @@ export function user_routes() {
       if(!target){await tx.rollback();res.status(404).json({error:{message:'Tài khoản không tồn tại.'}});return;}
       if(target.role==='admin'&&id!==actor&&status==='disabled'&&target.status!==status){await tx.rollback();res.status(403).json({error:{message:'Admin chỉ được khóa tài khoản Admin của chính mình.'}});return;}
       if(target.status!==status){
-        await new sql.Request(tx).input('id',sql.UniqueIdentifier,id).input('status',sql.VarChar(20),status).query('UPDATE dbo.users SET status=@status WHERE id=@id; UPDATE dbo.admin_sessions SET revoked_at=SYSUTCDATETIME() WHERE user_id=@id AND revoked_at IS NULL');
-        await new sql.Request(tx).input('actor',sql.UniqueIdentifier,actor).input('action',sql.VarChar(50),status==='disabled'?'user_locked':'user_unlocked').input('message',sql.NVarChar(sql.MAX),`${status==='disabled'?'Khóa':'Mở khóa'} tài khoản ${target.username}.`).query("INSERT INTO dbo.system_logs(user_id,component,level,action,message) VALUES(@actor,'users','info',@action,@message)");
+        await new sql.Request(tx).input('id',sql.VarChar(36),id).input('status',sql.VarChar(20),status).query('UPDATE dbo.users SET status=@status WHERE id=@id; UPDATE dbo.admin_sessions SET revoked_at=SYSUTCDATETIME() WHERE user_id=@id AND revoked_at IS NULL');
+        await new sql.Request(tx).input('actor',sql.VarChar(36),actor).input('action',sql.VarChar(50),status==='disabled'?'user_locked':'user_unlocked').input('message',sql.NVarChar(sql.MAX),`${status==='disabled'?'Khóa':'Mở khóa'} tài khoản ${target.username}.`).query("INSERT INTO dbo.system_logs(user_id,component,level,action,message) VALUES(@actor,'users','info',@action,@message)");
       }
       await tx.commit();res.json({data:{id,status}});
     }catch(error){await tx.rollback().catch(()=>{});throw error;}
@@ -47,7 +47,7 @@ export function user_routes() {
     const creating = req.method === 'POST';
     const input = validate_user(req.body, creating);
     const id = creating ? null : String(req.params.id).toLowerCase();
-    if (!input || (id && !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(id))) { res.status(400).json({error:{message:'Kiểm tra thông tin: tài khoản 3–100 ký tự (chữ, số, _, ., -), họ tên và mật khẩu ít nhất 5 ký tự.'}}); return; }
+    if (!input || (id && !/^USR[0-9]{3,20}$/i.test(id))) { res.status(400).json({error:{message:'Kiểm tra thông tin: tài khoản 3–100 ký tự (chữ, số, _, ., -), họ tên và mật khẩu ít nhất 5 ký tự.'}}); return; }
     const actor = (res.locals.adminUser.id as string).toLowerCase();
     if (id === actor && input.role !== 'admin') { res.status(409).json({error:{message:'Bạn không thể hạ quyền tài khoản đang sử dụng.'}}); return; }
     let password_hash: string | null = null;
@@ -60,11 +60,11 @@ export function user_routes() {
       const target = users.find(u=>u.id.toLowerCase()===id?.toLowerCase());
       if (!creating && !target) { await tx.rollback(); res.status(404).json({error:{message:'Tài khoản không tồn tại.'}}); return; }
       if(target?.role==='admin'&&id!==actor&&(input.role!=='admin'||(input.status==='disabled'&&target.status!==input.status))){await tx.rollback();res.status(403).json({error:{message:'Không được khóa hoặc hạ quyền Admin khác.'}});return;}
-      const q = new sql.Request(tx).input('id',sql.UniqueIdentifier,id).input('username',sql.NVarChar(100),input.username).input('name',sql.NVarChar(200),input.full_name).input('role',sql.VarChar(20),input.role).input('status',sql.VarChar(20),input.status).input('hash',sql.VarChar(200),password_hash);
+      const q = new sql.Request(tx).input('id',sql.VarChar(36),id).input('username',sql.NVarChar(100),input.username).input('name',sql.NVarChar(200),input.full_name).input('role',sql.VarChar(20),input.role).input('status',sql.VarChar(20),input.status).input('hash',sql.VarChar(200),password_hash);
       const result = await q.query(creating ? `INSERT INTO dbo.users(username,password_hash,full_name,role,status) OUTPUT inserted.id AS id VALUES(@username,@hash,@name,@role,@status)` : `UPDATE dbo.users SET username=@username,full_name=@name,role=@role,status=@status,password_hash=COALESCE(@hash,password_hash) OUTPUT inserted.id AS id WHERE id=@id`);
       const saved_id = result.recordset[0].id as string;
-      if (!creating && (password_hash || target!.role!==input.role || target!.status!==input.status)) await new sql.Request(tx).input('id',sql.UniqueIdentifier,saved_id).query('UPDATE dbo.admin_sessions SET revoked_at=SYSUTCDATETIME() WHERE user_id=@id AND revoked_at IS NULL');
-      await new sql.Request(tx).input('actor',sql.UniqueIdentifier,actor).input('message',sql.NVarChar(sql.MAX),`${creating?'Tạo':'Cập nhật'} tài khoản ${input.username}; quyền ${input.role}; trạng thái ${input.status}${password_hash&&!creating?'; đổi mật khẩu':''}.`).query("INSERT INTO dbo.system_logs(user_id,component,level,action,message) VALUES(@actor,'users','info','user_change',@message)");
+      if (!creating && (password_hash || target!.role!==input.role || target!.status!==input.status)) await new sql.Request(tx).input('id',sql.VarChar(36),saved_id).query('UPDATE dbo.admin_sessions SET revoked_at=SYSUTCDATETIME() WHERE user_id=@id AND revoked_at IS NULL');
+      await new sql.Request(tx).input('actor',sql.VarChar(36),actor).input('message',sql.NVarChar(sql.MAX),`${creating?'Tạo':'Cập nhật'} tài khoản ${input.username}; quyền ${input.role}; trạng thái ${input.status}${password_hash&&!creating?'; đổi mật khẩu':''}.`).query("INSERT INTO dbo.system_logs(user_id,component,level,action,message) VALUES(@actor,'users','info','user_change',@message)");
       await tx.commit(); res.status(creating?201:200).json({data:{id:saved_id}});
     } catch (error) {
       await tx.rollback().catch(()=>{});

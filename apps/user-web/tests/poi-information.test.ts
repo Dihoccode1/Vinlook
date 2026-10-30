@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { PoiTranslation } from '../src/features/translation/PoiTranslation';
 import type { Poi } from '../src/types/poi';
 
-const poi: Poi = { id: '11111111-1111-4111-8111-111111111111', slug: 'museum', name: 'Bảo tàng', description: 'KỊCH BẢN AUDIO KHÔNG HIỂN THỊ', visitor_description: 'Giới thiệu cho khách đọc.', address: '97 Phó Đức Chính', latitude: 10.77, longitude: 106.7, category: 'history', source_language: 'vi', image_url: null, image_credit: null, image_source_url: null, image_license_url: null };
+const poi: Poi = { id: 'POI001', slug: 'museum', name: 'Bảo tàng', description: 'KỊCH BẢN AUDIO KHÔNG HIỂN THỊ', visitor_description: 'Giới thiệu cho khách đọc.', address: '97 Phó Đức Chính', latitude: 10.77, longitude: 106.7, category: 'history', source_language: 'vi', image_url: null, image_credit: null, image_source_url: null, image_license_url: null };
 test('POI card displays visitor information and never renders the audio script', () => {
   const markup = renderToStaticMarkup(createElement(PoiTranslation, { poi, language: 'vi', on_language: () => {} }));
   assert.ok(markup.includes('Giới thiệu cho khách đọc.'));

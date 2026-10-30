@@ -7,8 +7,8 @@ import { use_route_plan } from '../src/features/navigation/use-route-plan.js';
 import type { Poi } from '../src/types/poi.js';
 import type { LocationFix } from '../src/features/tracking/location-tracker.js';
 
-const poi: Poi = { id: '11111111-1111-4111-8111-111111111111', slug: 'cho-ben-thanh', name: 'Chợ Bến Thành', description: '', address: '', latitude: 10.77, longitude: 106.69, category: 'market', source_language: 'vi', image_url: null, image_credit: null, image_source_url: null, image_license_url: null };
-const other: Poi = { ...poi, id: '22222222-2222-4222-8222-222222222222', name: 'Dinh Độc Lập', latitude: 10.78 };
+const poi: Poi = { id: 'POI001', slug: 'cho-ben-thanh', name: 'Chợ Bến Thành', description: '', address: '', latitude: 10.77, longitude: 106.69, category: 'market', source_language: 'vi', image_url: null, image_credit: null, image_source_url: null, image_license_url: null };
+const other: Poi = { ...poi, id: 'POI003', name: 'Dinh Độc Lập', latitude: 10.78 };
 function result(profile = 'driving') {
   return { data: { profile, provider: 'Valhalla', optimization: 'shortest', distance: 1234, duration: 200,
     geometry: { type: 'LineString', coordinates: [[106.69, 10.77], [106.69, 10.78]] }, legs: [{ distance: 1234, duration: 200, geometry: { type: 'LineString', coordinates: [[106.69, 10.77], [106.69, 10.78]] }, steps: [] }] } };
@@ -83,7 +83,7 @@ test('applying a complete stop order recalculates once and preserves origin and 
   Object.assign(globalThis, { window: dom.window, document: dom.window.document, IS_REACT_ACT_ENVIRONMENT: true });
   const root = createRoot(document.getElementById('root')!);
   t.after(async () => { await act(() => root.unmount()); Object.assign(globalThis, { window: old_window, document: old_document }); dom.window.close(); });
-  const third = { ...poi, id: '33333333-3333-4333-8333-333333333333', name: 'Bưu điện', latitude: 10.79 };
+  const third = { ...poi, id: 'POI004', name: 'Bưu điện', latitude: 10.79 };
   const gps = { active: true, position: { latitude: 10.75, longitude: 106.69, accuracy: 10, timestamp: Date.now() }, stale: false, start() {} };
   let plan!: ReturnType<typeof use_route_plan>;
   function Probe() { plan = use_route_plan([poi, other, third], gps); return null; }

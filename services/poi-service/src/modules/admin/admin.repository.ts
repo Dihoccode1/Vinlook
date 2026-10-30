@@ -1,4 +1,5 @@
 import sql from 'mssql';
+import {randomBytes} from 'node:crypto';
 import { get_pool } from '../../config/database.js';
 import type { Poi } from '../pois/poi.repository.js';
 import { decode_admin_image, type AdminPoiInput, type AdminPoiQuery } from './admin.schema.js';
@@ -6,6 +7,7 @@ import { decode_admin_image, type AdminPoiInput, type AdminPoiQuery } from './ad
 export interface AdminPoi extends Poi { is_published: boolean; updated_at: string }
 export interface AdminStats { total: number; published: number; drafts: number; with_images: number; categories: { category: string; total: number }[] }
 export interface AdminRepository {
+  next_id(): Promise<string>;
   list(query: AdminPoiQuery): Promise<{ data: AdminPoi[]; pagination: { total: number; page: number; limit: number } }>;
   find(id: string): Promise<AdminPoi | undefined>;
   save(id: string, input: AdminPoiInput, create: boolean, user_id?: string): Promise<boolean>;
@@ -18,6 +20,7 @@ const columns = `id AS id, slug AS slug, name AS name, description AS descriptio
 type DatabasePoi = Omit<AdminPoi, 'updated_at'> & { updated_at: Date };
 const to_poi = (row: DatabasePoi): AdminPoi => ({ ...row, updated_at: row.updated_at.toISOString() });
 export const admin_repository: AdminRepository = {
+  async next_id() { const pool=await get_pool(); return (await pool.request().query("SELECT 'POI'+FORMAT(NEXT VALUE FOR dbo.pois_id_seq,'000') AS id")).recordset[0].id; },
   async list(query) {
     const pool = await get_pool();
     const where = `(@q = N'' OR name LIKE @q ESCAPE N'~' OR address LIKE @q ESCAPE N'~') AND (@category IS NULL OR category = @category)
@@ -32,7 +35,7 @@ export const admin_repository: AdminRepository = {
   },
   async find(id) {
     const pool = await get_pool();
-    const result = await pool.request().input('id', sql.UniqueIdentifier, id).query<DatabasePoi>(`SELECT ${columns} FROM dbo.pois WHERE id = @id`);
+    const result = await pool.request().input('id', sql.VarChar(36), id).query<DatabasePoi>(`SELECT ${columns} FROM dbo.pois WHERE id = @id`);
     return result.recordset[0] ? to_poi(result.recordset[0]) : undefined;
   },
   async stats() {
@@ -49,8 +52,8 @@ export const admin_repository: AdminRepository = {
     const pool = await get_pool();
     const tx = new sql.Transaction(pool); await tx.begin();
     try {
-      const req = new sql.Request(tx).input('id', sql.UniqueIdentifier, id).input('name', sql.NVarChar(200), input.name).input('slug', sql.NVarChar(160), input.slug)
-        .input('user_id', sql.UniqueIdentifier, user_id ?? null)
+      const req = new sql.Request(tx).input('id', sql.VarChar(36), id).input('name', sql.NVarChar(200), input.name).input('slug', sql.NVarChar(160), input.slug)
+        .input('user_id', sql.VarChar(36), user_id ?? null)
         .input('description', sql.NVarChar(sql.MAX), input.description).input('address', sql.NVarChar(500), input.address)
         .input('visitor_description', sql.NVarChar(3000), input.visitor_description ?? null)
         .input('lat', sql.Float, input.latitude).input('lon', sql.Float, input.longitude).input('category', sql.NVarChar(50), input.category)
@@ -63,11 +66,13 @@ export const admin_repository: AdminRepository = {
           category=@category, source_language=@source, is_published=@published, image_credit=@credit, image_source_url=@imageSource, image_license_url=@license, updated_at=SYSUTCDATETIME(), updated_by=@user_id
           WHERE id=@id AND CONVERT(DATETIME2(3), updated_at)=@version; SELECT @@ROWCOUNT AS changed;`);
       if (!result.recordset[0]?.changed) { await tx.rollback(); return false; }
-      if (user_id) await new sql.Request(tx).input('user', sql.UniqueIdentifier, user_id).input('poi', sql.UniqueIdentifier, id)
+      if(create)await new sql.Request(tx).input('id',sql.VarChar(36),id).input('token',sql.VarChar(128),randomBytes(16).toString('hex'))
+        .query('INSERT INTO dbo.poi_qr_codes(poi_id,qr_token) VALUES(@id,@token)');
+      if (user_id) await new sql.Request(tx).input('user', sql.VarChar(36), user_id).input('poi', sql.VarChar(36), id)
         .input('action', sql.VarChar(50), create ? 'poi_created' : 'poi_updated')
         .query(`INSERT INTO dbo.system_logs(user_id,poi_id,component,level,action,message) VALUES(@user,@poi,N'poi-service','info',@action,N'Cập nhật nội dung địa điểm.');`);
       if (image) {
-        await new sql.Request(tx).input('id', sql.UniqueIdentifier, id).input('content', sql.VarBinary(sql.MAX), image.content)
+        await new sql.Request(tx).input('id', sql.VarChar(36), id).input('content', sql.VarBinary(sql.MAX), image.content)
           .input('type', sql.VarChar(30), image.content_type).input('hash', sql.Char(64), image.hash)
           .query(`UPDATE dbo.poi_images SET content=@content, content_type=@type, sha256=@hash, updated_at=SYSUTCDATETIME() WHERE poi_id=@id;
             IF @@ROWCOUNT=0 INSERT INTO dbo.poi_images (poi_id,content,content_type,sha256) VALUES (@id,@content,@type,@hash);

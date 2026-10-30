@@ -11,7 +11,8 @@
     "build": "tsc -p tsconfig.json",
     "db:seed": "tsx --env-file=../../.env src/database.ts seed",
     "start": "node --env-file=../../.env dist/server.js",
-    "test:integration": "tsx --env-file=../../.env --test tests/integration/*.test.ts"
+    "test:integration": "tsx --env-file=../../.env --test tests/integration/*.test.ts",
+    "qr:prepare": "tsx --env-file=../../.env src/prepare-qrs.ts"
   },
   "dependencies": {
     "dotenv": "^18.0.9",

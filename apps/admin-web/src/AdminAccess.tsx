@@ -44,6 +44,6 @@ export function AdminAccess() {
       {error && <p className="error-banner" role="alert">{error}</p>}
       <button className="primary" type="submit" disabled={busy}>{busy ? 'Đang đăng nhập…' : 'Đăng nhập'}</button>
     </form>
-    <a className="login-map-link" href="http://127.0.0.1:5173/">← Về bản đồ khám phá</a>
+    <a className="login-map-link" href={import.meta.env.VITE_PUBLIC_WEB_URL || (import.meta.env.PROD ? "/" : "http://127.0.0.1:5173/")}>← Về bản đồ khám phá</a>
   </section></main>;
 }

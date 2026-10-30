@@ -1,11 +1,11 @@
 -- Development fixtures; update descriptive content before publishing to users.
-INSERT INTO dbo.pois (id, slug, name, description, address, latitude, longitude, category, is_published)
+INSERT INTO dbo.pois ( slug, name, description, address, latitude, longitude, category, is_published)
 SELECT v.* FROM (VALUES
-    (CAST('11111111-1111-4111-8111-111111111111' AS UNIQUEIDENTIFIER), N'cho-ben-thanh', N'Chợ Bến Thành', N'Khu chợ nổi tiếng tại trung tâm Thành phố Hồ Chí Minh.', N'Phường Bến Thành, TP. Hồ Chí Minh', 10.7725, 106.6980, N'market', 1),
-    (CAST('22222222-2222-4222-8222-222222222222' AS UNIQUEIDENTIFIER), N'dinh-doc-lap', N'Dinh Độc Lập', N'Địa điểm tham quan về lịch sử và kiến trúc.', N'135 Nam Kỳ Khởi Nghĩa, TP. Hồ Chí Minh', 10.7770, 106.6953, N'history', 1),
-    (CAST('33333333-3333-4333-8333-333333333333' AS UNIQUEIDENTIFIER), N'buu-dien-trung-tam', N'Bưu điện Trung tâm Sài Gòn', N'Công trình kiến trúc tại khu vực trung tâm thành phố.', N'2 Công xã Paris, TP. Hồ Chí Minh', 10.7799, 106.6999, N'architecture', 1)
-) AS v (id, slug, name, description, address, latitude, longitude, category, is_published)
-WHERE NOT EXISTS (SELECT 1 FROM dbo.pois AS p WHERE p.id = v.id);
+    (N'cho-ben-thanh', N'Chợ Bến Thành', N'Khu chợ nổi tiếng tại trung tâm Thành phố Hồ Chí Minh.', N'Phường Bến Thành, TP. Hồ Chí Minh', 10.7725, 106.6980, N'market', 1),
+    (N'dinh-doc-lap', N'Dinh Độc Lập', N'Địa điểm tham quan về lịch sử và kiến trúc.', N'135 Nam Kỳ Khởi Nghĩa, TP. Hồ Chí Minh', 10.7770, 106.6953, N'history', 1),
+    (N'buu-dien-trung-tam', N'Bưu điện Trung tâm Sài Gòn', N'Công trình kiến trúc tại khu vực trung tâm thành phố.', N'2 Công xã Paris, TP. Hồ Chí Minh', 10.7799, 106.6999, N'architecture', 1)
+) AS v ( slug, name, description, address, latitude, longitude, category, is_published)
+WHERE NOT EXISTS (SELECT 1 FROM dbo.pois AS p WHERE p.slug = v.slug);
 
 -- Fill only missing fixture photos; preserve images subsequently edited by admins.
 UPDATE p SET image_url = v.image_url, image_credit = v.image_credit,

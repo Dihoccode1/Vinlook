@@ -25,16 +25,16 @@ export function create_app(service = create_translation_service(create_poi_sourc
   app.get('/languages', (_req, res) => res.json({ data: languages }));
   app.post('/pois/:id/narration', async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
-    const id = z.string().uuid().safeParse(req.params.id);
+    const id = z.string().regex(/^POI[0-9]{3,20}$/).safeParse(req.params.id);
     const body = z.object({ language: z.string().refine(supports_language) }).strict().safeParse(req.body);
     if (!id.success || !body.success) { res.status(400).json({ error: { code: 'INVALID_NARRATION_REQUEST' } }); return; }
     res.type('audio/wav').send(await narration.get(id.data, body.data.language));
   });
   app.post('/pois/:id/translation', async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
-    const id = z.string().uuid().safeParse(req.params.id);
+    const id = z.string().regex(/^POI[0-9]{3,20}$/).safeParse(req.params.id);
     const body = z.object({ language: z.string().refine(supports_language) }).strict().safeParse(req.body);
-    if (!id.success || !body.success) { res.status(400).json({ error: { code: 'INVALID_TRANSLATION_REQUEST', message: 'Provide a POI UUID and supported language' } }); return; }
+    if (!id.success || !body.success) { res.status(400).json({ error: { code: 'INVALID_TRANSLATION_REQUEST', message: 'Provide a POI code and supported language' } }); return; }
     res.json(await service.get(id.data, body.data.language));
   });
   app.use((_req, res) => res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Route not found' } }));

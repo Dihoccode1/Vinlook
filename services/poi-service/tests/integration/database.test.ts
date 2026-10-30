@@ -25,7 +25,7 @@ test('SQL Server returns seeded POIs, filters and pagination', async () => {
 });
 
 test('SQL Server stores the exact binary photo, separate from POI JSON metadata', async () => {
-  const id = '11111111-1111-4111-8111-111111111111';
+  const id = (await poi_repository.list({q:'Bến Thành',category:'market',page:1,limit:20})).data[0].id;
   const original = await readFile(new URL('../../database/seeds/images/ben-thanh.jpg', import.meta.url));
   const photo = await poi_repository.find_image(id);
   assert.ok(photo);
@@ -35,7 +35,7 @@ test('SQL Server stores the exact binary photo, separate from POI JSON metadata'
   const poi = await poi_repository.find(id);
   assert.ok(poi);
   assert.equal('content' in poi, false);
-  assert.equal(await poi_repository.find_image('44444444-4444-4444-8444-444444444444'), undefined);
+  assert.equal(await poi_repository.find_image('POI99999999999999999999'), undefined);
 });
 
 test('search treats SQL injection and LIKE wildcards as literal text', async () => {

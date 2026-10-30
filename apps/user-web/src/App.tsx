@@ -25,9 +25,10 @@ export default function App() {
   const [selected, set_selected] = useState<Poi | null>(null);
   const [detail, set_detail] = useState<Poi | null>(null);
   const [detail_error, set_detail_error] = useState('');
+  const [qr_error,set_qr_error]=useState('');
   const [retry, set_retry] = useState(0);
   const location = use_location();
-  const has_gps = location.active && !location.stale && location.position !== null;
+  const has_gps = location.active && location.position !== null;
   const searching = search.trim().length > 0;
   const { all_pois: all_pois, matches, loading, error } = use_poi_discovery({ search, category, position: has_gps ? location.position : null }, retry);
   const total = matches.length;
@@ -44,7 +45,19 @@ export default function App() {
   const photo_poi = detail ?? selected;
   const photo_source = https_url(photo_poi?.image_source_url);
   const photo_license = https_url(photo_poi?.image_license_url);
-  function locate() { set_selected(null); set_following(true); sheet.current?.collapse(); set_location_focus(value => value + 1); if (!location.active) location.start(); }
+  function locate() { set_selected(null); set_following(true); sheet.current?.collapse(); set_location_focus(value => value + 1); if (!location.active) location.start(); else if (location.stale || location.error) location.refresh(); }
+
+  useEffect(()=>{
+    if(!window.location.pathname.startsWith('/qr/'))return;
+    const token=window.location.pathname.slice(4).replace(/\/$/,'');
+    if(!/^[a-f0-9]{32}$/.test(token)){set_qr_error('Mã QR không hợp lệ. Bạn vẫn có thể tìm địa điểm trên bản đồ.');return;}
+    const controller=new AbortController();
+    fetch(`/api/pois/qr/${token}`,{signal:controller.signal}).then(async response=>{
+      if(!response.ok)throw Error(response.status===404?'Địa điểm không tồn tại hoặc chưa được xuất bản.':'Không tải được địa điểm từ QR. Hãy tải lại trang để thử lại.');
+      return response.json() as Promise<{data:Poi}>;
+    }).then(result=>{if(!controller.signal.aborted)select(result.data);}).catch(failure=>{if(!controller.signal.aborted)set_qr_error(failure instanceof Error?failure.message:'Không đọc được QR.');});
+    return()=>controller.abort();
+  },[select]);
 
   useEffect(() => {
     set_selected(null);
@@ -90,6 +103,7 @@ export default function App() {
       <PoiMap pois={map_pois} selected={selected} on_select={select} position={location.position} stale={location.stale} following={following} location_focus={location_focus} on_manual_move={stop_following} route={plan.route} itinerary={plan.stops} profile={plan.profile} />
       <LocationControls {...location} on_locate={locate} />
       <div className="map-badge"><span className="live-dot" /> Thành phố Hồ Chí Minh <span className="badge-country">VIỆT NAM</span></div>
+      {qr_error&&<article className="detail" role="alert"><button className="close" aria-label="Đóng thông báo QR" onClick={()=>set_qr_error('')}>×</button><p>{qr_error}</p></article>}
       {selected && <article className="detail photo-detail">
         <button className="close" aria-label="Đóng chi tiết" onClick={() => set_selected(null)}>×</button>
         <PoiImage class_name="poi-detail-photo" src={photo_poi?.image_url ?? null} name={selected.name} lazy={false} />

@@ -12,12 +12,20 @@
     "db:up": "docker compose --env-file .env -f infrastructure/docker/compose.yml up -d --wait",
     "dev": "concurrently -k -n poi,gateway,navigation,translation,web,admin \"npm run dev -w @tourism/poi-service\" \"npm run dev -w @tourism/api-gateway\" \"npm run dev -w @tourism/navigation-service\" \"npm run dev -w @tourism/translation-service\" \"npm run dev -w @tourism/user-web\" \"npm run dev -w @tourism/admin-web\"",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "db:migrate": "npm run db:migrate -w @tourism/poi-service && npm run db:migrate -w @tourism/translation-service",
+    "db:migrate": "npm run db:migrate -w @tourism/poi-service && npm run db:migrate -w @tourism/translation-service && npm run db:short-ids",
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "db:down": "docker compose --env-file .env -f infrastructure/docker/compose.yml down",
     "db:seed": "npm run db:seed -w @tourism/poi-service",
-    "audio:prepare-defaults": "npm run content:prepare -w @tourism/translation-service -- vi en zh-CN"
+    "audio:prepare-defaults": "npm run content:prepare -w @tourism/translation-service -- vi en zh-CN",
+    "db:short-ids": "tsx --env-file=.env database/short-ids.ts",
+    "server:build": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml build",
+    "server:up": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml up -d --build --wait --wait-timeout 240",
+    "server:status": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml ps -a",
+    "server:logs": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml logs -f --tail 100",
+    "server:down": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml down",
+    "server:tunnel": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml --profile tunnel up -d cloudflared",
+    "server:tunnel:stop": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml --profile tunnel stop cloudflared"
   },
   "engines": {
     "node": ">=22.12.0"

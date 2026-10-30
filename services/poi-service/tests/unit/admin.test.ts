@@ -10,6 +10,7 @@ const input = { name:'Điểm thử',slug:'diem-thu',description:'Nội dung g�
 function setup() {
   let poi: AdminPoi | undefined; let conflict = false; let writes = 0;
   const repository: AdminRepository = {
+    next_id: async()=> 'POI001',
     stats: async () => ({ total:poi?1:0,published:0,drafts:poi?1:0,with_images:0,categories:[] }),
     list: async query => ({ data:poi?[poi]:[],pagination:{total:poi?1:0,page:query.page,limit:query.limit} }),
     find: async () => poi,
@@ -25,7 +26,7 @@ test('admin API requires its server key and does not expose records anonymously'
 });
 test('admin creates drafts, validates updates and reports optimistic conflicts',async()=>{
   const f=setup();const created=await request(f.app).post('/admin/pois').set('x-admin-key','test-admin-key').send(input).expect(201);
-  assert.equal(created.body.data.is_published,false);assert.match(created.body.data.id,/^[a-f0-9-]{36}$/);
+  assert.equal(created.body.data.is_published,false);assert.match(created.body.data.id,/^POI[0-9]{3,20}$/);
   const url=`/admin/pois/${created.body.data.id}`;
   await request(f.app).put(url).set('x-admin-key','test-admin-key').send(input).expect(400);
   await request(f.app).put(url).set('x-admin-key','test-admin-key').send({...input,updated_at:created.body.data.updated_at,is_published:true}).expect(200);

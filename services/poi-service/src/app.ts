@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { z } from 'zod';
 import { poi_repository, type PoiRepository } from './modules/pois/poi.repository.js';
 import { admin_routes } from './modules/admin/admin.routes.js';
+import {qr_repository,type QrRepository} from './modules/pois/qr.repository.js';
 
 const query_schema = z.object({
   q: z.string().trim().max(200).default(''),
@@ -12,7 +13,7 @@ const query_schema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 }).strict();
 
-export function create_app(repository: PoiRepository = poi_repository) {
+export function create_app(repository: PoiRepository = poi_repository, qr:QrRepository=qr_repository) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
@@ -34,8 +35,17 @@ export function create_app(repository: PoiRepository = poi_repository) {
     }
     res.json(await repository.list(query.data));
   });
+  app.get('/pois/qr/:token',async(req,res)=>{
+    res.setHeader('Cache-Control','no-store');
+    const token=String(req.params.token);
+    if(!/^[a-f0-9]{32}$/.test(token)){res.status(400).json({error:{message:'Mã QR không hợp lệ.'}});return;}
+    const id=await qr.resolve(token);
+    const poi=id?await repository.find(id):undefined;
+    if(!poi){res.status(404).json({error:{message:'Địa điểm không tồn tại hoặc chưa được xuất bản.'}});return;}
+    res.json({data:poi});
+  });
   app.get('/pois/:id/image', async (req, res) => {
-    const id = z.string().uuid().safeParse(req.params.id);
+    const id = z.string().regex(/^POI[0-9]{3,20}$/).safeParse(req.params.id);
     if (!id.success) {
       res.status(400).json({ error: { code: 'INVALID_ID', message: 'POI id must be a UUID' } });
       return;
@@ -52,7 +62,7 @@ export function create_app(repository: PoiRepository = poi_repository) {
     }).send(image.content);
   });
   app.get('/pois/:id', async (req, res) => {
-    const id = z.string().uuid().safeParse(req.params.id);
+    const id = z.string().regex(/^POI[0-9]{3,20}$/).safeParse(req.params.id);
     if (!id.success) {
       res.status(400).json({ error: { code: 'INVALID_ID', message: 'POI id must be a UUID' } });
       return;

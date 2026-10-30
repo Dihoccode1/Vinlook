@@ -99,3 +99,40 @@ test('denied permission does not trigger an automatic watch or repeated prompts'
   assert.equal(env.watches(), 0);
   session.dispose();
 });
+
+test('stalled GPS retries without discarding the last fix or accepting callbacks from the old watch', () => {
+  const env = environment('granted');
+  let now = 1000;
+  let tick!: () => void;
+  let cancelled = false;
+  const callbacks: {success: PositionCallback; failure?: PositionErrorCallback | null}[] = [];
+  const session = create_location_session({...env, now:()=>now,
+    every: callback => { tick=callback; return 7; }, cancel: id=>{assert.equal(id,7);cancelled=true;},
+    geolocation:{watchPosition(success,failure){callbacks.push({success,failure});return callbacks.length-1;},clearWatch:env.geolocation.clearWatch},
+  });
+  session.start();
+  const fix = {coords:{latitude:10.77,longitude:106.69,accuracy:12},timestamp:now} as GeolocationPosition;
+  callbacks[0].success(fix);
+  now=32000;tick();
+  assert.equal(callbacks.length,2);
+  assert.equal(session.get_snapshot().active,true);
+  assert.equal(session.get_snapshot().position?.latitude,10.77);
+  assert.deepEqual(env.cleared,[0]);
+  callbacks[0].success({...fix,coords:{...fix.coords,latitude:20},timestamp:now});
+  assert.equal(session.get_snapshot().position?.latitude,10.77);
+  tick();assert.equal(callbacks.length,2);
+  callbacks[1].success({...fix,timestamp:now});
+  now=63000;env.page.dispatchEvent(new Event('focus'));
+  assert.equal(callbacks.length,3);
+  callbacks[2].failure?.({code:1} as GeolocationPositionError);
+  now=100000;tick();assert.equal(callbacks.length,3);
+  session.dispose();assert.equal(cancelled,true);
+});
+
+test('recovery never enables a stopped session', () => {
+  const env=environment('granted');let tick!:()=>void;
+  const session=create_location_session({...env,every:callback=>{tick=callback;return 0;},cancel:()=>{}});
+  session.start();session.stop();tick();
+  assert.equal(env.watches(),1);assert.equal(session.get_snapshot().active,false);
+  session.dispose();
+});

@@ -18,6 +18,8 @@ async function main(){
         const result=await run(process.execPath,[cli,'--env-file=.env',script,...args],{env});
         if(pass===1)assert.ok(!result.stdout.includes('Applied '),'Second migration run must not reapply scripts');
       }
+      await run(process.execPath,[cli,'--env-file=.env','database/short-ids.ts'],{env});
+      await run(process.execPath,[cli,'--env-file=.env','services/poi-service/src/database.ts','seed'],{env});
     }
     const result=await run(process.execPath,[cli,'--env-file=.env','database/verify-erd.ts'],{env});
     console.log(result.stdout.trim());

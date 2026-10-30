@@ -7,7 +7,7 @@ import type { NarrationRepository } from './narration.repository.js';
 
 export function create_narration_file_store(root = fileURLToPath(new URL('../../../storage/narrations/', import.meta.url))): NarrationRepository {
   function path(id: string, language: string, hash: string) {
-    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id) || !supports_language(language) || !/^[a-f0-9]{64}$/.test(hash)) throw new Error('Invalid narration file key');
+    if (!/^POI[0-9]{3,20}$/i.test(id) || !supports_language(language) || !/^[a-f0-9]{64}$/.test(hash)) throw new Error('Invalid narration file key');
     return join(root, id.toLowerCase(), `${language}-${hash}.wav`);
   }
   function valid(audio: Buffer) { return audio.length >= 44 && audio.length <= 21000000 && audio.toString('ascii', 0, 4) === 'RIFF' && audio.toString('ascii', 8, 12) === 'WAVE'; }

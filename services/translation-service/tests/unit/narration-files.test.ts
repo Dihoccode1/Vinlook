@@ -9,7 +9,7 @@ import { narration_key } from '../../src/modules/translations/narration-key.js';
 
 test('WAV files survive service restart and restore SQL without generating again', async () => {
   const root = await mkdtemp(join(tmpdir(), 'vinlook-narration-'));
-  const id = '11111111-1111-4111-8111-111111111111';
+  const id = 'POI001';
   const text = { name: 'Chợ', description: 'Câu chuyện' };
   const key = narration_key(id, 'vi', text.name, text.description, 'voice');
   const wav = Buffer.alloc(48); wav.write('RIFF'); wav.write('WAVE', 8);

@@ -12,7 +12,7 @@ const options = { username: 'admin', password_hash: `${salt}:${scryptSync('12345
 function setup(role: 'admin'|'staff' = 'admin') {
   const app = express();
   const sessions = new Map<string, AdminUser>();
-  const user = { id: '11111111-1111-4111-8111-111111111111', username: options.username, password_hash: options.password_hash, role };
+  const user = { id: 'POI001', username: options.username, password_hash: options.password_hash, role };
   const store: AuthStore = { find_user: async name => name === user.username ? user : undefined,
     create_session: async (hash, value) => { sessions.set(hash, value); }, find_session: async hash => sessions.get(hash), revoke_session: async hash => { sessions.delete(hash); } };
   app.use('/api/admin', admin_auth(options, store));
@@ -43,6 +43,7 @@ test('staff session exposes role and allows POI tools but denies monitor and use
   assert.equal(login.body.data.role,'staff');
   assert.equal((await agent.get('/api/admin/auth/session')).body.data.role,'staff');
   for(const path of ['/stats','/activity','/pois','/pois/123','/geocode?q=x']) await agent.get(`/api/admin${path}`).expect(200);
+  await agent.post('/api/admin/pois/POI001/qr').set('x-vinlook-admin','1').expect(200);
   await agent.put('/api/admin/pois/123').set('x-vinlook-admin','1').send({}).expect(200);
   for(const path of ['/monitor','/users','/users/123','/private']) await agent.get(`/api/admin${path}`).expect(403);
   await agent.post('/api/admin/users').set('x-vinlook-admin','1').send({}).expect(403);

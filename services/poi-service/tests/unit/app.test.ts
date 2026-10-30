@@ -5,7 +5,7 @@ import { create_app } from '../../src/app.js';
 import type { Poi, PoiRepository } from '../../src/modules/pois/poi.repository.js';
 import { createHash } from 'node:crypto';
 
-const poi: Poi = { id: '11111111-1111-4111-8111-111111111111', slug: 'cho-ben-thanh', name: 'Chợ Bến Thành', description: 'Test', address: 'TP.HCM', latitude: 10.7725, longitude: 106.698, category: 'market', source_language: 'vi', image_url: '/images/pois/ben-thanh.jpg', image_credit: 'Riza · CC BY 2.0', image_source_url: 'https://commons.wikimedia.org/wiki/File:Ben_Thanh_market_2.jpg', image_license_url: 'https://creativecommons.org/licenses/by/2.0/' };
+const poi: Poi = { id: 'POI001', slug: 'cho-ben-thanh', name: 'Chợ Bến Thành', description: 'Test', address: 'TP.HCM', latitude: 10.7725, longitude: 106.698, category: 'market', source_language: 'vi', image_url: '/images/pois/ben-thanh.jpg', image_credit: 'Riza · CC BY 2.0', image_source_url: 'https://commons.wikimedia.org/wiki/File:Ben_Thanh_market_2.jpg', image_license_url: 'https://creativecommons.org/licenses/by/2.0/' };
 const repository: PoiRepository = {
   async list(query) { return { data: [poi], pagination: { page: query.page, limit: query.limit, total: 1 } }; },
   async find(id) { return id === poi.id ? poi : undefined; },
@@ -28,7 +28,7 @@ test('image endpoint returns original bytes and supports conditional caching', a
   const cached = await request(app).get(url).set('If-None-Match', image.headers.etag);
   assert.equal(cached.status, 304);
   assert.equal((await request(app).get('/pois/bad/image')).status, 400);
-  assert.equal((await request(app).get('/pois/44444444-4444-4444-8444-444444444444/image')).status, 404);
+  assert.equal((await request(app).get('/pois/POI002/image')).status, 404);
 });
 
 test('list forwards validated search and pagination to repository', async () => {
@@ -54,7 +54,7 @@ test('detail returns POI, malformed id returns 400, unknown id returns 404', asy
   assert.equal((await request(app).get(`/pois/${poi.id}`)).body.data.name, poi.name);
   assert.equal((await request(app).get(`/pois/${poi.id}`)).body.data.image_credit, poi.image_credit);
   assert.equal((await request(app).get('/pois/invalid')).status, 400);
-  assert.equal((await request(app).get('/pois/44444444-4444-4444-8444-444444444444')).status, 404);
+  assert.equal((await request(app).get('/pois/POI002')).status, 404);
 });
 
 test('database outage fails readiness and API without exposing SQL errors', async () => {

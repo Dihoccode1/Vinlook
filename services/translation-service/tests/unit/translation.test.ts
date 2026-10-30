@@ -7,7 +7,7 @@ import { create_my_memory_provider, split_for_translation } from '../../src/prov
 import { create_app } from '../../src/app.js';
 
 function fixture() {
-  const poi = { id: '11111111-1111-4111-8111-111111111111', name: 'Chợ', description: 'Một địa điểm', source_language: 'vi' };
+  const poi = { id: 'POI001', name: 'Chợ', description: 'Một địa điểm', source_language: 'vi' };
   const rows = new Map<string, Translation>(); let calls = 0; let fail = false;
   const service = create_translation_service({ get: async () => poi }, {
     find: async (id, language, hash) => { const row = rows.get(`${id}:${language}`); return row?.source_hash === hash ? row : undefined; },

@@ -52,7 +52,7 @@ export function create_location_tracker(environment: LocationEnvironment) {
         return;
       }
       const current = generation;
-      update({ ...initial, active: true, status: 'locating' });
+      update({ ...initial, position: snapshot.position, active: true, status: 'locating' });
       try {
         const id = environment.geolocation.watchPosition(position => {
           if (generation !== current) return;
@@ -69,11 +69,11 @@ export function create_location_tracker(environment: LocationEnvironment) {
           if (generation !== current) return;
           if (error.code === 1) {
             clear();
-            update({ ...initial, status: 'error', error: 'Quyền vị trí đã bị từ chối. Hãy cho phép vị trí trong cài đặt trình duyệt rồi thử lại.' });
+            update({ ...initial, status: 'error', error: 'Quyền vị trí đã bị từ chối. Bật quyền vị trí cho trang và trình duyệt trong cài đặt điện thoại, rồi bấm Về vị trí của tôi. Nếu mở từ Zalo/Facebook, hãy mở link bằng Chrome hoặc Safari.' });
           } else {
             update({ ...snapshot, status: 'error', error: error.code === 3
               ? 'Chưa lấy được vị trí trong thời gian chờ. GPS vẫn đang thử cập nhật.'
-              : 'Tạm thời không xác định được vị trí. Kiểm tra GPS hoặc kết nối của thiết bị.' });
+              : 'Tạm thời không xác định được vị trí. Bật Vị trí/GPS trên điện thoại và kiểm tra kết nối. Nếu mở từ Zalo/Facebook, hãy thử mở link bằng Chrome hoặc Safari.' });
           }
         }, { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 });
         // Covers permission callbacks that complete before watchPosition returns.
@@ -87,6 +87,12 @@ export function create_location_tracker(environment: LocationEnvironment) {
     stop() {
       clear();
       update(initial);
+    },
+    refresh() {
+      if (!snapshot.active) return;
+      clear();
+      update({ ...snapshot, active: false });
+      this.start();
     },
   };
 }

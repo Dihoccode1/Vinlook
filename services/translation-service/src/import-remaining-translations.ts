@@ -25,7 +25,7 @@ async function main() {
     for (const set of sets) {
       const poi = pois.find(item => item.slug === set.slug)!;
       for (const [language, text] of Object.entries(set.translations)) {
-        const result = await translations.request().input('id', sql.UniqueIdentifier, poi.id).input('language', sql.VarChar(10), language)
+        const result = await translations.request().input('id', sql.VarChar(36), poi.id).input('language', sql.VarChar(10), language)
           .input('hash', sql.Char(64), set.source_hash).input('source', sql.VarChar(10), poi.source_language)
           .input('name', sql.NVarChar(2000), text.name).input('description', sql.NVarChar(sql.MAX), text.description)
           .input('provider', sql.NVarChar(50), editorial_provider)

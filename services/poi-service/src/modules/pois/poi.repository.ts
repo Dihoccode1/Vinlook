@@ -54,7 +54,7 @@ export const poi_repository: PoiRepository = {
   },
   async find(id) {
     const pool = await get_pool();
-    const result = await pool.request().input('id', sql.UniqueIdentifier, id)
+    const result = await pool.request().input('id', sql.VarChar(36), id)
       .query<Poi>(`SELECT ${columns} FROM dbo.pois WHERE id = @id AND is_published = 1`);
     return result.recordset[0];
   },
@@ -64,7 +64,7 @@ export const poi_repository: PoiRepository = {
   },
   async find_image(id) {
     const pool = await get_pool();
-    const result = await pool.request().input('id', sql.UniqueIdentifier, id)
+    const result = await pool.request().input('id', sql.VarChar(36), id)
       .query<PoiImageRecord>(`SELECT i.content AS content, i.content_type AS content_type, i.sha256 AS sha256
         FROM dbo.poi_images i INNER JOIN dbo.pois p ON p.id = i.poi_id
         WHERE p.id = @id AND p.is_published = 1`);

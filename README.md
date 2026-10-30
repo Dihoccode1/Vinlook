@@ -19,6 +19,9 @@ Admin, monitor, dịch và các service khác hiện còn là bộ khung. GPS hi
 
 ## Chạy local trên PowerShell
 
+Chạy toàn bộ ứng dụng bằng Docker trên máy cá nhân: xem [Docker server và Cloudflare Tunnel](docs/docker-server.md).
+Sau khi có `.env`, dùng `npm run server:up`, mở `http://localhost:8080` và `http://localhost:8080/admin/`.
+
 Yêu cầu Node.js >= 22.12 (khuyến nghị Node 24), npm và Docker Engine chạy Linux containers.
 
 ```powershell

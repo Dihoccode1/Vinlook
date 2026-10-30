@@ -5,12 +5,18 @@ import { activity_routes } from './activity.js';
 import { monitor_routes } from './monitor.js';
 import { admin_auth } from './admin-auth.js';
 import { user_routes } from './users.js';
+import { create_event_journal } from './event-journal.js';
+import { delivery_status_routes } from './delivery-status.js';
 
 export function create_app(poi_service_url = process.env.POI_SERVICE_URL ?? 'http://localhost:4001', navigation_service_url = process.env.NAVIGATION_SERVICE_URL ?? 'http://localhost:4002', translation_service_url = process.env.TRANSLATION_SERVICE_URL ?? 'http://localhost:4003') {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
+  const journal = create_event_journal();
+  app.use(journal.middleware);
   app.use('/api/admin', admin_auth());
+  app.use('/api/admin', journal.router);
+  app.use('/api/admin', delivery_status_routes());
   app.use('/api/admin/users', user_routes());
   app.use('/api', activity_routes());
   app.use('/api', monitor_routes([

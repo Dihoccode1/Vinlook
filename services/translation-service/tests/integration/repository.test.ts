@@ -7,7 +7,7 @@ import { get_pool, close_pool } from '../../src/config/database.js';
 import { narration_repository } from '../../src/modules/translations/narration.repository.js';
 import { create_narration_service } from '../../src/modules/translations/narration.service.js';
 test('SQL cache stores Unicode, replaces translations and filters stale hashes', async () => {
-  const poi_id = randomUUID();
+  const poi_id = ('POI'+BigInt('0x'+randomUUID().replaceAll('-','').slice(0,12)).toString());
   try {
     await translation_repository.ready();
     const row = { poi_id: poi_id, language: 'ja', source_language: 'vi', source_hash: 'a'.repeat(64), name: '市場', description: 'Địa điểm 日本語', provider: 'test', translated_at: new Date().toISOString() };
@@ -28,9 +28,9 @@ test('SQL cache stores Unicode, replaces translations and filters stale hashes',
     assert.deepEqual(await make().get(poi_id, 'vi'), wav); assert.equal(generations, 1);
     content.description = 'Câu chuyện mới'; await make().get(poi_id, 'vi'); assert.equal(generations, 2);
     const pool = await get_pool();
-    const count = await pool.request().input('id', sql.UniqueIdentifier, poi_id).query('SELECT COUNT(*) AS total FROM dbo.poi_narrations WHERE poi_id = @id');
+    const count = await pool.request().input('id', sql.VarChar(36), poi_id).query('SELECT COUNT(*) AS total FROM dbo.poi_narrations WHERE poi_id = @id');
     assert.equal(count.recordset[0].total, 1);
   } finally {
-    const pool = await get_pool(); await pool.request().input('id', sql.UniqueIdentifier, poi_id).query('DELETE FROM dbo.poi_narrations WHERE poi_id = @id; DELETE FROM dbo.poi_translations WHERE poi_id = @id'); await close_pool();
+    const pool = await get_pool(); await pool.request().input('id', sql.VarChar(36), poi_id).query('DELETE FROM dbo.poi_narrations WHERE poi_id = @id; DELETE FROM dbo.poi_translations WHERE poi_id = @id'); await close_pool();
   }
 });

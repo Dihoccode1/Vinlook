@@ -8,27 +8,28 @@ import { poi_repository } from '../../src/modules/pois/poi.repository.js';
 import { get_pool, close_pool } from '../../src/config/database.js';
 
 test('admin writes author and audit log atomically with the POI', async () => {
-  const user_id = randomUUID(), poi_id = randomUUID(); const pool = await get_pool();
+  const user_id = ('USR'+BigInt('0x'+randomUUID().replaceAll('-','').slice(0,12)).toString()), poi_id = ('POI'+BigInt('0x'+randomUUID().replaceAll('-','').slice(0,12)).toString()); const pool = await get_pool();
   try {
-    await pool.request().input('id', sql.UniqueIdentifier, user_id).input('name', sql.NVarChar(100), `audit-${user_id}`)
+    await pool.request().input('id', sql.VarChar(36), user_id).input('name', sql.NVarChar(100), `audit-${user_id}`)
       .query("INSERT INTO dbo.users(id,username,password_hash,full_name) VALUES(@id,@name,'test-only',N'Audit test')");
     const input = { name: 'Audit test', slug: `audit-${poi_id}`, description: 'Narration', address: 'Test address', latitude: 10, longitude: 106, category: 'history' as const, source_language: 'vi' as const, is_published: false };
     await admin_repository.save(poi_id, input, true, user_id);
     const created = await admin_repository.find(poi_id); assert.ok(created);
+    const qr=await pool.request().input('id',sql.VarChar(36),poi_id).query('SELECT qr_token FROM dbo.poi_qr_codes WHERE poi_id=@id');assert.match(qr.recordset[0].qr_token,/^[a-f0-9]{32}$/);
     await admin_repository.save(poi_id, { ...input, name: 'Edited', updated_at: created.updated_at }, false, user_id);
-    const result = await pool.request().input('id', sql.UniqueIdentifier, poi_id).query(`SELECT created_by,updated_by FROM dbo.pois WHERE id=@id; SELECT action FROM dbo.system_logs WHERE poi_id=@id ORDER BY id`);
-    assert.equal(result.recordsets[0][0].created_by.toLowerCase(), user_id);
-    assert.equal(result.recordsets[0][0].updated_by.toLowerCase(), user_id);
+    const result = await pool.request().input('id', sql.VarChar(36), poi_id).query(`SELECT created_by,updated_by FROM dbo.pois WHERE id=@id; SELECT action FROM dbo.system_logs WHERE poi_id=@id ORDER BY id`);
+    assert.equal(result.recordsets[0][0].created_by, user_id);
+    assert.equal(result.recordsets[0][0].updated_by, user_id);
     assert.deepEqual(result.recordsets[1].map((row: { action: string }) => row.action), ['poi_created', 'poi_updated']);
   } finally {
-    await pool.request().input('poi', sql.UniqueIdentifier, poi_id).input('user', sql.UniqueIdentifier, user_id)
-      .query('DELETE FROM dbo.system_logs WHERE poi_id=@poi; DELETE FROM dbo.pois WHERE id=@poi; DELETE FROM dbo.users WHERE id=@user');
+    await pool.request().input('poi', sql.VarChar(36), poi_id).input('user', sql.VarChar(36), user_id)
+      .query('DELETE FROM dbo.system_logs WHERE poi_id=@poi; DELETE FROM dbo.poi_qr_codes WHERE poi_id=@poi; DELETE FROM dbo.pois WHERE id=@poi; DELETE FROM dbo.users WHERE id=@user');
     await close_pool();
   }
 });
 
 test('SQL admin CRUD preserves draft privacy, saves photo atomically and rejects stale versions',async()=>{
-  const id=randomUUID();const second=randomUUID();
+  const id=('POI'+BigInt('0x'+randomUUID().replaceAll('-','').slice(0,12)).toString());const second=('POI'+BigInt('0x'+randomUUID().replaceAll('-','').slice(0,12)).toString());
   const input={name:'Địa điểm kiểm thử',slug:`admin-test-${id}`,description:'Nội dung tiếng Việt',visitor_description:'Giới thiệu cho khách, tách khỏi bài thuyết minh.',address:'Địa chỉ thử',latitude:10.77,longitude:106.7,category:'history' as const,source_language:'vi' as const,is_published:false};
   try{
     assert.equal(await admin_repository.save(id,input,true),true);
@@ -48,6 +49,6 @@ test('SQL admin CRUD preserves draft privacy, saves photo atomically and rejects
     await assert.rejects(admin_repository.save(id,{...input,name:'Bad image update',updated_at:latest.updated_at,image_credit:'Test',image:{content_type:'image/png',base64:jpeg.toString('base64')}},false));
     assert.equal((await admin_repository.find(id))?.name,input.name);
   }finally{
-    const pool=await get_pool();await pool.request().input('id',sql.UniqueIdentifier,id).input('second',sql.UniqueIdentifier,second).query('DELETE FROM dbo.pois WHERE id=@id OR id=@second');await close_pool();
+    const pool=await get_pool();await pool.request().input('id',sql.VarChar(36),id).input('second',sql.VarChar(36),second).query('DELETE FROM dbo.poi_qr_codes WHERE poi_id=@id OR poi_id=@second; DELETE FROM dbo.pois WHERE id=@id OR id=@second');await close_pool();
   }
 });

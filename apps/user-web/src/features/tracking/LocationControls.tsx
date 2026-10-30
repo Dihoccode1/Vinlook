@@ -6,7 +6,7 @@ interface Props extends TrackingSnapshot {
 }
 
 export function LocationControls({ status, active, position, stale, error, on_locate: on_locate }: Props) {
-  const message = error ? 'Chưa lấy được GPS · Thử lại' : status === 'locating' ? 'Đang tìm vị trí…' : stale && position ? 'Vị trí cần cập nhật' : '';
+  const message = error || (position && active && stale ? 'Vị trí gần nhất · Đang cập nhật' : status === 'locating' ? 'Đang tìm vị trí…' : '');
   return <section className="location-controls location-compact" aria-label="Định vị của bạn">
     <button className="location-locate" onClick={on_locate} title={error || 'Về vị trí của tôi'}>
       <span className="location-target" aria-hidden="true">⌖</span>

@@ -25,7 +25,7 @@ export const sql_auth_store: AuthStore = {
   },
   async create_session(hash, user, expires) {
     const pool = await auth_pool();
-    await pool.request().input('hash', sql.Char(64), hash).input('user', sql.UniqueIdentifier, user.id).input('expires', sql.DateTime2, expires).query(`
+    await pool.request().input('hash', sql.Char(64), hash).input('user', sql.VarChar(36), user.id).input('expires', sql.DateTime2, expires).query(`
       SET XACT_ABORT ON; BEGIN TRANSACTION;
       INSERT INTO dbo.admin_sessions(token_hash,user_id,expires_at) VALUES(@hash,@user,@expires);
       INSERT INTO dbo.system_logs(user_id,component,level,action,message) VALUES(@user,N'admin-auth','info','login',N'Đăng nhập quản trị thành công.');

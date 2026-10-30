@@ -1,0 +1,37 @@
+# Build from the repository root. SERVICE is the folder under services/.
+# Example: docker build -f Dockerfile.backend --build-arg SERVICE=api-gateway -t vinlook-gateway .
+FROM node:24-bookworm-slim AS tools
+WORKDIR /app
+
+# Keep the npm workspace layout when resolving the shared lockfile.
+# Local dependencies, build outputs and .env files are excluded by .dockerignore.
+COPY package.json package-lock.json tsconfig.json ./
+COPY apps/ ./apps/
+COPY packages/ ./packages/
+COPY services/ ./services/
+COPY database/ ./database/
+RUN npm ci
+RUN mkdir -p .local-backups && chown -R node:node .local-backups
+
+FROM tools AS build
+
+ARG SERVICE=api-gateway
+RUN case "$SERVICE" in api-gateway|poi-service|navigation-service|translation-service) ;; *) echo "Unsupported SERVICE"; exit 1 ;; esac \
+    && npm run build --workspace="@tourism/$SERVICE" \
+    && npm prune --omit=dev
+
+FROM node:24-bookworm-slim AS runtime
+ENV NODE_ENV=production
+WORKDIR /app
+ARG SERVICE=api-gateway
+
+COPY --from=build --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/package.json ./package.json
+# Preserve paths used by SQL migrations and narration file storage.
+COPY --from=build --chown=node:node /app/database ./database
+COPY --from=build --chown=node:node /app/services/${SERVICE}/ ./services/${SERVICE}/
+
+WORKDIR /app/services/${SERVICE}
+USER node
+# Compose passes environment variables at runtime; no .env is baked into the image.
+CMD ["node", "dist/server.js"]

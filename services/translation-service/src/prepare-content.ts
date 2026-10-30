@@ -25,7 +25,7 @@ async function main() {
     url.search = new URLSearchParams({ page: String(page), limit: '20' }).toString();
     const response = await fetch(url, { signal: AbortSignal.timeout(6000), redirect: 'error' });
     if (!response.ok) throw new Error('POI list unavailable');
-    const result = z.object({ data: z.array(z.object({ id: z.string().uuid() })), pagination: z.object({ total: z.number() }) }).parse(await response.json());
+    const result = z.object({ data: z.array(z.object({ id: z.string().regex(/^POI[0-9]{3,20}$/) })), pagination: z.object({ total: z.number() }) }).parse(await response.json());
     ids.push(...result.data.map(poi => poi.id));
     if (ids.length >= result.pagination.total || !result.data.length) break;
   }
