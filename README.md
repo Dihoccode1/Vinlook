@@ -52,8 +52,8 @@ Không bật các endpoint backend local ra Internet khi chưa thêm phân quy�
 
 ## Định vị GPS
 
-Bấm **Về vị trí của tôi** lần đầu và cấp quyền. GPS dùng chung một phiên cho cả tab; đổi giữa Khám phá/Lộ trình không cần bật lại.
-Nếu trình duyệt đã cho quyền, GPS tự nối lại; F5 giữ cờ phiên trong sessionStorage, không lưu tọa độ.
+Mỗi lần mở hoặc tải lại trang, bảng hỏi định vị xuất hiện trước. Bấm **Cho phép định vị** để bắt đầu lấy GPS, hoặc **Để sau** để xem bản đồ và tìm kiếm không dùng vị trí. Có thể bật lại bằng **Về vị trí của tôi**. GPS dùng chung một phiên cho cả tab; đổi giữa Khám phá/Lộ trình không cần bật lại.
+Trang không tự lấy GPS trước lựa chọn ở bảng hỏi, kể cả khi trình duyệt đã cho quyền. Sau khi đồng ý, GPS có thể nối lại khi quay về tab. F5 hiện lại bảng hỏi; sessionStorage chỉ lưu lựa chọn phiên, không lưu tọa độ.
 Đóng tab sẽ kết thúc phiên. Giao diện chỉ có một nút Về vị trí của tôi, dùng để xin quyền hoặc đưa bản đồ về vị trí mới nhất.
 Việc ghi nhớ quyền và chạy GPS khi tab ở nền phụ thuộc trình duyệt/hệ điều hành; ứng dụng không thể buộc trình duyệt giữ quyền vĩnh viễn.
 Geolocation yêu cầu HTTPS hoặc localhost. Nhịp cập nhật và sai số phụ thuộc thiết bị, hệ điều hành và tín hiệu GPS.

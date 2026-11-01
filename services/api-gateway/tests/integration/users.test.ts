@@ -38,14 +38,23 @@ test('SQL-backed account creation, roles, password reset, locking and session re
     // Admins cannot lock one another using either endpoint or by demoting first.
     await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(403);
     const admin_body={username,full_name:'Test Admin',role:'admin',status:'active'};
+    for (const change of [{}, {username:username+'_changed'}, {full_name:'Changed name'}, {password:'hacked123'}]) {
+      await staff.put(`/api/admin/users/${admin_id}`).set('x-vinlook-admin','1').send({...admin_body,...change}).expect(403);
+    }
+    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(403);
+    await admin.get('/api/admin/auth/session').expect(200);
+    const unchanged=(await staff.get('/api/admin/users')).body.data.find((u:{id:string})=>u.id===admin_id);
+    assert.equal(unchanged.username,username);assert.equal(unchanged.full_name,'Test Admin');
     await staff.put(`/api/admin/users/${admin_id}`).set('x-vinlook-admin','1').send({...admin_body,status:'disabled'}).expect(403);
     await staff.put(`/api/admin/users/${admin_id}`).set('x-vinlook-admin','1').send({...admin_body,role:'staff'}).expect(403);
     await admin.patch(`/api/admin/users/${staff_id}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(403);
-    // Self-lock revokes the current session; another admin may unlock it.
+    // Self-lock revokes the session; another admin cannot unlock it either.
     await admin.patch(`/api/admin/users/${admin_id.toUpperCase()}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(200);
     await admin.get('/api/admin/auth/session').expect(401);
     await login(admin,username,'test12345').expect(401);
-    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(200);
+    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(403);
+    // Restore this test fixture directly to verify self-edit independently.
+    await pool.request().input('id',sql.VarChar(36),admin_id).query("UPDATE dbo.users SET status='active' WHERE id=@id");
     await login(admin,username,'test12345').expect(200);
     await admin.put(`/api/admin/users/${admin_id}`).set('x-vinlook-admin','1').send({...admin_body,status:'disabled'}).expect(200);
     await admin.get('/api/admin/auth/session').expect(401);

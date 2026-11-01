@@ -4,6 +4,7 @@ import { get_poi } from './services/pois';
 import type { Poi } from './types/poi';
 import { use_location } from './features/tracking/use-location';
 import { LocationControls } from './features/tracking/LocationControls';
+import { LocationPermissionDialog } from './features/tracking/LocationPermissionDialog';
 import { PoiImage } from './features/poi/PoiImage';
 import { https_url } from './features/poi/image-url';
 import { use_route_plan } from './features/navigation/use-route-plan';
@@ -28,6 +29,7 @@ export default function App() {
   const [qr_error,set_qr_error]=useState('');
   const [retry, set_retry] = useState(0);
   const location = use_location();
+  const [show_gps_permission, set_show_gps_permission] = useState(true);
   const has_gps = location.active && location.position !== null;
   const searching = search.trim().length > 0;
   const { all_pois: all_pois, matches, loading, error } = use_poi_discovery({ search, category, position: has_gps ? location.position : null }, retry);
@@ -77,6 +79,7 @@ export default function App() {
   }, [selected]);
 
   return <main className="app">
+    {show_gps_permission && <LocationPermissionDialog on_allow={() => { set_show_gps_permission(false); locate(); }} on_later={() => { location.stop(); set_show_gps_permission(false); }} />}
     <MobileSheet ref={sheet}>
       <header className="brand"><span className="brand-icon" aria-hidden="true">V</span><div><h1>vinlook<span>.</span></h1><p>ĐI ĐỂ HIỂU THÊM</p></div></header>
       <div className="view-tabs" role="group" aria-label="Chế độ bản đồ"><button aria-pressed={view === 'explore'} onClick={() => { set_view('explore'); sheet.current?.expand(); }}>Khám phá</button><button aria-pressed={view === 'route'} onClick={() => { set_view('route'); sheet.current?.expand(); }}>Lộ trình{plan.stops.length > 0 ? ` · ${plan.stops.length}` : ''}</button></div>

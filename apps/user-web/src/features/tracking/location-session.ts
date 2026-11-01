@@ -2,6 +2,7 @@ import { create_location_tracker, type LocationEnvironment } from './location-tr
 
 const preference_key = 'vinlook.gps.enabled';
 interface SessionEnvironment extends LocationEnvironment {
+  require_explicit_start?: boolean;
   storage?: Pick<Storage, 'getItem' | 'setItem'>;
   permissions?: Pick<Permissions, 'query'>;
   page?: EventTarget;
@@ -16,6 +17,7 @@ export function create_location_session(environment: SessionEnvironment) {
   let preference: string | null = null;
   let revision = 0;
   let disposed = false;
+  let consented_this_page = !environment.require_explicit_start;
   const now = environment.now ?? Date.now;
   let last_attempt = 0;
   try { preference = environment.storage?.getItem(preference_key) ?? null; } catch { /* Storage can be blocked. */ }
@@ -26,6 +28,7 @@ export function create_location_session(environment: SessionEnvironment) {
   }
   function start() {
     if (disposed) return;
+    consented_this_page = true;
     revision++;
     remember('enabled');
     last_attempt = now();
@@ -37,7 +40,7 @@ export function create_location_session(environment: SessionEnvironment) {
     tracker.stop();
   }
   async function resume() {
-    if (disposed || preference === 'disabled' || tracker.get_snapshot().active) return;
+    if (disposed || !consented_this_page || preference === 'disabled' || tracker.get_snapshot().active) return;
     const current = ++revision;
     let permission: PermissionState | undefined;
     try { permission = (await environment.permissions?.query({ name: 'geolocation' }))?.state; } catch { /* Unsupported Permissions API. */ }
@@ -81,6 +84,7 @@ export function get_browser_location_session() {
     let storage: Storage | undefined;
     try { storage = window.sessionStorage; } catch { /* Sandboxed/private browser mode. */ }
     browser_session = create_location_session({
+      require_explicit_start: true,
       secure_context: window.isSecureContext, geolocation: navigator.geolocation,
       storage, permissions: navigator.permissions, page: window,
       every: callback => window.setInterval(callback, 15000), cancel: id => window.clearInterval(id),

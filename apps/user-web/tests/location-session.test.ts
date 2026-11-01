@@ -15,6 +15,30 @@ function environment(permission: PermissionState = 'prompt') {
   };
 }
 
+test('entry consent blocks automatic GPS even with saved browser permission and preference', async () => {
+  const env = environment('granted');
+  env.values.set('vinlook.gps.enabled', 'enabled');
+  const session = create_location_session({ ...env, require_explicit_start: true });
+  await session.resume();
+  env.page.dispatchEvent(new Event('focus'));
+  env.page.dispatchEvent(new Event('pageshow'));
+  await Promise.resolve();
+  assert.equal(env.watches(), 0);
+  session.start();
+  assert.equal(env.watches(), 1);
+  env.page.dispatchEvent(new Event('pagehide'));
+  await session.resume();
+  assert.equal(env.watches(), 2);
+  session.stop();
+  await session.resume();
+  assert.equal(env.watches(), 2);
+  session.dispose();
+  const next_page = create_location_session({ ...env, require_explicit_start: true });
+  await next_page.resume();
+  assert.equal(env.watches(), 2);
+  next_page.dispose();
+});
+
 test('previously granted permission resumes GPS without a new enable action', async () => {
   const env = environment('granted');
   const session = create_location_session(env);

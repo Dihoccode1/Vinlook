@@ -12,4 +12,5 @@
 
 **/*.log
 .local-backups
+.local-runner
 services/translation-service/storage/narrations

@@ -10,3 +10,4 @@ coverage/
 Thumbs.db
 services/translation-service/storage/narrations/
 .local-backups/
+.local-runner/
