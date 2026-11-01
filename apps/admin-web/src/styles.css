@@ -106,3 +106,5 @@
 
 .qr-body input{padding:12px 14px;border:1px solid #d8e2d1;border-radius:9px;background:#fff;color:inherit;min-height:46px}
 .qr-head .qr-id-label{margin-top:8px;font-size:13px;color:#71836d}
+
+.login-password-field{position:relative}.login-password-field input{padding-right:54px}.login-card .login-password-toggle{position:absolute;right:5px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:7px;background:transparent;color:#54715e}.login-card .login-password-toggle:hover:not(:disabled){background:#edf3e8}
