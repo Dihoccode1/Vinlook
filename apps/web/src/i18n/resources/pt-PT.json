@@ -38,6 +38,7 @@
     "imageUnavailable": "Imagem indisponível."
   },
   "navigation": {
+    "locationHelp": "Permita o acesso à localização neste site e ative os serviços de localização do dispositivo. Tente novamente. O percurso a pé exige uma precisão de 50 m ou melhor. Se o computador não conseguir, experimente um telemóvel com GPS.",
     "walkTo": "Ir a pé para {{name}}",
     "directions": "Indicações a pé",
     "calculating": "A calcular o percurso…",

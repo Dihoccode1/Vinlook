@@ -38,6 +38,7 @@
     "imageUnavailable": "無法顯示圖片。"
   },
   "navigation": {
+    "locationHelp": "請允許此網站存取位置，並開啟裝置的定位服務後重試。步行路線需要誤差不超過50公尺的位置。若電腦無法提供，請改用支援GPS的手機。",
     "walkTo": "步行前往{{name}}",
     "directions": "步行路線指引",
     "calculating": "正在計算路線…",

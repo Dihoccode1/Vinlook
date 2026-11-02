@@ -38,6 +38,7 @@
     "imageUnavailable": "Imagen no disponible."
   },
   "navigation": {
+    "locationHelp": "Permite el acceso a la ubicación para este sitio y activa los servicios de ubicación del dispositivo. Vuelve a intentarlo. Las rutas a pie requieren una precisión de 50 m o mejor. Si tu ordenador no puede ofrecerla, prueba un teléfono con GPS.",
     "walkTo": "Ir a pie a {{name}}",
     "directions": "Indicaciones a pie",
     "calculating": "Calculando ruta…",

@@ -8,7 +8,7 @@ import {createLocaleStore} from '../apps/web/src/i18n/state.js';
 import {validateResources} from '../apps/web/src/i18n/validation.js';
 import {localeCodes,direction} from '../apps/web/src/i18n/locales.js';
 test('sixteen complete resources retain exact placeholders and variants; hostile/incomplete copy fails checks',()=>{
- assert.deepEqual(validateResources(resources),{locales:16,keys:51});
+ assert.deepEqual(validateResources(resources),{locales:16,keys:52});
  for(const mutate of [r=>delete r.vi.translation.audio.play,r=>r.vi.translation.navigation.walkTo='Đi đến {{url}}',r=>r.ar.translation.preview.title='<script>unsafe</script>',r=>r.ur.translation.common.close='\u202eunsafe',r=>r['zh-Hant'].translation.preview.title='']){
   const r=structuredClone(resources);mutate(r);assert.throws(()=>validateResources(r));
  }

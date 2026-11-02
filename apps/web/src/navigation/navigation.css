@@ -1,0 +1,17 @@
+.walking-navigation button {
+  padding: 12px 16px;
+  min-height: 44px;
+  border: 1px solid #117267;
+  border-radius: 8px;
+  background: #117267;
+  color: white;
+  font: inherit;
+  text-align: start;
+}
+.walking-navigation button:hover {
+  background: #0b584f;
+}
+.walking-location-help {
+  margin: 0;
+  line-height: 1.6;
+}
