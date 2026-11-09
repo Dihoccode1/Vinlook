@@ -5,7 +5,7 @@ import request from 'supertest';
 import {create_app} from '../../src/app.js';
 import {qr_routes} from '../../src/modules/admin/qr.routes.js';
 import type {PoiRepository} from '../../src/modules/pois/poi.repository.js';
-import {qr_link,default_public_url} from '../../../../apps/admin-web/src/qr-link.js';
+import {qr_link,default_public_url} from '../../../../apps/admin-web/src/services/qr.js';
 
 test('public QR lookup validates tokens and returns the selected published POI',async()=>{
   const token='a'.repeat(32);let lookups=0;

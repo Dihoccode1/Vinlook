@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import { scryptSync } from 'node:crypto';
 import express from 'express';
 import request from 'supertest';
-import { admin_auth } from '../../src/admin-auth.js';
+import { admin_auth } from '../../src/middleware/admin-auth.js';
 import { create_app } from '../../src/app.js';
-import type { AuthStore, AdminUser } from '../../src/auth-store.js';
+import type { AuthStore, AdminUser } from '../../src/modules/auth/auth-store.js';
 
 const salt = '1234567890abcdef1234567890abcdef';
 const options = { username: 'admin', password_hash: `${salt}:${scryptSync('12345', salt, 64).toString('hex')}`, key: 'server-only-key' };

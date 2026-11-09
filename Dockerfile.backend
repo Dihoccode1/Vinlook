@@ -7,7 +7,6 @@ WORKDIR /app
 # Local dependencies, build outputs and .env files are excluded by .dockerignore.
 COPY package.json package-lock.json tsconfig.json ./
 COPY apps/ ./apps/
-COPY packages/ ./packages/
 COPY services/ ./services/
 COPY database/ ./database/
 RUN npm ci

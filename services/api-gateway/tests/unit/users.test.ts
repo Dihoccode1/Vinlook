@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validate_user } from '../../src/users.js';
+import { validate_user } from '../../src/modules/users/users.js';
 const input={username:'staff.test',full_name:'Nhân viên',role:'staff',status:'active',password:'12345'};
 test('user validation accepts exactly staff/admin and requires a password only on creation',()=>{
   assert.ok(validate_user(input,true));

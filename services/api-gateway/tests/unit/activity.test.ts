@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
 import request from 'supertest';
-import { activity_routes, create_activity_tracker } from '../../src/activity.js';
+import { activity_routes, create_activity_tracker } from '../../src/modules/activity/activity.js';
 
 const id='11111111-1111-4111-8111-111111111111';
 test('activity counts sessions and playback once, expires stale sessions and ignores out-of-order updates',()=>{
