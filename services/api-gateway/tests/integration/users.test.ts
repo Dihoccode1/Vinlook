@@ -4,7 +4,7 @@ import {randomUUID,scryptSync} from 'node:crypto';
 import sql from 'mssql';
 import request from 'supertest';
 import {create_app} from '../../src/app.js';
-import {auth_pool} from '../../src/auth-store.js';
+import {auth_pool} from '../../src/modules/auth/auth-store.js';
 
 test('SQL-backed account creation, roles, password reset, locking and session revocation',async()=>{
   const pool=await auth_pool();const admin_id=('USR'+BigInt('0x'+randomUUID().replaceAll('-','').slice(0,12)).toString());const suffix=('USR'+BigInt('0x'+randomUUID().replaceAll('-','').slice(0,12)).toString()).slice(0,8);const username=`test_admin_${suffix}`,staffname=`test_staff_${suffix}`;

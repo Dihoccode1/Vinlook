@@ -1,8 +1,7 @@
 {
   "workspaces": [
     "apps/*",
-    "services/*",
-    "packages/*"
+    "services/*"
   ],
   "name": "multilingual-tourism-platform",
   "version": "0.1.0",
