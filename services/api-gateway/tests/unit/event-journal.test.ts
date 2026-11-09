@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
 import request from 'supertest';
-import { create_event_journal } from '../../src/event-journal.js';
+import { create_event_journal } from '../../src/modules/event-journal/event-journal.js';
 
 test('journal records completed usage and errors without retaining private request data', async () => {
   const app = express();

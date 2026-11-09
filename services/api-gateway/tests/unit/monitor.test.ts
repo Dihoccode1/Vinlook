@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
 import request from 'supertest';
-import { monitor_routes } from '../../src/monitor.js';
+import { monitor_routes } from '../../src/modules/monitor/monitor.js';
 
 test('monitor requires admin access and distinguishes failed readiness from unreachable services', async () => {
   let calls = 0;

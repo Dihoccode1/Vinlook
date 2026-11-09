@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
 import request from 'supertest';
-import { delivery_status_routes } from '../../src/delivery-status.js';
+import { delivery_status_routes } from '../../src/modules/delivery-status/delivery-status.js';
 
 test('CI cache expires and an unavailable GitHub does not keep reporting success', async () => {
   let time = 1000;

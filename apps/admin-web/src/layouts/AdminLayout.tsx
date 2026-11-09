@@ -4,7 +4,7 @@
  * Bao gồm Header điều hướng, huy hiệu người dùng, thanh chuyển đổi tab và khu vực nội dung chính.
  */
 
-import React, { useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { Icon } from '../components/Icon';
 import type { IconKind } from '../components/Icon';
 
@@ -36,6 +36,11 @@ export function AdminLayout({
   children
 }: AdminLayoutProps) {
   const mainRef = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    mainRef.current?.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [currentView]);
 
   const backToTop = () => {
     const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
