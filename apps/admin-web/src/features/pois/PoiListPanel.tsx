@@ -35,7 +35,7 @@ interface PoiListPanelProps {
   onRefresh: () => void;
   onViewAll: () => void;
   onEditPoi: (poi: Poi) => void;
-  onOpenQr: (poi: Poi) => void;
+  onPreview: (poi: Poi) => void;
 }
 
 export function PoiListPanel({
@@ -56,7 +56,7 @@ export function PoiListPanel({
   onRefresh,
   onViewAll,
   onEditPoi,
-  onOpenQr
+  onPreview
 }: PoiListPanelProps) {
   const isOverview = mode === 'overview';
 
@@ -184,10 +184,10 @@ export function PoiListPanel({
                       <button
                         type="button"
                         className="edit-button"
-                        aria-label={`Mã QR ${poi.name}`}
-                        onClick={() => onOpenQr(poi)}
+                        aria-label={`Nghe thử mẫu ${poi.name}`}
+                        onClick={() => onPreview(poi)}
                       >
-                        Mã QR
+                        Nghe thử mẫu
                       </button>
                       <button
                         type="button"

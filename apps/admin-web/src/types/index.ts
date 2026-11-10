@@ -63,15 +63,6 @@ export interface ActivitySample {
 }
 
 /**
- * Dữ liệu mã QR điểm tham quan
- */
-export interface QrData {
-  poi_id: string;
-  qr_token: string;
-  qr_path: string;
-}
-
-/**
  * Kết quả khớp địa chỉ tọa độ địa lý
  */
 export interface AddressMatch {

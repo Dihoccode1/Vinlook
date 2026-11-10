@@ -19,6 +19,13 @@ test('SQL-backed account creation, roles, password reset, locking and session re
     const created=await admin.post('/api/admin/users').set('x-vinlook-admin','1').send(body).expect(201);staff_id=created.body.data.id;
     await admin.post('/api/admin/users').set('x-vinlook-admin','1').send(body).expect(409);
     const listed=await admin.get('/api/admin/users').expect(200);assert.ok(listed.body.data.some((u:{id:string})=>u.id===staff_id));assert.ok(!JSON.stringify(listed.body).includes(hash));
+    const root=listed.body.data.find((u:{username:string})=>u.username.toLowerCase()==='admin');
+    assert.ok(root,'Seeded root admin must exist');
+    await admin.patch(`/api/admin/users/${root.id}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(403);
+    for(const change of [{status:'disabled'},{role:'staff'},{username:'renamed_root'}]) {
+      await admin.put(`/api/admin/users/${root.id}`).set('x-vinlook-admin','1').send({username:root.username,full_name:root.full_name,role:root.role,status:root.status,...change}).expect(403);
+    }
+    assert.equal((await admin.get('/api/admin/users')).body.data.find((u:{id:string})=>u.id===root.id).status,root.status);
     await login(staff,staffname,'test12345').expect(200);
     await staff.get('/api/admin/stats').expect(200);await staff.get('/api/admin/pois').expect(200);
     await staff.get('/api/admin/monitor').expect(403);await staff.get('/api/admin/users').expect(403);

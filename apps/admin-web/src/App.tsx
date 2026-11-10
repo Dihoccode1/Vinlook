@@ -12,7 +12,7 @@ import { MonitorDashboard } from './features/overview/MonitorDashboard';
 import { OverviewDashboard } from './features/overview/OverviewDashboard';
 import { PoiEditor } from './features/pois/PoiEditor';
 import { PoiListPanel } from './features/pois/PoiListPanel';
-import { PoiQrDialog } from './features/pois/PoiQrDialog';
+import { PoiNarrationDialog } from './features/pois/PoiNarrationDialog';
 import { UserManagement } from './features/users/UserManagement';
 import { AdminLayout, type AdminViewTab } from './layouts/AdminLayout';
 import { api } from './services/api';
@@ -52,9 +52,9 @@ export default function App({ on_logout, user }: AppProps) {
   const [activity, set_activity] = useState<{ visitors: number; listeners: number } | null>(null);
   const [samples, set_samples] = useState<ActivitySample[]>([]);
 
-  // Hộp thoại soạn thảo POI hoặc mã QR
+  // Hộp thoại soạn thảo POI hoặc nghe thử thuyết minh
   const [editor, set_editor] = useState<Poi | null | undefined>(undefined);
-  const [qr_poi, set_qr_poi] = useState<Poi | null>(null);
+  const [preview_poi, set_preview_poi] = useState<Poi | null>(null);
 
   async function logout() {
     set_logging_out(true);
@@ -225,11 +225,11 @@ export default function App({ on_logout, user }: AppProps) {
           onRefresh={() => set_refresh((v) => v + 1)}
           onViewAll={() => navigate('pois')}
           onEditPoi={(poi) => set_editor(poi)}
-          onOpenQr={(poi) => set_qr_poi(poi)}
+          onPreview={(poi) => set_preview_poi(poi)}
         />
       )}
 
-      {qr_poi && <PoiQrDialog key={qr_poi.id} poi={qr_poi} on_close={() => set_qr_poi(null)} />}
+      {preview_poi && <PoiNarrationDialog key={preview_poi.id} poi={preview_poi} on_close={() => set_preview_poi(null)} />}
       {editor !== undefined && <PoiEditor poi={editor} on_close={() => set_editor(undefined)} on_saved={saved} />}
     </AdminLayout>
   );

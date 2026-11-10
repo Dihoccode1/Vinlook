@@ -1,3 +1,4 @@
+import { provider_snapshot } from './providers/provider-status.js';
 import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import helmet from 'helmet';
@@ -19,8 +20,8 @@ export function create_app(service = create_translation_service(create_poi_sourc
   app.use(express.json({ limit: '1kb' }));
   app.get('/health/live', (_req, res) => res.json({ status: 'ok', service: 'translation-service' }));
   app.get('/health/ready', async (_req, res) => {
-    try { await service.ready(); res.json({ status: 'ok', service: 'translation-service' }); }
-    catch { res.status(503).json({ status: 'unavailable', service: 'translation-service' }); }
+    try { await service.ready(); res.json({ status: 'ok', service: 'translation-service', providers: provider_snapshot() }); }
+    catch { res.status(503).json({ status: 'unavailable', service: 'translation-service', providers: provider_snapshot() }); }
   });
   app.get('/languages', (_req, res) => res.json({ data: languages }));
   app.post('/pois/:id/narration', async (req, res) => {
