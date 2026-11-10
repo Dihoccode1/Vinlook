@@ -1,19 +1,13 @@
 import { Router, json } from 'express';
-import { randomBytes, createHash, scrypt, timingSafeEqual } from 'node:crypto';
-import { promisify } from 'node:util';
+import { randomBytes, createHash } from 'node:crypto';
 import { sql_auth_store, type AuthStore } from '../modules/auth/auth-store.js';
 
-const derive = promisify(scrypt);
 const cookie_name = 'vinlook_admin';
 const ttl = 8 * 60 * 60 * 1000;
 export function admin_auth(options = { username: process.env.ADMIN_USERNAME ?? 'admin', password_hash: process.env.ADMIN_PASSWORD_HASH ?? '', key: process.env.ADMIN_API_KEY ?? '' }, store: AuthStore = sql_auth_store) {
   const router = Router();
-  const attempts = new Map<string, { count: number; until: number }>();
   const secure = process.env.NODE_ENV === 'production';
   const token_hash = (value: string) => createHash('sha256').update(value).digest('hex');
-  function prune() {
-    for (const [ip, attempt] of attempts) if (attempt.until <= Date.now()) attempts.delete(ip);
-  }
   router.use((_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
   // Custom header prevents browser forms/cross-origin requests from mutating admin state.
   router.use((req, res, next) => {
@@ -21,29 +15,20 @@ export function admin_auth(options = { username: process.env.ADMIN_USERNAME ?? '
     next();
   });
   router.post('/auth/login', json({ limit: '1kb' }), async (req, res) => {
-    prune();
-    const ip = req.ip ?? 'local';
-    const attempt = attempts.get(ip);
-    if (attempt && attempt.count >= 5) { res.setHeader('Retry-After', Math.ceil((attempt.until - Date.now()) / 1000)); res.status(429).json({ error: { message: 'Bạn nhập sai quá nhiều lần. Hãy thử lại sau 15 phút.' } }); return; }
     if (!options.key) { res.status(503).json({ error: { message: 'Tài khoản quản trị chưa được cấu hình.' } }); return; }
     const { username, password } = req.body ?? {};
     if (typeof username !== 'string' || typeof password !== 'string' || username.length > 100 || password.length > 200) { res.status(400).json({ error: { message: 'Nhập tài khoản và mật khẩu hợp lệ.' } }); return; }
-    if (!attempt && attempts.size >= 1024) { res.status(429).json({ error: { message: 'Vui lòng thử lại sau.' } }); return; }
-    // Count before awaiting password verification, including simultaneous requests.
-    attempts.set(ip, { count: (attempt?.count ?? 0) + 1, until: attempt?.until ?? Date.now() + 900000 });
-    const user = await store.find_user(username);
-    const [salt, expected] = (user?.password_hash ?? `${'0'.repeat(32)}:${'0'.repeat(128)}`).split(':');
-    if (!salt || !expected || !/^[a-f0-9]{128}$/i.test(expected)) { res.status(503).json({ error: { message: 'Cấu hình tài khoản không hợp lệ.' } }); return; }
-    const actual = await derive(password, salt!, 64) as Buffer;
-    if (!timingSafeEqual(actual, Buffer.from(expected!, 'hex')) || !user) { res.status(401).json({ error: { message: 'Tài khoản hoặc mật khẩu không đúng.' } }); return; }
-    attempts.delete(ip);
+    const result=await store.login(username.trim(),password);
+    if(result.kind==='locked'){res.status(423).json({error:{code:'ACCOUNT_LOCKED',message:'Tài khoản đã bị khóa sau 15 lần nhập sai mật khẩu. Vui lòng liên hệ Admin khác để mở khóa.'}});return;}
+    if(result.kind==='cooldown'){res.setHeader('Retry-After',String(result.retry_after));res.status(429).json({error:{code:'LOGIN_COOLDOWN',retry_after:result.retry_after,message:'Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau '+result.retry_after+' giây.'}});return;}
+    if(result.kind==='invalid'){res.status(401).json({error:{message:'Tài khoản hoặc mật khẩu không đúng.'}});return;}
+    const user=result.user;
     const token = randomBytes(32).toString('hex');
-    await store.create_session(token_hash(token), user, new Date(Date.now() + ttl));
+    if(!await store.create_session(token_hash(token), user, new Date(Date.now() + ttl))){res.status(401).json({error:{message:'Thông tin hoặc trạng thái tài khoản đã thay đổi. Vui lòng đăng nhập lại.'}});return;}
     res.cookie(cookie_name, token, { httpOnly: true, sameSite: 'strict', secure, path: '/api/admin', maxAge: ttl });
     res.json({ data: { id: user.id, username: user.username, role: user.role } });
   });
   router.use(async (req, res, next) => {
-    prune();
     // Never accept a shared API key supplied by the browser or a dev proxy.
     delete req.headers['x-admin-key'];
     delete req.headers['x-admin-user-id'];
