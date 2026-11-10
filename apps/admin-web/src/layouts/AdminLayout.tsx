@@ -17,7 +17,6 @@ const pages:Record<AdminViewTab,{title:string;description:string}>={
 };
 const nav_items:{id:AdminViewTab;label:string;icon:IconKind;adminOnly?:boolean}[]=[
  {id:'overview',label:'Tổng quan',icon:'grid'},{id:'pois',label:'Quản lý địa điểm',icon:'pin'},
- {id:'categories',label:'Danh mục',icon:'photo'},{id:'languages',label:'Ngôn ngữ',icon:'listen'},
  {id:'users',label:'Quản lý tài khoản',icon:'user',adminOnly:true},{id:'monitor',label:'Giám sát hệ thống',icon:'eye',adminOnly:true}
 ];
 export function AdminLayout({user,currentView,onViewChange,onLogout,loggingOut=false,toast,onClearToast,children,onCreatePoi,onRefresh}:AdminLayoutProps){

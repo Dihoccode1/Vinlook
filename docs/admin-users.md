@@ -11,7 +11,7 @@ Quyền được kiểm tra tại gateway cho từng yêu cầu, ngoài việc �
 
 Mật khẩu được băm bằng scrypt với salt riêng; API danh sách không trả mật khẩu hoặc mã băm. Để trống mật khẩu khi chỉnh sửa sẽ giữ mật khẩu hiện tại. Tên đăng nhập dài 3–100 ký tự, chỉ gồm chữ Latin, số, dấu gạch dưới, chấm và gạch ngang; mật khẩu dài 5–200 ký tự.
 
-Admin chỉ được tự khóa tài khoản Admin của mình, không được khóa hoặc hạ quyền Admin khác. Admin vẫn khóa/mở khóa Staff và mở khóa Admin đã bị khóa được. Tự khóa thu hồi mọi phiên, bao gồm phiên hiện tại; không giới hạn số Admin còn hoạt động. Không được tự hạ quyền. Thao tác quản lý tài khoản được ghi vào system_logs, không ghi mật khẩu.
+Admin được khóa/mở khóa Staff, chính mình và Admin khác. Không được chỉnh sửa thông tin, đổi mật khẩu hoặc hạ quyền Admin khác. Tự khóa thu hồi mọi phiên, bao gồm phiên hiện tại; không giới hạn số Admin còn hoạt động. Không được tự hạ quyền. Thao tác quản lý tài khoản được ghi vào system_logs, không ghi mật khẩu.
 
 Migration `007_staff_role.sql` chuyển quyền `editor` cũ thành `staff` và giới hạn hai quyền `admin`, `staff`. Dùng lại bảng users và admin_sessions, không tạo thêm bảng.
 
