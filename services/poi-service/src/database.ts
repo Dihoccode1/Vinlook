@@ -67,7 +67,7 @@ async function main() {
         }
         await tx.commit();
       } catch (error) {
-        await tx.rollback();
+        await tx.rollback().catch(()=>{});
         throw error;
       }
     }

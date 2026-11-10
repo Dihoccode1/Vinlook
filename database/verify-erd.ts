@@ -28,7 +28,7 @@ async function main(){
         assert.ok(ids.every(row=>new RegExp(`^${prefix}[0-9]{3,20}$`).test(row.id)),`${table}: invalid short ID`);
       }
       const history=(await pool.request().query("SELECT COUNT(*) AS total FROM sys.extended_properties WHERE class=0 AND name LIKE N'Vinlook.Migration.%'")).recordset[0].total;
-      assert.equal(history,config.database===poi.database.database?10:4);
+      assert.equal(history,config.database===poi.database.database?11:4);
       console.log(JSON.stringify({database:config.database,tables:rows,migrations_in_metadata:history}));
     }finally{await pool.close();}
   }
