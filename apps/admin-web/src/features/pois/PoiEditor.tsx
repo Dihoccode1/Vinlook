@@ -288,7 +288,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
         <header className="editor-header">
           <div>
             <h2 id="editor-title">{poi ? 'Chỉnh sửa điểm tham quan' : 'Thêm điểm tham quan mới'}</h2>
-            <p>Nhập thông tin giới thiệu, vị trí bản đồ và tư liệu thuyết minh đa ngôn ngữ.</p>
+            <p>Cập nhật thông tin, hình ảnh và nội dung thuyết minh.</p>
           </div>
           <button className="icon-button" type="button" aria-label="Đóng cửa sổ" disabled={saving} onClick={on_close}>
             ✕
@@ -453,7 +453,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
               />
             </label>
             <p className="field-note">
-              Kịch bản này là nguồn dữ liệu cho worker tạo bản dịch và giọng đọc AI. Chỉnh sửa kịch bản sẽ kích hoạt tạo lại các audio phụ thuộc.
+              Thay đổi bài thuyết minh sẽ yêu cầu cập nhật lại bản dịch và giọng đọc.
             </p>
           </div>
 

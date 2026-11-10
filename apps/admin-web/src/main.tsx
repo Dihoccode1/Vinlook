@@ -2,4 +2,5 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AdminAccess } from './features/auth/AdminAccess';
 import './styles.css';
+import './admin-theme.css';
 createRoot(document.getElementById('root')!).render(<StrictMode><AdminAccess/></StrictMode>);

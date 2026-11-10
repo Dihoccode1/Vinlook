@@ -19,7 +19,7 @@ export function RoutePlanner({ plan, pois, on_explore: on_explore, on_calculate:
       {(Object.keys(vehicle_labels) as VehicleProfile[]).map(mode => <button key={mode} aria-pressed={plan.profile === mode} onClick={() => { on_show_route(); plan.set_profile(mode); }}>{vehicle_labels[mode]}</button>)}
     </div>
     {plan.route && <div className="route-quick-summary" role="status"><span>{vehicle_labels[plan.route.profile]} · Ngắn nhất theo quãng đường</span><div className="route-summary"><strong>{format_distance(plan.route.distance)}</strong><span>Khoảng {format_duration(plan.route.duration)}</span></div></div>}
-    <div className="route-stops-heading"><h3>Điểm dừng · {plan.stops.length}/9</h3><button onClick={on_explore}>+ Thêm POI</button></div>
+    <div className="route-stops-heading"><h3>Điểm dừng · {plan.stops.length}/9</h3><button onClick={on_explore}>+ Thêm POI vào lộ trình</button></div>
     <div className="route-order-entry"><button disabled={plan.stops.length < 2} onClick={() => set_order_open(true)}>⇅ Sắp xếp lộ trình</button>{plan.stops.length < 2 && <small>Thêm ít nhất 2 POI để sắp xếp.</small>}</div>
     {plan.stops.length === 0 ? <p className="route-hint">Chọn địa điểm trên bản đồ rồi bấm “Thêm vào lộ trình”.</p> : <ol className="route-stops">
       {plan.stops.map((poi, index) => <li key={poi.id}>
