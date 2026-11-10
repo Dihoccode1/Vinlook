@@ -13,7 +13,7 @@ export function validate_user(body: unknown, creating: boolean): UserInput | und
   if ((creating || b.password !== undefined) && (typeof b.password !== 'string' || b.password.length < 5 || b.password.length > 200)) return;
   return { username: b.username, full_name: b.full_name.trim(), role: b.role as UserInput['role'], status: b.status as UserInput['status'], ...(typeof b.password === 'string' ? {password:b.password} : {}) };
 }
-const public_fields = 'id AS id, username AS username, full_name AS full_name, role AS role, status AS status, created_at AS created_at';
+const public_fields = 'id AS id, username AS username, full_name AS full_name, role AS role, status AS status, created_at AS created_at, login_locked AS login_locked';
 export function user_routes() {
   const router = Router();
   router.use((req, res, next) => {
@@ -32,12 +32,13 @@ export function user_routes() {
     const actor=(res.locals.adminUser.id as string).toLowerCase();
     const tx=new sql.Transaction(await auth_pool());await tx.begin(sql.ISOLATION_LEVEL.SERIALIZABLE);
     try {
-      const users=(await new sql.Request(tx).query<{id:string;username:string;role:string;status:string}>('SELECT id AS id,username AS username,role AS role,status AS status FROM dbo.users WITH (UPDLOCK,HOLDLOCK) ORDER BY id')).recordset;
+      const users=(await new sql.Request(tx).query<{id:string;username:string;role:string;status:string;login_locked:boolean}>('SELECT id AS id,username AS username,role AS role,status AS status,login_locked FROM dbo.users WITH (UPDLOCK,HOLDLOCK) ORDER BY id')).recordset;
       const target=users.find(u=>u.id.toLowerCase()===id);
       if(!target){await tx.rollback();res.status(404).json({error:{message:'Tài khoản không tồn tại.'}});return;}
-      if(target.role==='admin'&&id!==actor){await tx.rollback();res.status(403).json({error:{message:'Không được chỉnh sửa hoặc đổi trạng thái tài khoản Admin khác.'}});return;}
+      if(target.login_locked&&(id===actor||status!=='active')){await tx.rollback();res.status(403).json({error:{message:'Tài khoản bị khóa do đăng nhập sai chỉ được Admin khác mở khóa.'}});return;}
+      if(target.role==='admin'&&id!==actor&&!(target.login_locked&&status==='active')){await tx.rollback();res.status(403).json({error:{message:'Không được chỉnh sửa hoặc đổi trạng thái tài khoản Admin khác.'}});return;}
       if(target.status!==status){
-        await new sql.Request(tx).input('id',sql.VarChar(36),id).input('status',sql.VarChar(20),status).query('UPDATE dbo.users SET status=@status WHERE id=@id; UPDATE dbo.admin_sessions SET revoked_at=SYSUTCDATETIME() WHERE user_id=@id AND revoked_at IS NULL');
+        await new sql.Request(tx).input('id',sql.VarChar(36),id).input('status',sql.VarChar(20),status).query(`UPDATE dbo.users SET status=@status,failed_login_count=CASE WHEN @status='active' THEN 0 ELSE failed_login_count END,login_retry_at=CASE WHEN @status='active' THEN NULL ELSE login_retry_at END,login_locked=CASE WHEN @status='active' THEN 0 ELSE login_locked END WHERE id=@id; UPDATE dbo.admin_sessions SET revoked_at=SYSUTCDATETIME() WHERE user_id=@id AND revoked_at IS NULL`);
         await new sql.Request(tx).input('actor',sql.VarChar(36),actor).input('action',sql.VarChar(50),status==='disabled'?'user_locked':'user_unlocked').input('message',sql.NVarChar(sql.MAX),`${status==='disabled'?'Khóa':'Mở khóa'} tài khoản ${target.username}.`).query("INSERT INTO dbo.system_logs(user_id,component,level,action,message) VALUES(@actor,'users','info',@action,@message)");
       }
       await tx.commit();res.json({data:{id,status}});
@@ -56,10 +57,11 @@ export function user_routes() {
     await tx.begin(sql.ISOLATION_LEVEL.SERIALIZABLE);
     try {
       // Check the current role while holding locks, so a concurrent update cannot bypass restrictions.
-      const users = (await new sql.Request(tx).query<{id:string;role:string;status:string}>('SELECT id AS id, role AS role, status AS status FROM dbo.users WITH (UPDLOCK,HOLDLOCK) ORDER BY id')).recordset;
+      const users = (await new sql.Request(tx).query<{id:string;role:string;status:string;login_locked:boolean}>('SELECT id AS id, role AS role, status AS status,login_locked FROM dbo.users WITH (UPDLOCK,HOLDLOCK) ORDER BY id')).recordset;
       const target = users.find(u=>u.id.toLowerCase()===id?.toLowerCase());
       if (!creating && !target) { await tx.rollback(); res.status(404).json({error:{message:'Tài khoản không tồn tại.'}}); return; }
       if(target?.role==='admin'&&id!==actor){await tx.rollback();res.status(403).json({error:{message:'Không được chỉnh sửa hoặc đổi mật khẩu tài khoản Admin khác.'}});return;}
+      if(target?.login_locked&&input.status==='active'){await tx.rollback();res.status(409).json({error:{message:'Vui lòng dùng nút Mở khóa để Admin khác mở lại tài khoản.'}});return;}
       const q = new sql.Request(tx).input('id',sql.VarChar(36),id).input('username',sql.NVarChar(100),input.username).input('name',sql.NVarChar(200),input.full_name).input('role',sql.VarChar(20),input.role).input('status',sql.VarChar(20),input.status).input('hash',sql.VarChar(200),password_hash);
       const result = await q.query(creating ? `INSERT INTO dbo.users(username,password_hash,full_name,role,status) OUTPUT inserted.id AS id VALUES(@username,@hash,@name,@role,@status)` : `UPDATE dbo.users SET username=@username,full_name=@name,role=@role,status=@status,password_hash=COALESCE(@hash,password_hash) OUTPUT inserted.id AS id WHERE id=@id`);
       const saved_id = result.recordset[0].id as string;
