@@ -1,3 +1,8 @@
+/**
+ * @file prepare-batch.test.ts
+ * @description Kiểm thử đơn vị cho công cụ chuẩn bị hàng loạt bản dịch và thuyết minh.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { prepare_batch } from '../../src/modules/translations/prepare-batch.js';

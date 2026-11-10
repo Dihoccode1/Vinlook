@@ -1,3 +1,8 @@
+/**
+ * @file index.ts
+ * @description Cấu hình cổng dịch vụ, khóa quản trị nội bộ và thông số kết nối SQL Server cho POI Service.
+ */
+
 import 'dotenv/config';
 
 function port(value: string | undefined, fallback: number): number {

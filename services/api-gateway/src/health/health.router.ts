@@ -27,7 +27,7 @@ export function create_health_router(poi_service_url: string) {
   router.get('/health/ready', async (_req, res) => {
     try {
       const response = await fetch(`${poi_service_url}/health/ready`, {
-        signal: AbortSignal.timeout(config.timeouts.healthCheckMs)
+        signal: AbortSignal.timeout(config.timeouts.health_check_ms)
       });
       res.status(response.ok ? 200 : 503).json({
         status: response.ok ? 'ok' : 'unavailable',

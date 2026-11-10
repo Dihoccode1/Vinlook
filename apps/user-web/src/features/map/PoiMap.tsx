@@ -1,3 +1,8 @@
+/**
+ * @file PoiMap.tsx
+ * @description Bản đồ tương tác Leaflet hiển thị các điểm tham quan (POI), vị trí du khách và đường đi đa chặng.
+ */
+
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';

@@ -1,3 +1,8 @@
+/**
+ * @file pois.ts
+ * @description Tầng gọi API lấy danh sách địa điểm, chi tiết POI và giải mã đường dẫn QR công khai.
+ */
+
 import type { Poi, PoiPage } from '../types/poi';
 
 async function get<T>(url: string, signal: AbortSignal): Promise<T> {

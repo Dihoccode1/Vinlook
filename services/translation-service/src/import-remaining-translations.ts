@@ -1,3 +1,8 @@
+/**
+ * @file import-remaining-translations.ts
+ * @description Công cụ CLI bổ sung các bản dịch còn thiếu cho toàn bộ POI đã xuất bản.
+ */
+
 import { createHash } from 'node:crypto';
 import sql from 'mssql';
 import { config } from './config/index.js';

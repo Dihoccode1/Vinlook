@@ -1,3 +1,8 @@
+/**
+ * @file narration.repository.ts
+ * @description Truy vấn và lưu trữ bản ghi âm thanh thuyết minh trong bảng dbo.poi_narrations (TranslationDb).
+ */
+
 import sql from 'mssql';
 import { get_pool } from '../../config/database.js';
 

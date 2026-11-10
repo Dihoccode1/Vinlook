@@ -1,3 +1,8 @@
+/**
+ * @file route-colors.ts
+ * @description Bảng màu phân biệt các chặng đường (legs) trên bản đồ hành trình.
+ */
+
 import type { VehicleProfile } from './types';
 
 const colors: Record<VehicleProfile, string[]> = {

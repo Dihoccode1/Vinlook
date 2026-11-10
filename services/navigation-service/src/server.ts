@@ -1,3 +1,8 @@
+/**
+ * @file server.ts
+ * @description Điểm khởi động HTTP server cho Navigation Service (cổng mặc định 4002).
+ */
+
 import 'dotenv/config';
 import { create_app } from './app.js';
 

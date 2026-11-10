@@ -1,3 +1,8 @@
+/**
+ * @file admin.routes.ts
+ * @description Các route quản trị POI nội bộ: thống kê, tìm kiếm tọa độ địa chỉ (geocoding) và CRUD địa điểm.
+ */
+
 import { Router, json, type ErrorRequestHandler } from 'express';
 import { timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';

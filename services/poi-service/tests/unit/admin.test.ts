@@ -1,3 +1,8 @@
+/**
+ * @file admin.test.ts
+ * @description Kiểm thử đơn vị cho xác thực khóa nội bộ và kiểm tra dữ liệu quản trị POI.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';

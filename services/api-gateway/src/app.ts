@@ -24,9 +24,9 @@ import { forward, json_body, JSON_HEADERS, rewrite_target } from './proxies/prox
  * Tham số URL cho phép test truyền địa chỉ service giả lập; mặc định lấy từ biến môi trường.
  */
 export function create_app(
-  poi_service_url = config.poiServiceUrl,
-  navigation_service_url = config.navigationServiceUrl,
-  translation_service_url = config.translationServiceUrl
+  poi_service_url = process.env.POI_SERVICE_URL ?? config.poi_service_url,
+  navigation_service_url = process.env.NAVIGATION_SERVICE_URL ?? config.navigation_service_url,
+  translation_service_url = process.env.TRANSLATION_SERVICE_URL ?? config.translation_service_url
 ) {
   const app = express();
   const { timeouts, limits } = config;
@@ -60,7 +60,7 @@ export function create_app(
   );
 
   // 6. Proxy quản trị POI: chuyển nguyên phương thức, body và danh tính admin sang POI Service
-  app.use('/api/admin', express.json({ limit: limits.adminBody }), (req, res) =>
+  app.use('/api/admin', express.json({ limit: limits.admin_body }), (req, res) =>
     forward(res, {
       target: rewrite_target(poi_service_url, req.originalUrl),
       method: req.method,
@@ -70,20 +70,20 @@ export function create_app(
         'x-admin-user-id': req.get('x-admin-user-id') ?? ''
       },
       body: json_body(req.method, req.body),
-      timeout_ms: timeouts.poiRequestMs,
+      timeout_ms: timeouts.poi_request_ms,
       mode: 'json',
       error: { code: 'ADMIN_UNAVAILABLE', message: 'Không kết nối được dịch vụ quản trị.' }
     })
   );
 
   // 7. Thuyết minh âm thanh đa ngôn ngữ (trả file WAV)
-  app.post('/api/pois/:id/narration', express.json({ limit: limits.narrationBody }), (req, res) =>
+  app.post('/api/pois/:id/narration', express.json({ limit: limits.narration_body }), (req, res) =>
     forward(res, {
       target: new URL(`/pois/${encodeURIComponent(String(req.params.id))}/narration`, translation_service_url),
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(req.body ?? null),
-      timeout_ms: timeouts.translationAudioMs,
+      timeout_ms: timeouts.translation_audio_ms,
       mode: 'audio',
       error: { message: 'Không thể tải thuyết minh. Hãy thử lại.' }
     })
@@ -93,7 +93,7 @@ export function create_app(
   app.get('/api/languages', (_req, res) =>
     forward(res, {
       target: new URL('/languages', translation_service_url),
-      timeout_ms: timeouts.healthCheckMs,
+      timeout_ms: timeouts.health_check_ms,
       mode: 'json',
       no_store: false,
       error: { message: 'Không thể tải danh sách ngôn ngữ' }
@@ -101,26 +101,26 @@ export function create_app(
   );
 
   // 9. Dịch nội dung POI
-  app.post('/api/pois/:id/translation', express.json({ limit: limits.translationBody }), (req, res) =>
+  app.post('/api/pois/:id/translation', express.json({ limit: limits.translation_body }), (req, res) =>
     forward(res, {
       target: new URL(`/pois/${encodeURIComponent(String(req.params.id))}/translation`, translation_service_url),
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(req.body ?? null),
-      timeout_ms: timeouts.translationTextMs,
+      timeout_ms: timeouts.translation_text_ms,
       mode: 'json',
       error: { message: 'Dịch vụ dịch tạm thời không khả dụng' }
     })
   );
 
   // 10. Tìm đường đi bộ / xe máy / ô tô
-  app.post('/api/routes', express.json({ limit: limits.routesBody }), (req, res) =>
+  app.post('/api/routes', express.json({ limit: limits.routes_body }), (req, res) =>
     forward(res, {
       target: new URL('/routes', navigation_service_url),
       method: 'POST',
       headers: JSON_HEADERS,
       body: JSON.stringify(req.body ?? null),
-      timeout_ms: timeouts.navigationMs,
+      timeout_ms: timeouts.navigation_ms,
       mode: 'json',
       error: { code: 'UPSTREAM_UNAVAILABLE', message: 'Navigation service is unavailable' }
     })
@@ -137,7 +137,7 @@ export function create_app(
     return forward(res, {
       target: rewrite_target(poi_service_url, req.originalUrl),
       headers: etag ? { 'If-None-Match': etag } : {},
-      timeout_ms: timeouts.poiRequestMs,
+      timeout_ms: timeouts.poi_request_ms,
       mode: 'passthrough',
       no_store: false,
       error: { code: 'UPSTREAM_UNAVAILABLE', message: 'POI service is unavailable' }

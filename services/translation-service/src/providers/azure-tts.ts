@@ -1,3 +1,8 @@
+/**
+ * @file azure-tts.ts
+ * @description Nhà cung cấp tổng hợp giọng nói Azure Cognitive Services Speech (chuẩn hóa đầu ra WAV RIFF).
+ */
+
 import { TranslationError } from '../modules/translations/types.js';
 import { check_tts_status, require_wav, synthesis_error, type TtsProvider } from './tts-types.js';
 

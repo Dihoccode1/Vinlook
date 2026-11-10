@@ -1,3 +1,8 @@
+/**
+ * @file image-url.ts
+ * @description Hàm chuẩn hóa đường dẫn ảnh minh họa của địa điểm (POI).
+ */
+
 export const placeholder_image = '/images/poi-placeholder.svg';
 
 export function https_url(value: string | null | undefined): string | null {

@@ -1,3 +1,8 @@
+/**
+ * @file location-tracker.test.ts
+ * @description Kiểm thử đơn vị cho bộ lọc độ chính xác và khoảng dịch chuyển GPS.
+ */
+
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { create_location_tracker } from '../src/features/tracking/location-tracker.js';

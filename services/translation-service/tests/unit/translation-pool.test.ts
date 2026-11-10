@@ -1,3 +1,8 @@
+/**
+ * @file translation-pool.test.ts
+ * @description Kiểm thử đơn vị cho cơ chế xoay vòng và dự phòng nhà cung cấp dịch thuật.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { create_translation_pool } from '../../src/providers/translation-pool.js';

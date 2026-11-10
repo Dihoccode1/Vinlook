@@ -1,3 +1,8 @@
+/**
+ * @file location-tracker.ts
+ * @description Bộ lọc làm mượt tọa độ GPS, kiểm tra độ chính xác và loại bỏ nhiễu di chuyển.
+ */
+
 export interface LocationFix {
   latitude: number;
   longitude: number;

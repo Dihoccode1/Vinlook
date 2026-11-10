@@ -1,3 +1,8 @@
+/**
+ * @file index.ts
+ * @description Cấu hình cổng dịch vụ, khóa API các nhà cung cấp dịch thuật/TTS và kết nối TranslationDb.
+ */
+
 import 'dotenv/config';
 
 function port(value: string | undefined, fallback: number) {

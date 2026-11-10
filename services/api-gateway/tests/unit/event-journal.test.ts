@@ -1,3 +1,8 @@
+/**
+ * @file event-journal.test.ts
+ * @description Kiểm thử đơn vị cho nhật ký sự kiện hệ thống và hành vi người dùng.
+ */
+
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';

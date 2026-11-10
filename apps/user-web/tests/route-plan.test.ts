@@ -1,3 +1,8 @@
+/**
+ * @file route-plan.test.ts
+ * @description Kiểm thử đơn vị cho quy trình lập lộ trình và sắp xếp điểm dừng.
+ */
+
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { act, createElement } from 'react';

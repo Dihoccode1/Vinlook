@@ -1,3 +1,8 @@
+/**
+ * @file NarrationPlayer.tsx
+ * @description Trình phát thuyết minh âm thanh đa ngôn ngữ cho địa điểm tham quan.
+ */
+
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { set_listening } from '../../services/activity';

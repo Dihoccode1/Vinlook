@@ -1,3 +1,8 @@
+/**
+ * @file PoiTranslation.tsx
+ * @description Thành phần chọn ngôn ngữ, tải bản dịch nội dung POI và tích hợp trình phát thuyết minh.
+ */
+
 import { useEffect, useState } from 'react';
 import type { Poi } from '../../types/poi';
 import { NarrationPlayer } from './NarrationPlayer';

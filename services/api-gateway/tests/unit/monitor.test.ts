@@ -1,3 +1,8 @@
+/**
+ * @file monitor.test.ts
+ * @description Kiểm thử đơn vị cho endpoint giám sát sức khỏe các microservice nội bộ.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';

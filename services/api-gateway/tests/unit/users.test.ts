@@ -1,3 +1,8 @@
+/**
+ * @file users.test.ts
+ * @description Kiểm thử đơn vị cho hàm kiểm tra hợp lệ dữ liệu tài khoản nội bộ.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { validate_user } from '../../src/modules/users/users.js';

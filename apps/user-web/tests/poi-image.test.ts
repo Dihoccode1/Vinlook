@@ -1,3 +1,8 @@
+/**
+ * @file poi-image.test.ts
+ * @description Kiểm thử đơn vị cho hàm xử lý đường dẫn ảnh địa điểm.
+ */
+
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { https_url, placeholder_image, poi_image_url } from '../src/features/poi/image-url.js';

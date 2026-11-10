@@ -1,3 +1,8 @@
+/**
+ * @file LocationControls.tsx
+ * @description Cụm nút điều khiển bật/tắt định vị GPS và đưa bản đồ về vị trí hiện tại của du khách.
+ */
+
 import type { TrackingSnapshot } from './location-tracker';
 
 interface Props extends TrackingSnapshot {

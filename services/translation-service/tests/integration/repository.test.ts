@@ -1,3 +1,8 @@
+/**
+ * @file repository.test.ts
+ * @description Kiểm thử tích hợp SQL Server cho lưu trữ bản dịch và âm thanh thuyết minh trong TranslationDb.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';

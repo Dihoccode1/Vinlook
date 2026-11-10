@@ -1,3 +1,8 @@
+/**
+ * @file poi-source.ts
+ * @description Truy vấn nội dung gốc của địa điểm từ POI Service để làm đầu vào dịch thuật và thuyết minh.
+ */
+
 import { z } from 'zod';
 import { TranslationError, type PoiSource } from '../modules/translations/types.js';
 const schema = z.object({ data: z.object({ id: z.string().regex(/^POI[0-9]{3,20}$/), name: z.string().max(200), description: z.string().max(20000), source_language: z.string().min(2).max(10) }) });

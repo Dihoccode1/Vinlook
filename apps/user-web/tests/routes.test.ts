@@ -1,3 +1,8 @@
+/**
+ * @file routes.test.ts
+ * @description Kiểm thử đơn vị cho dịch vụ gọi API định tuyến.
+ */
+
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { format_distance, format_duration } from '../src/features/navigation/types.js';

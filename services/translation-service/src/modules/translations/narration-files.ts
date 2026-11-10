@@ -1,3 +1,8 @@
+/**
+ * @file narration-files.ts
+ * @description Quản lý đọc/ghi tệp âm thanh thuyết minh (WAV) dự phòng trên hệ thống tệp cục bộ.
+ */
+
 import { mkdir, readFile, writeFile, rename, unlink } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';

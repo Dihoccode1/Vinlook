@@ -1,3 +1,8 @@
+/**
+ * @file gemini-translate.ts
+ * @description Nhà cung cấp dịch thuật văn bản sử dụng mô hình Google Gemini.
+ */
+
 import { z } from 'zod';
 import { TranslationError, type TranslationProvider } from '../modules/translations/types.js';
 

@@ -1,3 +1,8 @@
+/**
+ * @file app.ts
+ * @description Khởi tạo ứng dụng Express cho Navigation Service: kiểm tra sức khỏe và tính toán lộ trình qua Valhalla.
+ */
+
 import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import helmet from 'helmet';

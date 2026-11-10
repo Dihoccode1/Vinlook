@@ -1,3 +1,8 @@
+/**
+ * @file server.ts
+ * @description Điểm khởi động HTTP server cho Translation Service (cổng mặc định 4003) và đóng kết nối an toàn.
+ */
+
 import { config } from './config/index.js';
 import { close_pool } from './config/database.js';
 import { create_app } from './app.js';

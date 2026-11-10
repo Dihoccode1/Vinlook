@@ -1,3 +1,8 @@
+/**
+ * @file App.tsx
+ * @description Thành phần gốc của ứng dụng du khách: điều phối bản đồ, tìm kiếm POI, quét/mở mã QR, định tuyến đa chặng, dịch thuật và thuyết minh.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PoiMap } from './features/map/PoiMap';
 import { get_poi } from './services/pois';

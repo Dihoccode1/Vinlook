@@ -1,3 +1,8 @@
+/**
+ * @file MapCredits.tsx
+ * @description Hiển thị thông tin bản quyền dữ liệu bản đồ OpenStreetMap và nền bản đồ.
+ */
+
 import { useEffect, useState } from 'react';
 
 export function MapCredits() {

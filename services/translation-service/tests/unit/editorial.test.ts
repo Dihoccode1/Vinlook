@@ -1,3 +1,8 @@
+/**
+ * @file editorial.test.ts
+ * @description Kiểm thử đơn vị cho bộ tạo văn bản biên tập đa ngôn ngữ.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { saigon_pois } from '../../src/content/saigon-pois.js';

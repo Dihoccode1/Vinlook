@@ -1,3 +1,8 @@
+/**
+ * @file app.ts
+ * @description Khởi tạo ứng dụng Express cho Translation Service: danh mục 16 ngôn ngữ, dịch nội dung POI và tổng hợp thuyết minh.
+ */
+
 import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import helmet from 'helmet';

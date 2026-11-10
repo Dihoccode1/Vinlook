@@ -1,3 +1,8 @@
+/**
+ * @file translation.service.ts
+ * @description Dịch vụ dịch nội dung POI sang ngôn ngữ đích với cơ chế lưu đệm theo mã băm nguồn (source_hash).
+ */
+
 import { createHash } from 'node:crypto';
 import { supports_language } from '../languages/languages.js';
 import { TranslationError, type PoiSource, type Translation, type TranslationProvider, type TranslationRepository } from './types.js';

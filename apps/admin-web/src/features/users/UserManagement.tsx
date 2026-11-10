@@ -221,15 +221,23 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
       </div>
 
       {notice && (
-        <div className="notice-banner" role="status">
-          {notice}
+        <div className="success-banner" role="status">
+          ✓ {notice}
         </div>
       )}
 
       {/* Modal tạo mới / chỉnh sửa tài khoản */}
       {modal_open && (
-        <dialog ref={dialog} className="user-dialog" aria-labelledby="user-dialog-title">
-          <form onSubmit={save}>
+        <dialog
+          ref={dialog}
+          className="user-dialog"
+          aria-labelledby="user-dialog-title"
+          onCancel={(event) => {
+            event.preventDefault();
+            close_editor();
+          }}
+        >
+          <form className="user-form" onSubmit={save} aria-busy={busy}>
             <header className="user-dialog-header">
               <div>
                 <h2 id="user-dialog-title">
@@ -263,7 +271,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                     maxLength={100}
                     autoComplete="off"
                     value={form.username}
-                    disabled={busy || !!editing}
+                    disabled={busy}
                     onChange={(e) => set_form({ ...form, username: e.target.value })}
                   />
                 </label>
@@ -364,7 +372,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
               </div>
 
               <p className="field-note">
-                Mật khẩu được mã hóa an toàn bằng thuật toán băm (bcrypt) và không bao giờ hiển thị lại.
+                Mật khẩu được lưu dưới dạng mã băm (scrypt) và không hiển thị lại. Bạn có thể đặt mật khẩu mới khi cần.
               </p>
 
               {error && (

@@ -1,3 +1,8 @@
+/**
+ * @file narration-files.test.ts
+ * @description Kiểm thử đơn vị cho đọc/ghi tệp âm thanh thuyết minh trên đĩa.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, unlink, rmdir } from 'node:fs/promises';

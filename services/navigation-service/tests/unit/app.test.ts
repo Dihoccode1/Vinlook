@@ -1,3 +1,8 @@
+/**
+ * @file app.test.ts
+ * @description Kiểm thử đơn vị cho các endpoint HTTP của Navigation Service.
+ */
+
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import request from 'supertest';

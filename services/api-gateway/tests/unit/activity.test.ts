@@ -1,3 +1,8 @@
+/**
+ * @file activity.test.ts
+ * @description Kiểm thử đơn vị cho bộ đếm du khách đang hoạt động và đang nghe thuyết minh.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';

@@ -2,12 +2,10 @@
  * @file App.tsx
  * @description Điều phối viên trung tâm của phân hệ Quản trị (Admin Web Application).
  * Quản lý trạng thái điều hướng tab, tải dữ liệu bất đồng bộ và kết nối các phân hệ chức năng:
- * Tổng quan, Điểm tham quan, Danh mục, Ngôn ngữ, Giám sát hệ thống và Quản lý tài khoản.
+ * Tổng quan, Quản lý địa điểm, Giám sát hệ thống và Quản lý tài khoản.
  */
 
 import React, { useEffect, useState } from 'react';
-import { CategoryManager } from './features/categories/CategoryManager';
-import { LanguageManager } from './features/languages/LanguageManager';
 import { MonitorDashboard } from './features/overview/MonitorDashboard';
 import { OverviewDashboard } from './features/overview/OverviewDashboard';
 import { PoiEditor } from './features/pois/PoiEditor';
@@ -72,14 +70,14 @@ export default function App({ on_logout, user }: AppProps) {
     api<{ data: Stats }>('/stats', { signal: controller.signal })
       .then((result) => set_stats(result.data))
       .catch(() => {
-        if (!controller.signal.aborted) set_error('Không thể tải tổng quan từ database.');
+        if (!controller.signal.aborted) set_error('Không tải được tổng quan từ database.');
       });
     return () => controller.abort();
   }, [refresh]);
 
   // Tải danh sách POI (debounce 200ms khi lọc/phân trang)
   useEffect(() => {
-    if (view !== 'overview' && view !== 'pois') return;
+    if (view === 'monitor' || view === 'users') return;
 
     const controller = new AbortController();
     set_loading(true);
@@ -101,7 +99,7 @@ export default function App({ on_logout, user }: AppProps) {
         })
         .catch((failure) => {
           if (!controller.signal.aborted) {
-            set_error(failure instanceof Error ? failure.message : 'Không tải được danh sách địa điểm.');
+            set_error(failure instanceof Error ? failure.message : 'Không tải được địa điểm.');
           }
         })
         .finally(() => {
@@ -122,7 +120,7 @@ export default function App({ on_logout, user }: AppProps) {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  // Polling hoạt động du khách mỗi 5 giây trên cửa sổ 5 phút
+  // Polling hoạt động du khách mỗi 3 giây trên cửa sổ 5 phút
   useEffect(() => {
     if (view !== 'overview') return;
     const controller = new AbortController();
@@ -142,88 +140,84 @@ export default function App({ on_logout, user }: AppProps) {
           );
         }
       } catch {
-        // Bỏ qua lỗi mạng tạm thời khi polling
+        if (!controller.signal.aborted) set_activity(null);
       } finally {
         pending = false;
       }
     };
 
     void poll();
-    const interval = setInterval(() => void poll(), 5000);
+    const timer = setInterval(() => void poll(), 3000);
     return () => {
-      clearInterval(interval);
+      clearInterval(timer);
       controller.abort();
     };
   }, [view]);
 
-  function saved() {
-    set_editor(undefined);
-    set_refresh((v) => v + 1);
-    set_toast('Đã lưu điểm tham quan thành công.');
+  function navigate(next_view: AdminViewTab) {
+    set_view(next_view);
+    set_page(1);
   }
 
-  function navigate(nextView: AdminViewTab) {
-    set_view(nextView);
-    set_page(1);
-    set_search('');
-    set_category('');
-    set_status('all');
+  function saved() {
+    set_editor(undefined);
+    set_toast('Đã lưu địa điểm thành công.');
+    set_refresh((value) => value + 1);
   }
 
   return (
     <AdminLayout
       user={user}
-      currentView={view}
-      onViewChange={navigate}
-      onLogout={logout}
-      loggingOut={logging_out}
+      current_view={view}
+      has_stats={stats !== null}
+      logging_out={logging_out}
       toast={toast}
-      onClearToast={() => set_toast('')}
+      on_view_change={navigate}
+      on_logout={() => void logout()}
+      on_create_poi={() => set_editor(null)}
     >
       {view === 'overview' && (
         <OverviewDashboard
           stats={stats}
           activity={activity}
           samples={samples}
-          onNavigateCategories={() => navigate('categories')}
-          onCreatePoi={() => set_editor(null)}
+          on_create_poi={() => set_editor(null)}
         />
       )}
 
-      {view === 'users' && user.role === 'admin' && <UserManagement current_user_id={user.id} />}
-      {view === 'monitor' && user.role === 'admin' && <MonitorDashboard />}
-      {view === 'categories' && <CategoryManager stats={stats} />}
-      {view === 'languages' && <LanguageManager />}
-
-      {(view === 'pois' || view === 'overview') && (
+      {view === 'users' && user.role === 'admin' ? (
+        <UserManagement current_user_id={user.id} />
+      ) : view === 'monitor' && user.role === 'admin' ? (
+        <MonitorDashboard />
+      ) : (
         <PoiListPanel
-          mode={view}
+          mode={view === 'overview' ? 'overview' : 'pois'}
           pois={pois}
           total={total}
-          overviewTotal={stats?.total}
+          overview_total={stats?.total}
           page={page}
           search={search}
           category={category}
           status={status}
           loading={loading}
           error={error}
-          onSearchChange={(value) => {
+          on_search_change={(value) => {
             set_search(value);
             set_page(1);
           }}
-          onCategoryChange={(value) => {
+          on_category_change={(value) => {
             set_category(value);
             set_page(1);
           }}
-          onStatusChange={(value) => {
+          on_status_change={(value) => {
             set_status(value);
             set_page(1);
           }}
-          onPageChange={set_page}
-          onRefresh={() => set_refresh((v) => v + 1)}
-          onViewAll={() => navigate('pois')}
-          onEditPoi={(poi) => set_editor(poi)}
-          onOpenQr={(poi) => set_qr_poi(poi)}
+          on_page_change={set_page}
+          on_refresh={() => set_refresh((value) => value + 1)}
+          on_view_all={() => navigate('pois')}
+          on_edit_poi={(poi) => set_editor(poi)}
+          on_open_qr={(poi) => set_qr_poi(poi)}
         />
       )}
 

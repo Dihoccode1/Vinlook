@@ -1,3 +1,8 @@
+/**
+ * @file saigon-pois.ts
+ * @description Dữ liệu biên tập chuẩn hóa cho các địa điểm tham quan tiêu biểu tại trung tâm TP.HCM.
+ */
+
 export const editorial_provider = 'Codex editorial';
 // Coordinates are representative map pins, not surveyed entrances.
 export const saigon_pois = [

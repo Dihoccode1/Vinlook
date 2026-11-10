@@ -1,3 +1,8 @@
+/**
+ * @file activity.ts
+ * @description Gửi tín hiệu nhịp đập (heartbeat) ẩn danh báo trạng thái truy cập và nghe thuyết minh về API Gateway.
+ */
+
 let id: string | undefined;
 let sequence = 0;
 let subscribers = 0;

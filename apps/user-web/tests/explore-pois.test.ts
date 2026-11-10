@@ -1,3 +1,8 @@
+/**
+ * @file explore-pois.test.ts
+ * @description Kiểm thử đơn vị cho bộ lọc danh mục, từ khóa và sắp xếp khoảng cách POI.
+ */
+
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { distance_meters, filter_explore_pois } from '../src/features/poi/explore-pois.js';

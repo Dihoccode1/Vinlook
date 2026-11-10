@@ -1,3 +1,8 @@
+/**
+ * @file RoutePlanner.tsx
+ * @description Giao diện lập kế hoạch lộ trình: chọn phương tiện, điểm xuất phát, điểm dừng và hướng dẫn từng bước.
+ */
+
 import type { Poi } from '../../types/poi';
 import { useState } from 'react';
 import type { use_route_plan } from './use-route-plan';

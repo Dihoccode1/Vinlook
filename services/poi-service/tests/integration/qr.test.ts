@@ -1,3 +1,8 @@
+/**
+ * @file qr.test.ts
+ * @description Kiểm thử tích hợp khởi tạo và tra cứu mã QR định danh POI trên SQL Server.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import sql from 'mssql';

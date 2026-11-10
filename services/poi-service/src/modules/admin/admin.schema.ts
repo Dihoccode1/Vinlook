@@ -1,3 +1,8 @@
+/**
+ * @file admin.schema.ts
+ * @description Lược đồ Zod kiểm tra dữ liệu đầu vào khi tạo mới hoặc cập nhật POI và giải mã ảnh Base64.
+ */
+
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 

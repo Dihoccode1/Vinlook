@@ -1,16 +1,14 @@
 /**
  * @file qr.ts
- * @description Các hàm tiện ích liên quan đến mã QR điểm tham quan
+ * @description Các hàm tiện ích xây dựng đường dẫn liên kết mã QR công khai cho điểm tham quan.
  */
 
 /**
- * Tạo đường dẫn liên kết QR công khai từ domain gốc và token
- * @param baseUrl URL trang web bản đồ công khai (ví dụ https://vinlook.vn)
- * @param qrToken Mã token QR ngẫu nhiên gồm 32 ký tự hex
- * @returns URL hoàn chỉnh để du khách quét mã
+ * Tạo đường dẫn liên kết QR công khai từ địa chỉ gốc của web bản đồ và mã token 32 ký tự hex.
+ * Từ chối các URL không phải http/https, có thông tin đăng nhập, query, hash hoặc đường dẫn con.
  */
-export function qr_link(baseUrl: string, qrToken: string): string {
-  const url = new URL(baseUrl);
+export function qr_link(base_url: string, qr_token: string): string {
+  const url = new URL(base_url);
   if (
     !['http:', 'https:'].includes(url.protocol) ||
     url.username ||
@@ -18,23 +16,20 @@ export function qr_link(baseUrl: string, qrToken: string): string {
     url.search ||
     url.hash ||
     url.pathname !== '/' ||
-    !/^[a-f0-9]{32}$/.test(qrToken)
+    !/^[a-f0-9]{32}$/.test(qr_token)
   ) {
-    throw new Error('Vui lòng nhập địa chỉ gốc hợp lệ của web bản đồ (ví dụ: https://vinlook.vn)');
+    throw new Error('Nhập địa chỉ gốc của web bản đồ, ví dụ https://vinlook.vn');
   }
-  return new URL(`/qr/${qrToken}`, url).href;
+  return new URL(`/qr/${qr_token}`, url).href;
 }
 
 /**
- * Xác định URL web bản đồ mặc định dựa vào origin hiện tại
- * @param origin Window location origin hiện tại
- * @param configured URL cấu hình trong file biến môi trường (nếu có)
- * @returns URL trang web du khách
+ * Xác định địa chỉ web bản đồ du khách mặc định dựa vào origin hiện tại hoặc biến cấu hình.
+ * Khi chạy local admin ở cổng 5174, tự động chuyển sang cổng 5173 của user-web.
  */
 export function default_public_url(origin: string, configured?: string): string {
   if (configured) return configured;
   const url = new URL(origin);
-  // Nếu đang dev admin ở port 5174, mặc định map sang port 5173 của user-web
   if (url.port === '5174') url.port = '5173';
   return url.origin;
 }

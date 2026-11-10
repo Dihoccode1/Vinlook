@@ -1,3 +1,8 @@
+/**
+ * @file extra-tts.test.ts
+ * @description Kiểm thử đơn vị cho các nhà cung cấp TTS bổ sung (Azure TTS, Google Cloud TTS).
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { create_azure_tts } from '../../src/providers/azure-tts.js';

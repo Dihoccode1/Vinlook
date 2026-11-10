@@ -1,3 +1,8 @@
+/**
+ * @file tts-provider.ts
+ * @description Khởi tạo chuỗi nhà cung cấp tổng hợp giọng nói (Gemini TTS, Azure TTS, Google Cloud TTS).
+ */
+
 import { TranslationError } from '../modules/translations/types.js';
 import { create_gemini_tts } from './gemini-tts.js';
 import { create_azure_tts } from './azure-tts.js';

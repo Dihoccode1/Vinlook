@@ -1,3 +1,8 @@
+/**
+ * @file google-translate.test.ts
+ * @description Kiểm thử đơn vị cho bộ dịch thuật Google Translate.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { create_google_translate_provider } from '../../src/providers/google-translate.js';

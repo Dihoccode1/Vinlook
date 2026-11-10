@@ -1,3 +1,8 @@
+/**
+ * @file database.ts
+ * @description Công cụ CLI khởi tạo và chạy migration cho cơ sở dữ liệu TranslationDb.
+ */
+
 import { readFile, readdir } from 'node:fs/promises';
 import sql from 'mssql';
 import { config } from './config/index.js';

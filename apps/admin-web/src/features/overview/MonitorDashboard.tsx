@@ -35,7 +35,7 @@ function ci_label(ci: Delivery['ci']): string {
   if (ci.state === 'unknown') return 'Không kiểm tra được';
   if (ci.state === 'no_runs') return 'Chưa có lần chạy';
   if (ci.state === 'completed') {
-    const conclusionMap: Record<string, string> = {
+    const conclusion_map: Record<string, string> = {
       success: 'Thành công',
       failure: 'Thất bại',
       cancelled: 'Đã hủy',
@@ -44,7 +44,7 @@ function ci_label(ci: Delivery['ci']): string {
       neutral: 'Trung lập',
       action_required: 'Cần xử lý'
     };
-    return conclusionMap[ci.conclusion ?? ''] ?? 'Chưa xác định kết quả';
+    return conclusion_map[ci.conclusion ?? ''] ?? 'Chưa xác định kết quả';
   }
   return ci.state === 'in_progress' ? 'Đang chạy' : 'Đang chờ';
 }
