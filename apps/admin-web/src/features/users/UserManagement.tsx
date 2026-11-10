@@ -364,7 +364,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
               </div>
 
               <p className="field-note">
-                Mật khẩu được mã hóa an toàn bằng thuật toán băm (bcrypt) và không bao giờ hiển thị lại.
+                Mật khẩu được lưu an toàn và không hiển thị lại. Chỉ nhập mật khẩu mới khi cần thay đổi.
               </p>
 
               {error && (

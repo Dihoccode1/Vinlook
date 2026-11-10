@@ -56,7 +56,7 @@ export function ActivityChart({ samples }: ActivityChartProps) {
       <div className="panel-title">
         <div>
           <h2>Hoạt động theo thời gian thực</h2>
-          <p>5 phút gần nhất • Lấy mẫu tự động mỗi 5 giây</p>
+          <p>5 phút gần nhất · Cập nhật mỗi 5 giây</p>
         </div>
         <div className="activity-legend">
           <span>
@@ -110,7 +110,7 @@ export function ActivityChart({ samples }: ActivityChartProps) {
       )}
 
       <p className="chart-note">
-        Biểu đồ tự động ghi nhận khi bạn mở trang này. Khoảng mất kết nối sẽ để trống; dữ liệu biểu đồ được đo lường in-memory.
+        Dữ liệu được ghi nhận từ khi mở trang. Khoảng mất kết nối được để trống.
       </p>
     </section>
   );

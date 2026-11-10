@@ -174,6 +174,8 @@ export default function App({ on_logout, user }: AppProps) {
     <AdminLayout
       user={user}
       currentView={view}
+      onCreatePoi={() => set_editor(null)}
+      onRefresh={() => set_refresh(value => value + 1)}
       onViewChange={navigate}
       onLogout={logout}
       loggingOut={logging_out}

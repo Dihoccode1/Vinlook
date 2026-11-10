@@ -122,7 +122,7 @@ export function PoiQrDialog({ poi, on_close }: PoiQrDialogProps) {
       <header className="qr-dialog-header">
         <div>
           <h2 id="qr-dialog-title">Mã QR điểm tham quan</h2>
-          <p>{poi.name}</p>
+          <p>{poi.name}</p><p className="qr-id-label">Mã POI: <strong>{poi.id}</strong></p>
         </div>
         <button className="icon-button" type="button" aria-label="Đóng cửa sổ" onClick={on_close}>
           ✕
@@ -161,7 +161,7 @@ export function PoiQrDialog({ poi, on_close }: PoiQrDialogProps) {
 
         {png ? (
           <div className="qr-preview">
-            <img src={png} alt={`Mã QR cho ${poi.name}`} />
+            <img src={png} alt={`Mã QR cho ${poi.name}`} /><strong className="qr-name">{poi.name}</strong>
             <div className="qr-link-box">
               <code>{link}</code>
               <button type="button" onClick={copy_link}>
