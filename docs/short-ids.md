@@ -8,7 +8,7 @@
 | poi_translations | TRN001 |
 | poi_narrations | AUD001 |
 
-Các khóa ngoại dùng cùng mã với bản ghi được tham chiếu, bao gồm `poi_qr_codes.poi_id`. ID log và sự kiện giữ nguyên BIGINT tăng dần vì đã ngắn. `admin_sessions.token_hash`, `qr_token`, mã heartbeat phía trình duyệt và hash nội dung không phải ID thực thể cần đánh số; giữ nguyên.
+Các khóa ngoại dùng cùng mã với bản ghi được tham chiếu. ID log và sự kiện giữ nguyên BIGINT tăng dần vì đã ngắn. `admin_sessions.token_hash`, mã heartbeat phía trình duyệt và hash nội dung không phải ID thực thể cần đánh số; giữ nguyên.
 
 ID mới được cấp bằng SQL SEQUENCE và định dạng tối thiểu ba chữ số. Sau 999 tiếp tục 1000, không cắt số, không quay vòng. Sequence có thể có khoảng trống khi rollback hoặc yêu cầu bị hủy.
 

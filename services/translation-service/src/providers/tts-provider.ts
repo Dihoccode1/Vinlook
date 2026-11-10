@@ -1,3 +1,4 @@
+import { track_tts } from './provider-status.js';
 import { TranslationError } from '../modules/translations/types.js';
 import { create_gemini_tts } from './gemini-tts.js';
 import { create_azure_tts } from './azure-tts.js';
@@ -41,9 +42,9 @@ export function create_tts_provider(): TtsProvider {
   const names = [...new Set((process.env.TTS_PROVIDERS ?? 'gemini,azure,google').split(',').map(name => name.trim()).filter(Boolean))];
   if (!names.length || names.some(name => !['gemini', 'azure', 'google'].includes(name))) throw new Error('TTS_PROVIDERS must contain gemini, azure or google');
   const providers = names.flatMap(name => {
-    if (name === 'gemini' && process.env.GEMINI_API_KEY?.trim()) return [create_gemini_tts()];
-    if (name === 'azure' && process.env.AZURE_SPEECH_KEY?.trim() && process.env.AZURE_SPEECH_REGION?.trim()) return [create_azure_tts()];
-    if (name === 'google' && process.env.GOOGLE_TTS_API_KEY?.trim()) return [create_google_cloud_tts()];
+    if (name === 'gemini') { const configured = !!process.env.GEMINI_API_KEY?.trim(); const provider = track_tts('Gemini TTS', configured, create_gemini_tts()); return configured ? [provider] : []; }
+    if (name === 'azure') { const configured = !!(process.env.AZURE_SPEECH_KEY?.trim() && process.env.AZURE_SPEECH_REGION?.trim()); const provider = track_tts('Azure Speech', configured, create_azure_tts()); return configured ? [provider] : []; }
+    if (name === 'google') { const configured = !!process.env.GOOGLE_TTS_API_KEY?.trim(); const provider = track_tts('Google Cloud TTS', configured, create_google_cloud_tts()); return configured ? [provider] : []; }
     return [];
   });
   if (!providers.length) return { identity: 'unconfigured-tts', async generate() { throw new TranslationError('PROVIDER_NOT_CONFIGURED'); } };

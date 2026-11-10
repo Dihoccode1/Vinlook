@@ -18,3 +18,5 @@ Migration `007_staff_role.sql` chuyển quyền `editor` cũ thành `staff` và 
 Kiểm thử đơn vị: `npm run test -w @tourism/api-gateway`.
 
 Kiểm thử tích hợp sau khi SQL Server và POI service đang chạy: `npx tsx --env-file=.env --test services/api-gateway/tests/integration/users.test.ts`. Bài kiểm thử tạo tài khoản riêng và dọn dữ liệu thử sau khi chạy.
+
+Tài khoản tên đăng nhập admin là tài khoản root: không có nút khóa, API chặn khóa, đổi tên hoặc hạ quyền tài khoản này. Quy tắc tự khóa do nhập sai mật khẩu vẫn được giữ; Admin khác có thể mở khóa theo luồng khôi phục.

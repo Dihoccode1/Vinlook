@@ -7,6 +7,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { api } from '../../services/api';
 import type { User } from '../../types';
+import { AccountStatusDialog } from './AccountStatusDialog';
 
 interface UserFormData {
   username: string;
@@ -36,6 +37,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
   const [query, set_query] = useState('');
   const [confirm_password, set_confirm_password] = useState('');
   const [changing_id, set_changing_id] = useState<string | null>(null);
+  const [pending_status, set_pending_status] = useState<User | null>(null);
 
   const confirm_input = useRef<HTMLInputElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -166,7 +168,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
    * Khóa hoặc mở khóa trạng thái tài khoản
    */
   async function change_status(user: User) {
-    if (busy) return;
+    if (busy || (user.username.toLowerCase() === 'admin' && user.status === 'active')) return;
     const status = user.status === 'active' ? 'disabled' : 'active';
     set_busy(true);
     set_changing_id(user.id);
@@ -190,6 +192,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
             : item
         )
       );
+      set_pending_status(null);
 
       if (user.id.toLowerCase() === current_user_id.toLowerCase() && status === 'disabled') {
         window.dispatchEvent(new Event('admin-session-expired'));
@@ -227,9 +230,18 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
         </div>
       )}
 
-      {error && !modal_open && (
+      {error && !modal_open && !pending_status && (
         <div className="error-banner" role="alert">{error}</div>
       )}
+
+      {pending_status && <AccountStatusDialog
+        user={pending_status}
+        is_self={pending_status.id.toLowerCase() === current_user_id.toLowerCase()}
+        busy={busy}
+        error={error}
+        on_cancel={() => { if (!busy) { set_pending_status(null); set_error(''); } }}
+        on_confirm={() => void change_status(pending_status)}
+      />}
 
       {/* Modal tạo mới / chỉnh sửa tài khoản */}
       {modal_open && (
@@ -347,7 +359,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                   Trạng thái
                   <select
                     value={form.status}
-                    disabled={busy}
+                    disabled={busy || editing?.username.toLowerCase() === 'admin'}
                     onChange={(e) =>
                       set_form({ ...form, status: e.target.value as User['status'] })
                     }
@@ -430,7 +442,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                 <tr key={u.id}>
                   <td>
                     <strong>
-                      {u.username}
+                      {u.username}{u.username.toLowerCase() === 'admin' ? ' · Root' : ''}
                       {u.id === current_user_id ? ' (Bạn)' : ''}
                     </strong>
                     {u.full_name !== u.username && <div>{u.full_name}</div>}
@@ -452,18 +464,18 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                       >
                         Chỉnh sửa
                       </button>
-                      <button
+                      {!(u.username.toLowerCase() === 'admin' && u.status === 'active') && <button
                         className={u.status === 'active' ? 'account-lock' : 'account-unlock'}
                         disabled={busy}
                         aria-label={`${u.status === 'active' ? 'Khóa' : 'Mở khóa'} tài khoản ${u.username}`}
-                        onClick={() => void change_status(u)}
+                        onClick={() => { set_error(''); set_notice(''); set_pending_status(u); }}
                       >
                         {changing_id === u.id
                           ? 'Đang xử lý...'
                           : u.status === 'active'
                           ? 'Khóa'
                           : 'Mở khóa'}
-                      </button>
+                      </button>}
                     </div>
                   </td>
                 </tr>

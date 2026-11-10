@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { admin_repository, type AdminRepository } from './admin.repository.js';
 import { admin_poi_schema, admin_query_schema, decode_admin_image } from './admin.schema.js';
 import { lookup_address, type AddressLookup } from './geocode.js';
-import {qr_routes} from './qr.routes.js';
 
 export function admin_routes(repository: AdminRepository = admin_repository, key = process.env.ADMIN_API_KEY, geocode: AddressLookup = lookup_address) {
   const router = Router();
@@ -16,7 +15,6 @@ export function admin_routes(repository: AdminRepository = admin_repository, key
     next();
   });
   router.use(json({ limit: '8mb' }));
-  router.use(qr_routes());
   router.get('/geocode', async (req, res) => {
     const query = z.string().trim().min(5).max(500).safeParse(req.query.q);
     if (!query.success) { res.status(400).json({ error: { code: 'INVALID_ADDRESS', message: 'Nhập địa chỉ cụ thể từ 5 đến 500 ký tự.' } }); return; }

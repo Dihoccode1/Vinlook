@@ -53,7 +53,7 @@ test('staff session exposes role and allows POI tools but denies monitor and use
   assert.equal(login.body.data.role,'staff');
   assert.equal((await agent.get('/api/admin/auth/session')).body.data.role,'staff');
   for(const path of ['/stats','/activity','/pois','/pois/123','/geocode?q=x']) await agent.get(`/api/admin${path}`).expect(200);
-  await agent.post('/api/admin/pois/POI001/qr').set('x-vinlook-admin','1').expect(200);
+  await agent.post('/api/admin/pois/POI001/qr').set('x-vinlook-admin','1').expect(403);
   await agent.put('/api/admin/pois/123').set('x-vinlook-admin','1').send({}).expect(200);
   for(const path of ['/monitor','/users','/users/123','/private']) await agent.get(`/api/admin${path}`).expect(403);
   await agent.post('/api/admin/users').set('x-vinlook-admin','1').send({}).expect(403);

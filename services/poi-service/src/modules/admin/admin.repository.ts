@@ -1,5 +1,4 @@
 import sql from 'mssql';
-import {randomBytes} from 'node:crypto';
 import { get_pool } from '../../config/database.js';
 import type { Poi } from '../pois/poi.repository.js';
 import { decode_admin_image, type AdminPoiInput, type AdminPoiQuery } from './admin.schema.js';
@@ -66,8 +65,6 @@ export const admin_repository: AdminRepository = {
           category=@category, source_language=@source, is_published=@published, image_credit=@credit, image_source_url=@imageSource, image_license_url=@license, updated_at=SYSUTCDATETIME(), updated_by=@user_id
           WHERE id=@id AND CONVERT(DATETIME2(3), updated_at)=@version; SELECT @@ROWCOUNT AS changed;`);
       if (!result.recordset[0]?.changed) { await tx.rollback(); return false; }
-      if(create)await new sql.Request(tx).input('id',sql.VarChar(36),id).input('token',sql.VarChar(128),randomBytes(16).toString('hex'))
-        .query('INSERT INTO dbo.poi_qr_codes(poi_id,qr_token) VALUES(@id,@token)');
       if (user_id) await new sql.Request(tx).input('user', sql.VarChar(36), user_id).input('poi', sql.VarChar(36), id)
         .input('action', sql.VarChar(50), create ? 'poi_created' : 'poi_updated')
         .query(`INSERT INTO dbo.system_logs(user_id,poi_id,component,level,action,message) VALUES(@user,@poi,N'poi-service','info',@action,N'Cập nhật nội dung địa điểm.');`);

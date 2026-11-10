@@ -5,7 +5,7 @@
  */
 
 export const config = {
-  /** POI Service: quản lý điểm tham quan, ảnh, mã QR. */
+  /** POI Service: quản lý điểm tham quan và ảnh. */
   poiServiceUrl: process.env.POI_SERVICE_URL ?? 'http://localhost:4001',
 
   /** Navigation Service: tìm đường đi bộ/xe máy qua Valhalla. */

@@ -14,7 +14,6 @@ erDiagram
     users ||--o{ pois : "sửa - updated_by"
     users ||--o{ admin_sessions : "đăng nhập"
     users o|--o{ system_logs : "thực hiện"
-    pois ||--o| poi_qr_codes : "mã QR"
     pois ||--o| poi_images : "ảnh minh họa"
     pois ||..o{ poi_translations : "bản dịch - liên kết logic"
     pois ||..o{ poi_narrations : "audio - liên kết logic"
@@ -190,11 +189,3 @@ SELECT name FROM TranslationDb.sys.tables WHERE is_ms_shipped=0;
 ```
 
 Không đưa `password_hash` hoặc `token_hash` vào API dashboard công khai.
-
-## Mã QR địa điểm
-
-Bảng `PoiDb.dbo.poi_qr_codes`: `poi_id` (PK, FK → pois.id), `qr_token` (UNIQUE, bắt buộc, tối đa 128 ký tự, phân biệt hoa/thường), `qr_image_url` (nullable, tối đa 2048 ký tự), `created_at`, `updated_at` (UTC). Mỗi POI có tối đa một QR. Hai thời điểm mặc định là lúc tạo; trigger tự cập nhật `updated_at` khi sửa. Không tự tạo mã hoặc ảnh QR khi chạy migration.
-
-ID thực thể hiện dùng mã ngắn có tiền tố (`POI001`, `USR001`, `VST001`, `TRN001`, `AUD001`). Các khóa ngoại dùng mã tương ứng. Xem [quy tắc ID và nâng cấp](short-ids.md).
-
-Giới hạn đăng nhập được lưu trong `users.failed_login_count`, `login_retry_at`, `login_locked`. Xem [chính sách khóa đăng nhập](login-lockout.md).
