@@ -25,6 +25,11 @@ export function AdminAccess() {
   const [show_password, set_show_password] = useState(false);
   const [busy, set_busy] = useState(false);
   const [error, set_error] = useState('');
+  const [retry_at,set_retry_at]=useState(0);
+  const [now,set_now]=useState(Date.now);
+  const [retry_user,set_retry_user]=useState('');
+  const retry_seconds=retry_user===username.trim().toLowerCase()?Math.max(0,Math.ceil((retry_at-now)/1000)):0;
+  useEffect(()=>{if(!retry_at)return;const timer=window.setInterval(()=>set_now(Date.now()),250);return()=>window.clearInterval(timer);},[retry_at]);
 
   // Kiểm tra phiên đăng nhập hiện có khi tải trang
   useEffect(() => {
@@ -67,7 +72,7 @@ export function AdminAccess() {
    */
   async function login(event: React.FormEvent) {
     event.preventDefault();
-    if (busy) return;
+    if (busy || retry_seconds>0) return;
     set_busy(true);
     set_error('');
     set_show_password(false);
@@ -83,6 +88,7 @@ export function AdminAccess() {
       });
 
       const body = await response.json();
+      if(response.status===429){const seconds=Number(response.headers.get('Retry-After')??body.error?.retry_after);if(Number.isFinite(seconds)&&seconds>0){set_now(Date.now());set_retry_at(Date.now()+seconds*1000);set_retry_user(username.trim().toLowerCase());}}
       if (!response.ok) {
         throw new Error(body.error?.message ?? 'Đăng nhập không thành công.');
       }
@@ -186,8 +192,8 @@ export function AdminAccess() {
 
           {error && <p className="error-banner" role="alert">{error}</p>}
 
-          <button className="primary" type="submit" disabled={busy}>
-            {busy ? 'Đang đăng nhập...' : 'Đăng nhập'}
+          <button className="primary" type="submit" disabled={busy || retry_seconds>0}>
+            {busy ? 'Đang đăng nhập...' : retry_seconds>0 ? `Thử lại sau ${retry_seconds} giây` : 'Đăng nhập'}
           </button>
         </form>
 
