@@ -1,3 +1,8 @@
+/**
+ * @file narration.service.ts
+ * @description Dịch vụ điều phối tổng hợp thuyết minh: kiểm tra bộ nhớ đệm DB/tệp, dịch văn bản và gọi nhà cung cấp TTS.
+ */
+
 import { narration_key } from './narration-key.js';
 import { TranslationError } from './types.js';
 import type { NarrationRepository } from './narration.repository.js';

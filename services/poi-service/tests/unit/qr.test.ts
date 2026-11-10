@@ -1,3 +1,8 @@
+/**
+ * @file qr.test.ts
+ * @description Kiểm thử đơn vị cho các endpoint tạo và giải mã mã QR của địa điểm.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';

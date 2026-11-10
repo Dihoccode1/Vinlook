@@ -1,3 +1,8 @@
+/**
+ * @file database.test.ts
+ * @description Kiểm thử tích hợp truy vấn danh sách, tìm kiếm và chi tiết POI trên cơ sở dữ liệu PoiDb.
+ */
+
 import assert from 'node:assert/strict';
 import { after, test } from 'node:test';
 import { poi_repository } from '../../src/modules/pois/poi.repository.js';

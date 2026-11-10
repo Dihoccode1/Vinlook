@@ -1,3 +1,8 @@
+/**
+ * @file PoiImage.tsx
+ * @description Thành phần hiển thị ảnh địa điểm kèm trạng thái tải, ảnh dự phòng khi lỗi và thông tin tác quyền.
+ */
+
 import { useState } from 'react';
 import { placeholder_image, poi_image_url } from './image-url';
 

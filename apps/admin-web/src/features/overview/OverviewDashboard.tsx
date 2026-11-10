@@ -1,7 +1,7 @@
 /**
  * @file OverviewDashboard.tsx
- * @description Bảng điều khiển Tổng quan (Overview Dashboard) của trang Quản trị.
- * Hiển thị 6 chỉ số KPI cốt lõi, biểu đồ hoạt động thời gian thực và phân bố danh mục điểm đến.
+ * @description Phân hệ Tổng quan (Overview Dashboard) của trang Quản trị.
+ * Hiển thị 3 ô chỉ số hoạt động trực tiếp, biểu đồ chuỗi thời gian và phân bố danh mục địa điểm.
  */
 
 import React from 'react';
@@ -14,108 +14,104 @@ interface OverviewDashboardProps {
   stats: Stats | null;
   activity: { visitors: number; listeners: number } | null;
   samples: ActivitySample[];
-  onNavigateCategories: () => void;
-  onCreatePoi: () => void;
+  on_create_poi: () => void;
 }
 
 export function OverviewDashboard({
   stats,
   activity,
   samples,
-  onNavigateCategories,
-  onCreatePoi
+  on_create_poi
 }: OverviewDashboardProps) {
+  const metrics = [
+    {
+      label: 'Tổng địa điểm',
+      value: stats?.total,
+      icon: 'pin' as const,
+      note: 'Trong kho nội dung',
+      color: 'green'
+    },
+    {
+      label: 'Đang truy cập',
+      value: activity?.visitors,
+      icon: 'eye' as const,
+      note: activity ? 'Phiên truy cập đang hoạt động' : 'Đang tải thông tin trực tiếp…',
+      color: 'blue'
+    },
+    {
+      label: 'Đang lắng nghe',
+      value: activity?.listeners,
+      icon: 'listen' as const,
+      note: activity ? 'Phiên đang phát thuyết minh' : 'Đang tải thông tin trực tiếp…',
+      color: 'orange'
+    }
+  ];
+
   return (
     <>
-      <section className="metrics" aria-label="Các chỉ số chính">
-        <article>
-          <div className="metric-label">
-            <Icon kind="pin" /> Điểm tham quan
-          </div>
-          <strong>{stats?.total ?? '—'}</strong>
-          <p>Tổng số điểm đến trong cơ sở dữ liệu</p>
-        </article>
-
-        <article>
-          <div className="metric-label">
-            <Icon kind="eye" /> Đã xuất bản
-          </div>
-          <strong>{stats?.published ?? '—'}</strong>
-          <p>Hiển thị công khai cho du khách trên bản đồ</p>
-        </article>
-
-        <article>
-          <div className="metric-label">
-            <Icon kind="draft" /> Bản nháp
-          </div>
-          <strong>{stats?.drafts ?? '—'}</strong>
-          <p>Đang biên soạn hoặc chờ kiểm duyệt kịch bản</p>
-        </article>
-
-        <article>
-          <div className="metric-label">
-            <Icon kind="photo" /> Có ảnh minh họa
-          </div>
-          <strong>{stats?.with_images ?? '—'}</strong>
-          <p>Đã tải ảnh thực tế và bản quyền tác giả</p>
-        </article>
-
-        <article>
-          <div className="metric-label">
-            <Icon kind="user" /> Đang truy cập
-          </div>
-          <strong>{activity?.visitors ?? '—'}</strong>
-          <p>Số thiết bị đang mở bản đồ (5 phút gần nhất)</p>
-        </article>
-
-        <article>
-          <div className="metric-label">
-            <Icon kind="listen" /> Đang nghe thuyết minh
-          </div>
-          <strong>{activity?.listeners ?? '—'}</strong>
-          <p>Số phiên audio thuyết minh đang phát trực tiếp</p>
-        </article>
+      <section className="metrics" aria-label="Thống kê địa điểm">
+        {metrics.map((item) => (
+          <article key={item.label}>
+            <div className="metric-label">
+              {item.label}
+              <span className={`metric-icon ${item.color}`}>
+                <Icon kind={item.icon} />
+              </span>
+            </div>
+            <strong>{item.value ?? '—'}</strong>
+            <p>{item.note}</p>
+          </article>
+        ))}
       </section>
 
       <ActivityChart samples={samples} />
 
-      <div className="overview-split">
-        <section className="panel categories-overview">
+      <div className="overview-grid">
+        <section className="panel categories">
           <div className="panel-title">
-            <h2>Phân bố danh mục</h2>
-            <button className="text-button" onClick={onNavigateCategories}>
-              Chi tiết danh mục →
-            </button>
+            <div>
+              <h2>Phân bố địa điểm</h2>
+              <p>Mỗi danh mục, một cách khám phá thành phố.</p>
+            </div>
+            <span className="soft-badge">{stats?.categories.length ?? '—'} danh mục</span>
           </div>
-          <div className="category-bars">
-            {stats?.categories.map((c) => {
-              const pct = stats.total ? Math.round((c.total / stats.total) * 100) : 0;
-              return (
-                <div key={c.category} className="cat-row">
-                  <div className="cat-meta">
-                    <span>{categories[c.category] ?? c.category}</span>
-                    <strong>
-                      {c.total} <small>({pct}%)</small>
-                    </strong>
-                  </div>
-                  <div className="cat-bar">
-                    <div className={`cat-fill ${c.category}`} style={{ width: `${pct}%` }} />
-                  </div>
+          {Object.entries(categories).map(([key, name], index) => {
+            const count = stats?.categories.find((item) => item.category === key)?.total ?? 0;
+            const percent = stats?.total ? Math.round((count / stats.total) * 100) : 0;
+            return (
+              <div className="category-row" key={key}>
+                <div>
+                  <span className={`category-dot c${index}`} />
+                  {name}
+                  <strong>
+                    {count} <small>địa điểm</small>
+                  </strong>
                 </div>
-              );
-            })}
-          </div>
+                <div className="bar-track">
+                  <span className={`bar-fill c${index}`} style={{ width: `${percent}%` }} />
+                </div>
+              </div>
+            );
+          })}
+          <p className="chart-note">Tính trên toàn bộ địa điểm, gồm cả bản nháp.</p>
         </section>
 
-        <section className="panel get-started">
-          <span className="eyebrow">KHỞI ĐẦU ĐIỂM ĐẾN</span>
-          <h2>Kể câu chuyện về thành phố.</h2>
+        <section className="editorial-note">
+          <span className="note-symbol" aria-hidden="true">
+            ↗
+          </span>
+          <span className="eyebrow">KỂ MỘT CÂU CHUYỆN HAY</span>
+          <h2>
+            Mỗi nơi đến,
+            <br />
+            một điều đáng nhớ.
+          </h2>
           <p>
-            Thêm điểm tham quan, chọn một bức ảnh đẹp và viết câu chuyện lịch sử văn hóa. Vinlook kết nối những câu
-            chuyện ấy với hành trình của du khách.
+            Thêm địa điểm, chọn một bức ảnh và viết câu chuyện gốc. Vinlook kết nối những câu chuyện ấy với hành trình
+            của khách.
           </p>
-          <button className="primary" onClick={onCreatePoi}>
-            Bắt đầu thêm điểm mới <span>+</span>
+          <button onClick={on_create_poi}>
+            Bắt đầu với địa điểm mới <span>→</span>
           </button>
         </section>
       </div>

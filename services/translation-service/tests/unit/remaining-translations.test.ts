@@ -1,3 +1,8 @@
+/**
+ * @file remaining-translations.test.ts
+ * @description Kiểm thử đơn vị cho kiểm tra độ phủ bản dịch trên toàn bộ ngôn ngữ.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ben_thanh_translations } from '../../src/content/ben-thanh-translations.js';

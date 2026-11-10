@@ -1,3 +1,8 @@
+/**
+ * @file location-session.test.ts
+ * @description Kiểm thử đơn vị cho vòng đời phiên định vị GPS (location session).
+ */
+
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { create_location_session } from '../src/features/tracking/location-session.js';

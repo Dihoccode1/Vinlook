@@ -1,3 +1,8 @@
+/**
+ * @file valhalla.test.ts
+ * @description Kiểm thử đơn vị cho tích hợp Valhalla, giải mã hình học và tối ưu điểm dừng.
+ */
+
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { create_valhalla_provider } from '../../src/providers/valhalla.js';

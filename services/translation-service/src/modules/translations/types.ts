@@ -1,3 +1,8 @@
+/**
+ * @file types.ts
+ * @description Định nghĩa kiểu dữ liệu bản dịch văn bản, bản ghi thuyết minh và kết quả trả về.
+ */
+
 export interface SourcePoi { id: string; name: string; description: string; source_language: string }
 export interface Translation {
   poi_id: string; language: string; source_language: string; source_hash: string;

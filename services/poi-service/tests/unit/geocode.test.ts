@@ -1,3 +1,8 @@
+/**
+ * @file geocode.test.ts
+ * @description Kiểm thử đơn vị cho chức năng tra cứu tọa độ từ địa chỉ (geocoding).
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { create_address_lookup } from '../../src/modules/admin/geocode.js';

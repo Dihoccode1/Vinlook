@@ -1,3 +1,8 @@
+/**
+ * @file google-cloud-tts.ts
+ * @description Nhà cung cấp tổng hợp giọng nói Google Cloud Text-to-Speech.
+ */
+
 import { z } from 'zod';
 import { TranslationError } from '../modules/translations/types.js';
 import { check_tts_status, require_wav, synthesis_error, type TtsProvider } from './tts-types.js';

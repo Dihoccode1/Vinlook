@@ -1,3 +1,8 @@
+/**
+ * @file export-narration-files.ts
+ * @description Công cụ CLI xuất dữ liệu âm thanh thuyết minh từ TranslationDb ra tệp WAV lưu trữ cục bộ.
+ */
+
 import { get_pool, close_pool } from './config/database.js';
 import { create_narration_file_store } from './modules/translations/narration-files.js';
 async function main() {

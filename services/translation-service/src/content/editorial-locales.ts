@@ -1,3 +1,8 @@
+/**
+ * @file editorial-locales.ts
+ * @description Bộ khung mẫu câu biên tập đa ngôn ngữ (16 ngôn ngữ) cho mô tả điểm tham quan.
+ */
+
 interface Locale {
   welcome: string;
   location: string;

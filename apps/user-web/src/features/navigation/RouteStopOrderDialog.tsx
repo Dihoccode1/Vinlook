@@ -1,3 +1,8 @@
+/**
+ * @file RouteStopOrderDialog.tsx
+ * @description Hộp thoại hỏi du khách cách sắp xếp thứ tự các điểm dừng (tối ưu tự động hoặc giữ nguyên thứ tự).
+ */
+
 import { useEffect, useRef, useState } from 'react';
 import type { Poi } from '../../types/poi';
 import { PoiImage } from '../poi/PoiImage';

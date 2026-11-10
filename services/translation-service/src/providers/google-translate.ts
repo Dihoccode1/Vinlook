@@ -1,3 +1,8 @@
+/**
+ * @file google-translate.ts
+ * @description Nhà cung cấp dịch thuật văn bản qua Google Translate.
+ */
+
 import { z } from 'zod';
 import { TranslationError, type TranslationProvider } from '../modules/translations/types.js';
 

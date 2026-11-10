@@ -1,3 +1,8 @@
+/**
+ * @file tts-types.ts
+ * @description Định nghĩa giao diện chung cho các nhà cung cấp dịch vụ Text-to-Speech (TTS).
+ */
+
 import { TranslationError } from '../modules/translations/types.js';
 export interface TtsProvider {
   identity: string;

@@ -1,3 +1,8 @@
+/**
+ * @file west-saigon-pois.ts
+ * @description Dữ liệu biên tập chuẩn hóa cho các địa điểm tham quan khu vực Tây Sài Gòn (Chợ Lớn, Quận 5, Quận 6, Bình Tân...).
+ */
+
 // District names are familiar geographic areas, not the current ward boundaries.
 // Coordinates are representative OSM map pins, not surveyed building entrances.
 export const west_saigon_pois = [

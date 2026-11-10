@@ -1,3 +1,8 @@
+/**
+ * @file prepare-content.ts
+ * @description Tác vụ CLI chuẩn bị sẵn toàn bộ bản dịch và âm thanh thuyết minh cho các POI đang hoạt động.
+ */
+
 import { z } from 'zod';
 import { languages, supports_language } from './modules/languages/languages.js';
 import { create_poi_source } from './providers/poi-source.js';

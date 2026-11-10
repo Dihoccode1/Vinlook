@@ -1,3 +1,8 @@
+/**
+ * @file admin.repository.ts
+ * @description Truy vấn SQL Server phục vụ quản trị POI: thống kê, thêm/sửa/xóa có kiểm soát đồng thời (optimistic concurrency) và ghi nhật ký.
+ */
+
 import sql from 'mssql';
 import {randomBytes} from 'node:crypto';
 import { get_pool } from '../../config/database.js';

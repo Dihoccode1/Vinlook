@@ -1,3 +1,8 @@
+/**
+ * @file translation-pool.ts
+ * @description Bộ điều phối xoay vòng và dự phòng (fallback) giữa nhiều nhà cung cấp dịch thuật.
+ */
+
 import { TranslationError, type TranslationProvider } from '../modules/translations/types.js';
 
 /** Share work across providers; never duplicate a successful request. */

@@ -1,3 +1,8 @@
+/**
+ * @file poi.ts
+ * @description Định nghĩa kiểu dữ liệu điểm tham quan (POI) và thông tin phân trang trên giao diện du khách.
+ */
+
 export interface Poi {
   id: string;
   slug: string;

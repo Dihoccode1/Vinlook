@@ -1,3 +1,8 @@
+/**
+ * @file west-saigon.test.ts
+ * @description Kiểm thử đơn vị cho bộ dữ liệu địa điểm khu vực Tây Sài Gòn.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {west_saigon_pois} from '../../src/content/west-saigon-pois.js';

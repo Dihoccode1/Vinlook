@@ -1,3 +1,8 @@
+/**
+ * @file mobile-sheet.test.ts
+ * @description Kiểm thử đơn vị cho trạng thái đóng/mở ngăn kéo di động (MobileSheet).
+ */
+
 import assert from 'node:assert/strict';
 import { test, type TestContext } from 'node:test';
 import { act, createElement, createRef } from 'react';

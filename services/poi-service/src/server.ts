@@ -1,3 +1,8 @@
+/**
+ * @file server.ts
+ * @description Điểm khởi động HTTP server cho POI Service (cổng mặc định 4001) và đóng kết nối an toàn.
+ */
+
 import { create_app } from './app.js';
 import { config } from './config/index.js';
 import { close_pool } from './config/database.js';

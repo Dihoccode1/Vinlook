@@ -1,3 +1,8 @@
+/**
+ * @file LocationPermissionDialog.tsx
+ * @description Hộp thoại hướng dẫn cấp quyền truy cập vị trí GPS trên trình duyệt.
+ */
+
 import { useEffect, useRef } from 'react';
 
 export function LocationPermissionDialog({ on_allow, on_later }: { on_allow: () => void; on_later: () => void }) {

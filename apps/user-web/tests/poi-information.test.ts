@@ -1,3 +1,8 @@
+/**
+ * @file poi-information.test.ts
+ * @description Kiểm thử đơn vị cho hiển thị thông tin chi tiết và mô tả địa điểm.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createElement } from 'react';

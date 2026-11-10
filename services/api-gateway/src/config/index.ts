@@ -6,28 +6,28 @@
 
 export const config = {
   /** POI Service: quản lý điểm tham quan, ảnh, mã QR. */
-  poiServiceUrl: process.env.POI_SERVICE_URL ?? 'http://localhost:4001',
+  poi_service_url: process.env.POI_SERVICE_URL ?? 'http://localhost:4001',
 
   /** Navigation Service: tìm đường đi bộ/xe máy qua Valhalla. */
-  navigationServiceUrl: process.env.NAVIGATION_SERVICE_URL ?? 'http://localhost:4002',
+  navigation_service_url: process.env.NAVIGATION_SERVICE_URL ?? 'http://localhost:4002',
 
   /** Translation Service: dịch thuật và tổng hợp giọng đọc đa ngôn ngữ. */
-  translationServiceUrl: process.env.TRANSLATION_SERVICE_URL ?? 'http://localhost:4003',
+  translation_service_url: process.env.TRANSLATION_SERVICE_URL ?? 'http://localhost:4003',
 
   /** Thời gian chờ tối đa (ms) cho từng loại tác vụ proxy. */
   timeouts: {
-    poiRequestMs: 15000,
-    navigationMs: 15000,
-    translationTextMs: 60000,
-    translationAudioMs: 175000,
-    healthCheckMs: 6000
+    poi_request_ms: 15000,
+    navigation_ms: 15000,
+    translation_text_ms: 60000,
+    translation_audio_ms: 175000,
+    health_check_ms: 6000
   },
 
   /** Giới hạn dung lượng thân yêu cầu cho từng nhóm route. */
   limits: {
-    adminBody: '8mb',
-    narrationBody: '1kb',
-    translationBody: '1kb',
-    routesBody: '16kb'
+    admin_body: '8mb',
+    narration_body: '1kb',
+    translation_body: '1kb',
+    routes_body: '16kb'
   }
 };

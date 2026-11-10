@@ -1,3 +1,8 @@
+/**
+ * @file database.ts
+ * @description Công cụ CLI chạy migration và nạp dữ liệu mẫu (seed) cho cơ sở dữ liệu PoiDb.
+ */
+
 import { readFile, readdir } from 'node:fs/promises';
 import sql from 'mssql';
 import { createHash } from 'node:crypto';

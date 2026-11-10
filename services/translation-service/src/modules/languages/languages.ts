@@ -1,3 +1,8 @@
+/**
+ * @file languages.ts
+ * @description Danh mục 16 ngôn ngữ được Vinlook hỗ trợ chính thức và hàm kiểm tra mã ngôn ngữ.
+ */
+
 export const languages = [
   { code: 'vi', name: 'Tiếng Việt' }, { code: 'en', name: 'English' },
   { code: 'fr', name: 'Français' }, { code: 'de', name: 'Deutsch' },

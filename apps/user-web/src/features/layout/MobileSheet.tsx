@@ -1,3 +1,8 @@
+/**
+ * @file MobileSheet.tsx
+ * @description Ngăn kéo trượt đáy (bottom sheet) có thể thu gọn/mở rộng cho giao diện di động.
+ */
+
 import { forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState, type PointerEvent, type ReactNode } from 'react';
 
 export interface MobileSheetHandle { expand(): void; collapse(): void }

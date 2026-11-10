@@ -1,3 +1,8 @@
+/**
+ * @file translation.repository.ts
+ * @description Truy vấn và lưu đệm bản dịch văn bản POI trong bảng dbo.poi_translations (TranslationDb).
+ */
+
 import sql from 'mssql';
 import { get_pool } from '../../config/database.js';
 import type { Translation, TranslationRepository } from './types.js';

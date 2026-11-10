@@ -1,3 +1,8 @@
+/**
+ * @file location-session.ts
+ * @description Quản lý phiên theo dõi vị trí GPS trực tiếp (watchPosition) và tự động thử lại khi mất tín hiệu.
+ */
+
 import { create_location_tracker, type LocationEnvironment } from './location-tracker';
 
 const preference_key = 'vinlook.gps.enabled';

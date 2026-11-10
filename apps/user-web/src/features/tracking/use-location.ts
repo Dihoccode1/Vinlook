@@ -1,3 +1,8 @@
+/**
+ * @file use-location.ts
+ * @description Hook React kết nối phiên định vị GPS của trình duyệt với trạng thái giao diện du khách.
+ */
+
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { get_browser_location_session } from './location-session';
 

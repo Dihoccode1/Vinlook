@@ -1,3 +1,8 @@
+/**
+ * @file narration.test.ts
+ * @description Kiểm thử đơn vị cho luồng tổng hợp và phát lại thuyết minh âm thanh.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import request from 'supertest';

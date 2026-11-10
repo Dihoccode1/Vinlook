@@ -1,3 +1,8 @@
+/**
+ * @file valhalla.ts
+ * @description Bộ tích hợp công cụ định tuyến Valhalla: giải mã polyline6, sắp xếp điểm dừng và chuẩn hóa chỉ dẫn đường đi.
+ */
+
 import { z } from 'zod';
 import { RoutingError, type RouteProvider, type RouteRequest, type RouteStep } from '../modules/routes/route.schema.js';
 

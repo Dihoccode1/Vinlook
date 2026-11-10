@@ -1,3 +1,8 @@
+/**
+ * @file geocode.ts
+ * @description Tích hợp dịch vụ Nominatim (OpenStreetMap) để tra cứu tọa độ GPS từ địa chỉ tại TP.HCM.
+ */
+
 export interface AddressMatch { label: string; latitude: number; longitude: number }
 export type AddressLookup = (address: string) => Promise<AddressMatch[]>;
 

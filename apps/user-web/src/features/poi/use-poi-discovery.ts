@@ -1,3 +1,8 @@
+/**
+ * @file use-poi-discovery.ts
+ * @description Hook phát hiện khi du khách tiến vào bán kính gần điểm tham quan để gợi ý khám phá.
+ */
+
 import { useEffect, useMemo, useState } from 'react';
 import type { Poi } from '../../types/poi';
 import { list_all_pois } from '../../services/pois';

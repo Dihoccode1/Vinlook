@@ -1,3 +1,8 @@
+/**
+ * @file translation-provider.ts
+ * @description Khởi tạo chuỗi nhà cung cấp dịch thuật (Gemini, Google Translate, MyMemory).
+ */
+
 import { create_google_translate_provider } from './google-translate.js';
 import { create_gemini_translate_provider } from './gemini-translate.js';
 import { create_my_memory_provider } from './mymemory.js';

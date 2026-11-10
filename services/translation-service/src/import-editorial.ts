@@ -1,3 +1,8 @@
+/**
+ * @file import-editorial.ts
+ * @description Công cụ CLI nhập nội dung biên tập đa ngôn ngữ vào cơ sở dữ liệu TranslationDb.
+ */
+
 import { createHash } from 'node:crypto';
 import sql from 'mssql';
 import { config } from './config/index.js';

@@ -1,3 +1,8 @@
+/**
+ * @file types.ts
+ * @description Định nghĩa kiểu dữ liệu tọa độ, điểm dừng, chặng đường và kết quả tính toán lộ trình.
+ */
+
 export interface Coordinate { latitude: number; longitude: number }
 export type VehicleProfile = 'driving' | 'motorcycle' | 'walking';
 export const vehicle_labels: Record<VehicleProfile, string> = { driving: 'Ô tô', motorcycle: 'Xe máy', walking: 'Đi bộ' };

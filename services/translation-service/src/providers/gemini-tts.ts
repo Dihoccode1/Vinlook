@@ -1,3 +1,8 @@
+/**
+ * @file gemini-tts.ts
+ * @description Nhà cung cấp tổng hợp giọng đọc tự nhiên sử dụng mô hình Google Gemini Audio.
+ */
+
 import { z } from 'zod';
 import { TranslationError } from '../modules/translations/types.js';
 

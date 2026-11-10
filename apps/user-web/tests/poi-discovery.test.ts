@@ -1,3 +1,8 @@
+/**
+ * @file poi-discovery.test.ts
+ * @description Kiểm thử đơn vị cho logic phát hiện địa điểm ở gần vị trí du khách.
+ */
+
 import assert from 'node:assert/strict';
 import { test, type TestContext } from 'node:test';
 import { act, createElement } from 'react';

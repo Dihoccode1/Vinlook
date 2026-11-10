@@ -1,3 +1,8 @@
+/**
+ * @file users.test.ts
+ * @description Kiểm thử tích hợp SQL Server cho quản lý tài khoản, phân quyền Admin/Staff, khóa tài khoản và thu hồi phiên.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID,scryptSync} from 'node:crypto';

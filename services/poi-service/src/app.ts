@@ -1,3 +1,8 @@
+/**
+ * @file app.ts
+ * @description Khởi tạo ứng dụng Express cho POI Service: phục vụ danh sách/chi tiết POI, ảnh, mã QR và API quản trị.
+ */
+
 import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import helmet from 'helmet';

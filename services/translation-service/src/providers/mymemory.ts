@@ -1,3 +1,8 @@
+/**
+ * @file mymemory.ts
+ * @description Nhà cung cấp dịch thuật dự phòng qua API MyMemory.
+ */
+
 import { z } from 'zod';
 import { TranslationError, type TranslationProvider } from '../modules/translations/types.js';
 

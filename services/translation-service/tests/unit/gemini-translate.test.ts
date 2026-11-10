@@ -1,3 +1,8 @@
+/**
+ * @file gemini-translate.test.ts
+ * @description Kiểm thử đơn vị cho bộ dịch thuật Google Gemini.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { create_gemini_translate_provider } from '../../src/providers/gemini-translate.js';

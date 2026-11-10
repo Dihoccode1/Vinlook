@@ -1,3 +1,8 @@
+/**
+ * @file admin.test.ts
+ * @description Kiểm thử tích hợp SQL Server cho các thao tác thêm, sửa, xóa và thống kê POI của quản trị viên.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';

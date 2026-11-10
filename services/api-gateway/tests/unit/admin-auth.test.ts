@@ -1,3 +1,8 @@
+/**
+ * @file admin-auth.test.ts
+ * @description Kiểm thử đơn vị cho xác thực phiên quản trị, giới hạn đoán mật khẩu và phân quyền Staff.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { scryptSync } from 'node:crypto';

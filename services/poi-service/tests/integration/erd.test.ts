@@ -1,3 +1,8 @@
+/**
+ * @file erd.test.ts
+ * @description Kiểm thử tích hợp cấu trúc bảng, khóa ngoại và ràng buộc dữ liệu theo thiết kế ERD.
+ */
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';

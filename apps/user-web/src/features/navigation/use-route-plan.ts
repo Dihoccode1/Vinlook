@@ -1,3 +1,8 @@
+/**
+ * @file use-route-plan.ts
+ * @description Hook quản lý trạng thái lập lộ trình, quản lý danh sách điểm dừng và gọi API định tuyến.
+ */
+
 import { useEffect, useRef, useState } from 'react';
 import type { Poi } from '../../types/poi';
 import type { LocationFix } from '../tracking/location-tracker';

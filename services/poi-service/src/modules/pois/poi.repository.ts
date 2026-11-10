@@ -1,3 +1,8 @@
+/**
+ * @file poi.repository.ts
+ * @description Truy vấn SQL Server cho dữ liệu POI công khai: danh sách phân trang, chi tiết theo mã/slug và nội dung ảnh nhị phân.
+ */
+
 import sql from 'mssql';
 import { get_pool } from '../../config/database.js';
 

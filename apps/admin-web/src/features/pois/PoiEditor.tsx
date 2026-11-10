@@ -1,18 +1,16 @@
 /**
  * @file PoiEditor.tsx
- * @description Phân hệ Quản lý Điểm tham quan (POI Editor Feature)
- * Cho phép tạo mới, chỉnh sửa thông tin POI, tải ảnh, tự động tra cứu tọa độ địa lý (Geocoding)
- * và phân tách thông tin hiển thị cho khách du lịch với nội dung kịch bản audio thuyết minh.
+ * @description Hộp thoại tạo mới / chỉnh sửa Điểm tham quan (POI Editor Modal).
+ * Hỗ trợ tự động tra cứu tọa độ từ địa chỉ (qua `/api/admin/geocode?q=`), tải ảnh minh họa
+ * (lưu kèm giao dịch SQL qua trường `image` base64) và phân tách lời giới thiệu ngắn với kịch bản thuyết minh.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
 import { api, categories } from '../../services/api';
-import type { Poi, AddressMatch } from '../../types';
+import type { AddressMatch, Poi } from '../../types';
 
-/**
- * Danh mục ngôn ngữ nguồn hỗ trợ thuyết minh với tên hiển thị chuẩn tiếng Việt
- */
-const LANGUAGE_NAMES: Record<string, string> = {
+/** Danh sách 16 ngôn ngữ gốc hỗ trợ thuyết minh. */
+const language_names: Record<string, string> = {
   vi: 'Tiếng Việt',
   en: 'English',
   fr: 'Français',
@@ -31,9 +29,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
   hi: 'हिन्दी'
 };
 
-/**
- * Hàm chuẩn hóa chuỗi tiêu đề thành slug URL an toàn
- */
+/** Chuẩn hóa tên địa điểm tiếng Việt có dấu thành slug URL không dấu. */
 function slugify(value: string): string {
   return value
     .normalize('NFD')
@@ -52,7 +48,6 @@ interface PoiEditorProps {
 
 export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
   const dialog = useRef<HTMLDialogElement>(null);
-
   const [form, set_form] = useState({
     name: poi?.name ?? '',
     slug: poi?.slug ?? '',
@@ -84,24 +79,27 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
   const [address_revision, set_address_revision] = useState(0);
   const locate_ref = useRef<() => Promise<void>>(async () => {});
 
-  // Tự động tìm kiếm tọa độ sau khi người dùng dừng gõ địa chỉ 1.2 giây (Debounce)
+  // Tự động tra cứu tọa độ sau khi ngừng nhập địa chỉ 1,2 giây
   useEffect(() => {
     if (!address_revision) return;
     const timer = window.setTimeout(() => void locate_ref.current(), 1200);
     return () => window.clearTimeout(timer);
   }, [address_revision]);
 
-  useEffect(() => () => {
-    lookup_version.current++;
-    queued_lookup.current = false;
-  }, []);
+  useEffect(
+    () => () => {
+      lookup_version.current++;
+      queued_lookup.current = false;
+    },
+    []
+  );
 
   useEffect(() => {
     dialog.current?.showModal();
     return () => dialog.current?.close();
   }, []);
 
-  // Xử lý chiều cao viewport động (tránh bàn phím ảo che khuất trên mobile/tablet)
+  // Đồng bộ chiều cao hiển thị khi bàn phím ảo trên thiết bị di động mở/đóng
   useEffect(() => {
     const element = dialog.current;
     const viewport = window.visualViewport;
@@ -114,12 +112,10 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
       element?.style.setProperty('--editor-visible-height', `${visible_height}px`);
       element?.style.setProperty('--editor-visible-top', `${viewport?.offsetTop ?? 0}px`);
     };
-
     update_viewport();
     viewport?.addEventListener('resize', update_viewport);
     viewport?.addEventListener('scroll', update_viewport);
     window.addEventListener('resize', update_viewport);
-
     return () => {
       viewport?.removeEventListener('resize', update_viewport);
       viewport?.removeEventListener('scroll', update_viewport);
@@ -127,7 +123,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
     };
   }, []);
 
-  // Tạo URL xem trước ảnh tải lên
+  // Tạo URL xem trước tạm thời khi quản trị viên chọn file ảnh mới
   useEffect(() => {
     if (!file) {
       set_preview('');
@@ -145,7 +141,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
       last_address.current = form.address.trim();
       set_locating(false);
       set_matches([]);
-      set_location_note('Đang sử dụng tọa độ bạn nhập thủ công.');
+      set_location_note('Đang dùng tọa độ bạn nhập.');
     }
     set_form((previous) => ({ ...previous, [key]: value }));
   };
@@ -157,123 +153,94 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
       longitude: String(match.longitude)
     }));
     set_matches([]);
-    set_location_note(`Đã chọn tọa độ: ${match.label}`);
+    set_location_note(`Đã lấy tọa độ: ${match.label}`);
   }
 
-  /**
-   * Tra cứu tọa độ địa lý qua OpenStreetMap Nominatim
-   */
   async function locate() {
     const address = form.address.trim();
     if (saving || address === last_address.current) return;
     if (address.length < 5) {
-      set_location_note('Nhập đầy đủ số nhà, tên đường và tỉnh/thành phố để tra cứu tọa độ.');
+      set_location_note('Nhập đủ số nhà, đường và tỉnh/thành phố để tìm vị trí.');
       return;
     }
     if (request_running.current) {
       queued_lookup.current = true;
       set_locating(true);
-      set_location_note('Đang chờ tra cứu địa chỉ mới nhất...');
+      set_location_note('Đang chờ tra cứu địa chỉ mới nhất…');
       return;
     }
-
     request_running.current = true;
     last_address.current = address;
     const version = ++lookup_version.current;
     set_locating(true);
     set_matches([]);
-    set_location_note('Đang tìm tọa độ địa lý...');
+    set_location_note('Đang tìm tọa độ…');
 
     try {
-      const response = await api<{ data: AddressMatch[] }>(
-        `/geocode?address=${encodeURIComponent(address)}`
-      );
-      if (lookup_version.current !== version) return;
-
-      if (!response.data.length) {
-        set_location_note('Không tìm thấy tọa độ tự động. Bạn vui lòng nhập tọa độ thủ công.');
-        return;
-      }
-
-      if (response.data.length === 1) {
-        choose_location(response.data[0]);
+      const result = await api<{ data: AddressMatch[] }>(`/geocode?q=${encodeURIComponent(address)}`);
+      if (version !== lookup_version.current) return;
+      if (result.data.length === 1) {
+        choose_location(result.data[0]!);
       } else {
-        set_matches(response.data);
-        set_location_note('Tìm thấy nhiều vị trí phù hợp, vui lòng bấm chọn bên dưới:');
+        set_matches(result.data);
+        set_location_note(
+          result.data.length
+            ? 'Có nhiều kết quả. Chọn đúng vị trí bên dưới.'
+            : 'Chưa tìm thấy vị trí khớp địa chỉ/số nhà này. Hãy kiểm tra địa chỉ hoặc nhập tọa độ bằng tay.'
+        );
       }
-    } catch {
-      if (lookup_version.current === version) {
-        set_location_note('Lỗi kết nối dịch vụ định vị. Bạn vui lòng nhập tọa độ thủ công.');
+    } catch (failure) {
+      if (version === lookup_version.current) {
+        last_address.current = '';
+        set_location_note(failure instanceof Error ? failure.message : 'Không tra cứu được địa chỉ.');
       }
     } finally {
       request_running.current = false;
-      if (lookup_version.current === version) {
-        set_locating(false);
-      }
+      if (version === lookup_version.current) set_locating(false);
       if (queued_lookup.current) {
         queued_lookup.current = false;
-        void locate();
+        void locate_ref.current();
       }
     }
   }
-
   locate_ref.current = locate;
 
-  /**
-   * Gửi form lưu dữ liệu POI
-   */
   async function save(event: React.FormEvent) {
     event.preventDefault();
-    set_error('');
-
-    const lat = Number(form.latitude);
-    const lng = Number(form.longitude);
-    if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) {
-      set_error('Tọa độ không hợp lệ. Vĩ độ phải từ -90 đến 90, kinh độ từ -180 đến 180.');
+    if (locating || matches.length > 0) return;
+    if (!form.latitude.trim() || !form.longitude.trim()) {
+      set_error('Hãy tìm vị trí hoặc nhập đầy đủ kinh độ, vĩ độ trước khi lưu.');
       return;
     }
-
     set_saving(true);
+    set_error('');
 
     try {
-      const payload = {
-        name: form.name.trim(),
-        slug: form.slug.trim(),
-        description: form.description.trim(),
-        visitor_description: form.visitor_description.trim(),
-        address: form.address.trim(),
-        category: form.category,
-        source_language: form.source_language,
-        is_published: form.is_published,
-        latitude: lat,
-        longitude: lng,
-        image_credit: form.image_credit.trim() || null,
-        image_source_url: form.image_source_url.trim() || null,
-        image_license_url: form.image_license_url.trim() || null
-      };
-
-      const path = poi ? `/pois/${encodeURIComponent(poi.id)}` : '/pois';
-      const method = poi ? 'PUT' : 'POST';
-      const result = await api<{ data: Poi }>(path, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      // Tải ảnh lên nếu có chọn file mới
+      let image: { content_type: string; base64: string } | undefined;
       if (file) {
-        const formData = new FormData();
-        formData.append('image', file);
-        formData.append('image_credit', form.image_credit.trim());
-        if (form.image_source_url.trim()) formData.append('image_source_url', form.image_source_url.trim());
-        if (form.image_license_url.trim()) formData.append('image_license_url', form.image_license_url.trim());
-
-        await api(`/pois/${encodeURIComponent(result.data.id)}/image`, {
-          method: 'POST',
-          body: formData
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5242880) {
+          throw new Error('Chọn ảnh JPG, PNG hoặc WebP không quá 5 MB.');
+        }
+        const data = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = () => reject(new Error('Không đọc được ảnh.'));
+          reader.readAsDataURL(file);
         });
+        image = { content_type: file.type, base64: data.split(',')[1]! };
       }
 
+      await api(poi ? `/pois/${poi.id}` : '/pois', {
+        method: poi ? 'PUT' : 'POST',
+        headers: { 'content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          latitude: Number(form.latitude),
+          longitude: Number(form.longitude),
+          updated_at: poi?.updated_at,
+          image
+        })
+      });
       on_saved();
     } catch (failure) {
       set_error(failure instanceof Error ? failure.message : 'Không thể lưu địa điểm.');
@@ -283,103 +250,119 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
   }
 
   return (
-    <dialog ref={dialog} className="editor-dialog" aria-labelledby="editor-title">
+    <dialog
+      ref={dialog}
+      className="editor"
+      aria-labelledby="editor-title"
+      onCancel={(event) => {
+        event.preventDefault();
+        if (!saving) on_close();
+      }}
+    >
       <form onSubmit={save}>
         <header className="editor-header">
           <div>
-            <h2 id="editor-title">{poi ? 'Chỉnh sửa điểm tham quan' : 'Thêm điểm tham quan mới'}</h2>
-            <p>Nhập thông tin giới thiệu, vị trí bản đồ và tư liệu thuyết minh đa ngôn ngữ.</p>
+            <span className="eyebrow">THÔNG TIN ĐỊA ĐIỂM</span>
+            <h2 id="editor-title">{poi ? 'Chỉnh sửa POI' : 'Thêm địa điểm mới'}</h2>
           </div>
-          <button className="icon-button" type="button" aria-label="Đóng cửa sổ" disabled={saving} onClick={on_close}>
-            ✕
+          <button
+            type="button"
+            className="icon-button"
+            aria-label="Đóng chỉnh sửa"
+            disabled={saving}
+            onClick={on_close}
+          >
+            ×
           </button>
         </header>
 
-        <div className="editor-body">
-          {/* Phần 1: Thông tin cơ bản & Định vị */}
+        <div className="editor-scroll">
           <div className="editor-section">
             <h3>
-              01 <span>Thông tin cơ bản & Vị trí</span>
+              01 <span>Thông tin cơ bản</span>
             </h3>
-            <div className="form-grid">
-              <label>
-                Tên điểm tham quan
-                <input
-                  required
-                  maxLength={200}
-                  value={form.name}
-                  onChange={(event) => {
-                    const name = event.target.value;
-                    set_form((previous) => ({
-                      ...previous,
-                      name,
-                      slug: !poi && (!previous.slug || previous.slug === slugify(previous.name)) ? slugify(name) : previous.slug
-                    }));
-                  }}
-                  placeholder="Ví dụ: Chợ Bến Thành"
-                />
-              </label>
-
-              <label>
-                Đường dẫn tĩnh (Slug URL)
-                <input
-                  required
-                  maxLength={100}
-                  pattern="[a-z0-9\-]+"
-                  value={form.slug}
-                  onChange={(event) => set('slug', event.target.value.toLowerCase())}
-                  placeholder="cho-ben-thanh"
-                />
-              </label>
-            </div>
-
+            <label>
+              Tên địa điểm
+              <input
+                required
+                maxLength={200}
+                value={form.name}
+                onChange={(event) => {
+                  const name = event.target.value;
+                  set_form((previous) => ({
+                    ...previous,
+                    name,
+                    slug:
+                      !poi && (!previous.slug || previous.slug === slugify(previous.name))
+                        ? slugify(name)
+                        : previous.slug
+                  }));
+                }}
+                placeholder="Ví dụ: Chợ Bến Thành"
+              />
+            </label>
+            <label>
+              Đường dẫn (slug)
+              <input
+                required
+                pattern="[a-z0-9]+(-[a-z0-9]+)*"
+                maxLength={160}
+                value={form.slug}
+                onChange={(event) => set('slug', event.target.value)}
+                placeholder="cho-ben-thanh"
+              />
+            </label>
             <div className="form-grid">
               <label>
                 Danh mục
                 <select value={form.category} onChange={(event) => set('category', event.target.value)}>
-                  {Object.entries(categories).map(([key, label]) => (
-                    <option key={key} value={key}>
-                      {label}
+                  {Object.entries(categories).map(([value, name]) => (
+                    <option value={value} key={value}>
+                      {name}
                     </option>
                   ))}
                 </select>
               </label>
-
               <label>
-                Ngôn ngữ gốc của kịch bản
-                <select value={form.source_language} onChange={(event) => set('source_language', event.target.value)}>
-                  {Object.entries(LANGUAGE_NAMES).map(([key, label]) => (
-                    <option key={key} value={key}>
-                      {label}
+                Ngôn ngữ gốc
+                <select
+                  value={form.source_language}
+                  onChange={(event) => set('source_language', event.target.value)}
+                >
+                  {Object.entries(language_names).map(([value, name]) => (
+                    <option value={value} key={value}>
+                      {name}
                     </option>
                   ))}
                 </select>
               </label>
             </div>
-
             <label>
-              Địa chỉ thực tế
+              Địa chỉ
               <input
                 required
-                maxLength={300}
+                maxLength={500}
                 value={form.address}
+                onBlur={() => void locate()}
                 onChange={(event) => {
                   const address = event.target.value;
-                  set_address_revision((v) => v + 1);
+                  lookup_version.current++;
+                  queued_lookup.current = false;
+                  last_address.current = '';
+                  set_address_revision((previous) => previous + 1);
+                  set_locating(false);
                   set_matches([]);
-                  set_location_note('Dừng nhập khoảng 1.2 giây để hệ thống tự động tìm tọa độ mới.');
+                  set_location_note('Địa chỉ đã đổi. Ngừng nhập khoảng 1 giây để tự lấy tọa độ mới.');
                   set_form((previous) => ({ ...previous, address, latitude: '', longitude: '' }));
                 }}
-                placeholder="Số nhà, tên đường, phường/xã, quận/huyện, TP. Hồ Chí Minh"
+                placeholder="Số nhà, tên đường, tỉnh/thành phố tại Việt Nam"
               />
             </label>
-
             <p className="field-note" role="status">
-              {location_note || 'Tọa độ địa lý sẽ được điền tự động; bạn vẫn có thể chỉnh sửa thủ công bên dưới.'}
+              {location_note || 'Tọa độ sẽ được điền tự động; bạn vẫn có thể chỉnh lại bên dưới.'}
             </p>
-
             {matches.length > 0 && (
-              <div className="geocode-matches" aria-label="Chọn vị trí phù hợp">
+              <div className="geocode-matches" aria-label="Chọn vị trí">
                 {matches.map((match, index) => (
                   <button type="button" key={index} onClick={() => choose_location(match)}>
                     {match.label}
@@ -390,14 +373,15 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
                 ))}
               </div>
             )}
-
             <p className="field-note">
-              Dữ liệu tra cứu: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>
+              Tra cứu:{' '}
+              <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
+                © OpenStreetMap contributors
+              </a>
             </p>
-
             <div className="form-grid">
               <label>
-                Vĩ độ (Latitude)
+                Vĩ độ
                 <input
                   required
                   type="number"
@@ -408,9 +392,8 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
                   onChange={(event) => set('latitude', event.target.value)}
                 />
               </label>
-
               <label>
-                Kinh độ (Longitude)
+                Kinh độ
                 <input
                   required
                   type="number"
@@ -424,40 +407,38 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
             </div>
           </div>
 
-          {/* Phần 2: Nội dung giới thiệu & Bài thuyết minh */}
           <div className="editor-section">
             <h3>
-              02 <span>Giới thiệu & Thuyết minh</span>
+              02 <span>Giới thiệu & thuyết minh</span>
             </h3>
             <label>
-              Thông tin giới thiệu ngắn (Hiển thị cho du khách trên thẻ điểm đến)
+              Thông tin giới thiệu hiển thị cho khách
               <textarea
                 maxLength={3000}
                 rows={4}
                 value={form.visitor_description}
                 onChange={(event) => set('visitor_description', event.target.value)}
-                placeholder="Giới thiệu tóm tắt điểm nổi bật, giờ mở cửa, lưu ý khi tham quan..."
+                placeholder="Giới thiệu ngắn về địa điểm, điểm nổi bật và lưu ý tham quan…"
               />
             </label>
-            <p className="field-note">Nội dung này hiển thị trực tiếp trên thẻ POI của du khách, tách biệt với file audio.</p>
-
+            <p className="field-note">Nội dung này hiển thị trong thẻ địa điểm, tách riêng với bài đọc audio.</p>
             <label>
-              Kịch bản thuyết minh gốc (Dùng làm tư liệu dịch và tạo audio)
+              Bài thuyết minh gốc (dùng cho audio)
               <textarea
                 required
                 maxLength={20000}
                 rows={8}
                 value={form.description}
                 onChange={(event) => set('description', event.target.value)}
-                placeholder="Viết câu chuyện lịch sử, kiến trúc, giá trị văn hóa để thuyết minh..."
+                placeholder="Viết câu chuyện và thông tin thuyết minh của địa điểm…"
               />
             </label>
             <p className="field-note">
-              Kịch bản này là nguồn dữ liệu cho worker tạo bản dịch và giọng đọc AI. Chỉnh sửa kịch bản sẽ kích hoạt tạo lại các audio phụ thuộc.
+              Bài thuyết minh không hiện trên thẻ địa điểm. Sửa tên, bài thuyết minh hoặc ngôn ngữ gốc sẽ làm bản dịch
+              và audio cũ cần được tạo lại.
             </p>
           </div>
 
-          {/* Phần 3: Ảnh tư liệu minh họa */}
           <div className="editor-section">
             <h3>
               03 <span>Ảnh minh họa</span>
@@ -466,10 +447,9 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
               <img
                 className="editor-photo"
                 src={preview || `${poi?.image_url}?v=${encodeURIComponent(poi?.updated_at ?? '')}`}
-                alt="Ảnh minh họa điểm tham quan"
+                alt="Ảnh minh họa địa điểm"
               />
             )}
-
             <label className="file-input">
               Chọn ảnh mới
               <input
@@ -477,8 +457,11 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(event) => {
                   const next = event.target.files?.[0];
-                  if (next && (!['image/jpeg', 'image/png', 'image/webp'].includes(next.type) || next.size > 5242880)) {
-                    set_error('Vui lòng chọn ảnh định dạng JPG, PNG hoặc WebP có dung lượng dưới 5 MB.');
+                  if (
+                    next &&
+                    (!['image/jpeg', 'image/png', 'image/webp'].includes(next.type) || next.size > 5242880)
+                  ) {
+                    set_error('Chọn ảnh JPG, PNG hoặc WebP không quá 5 MB.');
                     event.target.value = '';
                     return;
                   }
@@ -487,45 +470,41 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
                 }}
               />
             </label>
-            <p className="field-note">Định dạng JPG, PNG hoặc WebP • Tối đa 5 MB • Lưu trữ an toàn trong cơ sở dữ liệu.</p>
-
+            <p className="field-note">JPG, PNG hoặc WebP · Tối đa 5 MB · Lưu trực tiếp vào database.</p>
             <label>
-              Tác giả / Ghi công bản quyền ảnh
+              Tác giả / ghi công ảnh
               <input
                 required={!!file}
                 maxLength={300}
                 value={form.image_credit}
                 onChange={(event) => set('image_credit', event.target.value)}
-                placeholder="Tên tác giả • Nguồn giấy phép (ví dụ: CC BY-SA 4.0)"
+                placeholder="Tên tác giả · Giấy phép"
               />
             </label>
-
             <div className="form-grid">
               <label>
-                Đường dẫn nguồn ảnh gốc
+                Link nguồn ảnh
                 <input
                   type="url"
                   maxLength={2048}
                   value={form.image_source_url}
                   onChange={(event) => set('image_source_url', event.target.value)}
-                  placeholder="https://..."
+                  placeholder="https://…"
                 />
               </label>
-
               <label>
-                Đường dẫn giấy phép bản quyền
+                Link giấy phép
                 <input
                   type="url"
                   maxLength={2048}
                   value={form.image_license_url}
                   onChange={(event) => set('image_license_url', event.target.value)}
-                  placeholder="https://creativecommons.org/..."
+                  placeholder="https://…"
                 />
               </label>
             </div>
           </div>
 
-          {/* Tùy chọn xuất bản */}
           <label className="publish-option">
             <input
               type="checkbox"
@@ -533,11 +512,10 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
               onChange={(event) => set('is_published', event.target.checked)}
             />
             <span>
-              <strong>Xuất bản lên bản đồ du lịch</strong>
-              <small>Bỏ chọn để lưu dưới dạng bản nháp nội bộ, chưa hiển thị cho du khách.</small>
+              <strong>Xuất bản lên bản đồ</strong>
+              <small>Tắt để giữ bản nháp, chưa hiển thị cho khách.</small>
             </span>
           </label>
-
           {error && (
             <p className="error-banner" role="alert">
               {error}
@@ -547,10 +525,14 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
 
         <footer className="editor-footer">
           <button type="button" disabled={saving} onClick={on_close}>
-            Hủy bỏ
+            Hủy
           </button>
-          <button className="primary" disabled={saving || locating || matches.length > 0} type="submit">
-            {saving ? 'Đang lưu...' : poi ? 'Lưu thay đổi' : 'Tạo điểm tham quan'}
+          <button
+            className="primary"
+            disabled={saving || locating || matches.length > 0}
+            type="submit"
+          >
+            {saving ? 'Đang lưu…' : poi ? 'Lưu thay đổi' : 'Tạo địa điểm'}
           </button>
         </footer>
       </form>

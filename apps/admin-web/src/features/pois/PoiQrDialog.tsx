@@ -1,7 +1,7 @@
 /**
  * @file PoiQrDialog.tsx
- * @description Dialog tạo và tải mã QR cho từng điểm tham quan
- * Mã QR chứa liên kết dẫn trực tiếp du khách đến trang bản đồ và thuyết minh tự động.
+ * @description Hộp thoại tạo, xem trước và tải xuống mã QR cho từng điểm tham quan.
+ * Mỗi địa điểm có một mã token cố định 32 ký tự hex để du khách quét mở trực tiếp trên bản đồ.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -28,7 +28,6 @@ export function PoiQrDialog({ poi, on_close }: PoiQrDialogProps) {
       return default_public_url(window.location.origin, import.meta.env.VITE_PUBLIC_WEB_URL);
     }
   });
-
   const [png, set_png] = useState('');
   const [link, set_link] = useState('');
   const [error, set_error] = useState('');
@@ -40,11 +39,10 @@ export function PoiQrDialog({ poi, on_close }: PoiQrDialogProps) {
     return () => dialog.current?.close();
   }, []);
 
-  // Gọi API tạo hoặc lấy mã QR token cho điểm tham quan
+  // Lấy hoặc khởi tạo mã QR cố định của địa điểm từ backend
   useEffect(() => {
     const controller = new AbortController();
     set_error('');
-
     api<{ data: QrData }>(`/pois/${encodeURIComponent(poi.id)}/qr`, {
       method: 'POST',
       signal: controller.signal
@@ -54,14 +52,13 @@ export function PoiQrDialog({ poi, on_close }: PoiQrDialogProps) {
       })
       .catch((failure) => {
         if (!controller.signal.aborted) {
-          set_error(failure instanceof Error ? failure.message : 'Không thể tạo mã QR cho điểm này.');
+          set_error(failure instanceof Error ? failure.message : 'Không tạo được mã QR.');
         }
       });
-
     return () => controller.abort();
   }, [poi.id, retry]);
 
-  // Tạo ảnh QR PNG chất lượng cao
+  // Kết xuất ảnh QR PNG độ phân giải 1024px mỗi khi có token hoặc đổi địa chỉ gốc
   useEffect(() => {
     let cancelled = false;
     set_png('');
@@ -73,7 +70,7 @@ export function PoiQrDialog({ poi, on_close }: PoiQrDialogProps) {
     try {
       target = qr_link(base_url.trim(), qr.qr_token);
     } catch {
-      set_error('Nhập địa chỉ web bản đồ hợp lệ (ví dụ: https://vinlook.vn)');
+      set_error('Nhập địa chỉ web bản đồ hợp lệ, ví dụ https://vinlook.vn');
       return;
     }
 
@@ -92,12 +89,12 @@ export function PoiQrDialog({ poi, on_close }: PoiQrDialogProps) {
           try {
             localStorage.setItem('vinlook.public_web_url', base_url.trim());
           } catch {
-            // Lưu tùy chọn người dùng nếu localStorage khả dụng
+            // Lưu tùy chọn trình duyệt nếu localStorage khả dụng
           }
         }
       })
       .catch(() => {
-        if (!cancelled) set_error('Không tạo được ảnh mã QR. Vui lòng thử lại.');
+        if (!cancelled) set_error('Không tạo được ảnh QR. Vui lòng thử lại.');
       });
 
     return () => {
@@ -111,78 +108,78 @@ export function PoiQrDialog({ poi, on_close }: PoiQrDialogProps) {
     try {
       if (!navigator.clipboard) throw new Error('Unavailable');
       await navigator.clipboard.writeText(link);
-      set_notice('Đã sao chép đường dẫn vào bộ nhớ tạm.');
+      set_notice('Đã sao chép đường dẫn.');
     } catch {
-      set_notice('Không thể tự động sao chép. Bạn có thể chọn và sao chép thủ công.');
+      set_notice('Chưa sao chép được. Bạn có thể sao chép đường dẫn ở trên.');
     }
   }
 
   return (
-    <dialog ref={dialog} className="qr-dialog" aria-labelledby="qr-dialog-title">
-      <header className="qr-dialog-header">
+    <dialog ref={dialog} className="qr-dialog" aria-labelledby="qr-title" onCancel={on_close}>
+      <header className="qr-head">
         <div>
-          <h2 id="qr-dialog-title">Mã QR điểm tham quan</h2>
+          <span className="eyebrow">MÃ QR ĐỊA ĐIỂM</span>
+          <h2 id="qr-title">Quét để khám phá</h2>
           <p>{poi.name}</p>
+          <p className="qr-id-label">
+            Mã POI: <strong>{poi.id}</strong>
+          </p>
         </div>
-        <button className="icon-button" type="button" aria-label="Đóng cửa sổ" onClick={on_close}>
-          ✕
+        <button type="button" onClick={on_close} aria-label="Đóng mã QR">
+          ×
         </button>
       </header>
 
-      <div className="qr-dialog-body">
-        {error && (
-          <div className="error-banner" role="alert">
-            {error}
-            {!qr && (
-              <button type="button" className="retry-button" onClick={() => set_retry((v) => v + 1)}>
-                Thử lại
-              </button>
-            )}
-          </div>
+      <div className="qr-body">
+        <div className="qr-preview">
+          {png ? (
+            <img src={png} alt={`Mã QR mở ${poi.name}`} width="260" height="260" />
+          ) : (
+            <p role="status">{error ? 'Chưa có ảnh QR' : 'Đang chuẩn bị QR…'}</p>
+          )}
+        </div>
+        <strong className="qr-poi-code">{poi.name}</strong>
+        {!poi.is_published && (
+          <p className="qr-note">Địa điểm đang là bản nháp. Khách chỉ mở được sau khi xuất bản.</p>
         )}
-
-        <label className="qr-base-input">
-          Địa chỉ web bản đồ du khách
-          <input
-            type="url"
-            required
-            value={base_url}
-            onChange={(e) => set_base_url(e.target.value)}
-            placeholder="https://vinlook.vn"
-          />
-          <small>Mã QR sẽ mở trang web này khi du khách quét bằng điện thoại.</small>
-        </label>
-
+        <label htmlFor="qr-base-url">Địa chỉ web bản đồ</label>
+        <input
+          id="qr-base-url"
+          type="url"
+          value={base_url}
+          onChange={(event) => set_base_url(event.target.value)}
+          placeholder="https://vinlook.vn"
+        />
         {local_link && (
-          <p className="field-note warning">
-            Liên kết hiện tại là địa chỉ nội bộ (localhost), điện thoại thật sẽ không truy cập được trừ khi cùng mạng LAN hoặc dùng domain public.
+          <p className="qr-note">
+            Link local chỉ mở trên máy này. Để quét bằng điện thoại, nhập tên miền hoặc địa chỉ mạng mà điện thoại truy
+            cập được.
           </p>
         )}
-
-        {png ? (
-          <div className="qr-preview">
-            <img src={png} alt={`Mã QR cho ${poi.name}`} />
-            <div className="qr-link-box">
-              <code>{link}</code>
-              <button type="button" onClick={copy_link}>
-                Sao chép link
-              </button>
-            </div>
-            {notice && <p className="qr-copy-notice">{notice}</p>}
-          </div>
-        ) : !error ? (
-          <p className="empty-state">Đang tạo mã QR độ phân giải cao...</p>
-        ) : null}
+        {link && (
+          <a className="qr-target" href={link} target="_blank" rel="noreferrer">
+            {link}
+          </a>
+        )}
+        <p className="qr-help">Mỗi địa điểm dùng một mã cố định. Tải ảnh để in và đặt tại điểm tham quan.</p>
+        {error && (
+          <p role="alert" className="qr-error">
+            {error} <button onClick={() => set_retry((value) => value + 1)}>Thử lại</button>
+          </p>
+        )}
+        {notice && <p role="status">{notice}</p>}
       </div>
 
-      <footer className="qr-dialog-footer">
-        <button type="button" onClick={on_close}>
-          Đóng
+      <footer className="qr-footer">
+        <button disabled={!png} onClick={() => void copy_link()}>
+          Sao chép link
         </button>
-        {png && (
-          <a className="primary button-link" href={png} download={`qr-${poi.slug}.png`}>
-            Tải ảnh QR (PNG 1024px)
+        {png ? (
+          <a className="primary" href={png} download={`${poi.id}-QR.png`}>
+            Tải ảnh QR
           </a>
+        ) : (
+          <button disabled>Tải ảnh QR</button>
         )}
       </footer>
     </dialog>

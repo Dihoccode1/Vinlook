@@ -1,3 +1,8 @@
+/**
+ * @file prepare-batch.ts
+ * @description Tác vụ chuẩn bị hàng loạt bản dịch và tệp thuyết minh trước cho toàn bộ địa điểm.
+ */
+
 import { TranslationError } from './types.js';
 
 export async function prepare_batch(ids: string[], languages: string[], actions: {

@@ -1,3 +1,8 @@
+/**
+ * @file explore-pois.ts
+ * @description Các hàm lọc, tìm kiếm, tính khoảng cách Haversine và sắp xếp danh sách điểm tham quan (POI).
+ */
+
 import type { Poi } from '../../types/poi';
 
 export interface ExplorePosition { latitude: number; longitude: number }

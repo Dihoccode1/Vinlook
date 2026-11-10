@@ -1,9 +1,18 @@
+/**
+ * @file server.ts
+ * @description Điểm khởi động HTTP server cho API Gateway và xử lý tín hiệu dừng an toàn (graceful shutdown).
+ */
+
 import 'dotenv/config';
 import { create_app } from './app.js';
 
 const port = Number(process.env.GATEWAY_PORT ?? 4000);
-if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid GATEWAY_PORT');
+if (!Number.isInteger(port) || port < 1 || port > 65535) {
+  throw new Error('Invalid GATEWAY_PORT');
+}
+
 const server = create_app().listen(port, () => console.log(`API Gateway listening on ${port}`));
+
 for (const signal of ['SIGINT', 'SIGTERM']) {
   process.on(signal, () => {
     setTimeout(() => process.exit(1), 10000).unref();

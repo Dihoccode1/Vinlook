@@ -1,3 +1,8 @@
+/**
+ * @file database.ts
+ * @description Quản lý kết nối dùng chung (ConnectionPool) tới cơ sở dữ liệu SQL Server PoiDb.
+ */
+
 import sql from 'mssql';
 import { config } from './index.js';
 

@@ -1,3 +1,8 @@
+/**
+ * @file route.schema.ts
+ * @description Lược đồ Zod kiểm tra hợp lệ danh sách tọa độ, phương tiện và chế độ tối ưu lộ trình.
+ */
+
 import { z } from 'zod';
 
 export const coordinate_schema = z.object({

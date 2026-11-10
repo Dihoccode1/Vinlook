@@ -1,3 +1,8 @@
+/**
+ * @file routes.ts
+ * @description Tầng gọi API tính toán lộ trình di chuyển qua các điểm tham quan.
+ */
+
 import type { Coordinate, RouteResult, VehicleProfile } from '../features/navigation/types';
 
 const messages: Record<string, string> = {
