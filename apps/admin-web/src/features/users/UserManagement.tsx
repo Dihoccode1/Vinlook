@@ -166,7 +166,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
    * Khóa hoặc mở khóa trạng thái tài khoản
    */
   async function change_status(user: User) {
-    if (busy || is_other_admin(user)) return;
+    if (busy || (is_other_admin(user) && !user.login_locked)) return;
     const status = user.status === 'active' ? 'disabled' : 'active';
     set_busy(true);
     set_changing_id(user.id);
@@ -186,7 +186,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
       set_users((previous) =>
         previous.map((item) =>
           item.id.toLowerCase() === result.data.id.toLowerCase()
-            ? { ...item, status: result.data.status }
+            ? { ...item, status: result.data.status, login_locked: result.data.status === 'active' ? false : item.login_locked }
             : item
         )
       );
@@ -216,7 +216,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
           <strong>Staff (Nhân viên):</strong> Tổng quan, Quản lý điểm đến (POI).
         </p>
         <p>
-          <strong>Admin (Quản trị viên):</strong> Toàn bộ quyền của Staff, Giám sát hệ thống, Quản lý tài khoản.
+          <strong>Admin (Quản trị viên):</strong> Toàn bộ quyền của Staff, Giám sát hệ thống, Quản lý tài khoản. Tài khoản tự khóa sau 15 lần sai mật khẩu chỉ được Admin khác mở khóa.
         </p>
       </div>
 
@@ -435,7 +435,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                   </td>
                   <td data-label="Trạng thái">
                     <span className={`publish-status ${u.status === 'active' ? 'published' : ''}`}>
-                      {u.status === 'active' ? 'Hoạt động' : 'Đã khóa'}
+                      {u.status === 'active' ? 'Hoạt động' : u.login_locked ? 'Đã khóa · Sai mật khẩu 15 lần' : 'Đã khóa'}
                     </span>
                   </td>
                   <td>
@@ -449,8 +449,8 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                       </button>
                       <button
                         className={u.status === 'active' ? 'account-lock' : 'account-unlock'}
-                        disabled={busy || is_other_admin(u)}
-                        title={is_other_admin(u) ? 'Không được đổi trạng thái tài khoản Admin khác' : undefined}
+                        disabled={busy || (is_other_admin(u) && !u.login_locked)}
+                        title={is_other_admin(u) && !u.login_locked ? 'Không được đổi trạng thái tài khoản Admin khác' : undefined}
                         aria-label={`${u.status === 'active' ? 'Khóa' : 'Mở khóa'} tài khoản ${u.username}`}
                         onClick={() => void change_status(u)}
                       >
