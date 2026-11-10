@@ -36,7 +36,6 @@ export function user_routes() {
       const target=users.find(u=>u.id.toLowerCase()===id);
       if(!target){await tx.rollback();res.status(404).json({error:{message:'Tài khoản không tồn tại.'}});return;}
       if(target.login_locked&&(id===actor||status!=='active')){await tx.rollback();res.status(403).json({error:{message:'Tài khoản bị khóa do đăng nhập sai chỉ được Admin khác mở khóa.'}});return;}
-      if(target.role==='admin'&&id!==actor&&!(target.login_locked&&status==='active')){await tx.rollback();res.status(403).json({error:{message:'Không được chỉnh sửa hoặc đổi trạng thái tài khoản Admin khác.'}});return;}
       if(target.status!==status){
         await new sql.Request(tx).input('id',sql.VarChar(36),id).input('status',sql.VarChar(20),status).query(`UPDATE dbo.users SET status=@status,failed_login_count=CASE WHEN @status='active' THEN 0 ELSE failed_login_count END,login_retry_at=CASE WHEN @status='active' THEN NULL ELSE login_retry_at END,login_locked=CASE WHEN @status='active' THEN 0 ELSE login_locked END WHERE id=@id; UPDATE dbo.admin_sessions SET revoked_at=SYSUTCDATETIME() WHERE user_id=@id AND revoked_at IS NULL`);
         await new sql.Request(tx).input('actor',sql.VarChar(36),actor).input('action',sql.VarChar(50),status==='disabled'?'user_locked':'user_unlocked').input('message',sql.NVarChar(sql.MAX),`${status==='disabled'?'Khóa':'Mở khóa'} tài khoản ${target.username}.`).query("INSERT INTO dbo.system_logs(user_id,component,level,action,message) VALUES(@actor,'users','info',@action,@message)");

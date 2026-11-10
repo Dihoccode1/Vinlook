@@ -11,7 +11,7 @@ Trong thời gian chờ, cả mật khẩu đúng cũng bị chặn; các reques
 
 Migration `011_login_lockout.sql` bổ sung `failed_login_count`, `login_retry_at` (UTC, nullable), `login_locked` vào bảng `users`, không thêm bảng mới. Bộ đếm được lưu theo tài khoản trong SQL Server và được khóa hàng trong lúc kiểm tra mật khẩu. Trạng thái giữ nguyên khi đổi IP, trình duyệt hoặc khởi động lại gateway. Giờ chờ lấy theo SQL Server.
 
-Admin khác mở khóa bằng nút **Mở khóa** trong Quản lý tài khoản (`PATCH /api/admin/users/:id/status`, status active). Thao tác đặt bộ đếm về 0, xóa thời hạn chờ và cờ tự khóa, ghi nhật ký. Staff và chính tài khoản bị khóa không được mở. Ngoại lệ mở khóa Admin khác chỉ áp dụng khi tài khoản bị tự khóa do nhập sai 15 lần; các hạn chế chỉnh sửa Admin khác trước đây vẫn giữ nguyên. PUT chỉnh sửa tài khoản không được dùng để vượt qua cơ chế này.
+Admin khác mở khóa bằng nút **Mở khóa** trong Quản lý tài khoản (`PATCH /api/admin/users/:id/status`, status active). Thao tác đặt bộ đếm về 0, xóa thời hạn chờ và cờ tự khóa, ghi nhật ký. Staff và chính tài khoản bị khóa không được mở. Admin khác có thể mở tài khoản đang khóa bất kể lý do khóa, gồm tự khóa hoặc sai mật khẩu 15 lần. Admin được khóa và mở khóa Admin khác qua API trạng thái; không được chỉnh sửa thông tin, đổi mật khẩu hay hạ quyền Admin khác. PUT chỉnh sửa tài khoản không được dùng để vượt qua cơ chế này. Mở khóa không khôi phục phiên đã bị thu hồi; tài khoản phải đăng nhập lại.
 
 Giao diện đăng nhập hiển thị đếm ngược trên nút gửi theo `Retry-After`. Tải lại trang không bỏ được giới hạn vì backend luôn kiểm tra DB.
 

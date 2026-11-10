@@ -24,6 +24,7 @@ test('SQL-backed account creation, roles, password reset, locking and session re
     await staff.get('/api/admin/monitor').expect(403);await staff.get('/api/admin/users').expect(403);
     await admin.put(`/api/admin/users/${admin_id.toUpperCase()}`).set('x-vinlook-admin','1').send({...body,username,role:'staff'}).expect(409);
     await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(403);
+    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(403);
     await admin.patch(`/api/admin/users/${staff_id}/status`).send({status:'disabled'}).expect(403);
     await admin.patch(`/api/admin/users/${staff_id}/status`).set('x-vinlook-admin','1').send({status:'invalid'}).expect(400);
     await admin.patch(`/api/admin/users/${('USR'+BigInt('0x'+randomUUID().replaceAll('-','').slice(0,12)).toString())}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(404);
@@ -35,26 +36,42 @@ test('SQL-backed account creation, roles, password reset, locking and session re
     await admin.put(`/api/admin/users/${staff_id}`).set('x-vinlook-admin','1').send({...body,role:'admin',password:'changed123'}).expect(200);
     await login(staff,staffname,'test12345').expect(401);await login(staff,staffname,'changed123').expect(200);
     await staff.get('/api/admin/users').expect(200);
-    // Admins cannot lock one another using either endpoint or by demoting first.
-    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(403);
+    // Admins can lock/unlock one another; each lock revokes existing sessions.
+    for(let cycle=0;cycle<2;cycle++) {
+      await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(200);
+      await admin.get('/api/admin/auth/session').expect(401);
+      assert.equal((await staff.get('/api/admin/users')).body.data.find((u:{id:string})=>u.id===admin_id).status,'disabled');
+      await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(200);
+      assert.equal((await staff.get('/api/admin/users')).body.data.find((u:{id:string})=>u.id===admin_id).status,'active');
+      await admin.get('/api/admin/auth/session').expect(401);
+      await login(admin,username,'test12345').expect(200);
+    }
     const admin_body={username,full_name:'Test Admin',role:'admin',status:'active'};
     for (const change of [{}, {username:username+'_changed'}, {full_name:'Changed name'}, {password:'hacked123'}]) {
       await staff.put(`/api/admin/users/${admin_id}`).set('x-vinlook-admin','1').send({...admin_body,...change}).expect(403);
     }
-    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(403);
+    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(200);
     await admin.get('/api/admin/auth/session').expect(200);
     const unchanged=(await staff.get('/api/admin/users')).body.data.find((u:{id:string})=>u.id===admin_id);
     assert.equal(unchanged.username,username);assert.equal(unchanged.full_name,'Test Admin');
     await staff.put(`/api/admin/users/${admin_id}`).set('x-vinlook-admin','1').send({...admin_body,status:'disabled'}).expect(403);
     await staff.put(`/api/admin/users/${admin_id}`).set('x-vinlook-admin','1').send({...admin_body,role:'staff'}).expect(403);
-    await admin.patch(`/api/admin/users/${staff_id}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(403);
-    // Self-lock revokes the session; another admin cannot unlock it either.
+    // Self-lock revokes the session; another admin can recover a manually locked account.
+    for(let attempt=0;attempt<4;attempt++)await login(request.agent(app),username,'wrong').expect(401);
     await admin.patch(`/api/admin/users/${admin_id.toUpperCase()}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(200);
     await admin.get('/api/admin/auth/session').expect(401);
     await login(admin,username,'test12345').expect(401);
-    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(403);
-    // Restore this test fixture directly to verify self-edit independently.
-    await pool.request().input('id',sql.VarChar(36),admin_id).query("UPDATE dbo.users SET status='active' WHERE id=@id");
+    await staff.put(`/api/admin/users/${admin_id}`).set('x-vinlook-admin','1').send(admin_body).expect(403);
+    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(200);
+    const recovered=(await staff.get('/api/admin/users')).body.data.find((u:{id:string})=>u.id===admin_id);
+    assert.equal(recovered.status,'active');assert.equal(recovered.login_locked,false);
+    assert.equal(recovered.username,username);assert.equal(recovered.full_name,'Test Admin');assert.equal(recovered.role,'admin');
+    const counters=(await pool.request().input('id',sql.VarChar(36),admin_id).query('SELECT failed_login_count,login_retry_at,login_locked FROM dbo.users WHERE id=@id')).recordset[0];
+    assert.deepEqual(counters,{failed_login_count:0,login_retry_at:null,login_locked:false});
+    // Opening the account does not restore any session that was revoked on lock.
+    await admin.get('/api/admin/auth/session').expect(401);
+    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'disabled'}).expect(200);
+    await staff.patch(`/api/admin/users/${admin_id}/status`).set('x-vinlook-admin','1').send({status:'active'}).expect(200);
     await login(admin,username,'test12345').expect(200);
     await admin.put(`/api/admin/users/${admin_id}`).set('x-vinlook-admin','1').send({...admin_body,status:'disabled'}).expect(200);
     await admin.get('/api/admin/auth/session').expect(401);

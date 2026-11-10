@@ -166,7 +166,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
    * Khóa hoặc mở khóa trạng thái tài khoản
    */
   async function change_status(user: User) {
-    if (busy || (is_other_admin(user) && !user.login_locked)) return;
+    if (busy) return;
     const status = user.status === 'active' ? 'disabled' : 'active';
     set_busy(true);
     set_changing_id(user.id);
@@ -201,6 +201,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
           ? `Đã khóa tài khoản ${user.username}. Các phiên đăng nhập đã bị thu hồi.`
           : `Đã mở khóa tài khoản ${user.username}.`
       );
+      set_refresh((value) => value + 1);
     } catch (e) {
       set_error(e instanceof Error ? e.message : 'Không cập nhật được trạng thái tài khoản.');
     } finally {
@@ -216,7 +217,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
           <strong>Staff (Nhân viên):</strong> Tổng quan, Quản lý điểm đến (POI).
         </p>
         <p>
-          <strong>Admin (Quản trị viên):</strong> Toàn bộ quyền của Staff, Giám sát hệ thống, Quản lý tài khoản. Tài khoản tự khóa sau 15 lần sai mật khẩu chỉ được Admin khác mở khóa.
+          <strong>Admin (Quản trị viên):</strong> Toàn bộ quyền của Staff, Giám sát hệ thống, Quản lý tài khoản. Có thể khóa và mở khóa Staff hoặc Admin khác. Không được chỉnh sửa thông tin, đổi mật khẩu hay hạ quyền Admin khác.
         </p>
       </div>
 
@@ -224,6 +225,10 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
         <div className="notice-banner" role="status">
           {notice}
         </div>
+      )}
+
+      {error && !modal_open && (
+        <div className="error-banner" role="alert">{error}</div>
       )}
 
       {/* Modal tạo mới / chỉnh sửa tài khoản */}
@@ -449,8 +454,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                       </button>
                       <button
                         className={u.status === 'active' ? 'account-lock' : 'account-unlock'}
-                        disabled={busy || (is_other_admin(u) && !u.login_locked)}
-                        title={is_other_admin(u) && !u.login_locked ? 'Không được đổi trạng thái tài khoản Admin khác' : undefined}
+                        disabled={busy}
                         aria-label={`${u.status === 'active' ? 'Khóa' : 'Mở khóa'} tài khoản ${u.username}`}
                         onClick={() => void change_status(u)}
                       >
