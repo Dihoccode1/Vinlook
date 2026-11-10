@@ -49,6 +49,7 @@ export interface User {
   full_name: string;
   role: 'admin' | 'staff';
   status: 'active' | 'disabled';
+  login_locked: boolean;
   created_at: string;
 }
 
