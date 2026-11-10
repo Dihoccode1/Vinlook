@@ -29,6 +29,9 @@ erDiagram
         nvarchar full_name
         varchar role
         varchar status
+        int failed_login_count
+        datetime2 login_retry_at "nullable"
+        bit login_locked
         datetime2 created_at
     }
     admin_sessions {
@@ -193,3 +196,5 @@ Không đưa `password_hash` hoặc `token_hash` vào API dashboard công khai.
 Bảng `PoiDb.dbo.poi_qr_codes`: `poi_id` (PK, FK → pois.id), `qr_token` (UNIQUE, bắt buộc, tối đa 128 ký tự, phân biệt hoa/thường), `qr_image_url` (nullable, tối đa 2048 ký tự), `created_at`, `updated_at` (UTC). Mỗi POI có tối đa một QR. Hai thời điểm mặc định là lúc tạo; trigger tự cập nhật `updated_at` khi sửa. Không tự tạo mã hoặc ảnh QR khi chạy migration.
 
 ID thực thể hiện dùng mã ngắn có tiền tố (`POI001`, `USR001`, `VST001`, `TRN001`, `AUD001`). Các khóa ngoại dùng mã tương ứng. Xem [quy tắc ID và nâng cấp](short-ids.md).
+
+Giới hạn đăng nhập được lưu trong `users.failed_login_count`, `login_retry_at`, `login_locked`. Xem [chính sách khóa đăng nhập](login-lockout.md).
