@@ -73,7 +73,20 @@ jobs:
       - run: npm run db:seed && npm run db:seed
       - run: npm run test:integration -w @tourism/poi-service
       - run: npm run test:integration -w @tourism/translation-service
-      - run: npx tsx --env-file=.env --test services/api-gateway/tests/integration/*.test.ts
+      - name: Start the real POI upstream for gateway integration
+        run: |
+          node --import tsx services/poi-service/src/server.ts > "$RUNNER_TEMP/poi-service.log" 2>&1 &
+          node --input-type=module -e '
+            for (let attempt = 0; attempt < 30; attempt++) {
+              try {
+                const response = await fetch("http://127.0.0.1:4001/health/ready");
+                if (response.ok) process.exit(0);
+              } catch {}
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            throw new Error("POI upstream did not become ready");
+          '
+      - run: npm run test:integration -w @tourism/api-gateway
 
   containers:
     name: Container builds

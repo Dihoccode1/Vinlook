@@ -7,6 +7,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node --env-file-if-exists=../../.env dist/server.js",
     "test": "tsx --test tests/unit/*.test.ts",
+    "test:integration": "tsx --env-file=../../.env --test --test-concurrency=1 tests/integration/*.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "tsx watch --env-file=../../.env src/server.ts"
   },
