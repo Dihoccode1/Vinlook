@@ -29,7 +29,7 @@ export default function App() {
         const [snapRes, journalRes, actRes] = await Promise.allSettled([
           fetchMonitor<SystemSnapshot>('/monitor', controller.signal),
           fetchMonitor<JournalData>('/monitor/events', controller.signal),
-          fetchMonitor<ActivityData>('/activity', controller.signal)
+          fetchMonitor<ActivityData>('/activity', controller.signal),
         ]);
 
         if (snapRes.status === 'fulfilled') setSnapshot(snapRes.value);
@@ -70,10 +70,7 @@ export default function App() {
 
         <div className="split-panels">
           <AlertsList alerts={journal?.system ?? []} />
-          <EventLogs
-            systemLogs={journal?.system ?? []}
-            usageLogs={journal?.usage ?? []}
-          />
+          <EventLogs systemLogs={journal?.system ?? []} usageLogs={journal?.usage ?? []} />
         </div>
       </div>
     </MonitorLayout>

@@ -14,7 +14,7 @@ test('remaining 20 translations preserve five complete paragraphs and supported 
       assert.ok(text.name.trim().length > 0 && text.name.length <= 2000);
       assert.equal(text.description.split('\n\n').length, 5, `${set.slug}: ${language}`);
       assert.ok(text.description.length > 300 && text.description.length <= 20000);
-      assert.ok(text.description.split('\n\n').every(paragraph => paragraph.trim().length > 40));
+      assert.ok(text.description.split('\n\n').every((paragraph) => paragraph.trim().length > 40));
     }
   }
 });

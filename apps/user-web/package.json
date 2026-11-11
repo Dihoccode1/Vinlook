@@ -11,6 +11,7 @@
     "dev": "vite --host 127.0.0.1"
   },
   "dependencies": {
+    "@vinlook/ui": "^0.1.0",
     "leaflet": "^1.9.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"

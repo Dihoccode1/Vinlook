@@ -1,0 +1,15 @@
+node_modules
+**/dist
+**/build
+coverage
+package-lock.json
+docs
+database
+**/database
+**/storage
+**/public
+.local-backups
+.local-runner
+*.sql
+*.md
+*.svg

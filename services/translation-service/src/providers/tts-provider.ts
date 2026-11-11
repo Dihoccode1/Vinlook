@@ -12,8 +12,11 @@ export function create_tts_pool(providers: TtsProvider[], now = Date.now): TtsPr
   const cooldown = new Map<TtsProvider, { until: number; error: TranslationError }>();
   const active = new Set<TtsProvider>();
   return {
-    identity: JSON.stringify(['tts-pool-v1', providers.map(provider => provider.identity)]),
-    cache_identities: providers.flatMap(provider => [provider.identity, ...(provider.cache_identities ?? [])]),
+    identity: JSON.stringify(['tts-pool-v1', providers.map((provider) => provider.identity)]),
+    cache_identities: providers.flatMap((provider) => [
+      provider.identity,
+      ...(provider.cache_identities ?? []),
+    ]),
     async generate(text, language = 'vi') {
       const start = cursor++ % providers.length;
       let last: TranslationError | undefined;
@@ -21,32 +24,87 @@ export function create_tts_pool(providers: TtsProvider[], now = Date.now): TtsPr
       for (let offset = 0; offset < providers.length; offset++) {
         const provider = providers[(start + offset) % providers.length]!;
         const failed = cooldown.get(provider);
-        if (failed && failed.until > now()) { last = failed.error; only_unsupported = false; continue; }
-        if (active.has(provider)) { last = new TranslationError('PROVIDER_BUSY'); only_unsupported = false; continue; }
+        if (failed && failed.until > now()) {
+          last = failed.error;
+          only_unsupported = false;
+          continue;
+        }
+        if (active.has(provider)) {
+          last = new TranslationError('PROVIDER_BUSY');
+          only_unsupported = false;
+          continue;
+        }
         active.add(provider);
-        try { return await provider.generate(text, language); }
-        catch (error) {
+        try {
+          return await provider.generate(text, language);
+        } catch (error) {
           if (!(error instanceof TranslationError)) throw error;
           if (error.code === 'UNSUPPORTED_LANGUAGE') continue;
-          if (!['PROVIDER_QUOTA', 'PROVIDER_UNAVAILABLE', 'PROVIDER_NOT_CONFIGURED', 'PROVIDER_TIMEOUT', 'PROVIDER_BUSY'].includes(error.code)) throw error;
-          only_unsupported = false; last = error;
-          cooldown.set(provider, { until: now() + (error.code === 'PROVIDER_QUOTA' ? 60000 : 10000), error });
-        } finally { active.delete(provider); }
+          if (
+            ![
+              'PROVIDER_QUOTA',
+              'PROVIDER_UNAVAILABLE',
+              'PROVIDER_NOT_CONFIGURED',
+              'PROVIDER_TIMEOUT',
+              'PROVIDER_BUSY',
+            ].includes(error.code)
+          )
+            throw error;
+          only_unsupported = false;
+          last = error;
+          cooldown.set(provider, {
+            until: now() + (error.code === 'PROVIDER_QUOTA' ? 60000 : 10000),
+            error,
+          });
+        } finally {
+          active.delete(provider);
+        }
       }
-      throw last ?? new TranslationError(only_unsupported ? 'UNSUPPORTED_LANGUAGE' : 'PROVIDER_UNAVAILABLE');
+      throw (
+        last ??
+        new TranslationError(only_unsupported ? 'UNSUPPORTED_LANGUAGE' : 'PROVIDER_UNAVAILABLE')
+      );
     },
   };
 }
 
 export function create_tts_provider(): TtsProvider {
-  const names = [...new Set((process.env.TTS_PROVIDERS ?? 'gemini,azure,google').split(',').map(name => name.trim()).filter(Boolean))];
-  if (!names.length || names.some(name => !['gemini', 'azure', 'google'].includes(name))) throw new Error('TTS_PROVIDERS must contain gemini, azure or google');
-  const providers = names.flatMap(name => {
-    if (name === 'gemini') { const configured = !!process.env.GEMINI_API_KEY?.trim(); const provider = track_tts('Gemini TTS', configured, create_gemini_tts()); return configured ? [provider] : []; }
-    if (name === 'azure') { const configured = !!(process.env.AZURE_SPEECH_KEY?.trim() && process.env.AZURE_SPEECH_REGION?.trim()); const provider = track_tts('Azure Speech', configured, create_azure_tts()); return configured ? [provider] : []; }
-    if (name === 'google') { const configured = !!process.env.GOOGLE_TTS_API_KEY?.trim(); const provider = track_tts('Google Cloud TTS', configured, create_google_cloud_tts()); return configured ? [provider] : []; }
+  const names = [
+    ...new Set(
+      (process.env.TTS_PROVIDERS ?? 'gemini,azure,google')
+        .split(',')
+        .map((name) => name.trim())
+        .filter(Boolean),
+    ),
+  ];
+  if (!names.length || names.some((name) => !['gemini', 'azure', 'google'].includes(name)))
+    throw new Error('TTS_PROVIDERS must contain gemini, azure or google');
+  const providers = names.flatMap((name) => {
+    if (name === 'gemini') {
+      const configured = !!process.env.GEMINI_API_KEY?.trim();
+      const provider = track_tts('Gemini TTS', configured, create_gemini_tts());
+      return configured ? [provider] : [];
+    }
+    if (name === 'azure') {
+      const configured = !!(
+        process.env.AZURE_SPEECH_KEY?.trim() && process.env.AZURE_SPEECH_REGION?.trim()
+      );
+      const provider = track_tts('Azure Speech', configured, create_azure_tts());
+      return configured ? [provider] : [];
+    }
+    if (name === 'google') {
+      const configured = !!process.env.GOOGLE_TTS_API_KEY?.trim();
+      const provider = track_tts('Google Cloud TTS', configured, create_google_cloud_tts());
+      return configured ? [provider] : [];
+    }
     return [];
   });
-  if (!providers.length) return { identity: 'unconfigured-tts', async generate() { throw new TranslationError('PROVIDER_NOT_CONFIGURED'); } };
+  if (!providers.length)
+    return {
+      identity: 'unconfigured-tts',
+      async generate() {
+        throw new TranslationError('PROVIDER_NOT_CONFIGURED');
+      },
+    };
   return create_tts_pool(providers);
 }

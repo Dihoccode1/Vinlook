@@ -1,0 +1,137 @@
+name: CI and deployment
+
+on:
+  pull_request:
+  push:
+    branches: [main, TEST]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vinlook-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    name: Source checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+
+  sql-integration:
+    name: SQL integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SQLSERVER_PASSWORD: CiOnly_StrongPass123!
+      SQLSERVER_DATABASE: PoiIntegrationDb
+      TRANSLATION_DATABASE: TranslationIntegrationDb
+      SQLSERVER_TRUST_CERTIFICATE: 'true'
+      ADMIN_API_KEY: ci-only-integration-key
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: 'Y'
+          MSSQL_PID: Developer
+          MSSQL_SA_PASSWORD: CiOnly_StrongPass123!
+        ports: ['1433:1433']
+        options: >-
+          --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'CiOnly_StrongPass123!' -C -Q 'SELECT 1' -b -o /dev/null"
+          --health-interval=10s --health-timeout=5s --health-retries=18 --health-start-period=30s
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: cp .env.example .env
+      - name: Create an isolated CI administrator fixture
+        run: |
+          node --input-type=module -e '
+            import { randomBytes, scryptSync } from "node:crypto";
+            import { appendFileSync } from "node:fs";
+            const salt = randomBytes(16).toString("hex");
+            const hash = scryptSync("CiFixtureOnly_123!", salt, 64).toString("hex");
+            appendFileSync(process.env.GITHUB_ENV, `ADMIN_PASSWORD_HASH=${salt}:${hash}\n`);
+          '
+      - run: npm run db:migrate && npm run db:migrate
+      - run: npm run db:seed && npm run db:seed
+      - run: npm run test:integration -w @tourism/poi-service
+      - run: npm run test:integration -w @tourism/translation-service
+      - name: Start the real POI upstream for gateway integration
+        run: |
+          node --import tsx services/poi-service/src/server.ts > "$RUNNER_TEMP/poi-service.log" 2>&1 &
+          node --input-type=module -e '
+            for (let attempt = 0; attempt < 30; attempt++) {
+              try {
+                const response = await fetch("http://127.0.0.1:4001/health/ready");
+                if (response.ok) process.exit(0);
+              } catch {}
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            throw new Error("POI upstream did not become ready");
+          '
+      - run: npm run test:integration -w @tourism/api-gateway
+
+  containers:
+    name: Container builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VINLOOK_ENV_FILE: ${{ github.workspace }}/.env.example
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - run: docker compose --env-file .env.example -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml build
+
+  deploy:
+    name: Deploy main
+    needs: [quality, sql-integration, containers]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.VINLOOK_DEPLOY_ENABLED == 'true'
+    runs-on: [self-hosted, Windows, X64, vinlook-deploy]
+    timeout-minutes: 40
+    environment: production
+    concurrency:
+      group: vinlook-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Reject an outdated main revision
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $head = gh api "repos/$env:GITHUB_REPOSITORY/commits/main" --jq .sha
+          if ($LASTEXITCODE -ne 0 -or $head.Trim() -ne $env:GITHUB_SHA) { throw 'This revision is no longer main. Deploy the newer workflow run.' }
+      - run: npm ci
+        shell: pwsh
+      - name: Deploy backend, verify, then promote frontend
+        shell: pwsh
+        env:
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VINLOOK_ENV_FILE: ${{ vars.VINLOOK_ENV_FILE }}
+          VINLOOK_STATE_DIR: ${{ vars.VINLOOK_STATE_DIR }}
+          VINLOOK_PUBLIC_ORIGIN: ${{ vars.VINLOOK_PUBLIC_ORIGIN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./scripts/deploy-local.ps1 -EnvFile $env:VINLOOK_ENV_FILE -StateDirectory $env:VINLOOK_STATE_DIR -PublicOrigin $env:VINLOOK_PUBLIC_ORIGIN -QuickTunnel:(!$env:VINLOOK_PUBLIC_ORIGIN)

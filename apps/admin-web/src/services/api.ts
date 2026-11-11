@@ -15,7 +15,7 @@ export type { Poi, Stats };
 export const categories: Record<string, string> = {
   market: 'Chợ & mua sắm',
   history: 'Lịch sử & bảo tàng',
-  architecture: 'Kiến trúc & văn hóa'
+  architecture: 'Kiến trúc & văn hóa',
 };
 
 /**
@@ -45,9 +45,10 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   if (!response.ok) {
-    const defaultMsg = response.status === 401
-      ? 'Không có quyền truy cập quản trị hoặc phiên làm việc đã hết hạn.'
-      : 'Không thể tải dữ liệu từ máy chủ.';
+    const defaultMsg =
+      response.status === 401
+        ? 'Không có quyền truy cập quản trị hoặc phiên làm việc đã hết hạn.'
+        : 'Không thể tải dữ liệu từ máy chủ.';
     throw new Error(body.error?.message ?? defaultMsg);
   }
 

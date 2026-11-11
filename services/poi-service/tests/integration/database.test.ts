@@ -12,7 +12,12 @@ test('SQL Server returns seeded POIs, filters and pagination', async () => {
   const page = await poi_repository.list({ q: '', page: 1, limit: 1 });
   assert.equal(page.data.length, 1);
   assert.ok(page.pagination.total >= 3);
-  const result = await poi_repository.list({ q: 'Bến Thành', category: 'market', page: 1, limit: 20 });
+  const result = await poi_repository.list({
+    q: 'Bến Thành',
+    category: 'market',
+    page: 1,
+    limit: 20,
+  });
   assert.equal(result.data.length, 1);
   assert.equal(result.data[0].name, 'Chợ Bến Thành');
   assert.equal(result.data[0].image_url, `/api/pois/${result.data[0].id}/image`);
@@ -25,8 +30,11 @@ test('SQL Server returns seeded POIs, filters and pagination', async () => {
 });
 
 test('SQL Server stores the exact binary photo, separate from POI JSON metadata', async () => {
-  const id = (await poi_repository.list({q:'Bến Thành',category:'market',page:1,limit:20})).data[0].id;
-  const original = await readFile(new URL('../../database/seeds/images/ben-thanh.jpg', import.meta.url));
+  const id = (await poi_repository.list({ q: 'Bến Thành', category: 'market', page: 1, limit: 20 }))
+    .data[0].id;
+  const original = await readFile(
+    new URL('../../database/seeds/images/ben-thanh.jpg', import.meta.url),
+  );
   const photo = await poi_repository.find_image(id);
   assert.ok(photo);
   assert.deepEqual(photo.content, original);

@@ -20,7 +20,7 @@ export const config = {
     navigationMs: 15000,
     translationTextMs: 60000,
     translationAudioMs: 175000,
-    healthCheckMs: 6000
+    healthCheckMs: 6000,
   },
 
   /** Giới hạn dung lượng thân yêu cầu cho từng nhóm route. */
@@ -28,6 +28,6 @@ export const config = {
     adminBody: '8mb',
     narrationBody: '1kb',
     translationBody: '1kb',
-    routesBody: '16kb'
-  }
+    routesBody: '16kb',
+  },
 };

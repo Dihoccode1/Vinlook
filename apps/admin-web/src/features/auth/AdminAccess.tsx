@@ -5,6 +5,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { Button } from '@vinlook/ui/button';
+import { Input } from '@vinlook/ui/input';
 import App from '../../App';
 import type { User } from '../../types';
 
@@ -25,11 +27,18 @@ export function AdminAccess() {
   const [show_password, set_show_password] = useState(false);
   const [busy, set_busy] = useState(false);
   const [error, set_error] = useState('');
-  const [retry_at,set_retry_at]=useState(0);
-  const [now,set_now]=useState(Date.now);
-  const [retry_user,set_retry_user]=useState('');
-  const retry_seconds=retry_user===username.trim().toLowerCase()?Math.max(0,Math.ceil((retry_at-now)/1000)):0;
-  useEffect(()=>{if(!retry_at)return;const timer=window.setInterval(()=>set_now(Date.now()),250);return()=>window.clearInterval(timer);},[retry_at]);
+  const [retry_at, set_retry_at] = useState(0);
+  const [now, set_now] = useState(Date.now);
+  const [retry_user, set_retry_user] = useState('');
+  const retry_seconds =
+    retry_user === username.trim().toLowerCase()
+      ? Math.max(0, Math.ceil((retry_at - now) / 1000))
+      : 0;
+  useEffect(() => {
+    if (!retry_at) return;
+    const timer = window.setInterval(() => set_now(Date.now()), 250);
+    return () => window.clearInterval(timer);
+  }, [retry_at]);
 
   // Kiểm tra phiên đăng nhập hiện có khi tải trang
   useEffect(() => {
@@ -72,7 +81,7 @@ export function AdminAccess() {
    */
   async function login(event: React.FormEvent) {
     event.preventDefault();
-    if (busy || retry_seconds>0) return;
+    if (busy || retry_seconds > 0) return;
     set_busy(true);
     set_error('');
     set_show_password(false);
@@ -82,13 +91,20 @@ export function AdminAccess() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-vinlook-admin': '1'
+          'x-vinlook-admin': '1',
         },
-        body: JSON.stringify({ username: username.trim(), password })
+        body: JSON.stringify({ username: username.trim(), password }),
       });
 
       const body = await response.json();
-      if(response.status===429){const seconds=Number(response.headers.get('Retry-After')??body.error?.retry_after);if(Number.isFinite(seconds)&&seconds>0){set_now(Date.now());set_retry_at(Date.now()+seconds*1000);set_retry_user(username.trim().toLowerCase());}}
+      if (response.status === 429) {
+        const seconds = Number(response.headers.get('Retry-After') ?? body.error?.retry_after);
+        if (Number.isFinite(seconds) && seconds > 0) {
+          set_now(Date.now());
+          set_retry_at(Date.now() + seconds * 1000);
+          set_retry_user(username.trim().toLowerCase());
+        }
+      }
       if (!response.ok) {
         throw new Error(body.error?.message ?? 'Đăng nhập không thành công.');
       }
@@ -108,7 +124,7 @@ export function AdminAccess() {
   async function logout() {
     const response = await fetch('/api/admin/auth/logout', {
       method: 'POST',
-      headers: { 'x-vinlook-admin': '1' }
+      headers: { 'x-vinlook-admin': '1' },
     });
 
     if (!response.ok && response.status !== 401) {
@@ -147,7 +163,7 @@ export function AdminAccess() {
 
         <form onSubmit={login} aria-busy={busy}>
           <label htmlFor="admin-username">Tài khoản</label>
-          <input
+          <Input
             id="admin-username"
             autoComplete="username"
             required
@@ -161,7 +177,7 @@ export function AdminAccess() {
 
           <label htmlFor="admin-password">Mật khẩu</label>
           <div className="login-password-field">
-            <input
+            <Input
               id="admin-password"
               type={show_password ? 'text' : 'password'}
               autoComplete="current-password"
@@ -182,7 +198,17 @@ export function AdminAccess() {
               onClick={() => set_show_password((value) => !value)}
               disabled={busy}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
                 <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
                 <circle cx="12" cy="12" r="3" />
                 {show_password && <path d="m3 3 18 18" />}
@@ -190,16 +216,27 @@ export function AdminAccess() {
             </button>
           </div>
 
-          {error && <p className="error-banner" role="alert">{error}</p>}
+          {error && (
+            <p className="error-banner" role="alert">
+              {error}
+            </p>
+          )}
 
-          <button className="primary" type="submit" disabled={busy || retry_seconds>0}>
-            {busy ? 'Đang đăng nhập...' : retry_seconds>0 ? `Thử lại sau ${retry_seconds} giây` : 'Đăng nhập'}
-          </button>
+          <Button className="primary w-full" type="submit" disabled={busy || retry_seconds > 0}>
+            {busy
+              ? 'Đang đăng nhập...'
+              : retry_seconds > 0
+                ? `Thử lại sau ${retry_seconds} giây`
+                : 'Đăng nhập'}
+          </Button>
         </form>
 
         <a
           className="login-map-link"
-          href={import.meta.env.VITE_PUBLIC_WEB_URL || (import.meta.env.PROD ? '/' : 'http://127.0.0.1:5173/')}
+          href={
+            import.meta.env.VITE_PUBLIC_WEB_URL ||
+            (import.meta.env.PROD ? '/' : 'http://127.0.0.1:5173/')
+          }
         >
           ← Về bản đồ khám phá du lịch
         </a>

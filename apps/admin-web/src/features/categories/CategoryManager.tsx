@@ -54,7 +54,8 @@ export function CategoryManager({ stats }: CategoryManagerProps) {
                   <td>
                     {code === 'market' && 'Khu mua sắm, chợ truyền thống và trung tâm thương mại.'}
                     {code === 'history' && 'Bảo tàng, di tích lịch sử và công trình tưởng niệm.'}
-                    {code === 'architecture' && 'Công trình kiến trúc tiêu biểu, tôn giáo và văn hóa đặc sắc.'}
+                    {code === 'architecture' &&
+                      'Công trình kiến trúc tiêu biểu, tôn giáo và văn hóa đặc sắc.'}
                   </td>
                 </tr>
               );

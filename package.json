@@ -1,7 +1,8 @@
 {
   "workspaces": [
     "apps/*",
-    "services/*"
+    "services/*",
+    "packages/*"
   ],
   "name": "multilingual-tourism-platform",
   "version": "0.1.0",
@@ -13,7 +14,10 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "db:migrate": "npm run db:migrate -w @tourism/poi-service && npm run db:migrate -w @tourism/translation-service && npm run db:short-ids",
     "test": "npm run test --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
+    "build": "node scripts/build.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && npm run typecheck && npm test && npm run test:deployment && npm run build",
     "db:down": "docker compose --env-file .env -f infrastructure/docker/compose.yml down",
     "db:seed": "npm run db:seed -w @tourism/poi-service",
     "audio:prepare-defaults": "npm run content:prepare -w @tourism/translation-service -- vi en zh-CN",
@@ -24,19 +28,27 @@
     "server:logs": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml logs -f --tail 100",
     "server:down": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml down",
     "server:tunnel": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml --profile tunnel up -d cloudflared",
-    "server:tunnel:stop": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml --profile tunnel stop cloudflared"
+    "server:tunnel:stop": "docker compose --env-file .env -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml --profile tunnel stop cloudflared",
+    "env:init": "node scripts/init-env.mjs",
+    "build:web": "node scripts/build-web.mjs",
+    "test:deployment": "node --test scripts/tests/*.test.mjs"
   },
   "engines": {
     "node": ">=22.12.0"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.5",
     "@types/express": "^5.0.6",
     "@types/mssql": "^12.3.0",
     "@types/node": "^26.6.5",
     "@types/supertest": "^7.2.1",
     "concurrently": "^10.0.6",
+    "prettier": "^3.9.10",
     "supertest": "^7.3.1",
+    "tailwindcss": "^4.3.5",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vercel": "65.14.0",
+    "yaml": "^2.9.1"
   }
 }
