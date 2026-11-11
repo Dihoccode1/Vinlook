@@ -38,6 +38,7 @@ jobs:
       SQLSERVER_DATABASE: PoiIntegrationDb
       TRANSLATION_DATABASE: TranslationIntegrationDb
       SQLSERVER_TRUST_CERTIFICATE: 'true'
+      ADMIN_API_KEY: ci-only-integration-key
     services:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
