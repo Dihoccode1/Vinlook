@@ -60,6 +60,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: cp .env.example .env
+      - name: Create an isolated CI administrator fixture
+        run: |
+          node --input-type=module -e '
+            import { randomBytes, scryptSync } from "node:crypto";
+            import { appendFileSync } from "node:fs";
+            const salt = randomBytes(16).toString("hex");
+            const hash = scryptSync("CiFixtureOnly_123!", salt, 64).toString("hex");
+            appendFileSync(process.env.GITHUB_ENV, `ADMIN_PASSWORD_HASH=${salt}:${hash}\n`);
+          '
       - run: npm run db:migrate && npm run db:migrate
       - run: npm run db:seed && npm run db:seed
       - run: npm run test:integration -w @tourism/poi-service
