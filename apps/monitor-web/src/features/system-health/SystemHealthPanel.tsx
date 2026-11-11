@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Button } from '@vinlook/ui/button';
 import type { SystemSnapshot } from '../../types';
 
 interface SystemHealthPanelProps {
@@ -28,9 +29,9 @@ export function SystemHealthPanel({ snapshot, loading, error, onRefresh }: Syste
               : 'Đang kiểm tra kết nối...'}
           </p>
         </div>
-        <button type="button" onClick={onRefresh} disabled={loading}>
+        <Button variant="outline" onClick={onRefresh} disabled={loading}>
           {loading ? 'Đang tải...' : 'Làm mới'}
-        </button>
+        </Button>
       </div>
 
       {error && <div className="error-banner">{error}</div>}
@@ -47,7 +48,9 @@ export function SystemHealthPanel({ snapshot, loading, error, onRefresh }: Syste
         <div className="metric-box">
           <span className="metric-title">Trạng thái Cơ sở dữ liệu</span>
           <span className="metric-value">
-            {snapshot?.services.some((s) => s.database && s.status === 'healthy') ? 'Sẵn sàng' : 'Chưa kết nối'}
+            {snapshot?.services.some((s) => s.database && s.status === 'healthy')
+              ? 'Sẵn sàng'
+              : 'Chưa kết nối'}
           </span>
           <span className="metric-sub">Microsoft SQL Server</span>
         </div>

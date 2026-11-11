@@ -5,13 +5,16 @@ let pending: Promise<sql.ConnectionPool> | undefined;
 
 export function get_pool(): Promise<sql.ConnectionPool> {
   if (!config.database.password) throw new Error('SQLSERVER_PASSWORD is required');
-  pending ??= new sql.ConnectionPool(config.database).connect().then(pool => {
-    pool.on('error', () => console.error('SQL Server pool error'));
-    return pool;
-  }).catch(error => {
-    pending = undefined;
-    throw error;
-  });
+  pending ??= new sql.ConnectionPool(config.database)
+    .connect()
+    .then((pool) => {
+      pool.on('error', () => console.error('SQL Server pool error'));
+      return pool;
+    })
+    .catch((error) => {
+      pending = undefined;
+      throw error;
+    });
   return pending;
 }
 

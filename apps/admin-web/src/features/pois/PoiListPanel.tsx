@@ -14,7 +14,7 @@ const formatDate = (value: string) =>
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-    timeZone: 'Asia/Ho_Chi_Minh'
+    timeZone: 'Asia/Ho_Chi_Minh',
   });
 
 interface PoiListPanelProps {
@@ -56,7 +56,7 @@ export function PoiListPanel({
   onRefresh,
   onViewAll,
   onEditPoi,
-  onPreview
+  onPreview,
 }: PoiListPanelProps) {
   const isOverview = mode === 'overview';
 
@@ -66,7 +66,7 @@ export function PoiListPanel({
         <div>
           <h2>
             {isOverview ? 'Cập nhật gần đây' : 'Danh sách điểm tham quan'}{' '}
-            <span className="count-badge">{isOverview ? overviewTotal ?? '—' : total}</span>
+            <span className="count-badge">{isOverview ? (overviewTotal ?? '—') : total}</span>
           </h2>
           <p>
             {isOverview
@@ -168,7 +168,9 @@ export function PoiListPanel({
                     </div>
                   </td>
                   <td data-label="Danh mục">
-                    <span className={`category-tag ${poi.category}`}>{categories[poi.category] ?? poi.category}</span>
+                    <span className={`category-tag ${poi.category}`}>
+                      {categories[poi.category] ?? poi.category}
+                    </span>
                   </td>
                   <td data-label="Trạng thái">
                     <span className={`publish-status ${poi.is_published ? 'published' : ''}`}>

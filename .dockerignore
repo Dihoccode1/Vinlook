@@ -13,4 +13,7 @@
 **/*.log
 .local-backups
 .local-runner
+.local-deploy
+.vercel
+docs
 services/translation-service/storage/narrations

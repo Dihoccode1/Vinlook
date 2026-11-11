@@ -10,13 +10,27 @@ test('POI images support bundled photos and HTTPS URLs', () => {
 });
 
 test('missing, insecure and malformed image URLs use the placeholder', () => {
-  for (const value of [null, undefined, '', '//example.com/photo.jpg', '/\\example.com/photo.jpg', 'javascript:alert(1)', 'http://example.com/a.jpg', 'https://user:password@example.com/a.jpg', '/api/pois/bad/image', '/api/pois/POI001/image?redirect=evil']) {
+  for (const value of [
+    null,
+    undefined,
+    '',
+    '//example.com/photo.jpg',
+    '/\\example.com/photo.jpg',
+    'javascript:alert(1)',
+    'http://example.com/a.jpg',
+    'https://user:password@example.com/a.jpg',
+    '/api/pois/bad/image',
+    '/api/pois/POI001/image?redirect=evil',
+  ]) {
     assert.equal(poi_image_url(value), placeholder_image);
   }
 });
 
 test('photo credit links reject script URLs and local paths', () => {
-  assert.equal(https_url('https://creativecommons.org/licenses/by/2.0/'), 'https://creativecommons.org/licenses/by/2.0/');
+  assert.equal(
+    https_url('https://creativecommons.org/licenses/by/2.0/'),
+    'https://creativecommons.org/licenses/by/2.0/',
+  );
   assert.equal(https_url('javascript:alert(1)'), null);
   assert.equal(https_url('/images/credit'), null);
 });

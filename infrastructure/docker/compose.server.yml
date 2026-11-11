@@ -1,6 +1,6 @@
 # Use together with compose.yml, never alone. Keeps the existing SQL volume.
 x-backend: &backend
-  env_file: ../../.env
+  env_file: ${VINLOOK_ENV_FILE:-../../.env}
   environment: &environment
     NODE_ENV: production
     SQLSERVER_HOST: sqlserver
@@ -12,30 +12,39 @@ x-backend: &backend
     POI_SERVICE_URL: http://poi:4001
     NAVIGATION_SERVICE_URL: http://navigation:4002
     TRANSLATION_SERVICE_URL: http://translation:4003
+    VINLOOK_RELEASE_SHA: ${VINLOOK_RELEASE_SHA:-local}
+    VINLOOK_CI_RUN_URL: ${VINLOOK_CI_RUN_URL:-}
   restart: unless-stopped
   init: true
   logging:
     driver: json-file
-    options: { max-size: "10m", max-file: "3" }
+    options: { max-size: '10m', max-file: '3' }
 
 services:
   migrate:
     <<: *backend
+    image: vinlook/migrate:${VINLOOK_IMAGE_TAG:-local}
     build:
       context: ../..
       dockerfile: Dockerfile.backend
       target: tools
     user: node
-    restart: "no"
+    restart: 'no'
     depends_on:
       sqlserver: { condition: service_healthy }
     volumes:
-      - ../../.local-backups:/app/.local-backups
-      - ../../services/translation-service/storage/narrations:/app/services/translation-service/storage/narrations
-    command: ["sh", "-c", "node --import tsx services/poi-service/src/database.ts migrate && node --import tsx services/translation-service/src/database.ts && node --import tsx database/short-ids.ts"]
+      - ${VINLOOK_BACKUP_DIR:-../../.local-backups}:/app/.local-backups
+      - ${VINLOOK_STATE_DIR:-../../services/translation-service/storage}/narrations:/app/services/translation-service/storage/narrations
+    command:
+      [
+        'sh',
+        '-c',
+        'node --import tsx services/poi-service/src/database.ts migrate && node --import tsx services/translation-service/src/database.ts && node --import tsx database/short-ids.ts',
+      ]
 
   poi:
     <<: *backend
+    image: vinlook/poi:${VINLOOK_IMAGE_TAG:-local}
     build:
       context: ../..
       dockerfile: Dockerfile.backend
@@ -43,7 +52,13 @@ services:
     depends_on:
       migrate: { condition: service_completed_successfully }
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4001/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:4001/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
       interval: 15s
       timeout: 8s
       retries: 5
@@ -51,18 +66,26 @@ services:
 
   navigation:
     <<: *backend
+    image: vinlook/navigation:${VINLOOK_IMAGE_TAG:-local}
     build:
       context: ../..
       dockerfile: Dockerfile.backend
       args: { SERVICE: navigation-service }
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4002/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:4002/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
       interval: 15s
       timeout: 8s
       retries: 5
 
   translation:
     <<: *backend
+    image: vinlook/translation:${VINLOOK_IMAGE_TAG:-local}
     build:
       context: ../..
       dockerfile: Dockerfile.backend
@@ -70,9 +93,15 @@ services:
     depends_on:
       migrate: { condition: service_completed_successfully }
     volumes:
-      - ../../services/translation-service/storage/narrations:/app/services/translation-service/storage/narrations
+      - ${VINLOOK_STATE_DIR:-../../services/translation-service/storage}/narrations:/app/services/translation-service/storage/narrations
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4003/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:4003/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
       interval: 15s
       timeout: 8s
       retries: 5
@@ -80,6 +109,7 @@ services:
 
   gateway:
     <<: *backend
+    image: vinlook/gateway:${VINLOOK_IMAGE_TAG:-local}
     build:
       context: ../..
       dockerfile: Dockerfile.backend
@@ -89,24 +119,31 @@ services:
       navigation: { condition: service_healthy }
       translation: { condition: service_healthy }
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:4000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
       interval: 15s
       timeout: 8s
       retries: 5
 
   web:
+    image: vinlook/web:${VINLOOK_IMAGE_TAG:-local}
     build:
       context: ../..
       dockerfile: Dockerfile.web
       args:
         VITE_PUBLIC_WEB_URL: ${VITE_PUBLIC_WEB_URL:-}
     ports:
-      - "127.0.0.1:${WEB_PORT:-8080}:80"
+      - '127.0.0.1:${WEB_PORT:-8080}:80'
     depends_on:
       gateway: { condition: service_healthy }
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/healthz"]
+      test: ['CMD', 'wget', '-q', '-O', '-', 'http://127.0.0.1/healthz']
       interval: 15s
       timeout: 5s
       retries: 5
@@ -119,4 +156,12 @@ services:
       TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
     depends_on:
       web: { condition: service_healthy }
+    restart: unless-stopped
+
+  # Learning/demo mode: no account, token or paid domain required.
+  # Keep this container running across application releases to retain its URL.
+  quick-tunnel:
+    image: cloudflare/cloudflared:latest
+    profiles: [free-tunnel]
+    command: tunnel --no-autoupdate --url http://web:80
     restart: unless-stopped

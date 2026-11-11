@@ -2,7 +2,8 @@ import type { Poi, PoiPage } from '../types/poi';
 
 async function get<T>(url: string, signal: AbortSignal): Promise<T> {
   const response = await fetch(url, { signal });
-  if (!response.ok) throw new Error('Không thể tải địa điểm. Vui lòng kiểm tra API và kết nối cơ sở dữ liệu.');
+  if (!response.ok)
+    throw new Error('Không thể tải địa điểm. Vui lòng kiểm tra API và kết nối cơ sở dữ liệu.');
   return response.json() as Promise<T>;
 }
 
@@ -16,7 +17,7 @@ export function list_pois(q: string, category: string, page: number, signal: Abo
 export async function list_all_pois(signal: AbortSignal): Promise<Poi[]> {
   const limit = 100;
   const first = await get<PoiPage>(`/api/pois?page=1&limit=${limit}`, signal);
-  const catalog = new Map(first.data.map(poi => [poi.id, poi]));
+  const catalog = new Map(first.data.map((poi) => [poi.id, poi]));
   const pages = Math.ceil(first.pagination.total / limit);
   for (let page = 2; page <= pages; page++) {
     const result = await get<PoiPage>(`/api/pois?page=${page}&limit=${limit}`, signal);

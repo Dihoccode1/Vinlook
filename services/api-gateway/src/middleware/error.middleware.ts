@@ -24,7 +24,7 @@ export const error_middleware: ErrorRequestHandler = (error, _req, res, _next) =
   res.status(status).json({
     error: {
       code: status === 500 ? 'INTERNAL_ERROR' : 'INVALID_BODY',
-      message: 'Unable to process request'
-    }
+      message: 'Unable to process request',
+    },
   });
 };

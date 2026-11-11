@@ -5,7 +5,19 @@
 
 import React from 'react';
 
-export type IconKind = 'grid' | 'pin' | 'eye' | 'photo' | 'draft' | 'search' | 'listen' | 'user' | 'close' | 'plus' | 'refresh' | 'check';
+export type IconKind =
+  | 'grid'
+  | 'pin'
+  | 'eye'
+  | 'photo'
+  | 'draft'
+  | 'search'
+  | 'listen'
+  | 'user'
+  | 'close'
+  | 'plus'
+  | 'refresh'
+  | 'check';
 
 interface IconProps {
   kind: IconKind;
@@ -24,8 +36,9 @@ const ICON_PATHS: Record<IconKind, string> = {
   search: 'M21 21l-5-5 M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14',
   close: 'M18 6L6 18 M6 6l12 12',
   plus: 'M12 5v14 M5 12h14',
-  refresh: 'M23 4v6h-6 M1 20v-6h6 M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15',
-  check: 'M20 6L9 17l-5-5'
+  refresh:
+    'M23 4v6h-6 M1 20v-6h6 M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15',
+  check: 'M20 6L9 17l-5-5',
 };
 
 /**

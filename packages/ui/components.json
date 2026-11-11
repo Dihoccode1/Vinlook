@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@vinlook/ui/components",
+    "ui": "@vinlook/ui",
+    "utils": "@vinlook/ui/utils",
+    "lib": "@vinlook/ui/lib",
+    "hooks": "@vinlook/ui/hooks"
+  }
+}

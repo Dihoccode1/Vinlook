@@ -15,7 +15,9 @@ Monorepo dùng npm workspaces, React + Vite + TypeScript và Node.js + Express +
 - Migration có bảng theo dõi phiên bản; seed 3 POI mẫu có thể chạy lại.
 - GitHub Actions: typecheck, test, build và kiểm thử tích hợp SQL Server.
 
-Admin, monitor, dịch và các service khác hiện còn là bộ khung. GPS hiện chạy trên trình duyệt; chưa có chia sẻ vị trí qua backend. CI đã có cấu hình; CD chưa triển khai.
+Admin/Staff, quản trị tài khoản/POI, monitor, dịch và thuyết minh đã có mã triển khai. Ba frontend dùng chung Tailwind CSS v4 và component shadcn/ui trong `packages/ui`; backend dùng chung lifecycle HTTP trong `packages/server`.
+
+CI/CD cho học tập: PR chạy kiểm tra trên GitHub; push/merge `main` sau khi kiểm tra đạt sẽ cập nhật Docker/SQL Server trên máy nhóm và ba frontend trên Vercel Hobby. Xem [cấu hình, vận hành và giới hạn miễn phí](docs/deployment.md).
 
 ## Chạy local trên PowerShell
 
@@ -26,7 +28,7 @@ Yêu cầu Node.js >= 22.12 (khuyến nghị Node 24), npm và Docker Engine ch�
 
 ```powershell
 npm ci
-Copy-Item .env.example .env # chỉ làm khi chưa có .env
+npm run env:init # tạo .env với secret ngẫu nhiên khi file chưa tồn tại
 npm run db:up
 npm run db:migrate
 npm run db:seed

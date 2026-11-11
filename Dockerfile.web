@@ -1,17 +1,29 @@
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json tsconfig.json ./
+COPY apps/admin-web/package.json ./apps/admin-web/package.json
+COPY apps/monitor-web/package.json ./apps/monitor-web/package.json
+COPY apps/user-web/package.json ./apps/user-web/package.json
+COPY services/api-gateway/package.json ./services/api-gateway/package.json
+COPY services/poi-service/package.json ./services/poi-service/package.json
+COPY services/navigation-service/package.json ./services/navigation-service/package.json
+COPY services/translation-service/package.json ./services/translation-service/package.json
+COPY packages/ui/package.json ./packages/ui/package.json
+COPY packages/server/package.json ./packages/server/package.json
+RUN npm ci --no-audit --no-fund
 COPY apps/ ./apps/
 COPY services/ ./services/
+COPY packages/ ./packages/
 COPY database/ ./database/
-RUN npm ci
 ARG VITE_PUBLIC_WEB_URL=
 ENV VITE_PUBLIC_WEB_URL=${VITE_PUBLIC_WEB_URL}
 RUN npm run build -w @tourism/user-web \
-    && npm run build -w @tourism/admin-web -- --base=/admin/
+    && npm run build -w @tourism/admin-web -- --base=/admin/ \
+    && npm run build -w @tourism/monitor-web -- --base=/monitor/
 
 FROM nginx:stable-alpine
 COPY infrastructure/docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/apps/user-web/dist/ /usr/share/nginx/html/
 COPY --from=build /app/apps/admin-web/dist/ /usr/share/nginx/html/admin/
+COPY --from=build /app/apps/monitor-web/dist/ /usr/share/nginx/html/monitor/
 EXPOSE 80

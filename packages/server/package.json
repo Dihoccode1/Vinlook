@@ -1,0 +1,15 @@
+{
+  "name": "@vinlook/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./runtime": {
+      "types": "./src/runtime.d.mts",
+      "default": "./src/runtime.mjs"
+    }
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  }
+}

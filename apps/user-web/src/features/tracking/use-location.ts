@@ -7,7 +7,9 @@ export function use_location() {
   const [now, set_now] = useState(Date.now);
 
   // Component changes must not tear down a watch owned by the browser tab.
-  useEffect(() => { void tracker.resume(); }, [tracker]);
+  useEffect(() => {
+    void tracker.resume();
+  }, [tracker]);
   useEffect(() => {
     if (!snapshot.active) return;
     set_now(Date.now());
@@ -15,6 +17,9 @@ export function use_location() {
     return () => window.clearInterval(timer);
   }, [snapshot.active]);
 
-  const stale = snapshot.position !== null && (Math.max(now, Date.now()) - snapshot.position.timestamp > 30000 || snapshot.status !== 'tracking');
+  const stale =
+    snapshot.position !== null &&
+    (Math.max(now, Date.now()) - snapshot.position.timestamp > 30000 ||
+      snapshot.status !== 'tracking');
   return { ...snapshot, stale, start: tracker.start, stop: tracker.stop, refresh: tracker.refresh };
 }

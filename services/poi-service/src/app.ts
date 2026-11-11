@@ -5,12 +5,14 @@ import { z } from 'zod';
 import { poi_repository, type PoiRepository } from './modules/pois/poi.repository.js';
 import { admin_routes } from './modules/admin/admin.routes.js';
 
-const query_schema = z.object({
-  q: z.string().trim().max(200).default(''),
-  category: z.string().trim().min(1).max(50).optional(),
-  page: z.coerce.number().int().min(1).max(100000).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(20),
-}).strict();
+const query_schema = z
+  .object({
+    q: z.string().trim().max(200).default(''),
+    category: z.string().trim().min(1).max(50).optional(),
+    page: z.coerce.number().int().min(1).max(100000).default(1),
+    limit: z.coerce.number().int().min(1).max(100).default(20),
+  })
+  .strict();
 
 export function create_app(repository: PoiRepository = poi_repository) {
   const app = express();
@@ -29,13 +31,18 @@ export function create_app(repository: PoiRepository = poi_repository) {
   app.get('/pois', async (req, res) => {
     const query = query_schema.safeParse(req.query);
     if (!query.success) {
-      res.status(400).json({ error: { code: 'INVALID_QUERY', message: 'Invalid search or pagination parameters' } });
+      res.status(400).json({
+        error: { code: 'INVALID_QUERY', message: 'Invalid search or pagination parameters' },
+      });
       return;
     }
     res.json(await repository.list(query.data));
   });
   app.get('/pois/:id/image', async (req, res) => {
-    const id = z.string().regex(/^POI[0-9]{3,20}$/).safeParse(req.params.id);
+    const id = z
+      .string()
+      .regex(/^POI[0-9]{3,20}$/)
+      .safeParse(req.params.id);
     if (!id.success) {
       res.status(400).json({ error: { code: 'INVALID_ID', message: 'POI id must be a UUID' } });
       return;
@@ -45,14 +52,19 @@ export function create_app(repository: PoiRepository = poi_repository) {
       res.status(404).json({ error: { code: 'IMAGE_NOT_FOUND', message: 'POI image not found' } });
       return;
     }
-    res.set({
-      'content-Type': image.content_type,
-      'Cache-Control': 'public, max-age=300',
-      ETag: `"${image.sha256}"`,
-    }).send(image.content);
+    res
+      .set({
+        'content-Type': image.content_type,
+        'Cache-Control': 'public, max-age=300',
+        ETag: `"${image.sha256}"`,
+      })
+      .send(image.content);
   });
   app.get('/pois/:id', async (req, res) => {
-    const id = z.string().regex(/^POI[0-9]{3,20}$/).safeParse(req.params.id);
+    const id = z
+      .string()
+      .regex(/^POI[0-9]{3,20}$/)
+      .safeParse(req.params.id);
     if (!id.success) {
       res.status(400).json({ error: { code: 'INVALID_ID', message: 'POI id must be a UUID' } });
       return;
@@ -64,10 +76,14 @@ export function create_app(repository: PoiRepository = poi_repository) {
     }
     res.json({ data: poi });
   });
-  app.use((_req, res) => res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Route not found' } }));
+  app.use((_req, res) =>
+    res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Route not found' } }),
+  );
   const errors: ErrorRequestHandler = (error, _req, res, _next) => {
     console.error('POI request failed:', error instanceof Error ? error.name : 'UnknownError');
-    res.status(503).json({ error: { code: 'SERVICE_UNAVAILABLE', message: 'POI service is temporarily unavailable' } });
+    res.status(503).json({
+      error: { code: 'SERVICE_UNAVAILABLE', message: 'POI service is temporarily unavailable' },
+    });
   };
   app.use(errors);
   return app;

@@ -20,11 +20,19 @@ export function create_location_session(environment: SessionEnvironment) {
   let consented_this_page = !environment.require_explicit_start;
   const now = environment.now ?? Date.now;
   let last_attempt = 0;
-  try { preference = environment.storage?.getItem(preference_key) ?? null; } catch { /* Storage can be blocked. */ }
+  try {
+    preference = environment.storage?.getItem(preference_key) ?? null;
+  } catch {
+    /* Storage can be blocked. */
+  }
 
   function remember(value: 'enabled' | 'disabled') {
     preference = value;
-    try { environment.storage?.setItem(preference_key, value); } catch { /* Keep the in-memory session. */ }
+    try {
+      environment.storage?.setItem(preference_key, value);
+    } catch {
+      /* Keep the in-memory session. */
+    }
   }
   function start() {
     if (disposed) return;
@@ -40,32 +48,64 @@ export function create_location_session(environment: SessionEnvironment) {
     tracker.stop();
   }
   async function resume() {
-    if (disposed || !consented_this_page || preference === 'disabled' || tracker.get_snapshot().active) return;
+    if (
+      disposed ||
+      !consented_this_page ||
+      preference === 'disabled' ||
+      tracker.get_snapshot().active
+    )
+      return;
     const current = ++revision;
     let permission: PermissionState | undefined;
-    try { permission = (await environment.permissions?.query({ name: 'geolocation' }))?.state; } catch { /* Unsupported Permissions API. */ }
+    try {
+      permission = (await environment.permissions?.query({ name: 'geolocation' }))?.state;
+    } catch {
+      /* Unsupported Permissions API. */
+    }
     if (disposed || current !== revision || preference === 'disabled') return;
     if (permission === 'granted' || (preference === 'enabled' && permission !== 'denied')) start();
   }
-  const on_hide = () => { revision++; tracker.stop(); };
-  const on_show = () => { void resume(); };
+  const on_hide = () => {
+    revision++;
+    tracker.stop();
+  };
+  const on_show = () => {
+    void resume();
+  };
   function recover() {
     const snapshot = tracker.get_snapshot();
-    if (disposed || preference !== 'enabled' || !snapshot.active || now() - last_attempt < 30000) return;
-    if (snapshot.status === 'error' || !snapshot.position || now() - snapshot.position.timestamp > 30000) {
+    if (disposed || preference !== 'enabled' || !snapshot.active || now() - last_attempt < 30000)
+      return;
+    if (
+      snapshot.status === 'error' ||
+      !snapshot.position ||
+      now() - snapshot.position.timestamp > 30000
+    ) {
       last_attempt = now();
       tracker.refresh();
     }
   }
-  const on_focus = () => { recover(); void resume(); };
+  const on_focus = () => {
+    recover();
+    void resume();
+  };
   const recovery_timer = environment.every?.(recover);
   environment.page?.addEventListener('pagehide', on_hide);
   environment.page?.addEventListener('pageshow', on_show);
   environment.page?.addEventListener('focus', on_focus);
 
   return {
-    get_snapshot: tracker.get_snapshot, subscribe: tracker.subscribe,
-    start, stop, resume, refresh: () => { if (tracker.get_snapshot().active) { last_attempt = now(); tracker.refresh(); } else start(); },
+    get_snapshot: tracker.get_snapshot,
+    subscribe: tracker.subscribe,
+    start,
+    stop,
+    resume,
+    refresh: () => {
+      if (tracker.get_snapshot().active) {
+        last_attempt = now();
+        tracker.refresh();
+      } else start();
+    },
     dispose() {
       disposed = true;
       revision++;
@@ -82,12 +122,20 @@ let browser_session: ReturnType<typeof create_location_session> | undefined;
 export function get_browser_location_session() {
   if (!browser_session) {
     let storage: Storage | undefined;
-    try { storage = window.sessionStorage; } catch { /* Sandboxed/private browser mode. */ }
+    try {
+      storage = window.sessionStorage;
+    } catch {
+      /* Sandboxed/private browser mode. */
+    }
     browser_session = create_location_session({
       require_explicit_start: true,
-      secure_context: window.isSecureContext, geolocation: navigator.geolocation,
-      storage, permissions: navigator.permissions, page: window,
-      every: callback => window.setInterval(callback, 15000), cancel: id => window.clearInterval(id),
+      secure_context: window.isSecureContext,
+      geolocation: navigator.geolocation,
+      storage,
+      permissions: navigator.permissions,
+      page: window,
+      every: (callback) => window.setInterval(callback, 15000),
+      cancel: (id) => window.clearInterval(id),
     });
   }
   return browser_session;

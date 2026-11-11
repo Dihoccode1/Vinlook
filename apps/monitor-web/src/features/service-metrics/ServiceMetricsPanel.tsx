@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Badge } from '@vinlook/ui/badge';
 import type { ServiceStatus } from '../../types';
 
 interface ServiceMetricsPanelProps {
@@ -14,11 +15,11 @@ export function ServiceMetricsPanel({ services }: ServiceMetricsPanelProps) {
   const getStatusBadge = (status: ServiceStatus['status']) => {
     switch (status) {
       case 'healthy':
-        return <span className="status-badge healthy">Hoạt động tốt</span>;
+        return <Badge>Hoạt động tốt</Badge>;
       case 'unavailable':
-        return <span className="status-badge unavailable">Chưa sẵn sàng</span>;
+        return <Badge variant="secondary">Chưa sẵn sàng</Badge>;
       default:
-        return <span className="status-badge unreachable">Mất kết nối</span>;
+        return <Badge variant="destructive">Mất kết nối</Badge>;
     }
   };
 

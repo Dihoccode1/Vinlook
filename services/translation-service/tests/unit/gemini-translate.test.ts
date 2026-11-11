@@ -6,9 +6,15 @@ test('Gemini translates source text with isolated instructions and rejects trunc
     const body = JSON.parse(String(init?.body));
     assert.equal(body.contents[0].parts[0].text, 'Chợ');
     assert.match(body.systemInstruction.parts[0].text, /vi to en/);
-    return Response.json({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text: 'Market' }] } }] });
+    return Response.json({
+      candidates: [{ finishReason: 'STOP', content: { parts: [{ text: 'Market' }] } }],
+    });
   });
   assert.equal(await provider.translate('Chợ', 'vi', 'en'), 'Market');
-  const truncated = create_gemini_translate_provider('key', async () => Response.json({ candidates: [{ finishReason: 'MAX_TOKENS', content: { parts: [{ text: 'partial' }] } }] }));
+  const truncated = create_gemini_translate_provider('key', async () =>
+    Response.json({
+      candidates: [{ finishReason: 'MAX_TOKENS', content: { parts: [{ text: 'partial' }] } }],
+    }),
+  );
   await assert.rejects(truncated.translate('x', 'vi', 'en'), { code: 'PROVIDER_UNAVAILABLE' });
 });

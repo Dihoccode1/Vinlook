@@ -7,18 +7,27 @@ function mock_gps() {
   const cleared: number[] = [];
   const options: (PositionOptions | undefined)[] = [];
   const geolocation = {
-    watchPosition(success: PositionCallback, failure: PositionErrorCallback | null = null, settings?: PositionOptions) {
+    watchPosition(
+      success: PositionCallback,
+      failure: PositionErrorCallback | null = null,
+      settings?: PositionOptions,
+    ) {
       callbacks.push({ success, failure });
       options.push(settings);
       return callbacks.length - 1; // Zero is a valid watch id.
     },
-    clearWatch(id: number) { cleared.push(id); },
+    clearWatch(id: number) {
+      cleared.push(id);
+    },
   };
   return { callbacks, cleared, options, geolocation };
 }
 
 function fix(latitude = 10.77, timestamp = 1000): GeolocationPosition {
-  return { coords: { latitude, longitude: 106.69, accuracy: 12 }, timestamp } as GeolocationPosition;
+  return {
+    coords: { latitude, longitude: 106.69, accuracy: 12 },
+    timestamp,
+  } as GeolocationPosition;
 }
 function error(code: number): GeolocationPositionError {
   return { code, message: 'provider message' } as GeolocationPositionError;
@@ -48,7 +57,12 @@ test('stop clears watch 0 and coordinates; late callbacks cannot restore locatio
   gps.callbacks[0].success(fix(20));
   gps.callbacks[0].failure?.(error(1));
   assert.deepEqual(gps.cleared, [0]);
-  assert.deepEqual(tracker.get_snapshot(), { status: 'idle', active: false, position: null, error: null });
+  assert.deepEqual(tracker.get_snapshot(), {
+    status: 'idle',
+    active: false,
+    position: null,
+    error: null,
+  });
   tracker.start();
   gps.callbacks[0].success(fix(30));
   assert.equal(tracker.get_snapshot().position, null);
@@ -101,7 +115,10 @@ test('ignores older fixes and rejects invalid coordinates', () => {
 
 test('unsupported browser or insecure context never registers a watch', () => {
   const gps = mock_gps();
-  for (const environment of [{ secure_context: false, geolocation: gps.geolocation }, { secure_context: true }]) {
+  for (const environment of [
+    { secure_context: false, geolocation: gps.geolocation },
+    { secure_context: true },
+  ]) {
     const tracker = create_location_tracker(environment);
     tracker.start();
     assert.equal(tracker.get_snapshot().status, 'error');
@@ -112,16 +129,30 @@ test('unsupported browser or insecure context never registers a watch', () => {
 
 test('synchronous denial clears the returned watch id and start exceptions are handled', () => {
   const cleared: number[] = [];
-  const tracker = create_location_tracker({ secure_context: true, geolocation: {
-    watchPosition(_success, failure) { failure?.(error(1)); return 0; },
-    clearWatch(id) { cleared.push(id); },
-  } });
+  const tracker = create_location_tracker({
+    secure_context: true,
+    geolocation: {
+      watchPosition(_success, failure) {
+        failure?.(error(1));
+        return 0;
+      },
+      clearWatch(id) {
+        cleared.push(id);
+      },
+    },
+  });
   tracker.start();
   assert.deepEqual(cleared, [0]);
   assert.equal(tracker.get_snapshot().active, false);
-  const throwing = create_location_tracker({ secure_context: true, geolocation: {
-    watchPosition() { throw new Error('Blocked'); }, clearWatch() {},
-  } });
+  const throwing = create_location_tracker({
+    secure_context: true,
+    geolocation: {
+      watchPosition() {
+        throw new Error('Blocked');
+      },
+      clearWatch() {},
+    },
+  });
   throwing.start();
   assert.equal(throwing.get_snapshot().status, 'error');
   assert.equal(throwing.get_snapshot().active, false);

@@ -28,7 +28,7 @@ interface Delivery {
     url?: string;
     updated_at?: string;
   };
-  cd: { state: string };
+  cd: { state: string; revision?: string };
 }
 
 function ci_label(ci: Delivery['ci']): string {
@@ -42,7 +42,7 @@ function ci_label(ci: Delivery['ci']): string {
       skipped: 'Đã bỏ qua',
       timed_out: 'Quá thời gian',
       neutral: 'Trung lập',
-      action_required: 'Cần xử lý'
+      action_required: 'Cần xử lý',
     };
     return conclusionMap[ci.conclusion ?? ''] ?? 'Chưa xác định kết quả';
   }
@@ -64,7 +64,7 @@ interface Snapshot {
 const status_names = {
   healthy: 'Hoạt động',
   unavailable: 'Chưa sẵn sàng',
-  unreachable: 'Không kết nối được'
+  unreachable: 'Không kết nối được',
 };
 
 export function MonitorDashboard() {
@@ -106,7 +106,9 @@ export function MonitorDashboard() {
           })
           .catch(() => {
             if (!controller.signal.aborted) {
-              set_error('Không cập nhật được trạng thái. Dữ liệu hiển thị là lần kiểm tra gần nhất.');
+              set_error(
+                'Không cập nhật được trạng thái. Dữ liệu hiển thị là lần kiểm tra gần nhất.',
+              );
             }
           }),
 
@@ -119,9 +121,11 @@ export function MonitorDashboard() {
           })
           .catch(() => {
             if (!controller.signal.aborted) {
-              set_journal_error('Không tải được nhật ký sự kiện. Dữ liệu hiển thị là lần tải gần nhất.');
+              set_journal_error(
+                'Không tải được nhật ký sự kiện. Dữ liệu hiển thị là lần tải gần nhất.',
+              );
             }
-          })
+          }),
       ]);
 
       pending = false;
@@ -187,15 +191,15 @@ export function MonitorDashboard() {
                       delivery_error || delivery?.ci.state === 'unknown'
                         ? 'stale'
                         : delivery?.ci.conclusion === 'success'
-                        ? 'healthy'
-                        : 'unavailable'
+                          ? 'healthy'
+                          : 'unavailable'
                     }`}
                   >
                     {delivery_error
                       ? 'Không cập nhật được'
                       : delivery
-                      ? ci_label(delivery.ci)
-                      : 'Đang kiểm tra...'}
+                        ? ci_label(delivery.ci)
+                        : 'Đang kiểm tra...'}
                   </span>
                 </td>
                 <td data-label="Chi tiết kiểm tra">
@@ -222,11 +226,29 @@ export function MonitorDashboard() {
                   <strong>CD (Triển khai liên tục)</strong>
                 </td>
                 <td data-label="Trạng thái">
-                  <span className="monitor-status stale">
-                    {delivery_error ? 'Không cập nhật được' : delivery ? 'Sẵn sàng triển khai' : 'Đang kiểm tra...'}
+                  <span
+                    className={`monitor-status ${delivery?.cd.state === 'backend_running' ? 'healthy' : 'stale'}`}
+                  >
+                    {delivery_error
+                      ? 'Không cập nhật được'
+                      : delivery
+                        ? delivery.cd.state === 'backend_running'
+                          ? 'Backend đã cập nhật'
+                          : 'Chưa có bản triển khai tự động'
+                        : 'Đang kiểm tra...'}
                   </span>
                 </td>
-                <td data-label="Chi tiết kiểm tra">Hỗ trợ Docker Compose & Nginx Reverse Proxy.</td>
+                <td data-label="Chi tiết kiểm tra">
+                  Docker trên máy nhóm; frontend được kiểm tra rồi promote lên Vercel.
+                  {delivery?.cd.revision && (
+                    <small className="monitor-service-id">
+                      Backend: {delivery.cd.revision.slice(0, 7)}
+                    </small>
+                  )}
+                  <small className="monitor-service-id">
+                    Xem workflow để xác nhận kết quả toàn bộ lần triển khai.
+                  </small>
+                </td>
               </tr>
 
               <tr>
@@ -238,18 +260,22 @@ export function MonitorDashboard() {
                     className={`monitor-status ${
                       error || !snapshot
                         ? 'stale'
-                        : snapshot.services.filter((s) => s.database).every((s) => s.status === 'healthy')
-                        ? 'healthy'
-                        : 'unavailable'
+                        : snapshot.services
+                              .filter((s) => s.database)
+                              .every((s) => s.status === 'healthy')
+                          ? 'healthy'
+                          : 'unavailable'
                     }`}
                   >
                     {error
                       ? 'Chưa cập nhật'
                       : !snapshot
-                      ? 'Đang kiểm tra...'
-                      : snapshot.services.filter((s) => s.database).every((s) => s.status === 'healthy')
-                      ? 'Đã kết nối'
-                      : 'Chưa sẵn sàng'}
+                        ? 'Đang kiểm tra...'
+                        : snapshot.services
+                              .filter((s) => s.database)
+                              .every((s) => s.status === 'healthy')
+                          ? 'Đã kết nối'
+                          : 'Chưa sẵn sàng'}
                   </span>
                 </td>
                 <td data-label="Chi tiết kiểm tra">
@@ -257,7 +283,12 @@ export function MonitorDashboard() {
                     .filter((s) => s.database)
                     .map((s) => (
                       <small className="monitor-service-id" key={s.id}>
-                        {s.database} • {error ? 'Chưa cập nhật' : s.status === 'healthy' ? 'Đã kết nối' : 'Chưa xác nhận'}
+                        {s.database} •{' '}
+                        {error
+                          ? 'Chưa cập nhật'
+                          : s.status === 'healthy'
+                            ? 'Đã kết nối'
+                            : 'Chưa xác nhận'}
                       </small>
                     ))}
                   Microsoft SQL Server • Kiểm tra qua endpoint readiness mỗi 5 giây
@@ -290,11 +321,17 @@ export function MonitorDashboard() {
                       {error ? 'Chưa cập nhật' : status_names[service.status]}
                     </span>
                   </td>
-                  <td data-label="Phản hồi">{service.latency_ms === null ? '—' : `${service.latency_ms} ms`}</td>
+                  <td data-label="Phản hồi">
+                    {service.latency_ms === null ? '—' : `${service.latency_ms} ms`}
+                  </td>
                   <td data-label="Cơ sở dữ liệu">
                     {service.database
                       ? `${service.database} • ${
-                          error ? 'Chưa cập nhật' : service.status === 'healthy' ? 'Đã kết nối' : 'Chưa xác nhận'
+                          error
+                            ? 'Chưa cập nhật'
+                            : service.status === 'healthy'
+                              ? 'Đã kết nối'
+                              : 'Chưa xác nhận'
                         }`
                       : '—'}
                   </td>
@@ -305,7 +342,8 @@ export function MonitorDashboard() {
         </div>
 
         <p className="chart-note">
-          Dịch vụ POI và Dịch thuật kiểm tra kết nối SQL Server qua cơ chế readiness. Dịch vụ Tìm đường kiểm tra engine Valhalla.
+          Dịch vụ POI và Dịch thuật kiểm tra kết nối SQL Server qua cơ chế readiness. Dịch vụ Tìm
+          đường kiểm tra engine Valhalla.
         </p>
       </section>
 
@@ -316,10 +354,12 @@ export function MonitorDashboard() {
       )}
 
       {/* Nhật ký hệ thống & Nhật ký sự kiện */}
-      {([
-        ['system', 'Nhật ký hệ thống'],
-        ['usage', 'Sự kiện sử dụng & yêu cầu']
-      ] as const).map(([key, title]) => (
+      {(
+        [
+          ['system', 'Nhật ký hệ thống'],
+          ['usage', 'Sự kiện sử dụng & yêu cầu'],
+        ] as const
+      ).map(([key, title]) => (
         <section className="panel" key={key}>
           <div className="panel-title">
             <div>
@@ -337,7 +377,9 @@ export function MonitorDashboard() {
               {journal_error ? 'Chưa có dữ liệu để hiển thị.' : 'Đang tải dữ liệu...'}
             </p>
           ) : journal[key].length === 0 ? (
-            <p className="empty-state">Chưa ghi nhận {key === 'system' ? 'nhật ký' : 'sự kiện nào'}.</p>
+            <p className="empty-state">
+              Chưa ghi nhận {key === 'system' ? 'nhật ký' : 'sự kiện nào'}.
+            </p>
           ) : (
             <div className="table-wrap">
               <table>
@@ -354,7 +396,9 @@ export function MonitorDashboard() {
                       <td>{new Date(entry.time).toLocaleString('vi-VN')}</td>
                       <td data-label="Nội dung">{entry.message}</td>
                       <td data-label="Kết quả">
-                        <span className={`monitor-status ${entry.level === 'error' ? 'unreachable' : 'healthy'}`}>
+                        <span
+                          className={`monitor-status ${entry.level === 'error' ? 'unreachable' : 'healthy'}`}
+                        >
                           {entry.status === null
                             ? 'Thông tin'
                             : `${entry.status < 400 ? 'Thành công' : 'Lỗi'} • HTTP ${entry.status}`}

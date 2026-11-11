@@ -18,7 +18,7 @@ export function create_health_router(poi_service_url: string) {
       status: 'healthy',
       service: 'api-gateway',
       uptime_seconds: Math.floor(process.uptime()),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   });
 
@@ -27,11 +27,11 @@ export function create_health_router(poi_service_url: string) {
   router.get('/health/ready', async (_req, res) => {
     try {
       const response = await fetch(`${poi_service_url}/health/ready`, {
-        signal: AbortSignal.timeout(config.timeouts.healthCheckMs)
+        signal: AbortSignal.timeout(config.timeouts.healthCheckMs),
       });
       res.status(response.ok ? 200 : 503).json({
         status: response.ok ? 'ok' : 'unavailable',
-        service: 'api-gateway'
+        service: 'api-gateway',
       });
     } catch {
       res.status(503).json({ status: 'unavailable', service: 'api-gateway' });
