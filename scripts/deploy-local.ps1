@@ -33,11 +33,11 @@ try {
   if ($LASTEXITCODE -ne 0) { throw 'Start Docker Desktop (Linux containers) before deploying.' }
   $previousFile = Join-Path $state 'release.json'
   $previous = if (Test-Path -LiteralPath $previousFile) { Get-Content -LiteralPath $previousFile -Raw | ConvertFrom-Json } else { $null }
-  Invoke-Compose @('build')
+  Invoke-Compose -Arguments @('build')
   try {
-    Invoke-Compose @('up', '-d', '--no-build', '--wait', '--wait-timeout', '240', 'web')
+    Invoke-Compose -Arguments @('up', '-d', '--no-build', '--wait', '--wait-timeout', '240', 'web')
     if ($Seed) {
-      Invoke-Compose @('run', '--rm', '--no-deps', 'migrate', 'node', '--import', 'tsx', 'services/poi-service/src/database.ts', 'seed')
+      Invoke-Compose -Arguments @('run', '--rm', '--no-deps', 'migrate', 'node', '--import', 'tsx', 'services/poi-service/src/database.ts', 'seed')
     }
     # Read the configured local HTTP port without logging any secrets.
     $portLine = Get-Content -LiteralPath $envPath | Where-Object { $_ -match '^WEB_PORT=' } | Select-Object -Last 1
@@ -45,11 +45,11 @@ try {
     node scripts/smoke.mjs "http://127.0.0.1:$webPort"
     if ($LASTEXITCODE -ne 0) { throw 'Backend smoke checks failed' }
     if ($QuickTunnel) {
-      Invoke-Compose @('--profile', 'free-tunnel', 'up', '-d', '--no-deps', 'quick-tunnel')
+      Invoke-Compose -Arguments @('--profile', 'free-tunnel', 'up', '-d', '--no-deps', 'quick-tunnel')
       for ($attempt = 0; $attempt -lt 30; $attempt++) {
         $tunnelLogs = & docker @compose logs --no-color quick-tunnel 2>&1 | Out-String
-        $matches = [regex]::Matches($tunnelLogs, 'https://[a-z0-9-]+\.trycloudflare\.com')
-        if ($matches.Count) { $PublicOrigin = $matches[$matches.Count - 1].Value; break }
+        $tunnelMatches = [regex]::Matches($tunnelLogs, 'https://[a-z0-9-]+\.trycloudflare\.com')
+        if ($tunnelMatches.Count) { $PublicOrigin = $tunnelMatches[$tunnelMatches.Count - 1].Value; break }
         Start-Sleep -Seconds 2
       }
     }
