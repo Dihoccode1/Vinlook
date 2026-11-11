@@ -2,7 +2,8 @@ import 'dotenv/config';
 
 function port(value: string | undefined, fallback: number): number {
   const result = Number(value ?? fallback);
-  if (!Number.isInteger(result) || result < 1 || result > 65535) throw new Error('Invalid port configuration');
+  if (!Number.isInteger(result) || result < 1 || result > 65535)
+    throw new Error('Invalid port configuration');
   return result;
 }
 

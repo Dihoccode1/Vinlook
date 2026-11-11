@@ -6,8 +6,11 @@ import { languages } from '../../src/modules/languages/languages.js';
 
 test('editorial catalog adds 17 unique POIs with complete supported language coverage', () => {
   assert.equal(saigon_pois.length, 17);
-  assert.equal(new Set(saigon_pois.map(poi => poi.slug)).size, 17);
-  assert.deepEqual(Object.keys(editorial_locales).sort(), languages.map(language => language.code).sort());
+  assert.equal(new Set(saigon_pois.map((poi) => poi.slug)).size, 17);
+  assert.deepEqual(
+    Object.keys(editorial_locales).sort(),
+    languages.map((language) => language.code).sort(),
+  );
   for (const poi of saigon_pois) {
     assert.ok(poi.latitude > 10.7 && poi.latitude < 10.9);
     assert.ok(poi.longitude > 106.6 && poi.longitude < 106.8);

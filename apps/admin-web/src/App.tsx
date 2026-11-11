@@ -90,18 +90,22 @@ export default function App({ on_logout, user }: AppProps) {
         q: view === 'overview' ? '' : search,
         status: view === 'overview' ? 'all' : status,
         page: String(view === 'overview' ? 1 : page),
-        limit: view === 'overview' ? '5' : '10'
+        limit: view === 'overview' ? '5' : '10',
       });
       if (category && view === 'pois') query.set('category', category);
 
-      api<{ data: Poi[]; pagination: { total: number } }>(`/pois?${query}`, { signal: controller.signal })
+      api<{ data: Poi[]; pagination: { total: number } }>(`/pois?${query}`, {
+        signal: controller.signal,
+      })
         .then((result) => {
           set_pois(result.data);
           set_total(result.pagination.total);
         })
         .catch((failure) => {
           if (!controller.signal.aborted) {
-            set_error(failure instanceof Error ? failure.message : 'Không tải được danh sách địa điểm.');
+            set_error(
+              failure instanceof Error ? failure.message : 'Không tải được danh sách địa điểm.',
+            );
           }
         })
         .finally(() => {
@@ -133,12 +137,14 @@ export default function App({ on_logout, user }: AppProps) {
       pending = true;
       try {
         const result = await api<{ data: { visitors: number; listeners: number } }>('/activity', {
-          signal: controller.signal
+          signal: controller.signal,
         });
         if (!controller.signal.aborted) {
           set_activity(result.data);
           set_samples((prev) =>
-            [...prev, { time: Date.now(), ...result.data }].filter((item) => item.time >= Date.now() - 300000)
+            [...prev, { time: Date.now(), ...result.data }].filter(
+              (item) => item.time >= Date.now() - 300000,
+            ),
           );
         }
       } catch {
@@ -175,7 +181,7 @@ export default function App({ on_logout, user }: AppProps) {
       user={user}
       currentView={view}
       onCreatePoi={() => set_editor(null)}
-      onRefresh={() => set_refresh(value => value + 1)}
+      onRefresh={() => set_refresh((value) => value + 1)}
       onViewChange={navigate}
       onLogout={logout}
       loggingOut={logging_out}
@@ -229,8 +235,16 @@ export default function App({ on_logout, user }: AppProps) {
         />
       )}
 
-      {preview_poi && <PoiNarrationDialog key={preview_poi.id} poi={preview_poi} on_close={() => set_preview_poi(null)} />}
-      {editor !== undefined && <PoiEditor poi={editor} on_close={() => set_editor(undefined)} on_saved={saved} />}
+      {preview_poi && (
+        <PoiNarrationDialog
+          key={preview_poi.id}
+          poi={preview_poi}
+          on_close={() => set_preview_poi(null)}
+        />
+      )}
+      {editor !== undefined && (
+        <PoiEditor poi={editor} on_close={() => set_editor(undefined)} on_saved={saved} />
+      )}
     </AdminLayout>
   );
 }

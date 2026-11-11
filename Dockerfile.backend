@@ -6,10 +6,20 @@ WORKDIR /app
 # Keep the npm workspace layout when resolving the shared lockfile.
 # Local dependencies, build outputs and .env files are excluded by .dockerignore.
 COPY package.json package-lock.json tsconfig.json ./
+COPY apps/admin-web/package.json ./apps/admin-web/package.json
+COPY apps/monitor-web/package.json ./apps/monitor-web/package.json
+COPY apps/user-web/package.json ./apps/user-web/package.json
+COPY services/api-gateway/package.json ./services/api-gateway/package.json
+COPY services/poi-service/package.json ./services/poi-service/package.json
+COPY services/navigation-service/package.json ./services/navigation-service/package.json
+COPY services/translation-service/package.json ./services/translation-service/package.json
+COPY packages/ui/package.json ./packages/ui/package.json
+COPY packages/server/package.json ./packages/server/package.json
+RUN npm ci --no-audit --no-fund
 COPY apps/ ./apps/
 COPY services/ ./services/
+COPY packages/ ./packages/
 COPY database/ ./database/
-RUN npm ci
 RUN mkdir -p .local-backups && chown -R node:node .local-backups
 
 FROM tools AS build
@@ -17,7 +27,7 @@ FROM tools AS build
 ARG SERVICE=api-gateway
 RUN case "$SERVICE" in api-gateway|poi-service|navigation-service|translation-service) ;; *) echo "Unsupported SERVICE"; exit 1 ;; esac \
     && npm run build --workspace="@tourism/$SERVICE" \
-    && npm prune --omit=dev
+    && npm prune --omit=dev --no-audit --no-fund
 
 FROM node:24-bookworm-slim AS runtime
 ENV NODE_ENV=production
@@ -26,6 +36,7 @@ ARG SERVICE=api-gateway
 
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/package.json ./package.json
+COPY --from=build --chown=node:node /app/packages ./packages
 # Preserve paths used by SQL migrations and narration file storage.
 COPY --from=build --chown=node:node /app/database ./database
 COPY --from=build --chown=node:node /app/services/${SERVICE}/ ./services/${SERVICE}/

@@ -14,14 +14,13 @@ export function MonitorLayout({ children }: MonitorLayoutProps) {
     <div className="monitor-layout">
       <header className="monitor-topbar">
         <div className="topbar-brand">
-          <a href="/">vinlook<span>.</span></a>
+          <a href="/">
+            vinlook<span>.</span>
+          </a>
           <span className="sub-badge">Giám sát Hệ thống (System Monitoring)</span>
         </div>
         <div className="topbar-actions">
-          <a
-            href={import.meta.env.PROD ? '/admin' : 'http://127.0.0.1:5174/'}
-            className="btn-link"
-          >
+          <a href={import.meta.env.PROD ? '/admin' : 'http://127.0.0.1:5174/'} className="btn-link">
             Quản trị Admin →
           </a>
         </div>

@@ -18,9 +18,21 @@ export interface Poi {
   image_license_url: string | null;
 }
 
-export interface PoiQuery { q: string; category?: string; page: number; limit: number }
-export interface PoiPage { data: Poi[]; pagination: { page: number; limit: number; total: number } }
-export interface PoiImageRecord { content: Buffer; content_type: string; sha256: string }
+export interface PoiQuery {
+  q: string;
+  category?: string;
+  page: number;
+  limit: number;
+}
+export interface PoiPage {
+  data: Poi[];
+  pagination: { page: number; limit: number; total: number };
+}
+export interface PoiImageRecord {
+  content: Buffer;
+  content_type: string;
+  sha256: string;
+}
 export interface PoiRepository {
   list(query: PoiQuery): Promise<PoiPage>;
   find(id: string): Promise<Poi | undefined>;
@@ -39,7 +51,8 @@ export const poi_repository: PoiRepository = {
   async list(query) {
     const pool = await get_pool();
     const escaped = query.q.replace(/[~%_\[]/g, '~$&');
-    const result = await pool.request()
+    const result = await pool
+      .request()
       .input('search', sql.NVarChar(404), query.q ? `%${escaped}%` : '')
       .input('category', sql.NVarChar(50), query.category ?? null)
       .input('offset', sql.Int, (query.page - 1) * query.limit)
@@ -49,18 +62,26 @@ export const poi_repository: PoiRepository = {
     const sets = result.recordsets as sql.IRecordSet<unknown>[];
     return {
       data: sets[0] as unknown as Poi[],
-      pagination: { page: query.page, limit: query.limit, total: (sets[1][0] as { total: number }).total },
+      pagination: {
+        page: query.page,
+        limit: query.limit,
+        total: (sets[1][0] as { total: number }).total,
+      },
     };
   },
   async find(id) {
     const pool = await get_pool();
-    const result = await pool.request().input('id', sql.VarChar(36), id)
+    const result = await pool
+      .request()
+      .input('id', sql.VarChar(36), id)
       .query<Poi>(`SELECT ${columns} FROM dbo.pois WHERE id = @id AND is_published = 1`);
     return result.recordset[0];
   },
   async ready() {
     const pool = await get_pool();
-    await pool.request().query('SELECT TOP (0) p.id FROM dbo.pois p LEFT JOIN dbo.poi_images i ON i.poi_id = p.id');
+    await pool
+      .request()
+      .query('SELECT TOP (0) p.id FROM dbo.pois p LEFT JOIN dbo.poi_images i ON i.poi_id = p.id');
   },
   async find_image(id) {
     const pool = await get_pool();

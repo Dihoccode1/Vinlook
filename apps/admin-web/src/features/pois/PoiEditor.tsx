@@ -28,7 +28,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
   id: 'Bahasa Indonesia',
   ms: 'Bahasa Melayu',
   ar: 'العربية',
-  hi: 'हिन्दी'
+  hi: 'हिन्दी',
 };
 
 /**
@@ -66,7 +66,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
     is_published: poi?.is_published ?? false,
     image_credit: poi?.image_credit ?? '',
     image_source_url: poi?.image_source_url ?? '',
-    image_license_url: poi?.image_license_url ?? ''
+    image_license_url: poi?.image_license_url ?? '',
   });
 
   const [file, set_file] = useState<File | null>(null);
@@ -91,10 +91,13 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
     return () => window.clearTimeout(timer);
   }, [address_revision]);
 
-  useEffect(() => () => {
-    lookup_version.current++;
-    queued_lookup.current = false;
-  }, []);
+  useEffect(
+    () => () => {
+      lookup_version.current++;
+      queued_lookup.current = false;
+    },
+    [],
+  );
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -108,7 +111,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
     const update_viewport = () => {
       const layout_height = Math.min(
         window.innerHeight,
-        document.documentElement.clientHeight || window.innerHeight
+        document.documentElement.clientHeight || window.innerHeight,
       );
       const visible_height = Math.min(viewport?.height ?? layout_height, layout_height);
       element?.style.setProperty('--editor-visible-height', `${visible_height}px`);
@@ -154,7 +157,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
     set_form((previous) => ({
       ...previous,
       latitude: String(match.latitude),
-      longitude: String(match.longitude)
+      longitude: String(match.longitude),
     }));
     set_matches([]);
     set_location_note(`Đã chọn tọa độ: ${match.label}`);
@@ -186,7 +189,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
 
     try {
       const response = await api<{ data: AddressMatch[] }>(
-        `/geocode?address=${encodeURIComponent(address)}`
+        `/geocode?address=${encodeURIComponent(address)}`,
       );
       if (lookup_version.current !== version) return;
 
@@ -228,7 +231,14 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
 
     const lat = Number(form.latitude);
     const lng = Number(form.longitude);
-    if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) {
+    if (
+      !Number.isFinite(lat) ||
+      lat < -90 ||
+      lat > 90 ||
+      !Number.isFinite(lng) ||
+      lng < -180 ||
+      lng > 180
+    ) {
       set_error('Tọa độ không hợp lệ. Vĩ độ phải từ -90 đến 90, kinh độ từ -180 đến 180.');
       return;
     }
@@ -249,7 +259,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
         longitude: lng,
         image_credit: form.image_credit.trim() || null,
         image_source_url: form.image_source_url.trim() || null,
-        image_license_url: form.image_license_url.trim() || null
+        image_license_url: form.image_license_url.trim() || null,
       };
 
       const path = poi ? `/pois/${encodeURIComponent(poi.id)}` : '/pois';
@@ -257,7 +267,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
       const result = await api<{ data: Poi }>(path, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       // Tải ảnh lên nếu có chọn file mới
@@ -265,12 +275,14 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
         const formData = new FormData();
         formData.append('image', file);
         formData.append('image_credit', form.image_credit.trim());
-        if (form.image_source_url.trim()) formData.append('image_source_url', form.image_source_url.trim());
-        if (form.image_license_url.trim()) formData.append('image_license_url', form.image_license_url.trim());
+        if (form.image_source_url.trim())
+          formData.append('image_source_url', form.image_source_url.trim());
+        if (form.image_license_url.trim())
+          formData.append('image_license_url', form.image_license_url.trim());
 
         await api(`/pois/${encodeURIComponent(result.data.id)}/image`, {
           method: 'POST',
-          body: formData
+          body: formData,
         });
       }
 
@@ -287,10 +299,18 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
       <form onSubmit={save}>
         <header className="editor-header">
           <div>
-            <h2 id="editor-title">{poi ? 'Chỉnh sửa điểm tham quan' : 'Thêm điểm tham quan mới'}</h2>
+            <h2 id="editor-title">
+              {poi ? 'Chỉnh sửa điểm tham quan' : 'Thêm điểm tham quan mới'}
+            </h2>
             <p>Cập nhật thông tin, hình ảnh và nội dung thuyết minh.</p>
           </div>
-          <button className="icon-button" type="button" aria-label="Đóng cửa sổ" disabled={saving} onClick={on_close}>
+          <button
+            className="icon-button"
+            type="button"
+            aria-label="Đóng cửa sổ"
+            disabled={saving}
+            onClick={on_close}
+          >
             ✕
           </button>
         </header>
@@ -313,7 +333,10 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
                     set_form((previous) => ({
                       ...previous,
                       name,
-                      slug: !poi && (!previous.slug || previous.slug === slugify(previous.name)) ? slugify(name) : previous.slug
+                      slug:
+                        !poi && (!previous.slug || previous.slug === slugify(previous.name))
+                          ? slugify(name)
+                          : previous.slug,
                     }));
                   }}
                   placeholder="Ví dụ: Chợ Bến Thành"
@@ -336,7 +359,10 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
             <div className="form-grid">
               <label>
                 Danh mục
-                <select value={form.category} onChange={(event) => set('category', event.target.value)}>
+                <select
+                  value={form.category}
+                  onChange={(event) => set('category', event.target.value)}
+                >
                   {Object.entries(categories).map(([key, label]) => (
                     <option key={key} value={key}>
                       {label}
@@ -347,7 +373,10 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
 
               <label>
                 Ngôn ngữ gốc của kịch bản
-                <select value={form.source_language} onChange={(event) => set('source_language', event.target.value)}>
+                <select
+                  value={form.source_language}
+                  onChange={(event) => set('source_language', event.target.value)}
+                >
                   {Object.entries(LANGUAGE_NAMES).map(([key, label]) => (
                     <option key={key} value={key}>
                       {label}
@@ -367,7 +396,9 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
                   const address = event.target.value;
                   set_address_revision((v) => v + 1);
                   set_matches([]);
-                  set_location_note('Dừng nhập khoảng 1.2 giây để hệ thống tự động tìm tọa độ mới.');
+                  set_location_note(
+                    'Dừng nhập khoảng 1.2 giây để hệ thống tự động tìm tọa độ mới.',
+                  );
                   set_form((previous) => ({ ...previous, address, latitude: '', longitude: '' }));
                 }}
                 placeholder="Số nhà, tên đường, phường/xã, quận/huyện, TP. Hồ Chí Minh"
@@ -375,7 +406,8 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
             </label>
 
             <p className="field-note" role="status">
-              {location_note || 'Tọa độ địa lý sẽ được điền tự động; bạn vẫn có thể chỉnh sửa thủ công bên dưới.'}
+              {location_note ||
+                'Tọa độ địa lý sẽ được điền tự động; bạn vẫn có thể chỉnh sửa thủ công bên dưới.'}
             </p>
 
             {matches.length > 0 && (
@@ -392,7 +424,10 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
             )}
 
             <p className="field-note">
-              Dữ liệu tra cứu: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>
+              Dữ liệu tra cứu:{' '}
+              <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
+                © OpenStreetMap contributors
+              </a>
             </p>
 
             <div className="form-grid">
@@ -439,7 +474,9 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
                 placeholder="Giới thiệu tóm tắt điểm nổi bật, giờ mở cửa, lưu ý khi tham quan..."
               />
             </label>
-            <p className="field-note">Nội dung này hiển thị trực tiếp trên thẻ POI của du khách, tách biệt với file audio.</p>
+            <p className="field-note">
+              Nội dung này hiển thị trực tiếp trên thẻ POI của du khách, tách biệt với file audio.
+            </p>
 
             <label>
               Kịch bản thuyết minh gốc (Dùng làm tư liệu dịch và tạo audio)
@@ -477,8 +514,14 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(event) => {
                   const next = event.target.files?.[0];
-                  if (next && (!['image/jpeg', 'image/png', 'image/webp'].includes(next.type) || next.size > 5242880)) {
-                    set_error('Vui lòng chọn ảnh định dạng JPG, PNG hoặc WebP có dung lượng dưới 5 MB.');
+                  if (
+                    next &&
+                    (!['image/jpeg', 'image/png', 'image/webp'].includes(next.type) ||
+                      next.size > 5242880)
+                  ) {
+                    set_error(
+                      'Vui lòng chọn ảnh định dạng JPG, PNG hoặc WebP có dung lượng dưới 5 MB.',
+                    );
                     event.target.value = '';
                     return;
                   }
@@ -487,7 +530,9 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
                 }}
               />
             </label>
-            <p className="field-note">Định dạng JPG, PNG hoặc WebP • Tối đa 5 MB • Lưu trữ an toàn trong cơ sở dữ liệu.</p>
+            <p className="field-note">
+              Định dạng JPG, PNG hoặc WebP • Tối đa 5 MB • Lưu trữ an toàn trong cơ sở dữ liệu.
+            </p>
 
             <label>
               Tác giả / Ghi công bản quyền ảnh
@@ -549,7 +594,11 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
           <button type="button" disabled={saving} onClick={on_close}>
             Hủy bỏ
           </button>
-          <button className="primary" disabled={saving || locating || matches.length > 0} type="submit">
+          <button
+            className="primary"
+            disabled={saving || locating || matches.length > 0}
+            type="submit"
+          >
             {saving ? 'Đang lưu...' : poi ? 'Lưu thay đổi' : 'Tạo điểm tham quan'}
           </button>
         </footer>

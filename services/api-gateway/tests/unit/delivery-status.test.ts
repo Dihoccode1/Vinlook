@@ -8,11 +8,25 @@ test('CI cache expires and an unavailable GitHub does not keep reporting success
   let time = 1000;
   let calls = 0;
   const app = express();
-  app.use('/api/admin', delivery_status_routes(async () => {
-    calls++;
-    if (calls > 1) throw new Error('unavailable');
-    return Response.json({ workflow_runs: [{ status: 'completed', conclusion: 'success', html_url: 'https://github.com/Dihoccode1/Vinlook/actions/runs/123' }] });
-  }, () => time));
+  app.use(
+    '/api/admin',
+    delivery_status_routes(
+      async () => {
+        calls++;
+        if (calls > 1) throw new Error('unavailable');
+        return Response.json({
+          workflow_runs: [
+            {
+              status: 'completed',
+              conclusion: 'success',
+              html_url: 'https://github.com/Dihoccode1/Vinlook/actions/runs/123',
+            },
+          ],
+        });
+      },
+      () => time,
+    ),
+  );
   const first = await request(app).get('/api/admin/monitor/delivery').expect(200);
   assert.equal(first.body.data.ci.conclusion, 'success');
   assert.equal(first.body.data.cd.state, 'not_configured');
@@ -29,4 +43,21 @@ test('CI distinguishes a repository with no workflow runs', async () => {
   app.use(delivery_status_routes(async () => Response.json({ workflow_runs: [] })));
   const result = await request(app).get('/monitor/delivery').expect(200);
   assert.equal(result.body.data.ci.state, 'no_runs');
+});
+
+test('monitor targets main and reports backend revision without claiming frontend success', async () => {
+  const app = express();
+  app.use(
+    delivery_status_routes(
+      async (url) => {
+        assert.match(String(url), /ci-cd\.yml\/runs\?branch=main/);
+        return Response.json({ workflow_runs: [] });
+      },
+      Date.now,
+      '0123456789abcdef',
+    ),
+  );
+  const result = await request(app).get('/monitor/delivery').expect(200);
+  assert.equal(result.body.data.cd.state, 'backend_running');
+  assert.equal(result.body.data.cd.revision, '0123456789abcdef');
 });

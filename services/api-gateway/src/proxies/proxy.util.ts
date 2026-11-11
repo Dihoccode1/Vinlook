@@ -73,7 +73,7 @@ export async function forward(res: Response, options: ProxyOptions): Promise<voi
       headers: options.headers,
       body: options.body,
       signal: AbortSignal.timeout(options.timeout_ms),
-      redirect: 'error'
+      redirect: 'error',
     });
 
     res.status(upstream.status);
@@ -82,7 +82,9 @@ export async function forward(res: Response, options: ProxyOptions): Promise<voi
       return;
     }
     if (options.mode === 'audio') {
-      res.type(upstream.ok ? 'audio/wav' : 'application/json').send(Buffer.from(await upstream.arrayBuffer()));
+      res
+        .type(upstream.ok ? 'audio/wav' : 'application/json')
+        .send(Buffer.from(await upstream.arrayBuffer()));
       return;
     }
     // passthrough: đọc body trước rồi mới gắn header để tránh gửi header khi upstream đứt giữa chừng

@@ -5,7 +5,9 @@ export function https_url(value: string | null | undefined): string | null {
   try {
     const url = new URL(value);
     return url.protocol === 'https:' && !url.username && !url.password ? url.href : null;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 export function poi_image_url(value: string | null | undefined): string {

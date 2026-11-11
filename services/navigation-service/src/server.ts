@@ -1,12 +1,9 @@
 import 'dotenv/config';
+import { read_port, start_server } from '@vinlook/server/runtime';
 import { create_app } from './app.js';
 
-const port = Number(process.env.NAVIGATION_PORT ?? 4002);
-if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid NAVIGATION_PORT');
-const server = create_app().listen(port, () => console.log(`Navigation service listening on ${port}`));
-for (const signal of ['SIGINT', 'SIGTERM']) {
-  process.on(signal, () => {
-    setTimeout(() => process.exit(1), 10000).unref();
-    server.close(() => process.exit(0));
-  });
-}
+start_server({
+  app: create_app(),
+  port: read_port(process.env.NAVIGATION_PORT, 4002, 'NAVIGATION_PORT'),
+  name: 'Navigation service',
+});

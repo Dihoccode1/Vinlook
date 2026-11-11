@@ -22,7 +22,7 @@ const BLANK_FORM: UserFormData = {
   full_name: '',
   role: 'staff',
   status: 'active',
-  password: ''
+  password: '',
 };
 
 export function UserManagement({ current_user_id }: { current_user_id: string }) {
@@ -99,9 +99,9 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
             full_name: user.full_name,
             role: user.role,
             status: user.status,
-            password: ''
+            password: '',
           }
-        : BLANK_FORM
+        : BLANK_FORM,
     );
     set_confirm_password('');
     set_error('');
@@ -132,14 +132,16 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
         body: JSON.stringify({
           ...rest,
           ...(!editing ? { full_name: form.username } : {}),
-          ...(password ? { password } : {})
-        })
+          ...(password ? { password } : {}),
+        }),
       });
 
       set_editing(undefined);
       set_form(BLANK_FORM);
       set_confirm_password('');
-      set_notice('Đã lưu tài khoản thành công. Nếu thay đổi mật khẩu hoặc quyền hạn, tài khoản cần đăng nhập lại.');
+      set_notice(
+        'Đã lưu tài khoản thành công. Nếu thay đổi mật khẩu hoặc quyền hạn, tài khoản cần đăng nhập lại.',
+      );
       set_refresh((v) => v + 1);
 
       // Nếu người dùng đang chỉnh sửa chính mình và đổi mật khẩu/khóa, kết thúc session
@@ -157,7 +159,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
   }
 
   const filtered = users.filter((u) =>
-    `${u.username} ${u.full_name}`.toLocaleLowerCase('vi').includes(query.toLocaleLowerCase('vi'))
+    `${u.username} ${u.full_name}`.toLocaleLowerCase('vi').includes(query.toLocaleLowerCase('vi')),
   );
 
   function is_other_admin(user: User) {
@@ -181,16 +183,20 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status })
-        }
+          body: JSON.stringify({ status }),
+        },
       );
 
       set_users((previous) =>
         previous.map((item) =>
           item.id.toLowerCase() === result.data.id.toLowerCase()
-            ? { ...item, status: result.data.status, login_locked: result.data.status === 'active' ? false : item.login_locked }
-            : item
-        )
+            ? {
+                ...item,
+                status: result.data.status,
+                login_locked: result.data.status === 'active' ? false : item.login_locked,
+              }
+            : item,
+        ),
       );
       set_pending_status(null);
 
@@ -202,7 +208,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
       set_notice(
         status === 'disabled'
           ? `Đã khóa tài khoản ${user.username}. Các phiên đăng nhập đã bị thu hồi.`
-          : `Đã mở khóa tài khoản ${user.username}.`
+          : `Đã mở khóa tài khoản ${user.username}.`,
       );
       set_refresh((value) => value + 1);
     } catch (e) {
@@ -220,7 +226,9 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
           <strong>Staff (Nhân viên):</strong> Tổng quan, Quản lý điểm đến (POI).
         </p>
         <p>
-          <strong>Admin (Quản trị viên):</strong> Toàn bộ quyền của Staff, Giám sát hệ thống, Quản lý tài khoản. Có thể khóa và mở khóa Staff hoặc Admin khác. Không được chỉnh sửa thông tin, đổi mật khẩu hay hạ quyền Admin khác.
+          <strong>Admin (Quản trị viên):</strong> Toàn bộ quyền của Staff, Giám sát hệ thống, Quản
+          lý tài khoản. Có thể khóa và mở khóa Staff hoặc Admin khác. Không được chỉnh sửa thông
+          tin, đổi mật khẩu hay hạ quyền Admin khác.
         </p>
       </div>
 
@@ -231,17 +239,26 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
       )}
 
       {error && !modal_open && !pending_status && (
-        <div className="error-banner" role="alert">{error}</div>
+        <div className="error-banner" role="alert">
+          {error}
+        </div>
       )}
 
-      {pending_status && <AccountStatusDialog
-        user={pending_status}
-        is_self={pending_status.id.toLowerCase() === current_user_id.toLowerCase()}
-        busy={busy}
-        error={error}
-        on_cancel={() => { if (!busy) { set_pending_status(null); set_error(''); } }}
-        on_confirm={() => void change_status(pending_status)}
-      />}
+      {pending_status && (
+        <AccountStatusDialog
+          user={pending_status}
+          is_self={pending_status.id.toLowerCase() === current_user_id.toLowerCase()}
+          busy={busy}
+          error={error}
+          on_cancel={() => {
+            if (!busy) {
+              set_pending_status(null);
+              set_error('');
+            }
+          }}
+          on_confirm={() => void change_status(pending_status)}
+        />
+      )}
 
       {/* Modal tạo mới / chỉnh sửa tài khoản */}
       {modal_open && (
@@ -381,7 +398,8 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
               </div>
 
               <p className="field-note">
-                Mật khẩu được lưu an toàn và không hiển thị lại. Chỉ nhập mật khẩu mới khi cần thay đổi.
+                Mật khẩu được lưu an toàn và không hiển thị lại. Chỉ nhập mật khẩu mới khi cần thay
+                đổi.
               </p>
 
               {error && (
@@ -442,40 +460,57 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                 <tr key={u.id}>
                   <td>
                     <strong>
-                      {u.username}{u.username.toLowerCase() === 'admin' ? ' · Root' : ''}
+                      {u.username}
+                      {u.username.toLowerCase() === 'admin' ? ' · Root' : ''}
                       {u.id === current_user_id ? ' (Bạn)' : ''}
                     </strong>
                     {u.full_name !== u.username && <div>{u.full_name}</div>}
                   </td>
                   <td data-label="Quyền hạn">
-                    <span className={`role-badge ${u.role}`}>{u.role === 'admin' ? 'Admin' : 'Staff'}</span>
+                    <span className={`role-badge ${u.role}`}>
+                      {u.role === 'admin' ? 'Admin' : 'Staff'}
+                    </span>
                   </td>
                   <td data-label="Trạng thái">
                     <span className={`publish-status ${u.status === 'active' ? 'published' : ''}`}>
-                      {u.status === 'active' ? 'Hoạt động' : u.login_locked ? 'Đã khóa · Sai mật khẩu 15 lần' : 'Đã khóa'}
+                      {u.status === 'active'
+                        ? 'Hoạt động'
+                        : u.login_locked
+                          ? 'Đã khóa · Sai mật khẩu 15 lần'
+                          : 'Đã khóa'}
                     </span>
                   </td>
                   <td>
                     <div className="account-actions">
                       <button
                         disabled={busy || is_other_admin(u)}
-                        title={is_other_admin(u) ? 'Không được chỉnh sửa tài khoản Admin khác' : undefined}
+                        title={
+                          is_other_admin(u)
+                            ? 'Không được chỉnh sửa tài khoản Admin khác'
+                            : undefined
+                        }
                         onClick={() => edit(u)}
                       >
                         Chỉnh sửa
                       </button>
-                      {!(u.username.toLowerCase() === 'admin' && u.status === 'active') && <button
-                        className={u.status === 'active' ? 'account-lock' : 'account-unlock'}
-                        disabled={busy}
-                        aria-label={`${u.status === 'active' ? 'Khóa' : 'Mở khóa'} tài khoản ${u.username}`}
-                        onClick={() => { set_error(''); set_notice(''); set_pending_status(u); }}
-                      >
-                        {changing_id === u.id
-                          ? 'Đang xử lý...'
-                          : u.status === 'active'
-                          ? 'Khóa'
-                          : 'Mở khóa'}
-                      </button>}
+                      {!(u.username.toLowerCase() === 'admin' && u.status === 'active') && (
+                        <button
+                          className={u.status === 'active' ? 'account-lock' : 'account-unlock'}
+                          disabled={busy}
+                          aria-label={`${u.status === 'active' ? 'Khóa' : 'Mở khóa'} tài khoản ${u.username}`}
+                          onClick={() => {
+                            set_error('');
+                            set_notice('');
+                            set_pending_status(u);
+                          }}
+                        >
+                          {changing_id === u.id
+                            ? 'Đang xử lý...'
+                            : u.status === 'active'
+                              ? 'Khóa'
+                              : 'Mở khóa'}
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

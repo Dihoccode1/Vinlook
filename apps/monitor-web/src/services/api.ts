@@ -4,11 +4,11 @@
  */
 
 export async function fetchMonitor<T>(endpoint: string, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(`/api${endpoint}`, {
+  const response = await fetch(`/api/admin${endpoint}`, {
     signal,
     headers: {
-      'x-vinlook-admin': '1'
-    }
+      'x-vinlook-admin': '1',
+    },
   });
 
   if (!response.ok) {
