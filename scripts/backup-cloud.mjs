@@ -1,8 +1,9 @@
-/** Only ciphertext may be uploaded as a CI artifact. Keep the key outside artifacts. */
+/** Private encrypted backups stay inside Supabase Free's capped Storage quota. */
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { randomBytes, createCipheriv } from 'node:crypto';
 import { transaction, close_postgres } from '@vinlook/server/postgres';
+import { write_object } from '@vinlook/server/storage';
 
 const key = process.env.BACKUP_ENCRYPTION_KEY;
 if (!/^[a-f0-9]{64}$/i.test(key ?? ''))
@@ -30,14 +31,11 @@ try {
   const data = Buffer.concat([cipher.update(JSON.stringify(snapshot), 'utf8'), cipher.final()]);
   const output = resolve('.local-deploy/cloud-backups');
   await mkdir(output, { recursive: true });
-  await writeFile(
-    resolve(output, 'pre-deploy.enc'),
-    Buffer.concat([Buffer.from('VINLOOK1'), iv, cipher.getAuthTag(), data]),
-    { mode: 0o600 },
-  );
-  console.log(
-    'Encrypted pre-deploy database snapshot saved. Media remains in private persistent Storage.',
-  );
+  const encrypted = Buffer.concat([Buffer.from('VINLOOK1'), iv, cipher.getAuthTag(), data]);
+  await writeFile(resolve(output, 'pre-deploy.enc'), encrypted, { mode: 0o600 });
+  const path = `backups/${snapshot.dataset_id}/${Date.now()}-${process.env.GITHUB_SHA || 'manual'}.enc`;
+  await write_object(path, encrypted, 'application/octet-stream');
+  console.log('Encrypted pre-deploy snapshot verified in private Supabase Free Storage.');
 } finally {
   await close_postgres();
 }
