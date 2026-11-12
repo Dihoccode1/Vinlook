@@ -1,4 +1,5 @@
 import sql from 'mssql';
+import { postgres_auth_store } from './auth.postgres.js';
 import { password_matches, failed_login_state } from './login-policy.js';
 
 export interface AdminUser {
@@ -52,7 +53,7 @@ export async function close_auth_pool() {
   pending = undefined;
 }
 
-export const sql_auth_store: AuthStore = {
+const mssql_auth_store: AuthStore = {
   async login(username, password) {
     const tx = new sql.Transaction(await auth_pool());
     await tx.begin();
@@ -170,3 +171,6 @@ export const sql_auth_store: AuthStore = {
         SELECT user_id,N'admin-auth','info','logout',N'Đăng xuất quản trị.' FROM dbo.admin_sessions WHERE token_hash=@hash;`);
   },
 };
+export const sql_auth_store: AuthStore = process.env.DATABASE_URL
+  ? postgres_auth_store
+  : mssql_auth_store;

@@ -1,37 +1,34 @@
 name: CI and deployment
-
 on:
-  pull_request:
+  pull_request: null
   push:
-    branches: [main, TEST]
-  workflow_dispatch:
-
+    branches:
+      - main
+      - TEST
+  workflow_dispatch: null
 permissions:
   contents: read
-
 concurrency:
   group: vinlook-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 jobs:
   quality:
     name: Source checks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version: 24
           cache: npm
       - run: npm ci
       - run: npm run check
-
   sql-integration:
     name: SQL integration
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       SQLSERVER_PASSWORD: CiOnly_StrongPass123!
@@ -43,18 +40,20 @@ jobs:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
-          ACCEPT_EULA: 'Y'
+          ACCEPT_EULA: Y
           MSSQL_PID: Developer
           MSSQL_SA_PASSWORD: CiOnly_StrongPass123!
-        ports: ['1433:1433']
-        options: >-
-          --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'CiOnly_StrongPass123!' -C -Q 'SELECT 1' -b -o /dev/null"
-          --health-interval=10s --health-timeout=5s --health-retries=18 --health-start-period=30s
+        ports:
+          - 1433:1433
+        options:
+          --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'CiOnly_StrongPass123!' -C -Q
+          'SELECT 1' -b -o /dev/null" --health-interval=10s --health-timeout=5s --health-retries=18
+          --health-start-period=30s
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version: 24
           cache: npm
@@ -87,40 +86,130 @@ jobs:
             throw new Error("POI upstream did not become ready");
           '
       - run: npm run test:integration -w @tourism/api-gateway
-
   containers:
     name: Container builds
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
       VINLOOK_ENV_FILE: ${{ github.workspace }}/.env.example
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
-      - run: docker compose --env-file .env.example -f infrastructure/docker/compose.yml -f infrastructure/docker/compose.server.yml build
-
+      - run: docker compose --env-file .env.example -f infrastructure/docker/compose.yml -f
+          infrastructure/docker/compose.server.yml build
+      - run: docker build -f Dockerfile.cloud -t vinlook-cloud-ci .
   deploy:
-    name: Deploy main
-    needs: [quality, sql-integration, containers]
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.VINLOOK_DEPLOY_ENABLED == 'true'
-    runs-on: [self-hosted, Windows, X64, vinlook-deploy]
+    name: Deploy main to cloud
+    needs:
+      - quality
+      - sql-integration
+      - containers
+      - postgres-integration
+    if:
+      github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.VINLOOK_DEPLOY_ENABLED ==
+      'true' && vars.VINLOOK_DEPLOY_TARGET == 'cloud'
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     environment: production
     concurrency:
       group: vinlook-production
       cancel-in-progress: false
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Encrypted database backup before release
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          VINLOOK_DATASET_ID: ${{ vars.VINLOOK_DATASET_ID }}
+        run: node scripts/backup-cloud.mjs
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: encrypted-database-${{ github.sha }}-${{ github.run_attempt }}
+          path: .local-deploy/cloud-backups/*.enc
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+      - name: Deploy backend, verify, then promote frontend
+        env:
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VINLOOK_API_ORIGIN: ${{ vars.VINLOOK_API_ORIGIN }}
+          GH_TOKEN: ${{ github.token }}
+          RENDER_SERVICE_ID: ${{ vars.RENDER_SERVICE_ID }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: node scripts/deploy-cloud.mjs
+  postgres-integration:
+    name: PostgreSQL cloud integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://postgres:CiOnly_Postgres123@127.0.0.1:5432/vinlook_ci
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: CiOnly_Postgres123
+          POSTGRES_DB: vinlook_ci
+        ports:
+          - 5432:5432
+        options:
+          --health-cmd="pg_isready -U postgres -d vinlook_ci" --health-interval=5s --health-timeout=5s
+          --health-retries=15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run:
+          npm run build -w @tourism/api-gateway && npm run build -w @tourism/poi-service && npm run build -w
+          @tourism/navigation-service && npm run build -w @tourism/translation-service
+      - run: node --test scripts/tests/cloud.integration.mjs
+  deploy-local:
+    name: Deploy main locally
+    needs:
+      - quality
+      - sql-integration
+      - containers
+      - postgres-integration
+    if:
+      github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.VINLOOK_DEPLOY_ENABLED ==
+      'true' && vars.VINLOOK_DEPLOY_TARGET != 'cloud'
+    runs-on:
+      - self-hosted
+      - Windows
+      - X64
+      - vinlook-deploy
+    timeout-minutes: 40
+    environment: production
+    concurrency:
+      group: vinlook-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
       - name: Reject an outdated main revision
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
+        run: >
           $head = gh api "repos/$env:GITHUB_REPOSITORY/commits/main" --jq .sha
-          if ($LASTEXITCODE -ne 0 -or $head.Trim() -ne $env:GITHUB_SHA) { throw 'This revision is no longer main. Deploy the newer workflow run.' }
+
+          if ($LASTEXITCODE -ne 0 -or $head.Trim() -ne $env:GITHUB_SHA) { throw 'This revision is no longer
+          main. Deploy the newer workflow run.' }
       - run: npm ci
         shell: pwsh
       - name: Deploy backend, verify, then promote frontend
@@ -133,5 +222,6 @@ jobs:
           VINLOOK_STATE_DIR: ${{ vars.VINLOOK_STATE_DIR }}
           VINLOOK_PUBLIC_ORIGIN: ${{ vars.VINLOOK_PUBLIC_ORIGIN }}
           GH_TOKEN: ${{ github.token }}
-        run: |
-          ./scripts/deploy-local.ps1 -EnvFile $env:VINLOOK_ENV_FILE -StateDirectory $env:VINLOOK_STATE_DIR -PublicOrigin $env:VINLOOK_PUBLIC_ORIGIN -QuickTunnel:(!$env:VINLOOK_PUBLIC_ORIGIN)
+        run: >
+          ./scripts/deploy-local.ps1 -EnvFile $env:VINLOOK_ENV_FILE -StateDirectory $env:VINLOOK_STATE_DIR
+          -PublicOrigin $env:VINLOOK_PUBLIC_ORIGIN -QuickTunnel:(!$env:VINLOOK_PUBLIC_ORIGIN)

@@ -10,6 +10,9 @@ database
 **/public
 .local-backups
 .local-runner
+.local-deploy
+.vercel
+.env.cloud
 *.sql
 *.md
 *.svg

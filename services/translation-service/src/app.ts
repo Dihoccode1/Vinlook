@@ -24,7 +24,7 @@ export function create_app(
     service,
     create_tts_provider(),
     narration_repository,
-    create_narration_file_store(),
+    process.env.DATABASE_URL ? undefined : create_narration_file_store(),
   ),
 ) {
   const app = express();

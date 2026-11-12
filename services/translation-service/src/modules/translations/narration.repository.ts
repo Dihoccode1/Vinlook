@@ -1,5 +1,6 @@
 import sql from 'mssql';
 import { get_pool } from '../../config/database.js';
+import { postgres_narration_repository } from './narration.postgres.js';
 
 export interface NarrationRepository {
   find(id: string, language: string, hash: string): Promise<Buffer | undefined>;
@@ -11,7 +12,7 @@ export interface NarrationMetadata {
   bytes: number;
   created_at: string;
 }
-export const narration_repository: NarrationRepository & {
+const mssql_narration_repository: NarrationRepository & {
   metadata(id: string): Promise<NarrationMetadata[]>;
 } = {
   async metadata(id) {
@@ -50,3 +51,6 @@ export const narration_repository: NarrationRepository & {
         COMMIT TRANSACTION;`);
   },
 };
+export const narration_repository = process.env.DATABASE_URL
+  ? postgres_narration_repository
+  : mssql_narration_repository;

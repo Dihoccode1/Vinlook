@@ -125,7 +125,7 @@ export function admin_routes(
     res.json({ data: await repository.find(id.data) });
   });
   const errors: ErrorRequestHandler = (error, _req, res, _next) => {
-    const duplicate = [2601, 2627].includes(error?.number);
+    const duplicate = [2601, 2627].includes(error?.number) || error?.code === '23505';
     const invalid = ['INVALID_IMAGE', 'IMAGE_CREDIT_REQUIRED'].includes(error?.message);
     const status = duplicate
       ? 409

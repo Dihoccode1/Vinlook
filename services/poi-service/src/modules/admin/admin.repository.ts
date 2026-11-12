@@ -1,5 +1,6 @@
 import sql from 'mssql';
 import { get_pool } from '../../config/database.js';
+import { postgres_admin_repository } from './admin.postgres.js';
 import type { Poi } from '../pois/poi.repository.js';
 import { decode_admin_image, type AdminPoiInput, type AdminPoiQuery } from './admin.schema.js';
 
@@ -32,7 +33,7 @@ const to_poi = (row: DatabasePoi): AdminPoi => ({
   ...row,
   updated_at: row.updated_at.toISOString(),
 });
-export const admin_repository: AdminRepository = {
+const mssql_admin_repository: AdminRepository = {
   async next_id() {
     const pool = await get_pool();
     return (
@@ -144,3 +145,6 @@ export const admin_repository: AdminRepository = {
     }
   },
 };
+export const admin_repository = process.env.DATABASE_URL
+  ? postgres_admin_repository
+  : mssql_admin_repository;
