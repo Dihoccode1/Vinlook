@@ -1,8 +1,9 @@
 import sql from 'mssql';
 import { get_pool } from '../../config/database.js';
+import { postgres_translation_repository } from './translation.postgres.js';
 import type { Translation, TranslationRepository } from './types.js';
 
-export const translation_repository: TranslationRepository = {
+const mssql_translation_repository: TranslationRepository = {
   async find(poi_id, language, source_hash) {
     const pool = await get_pool();
     const result = await pool
@@ -46,3 +47,6 @@ export const translation_repository: TranslationRepository = {
       );
   },
 };
+export const translation_repository = process.env.DATABASE_URL
+  ? postgres_translation_repository
+  : mssql_translation_repository;

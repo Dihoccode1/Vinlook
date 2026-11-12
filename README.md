@@ -17,7 +17,7 @@ Monorepo dùng npm workspaces, React + Vite + TypeScript và Node.js + Express +
 
 Admin/Staff, quản trị tài khoản/POI, monitor, dịch và thuyết minh đã có mã triển khai. Ba frontend dùng chung Tailwind CSS v4 và component shadcn/ui trong `packages/ui`; backend dùng chung lifecycle HTTP trong `packages/server`.
 
-CI/CD cho học tập: PR chạy kiểm tra trên GitHub; push/merge `main` sau khi kiểm tra đạt sẽ cập nhật Docker/SQL Server trên máy nhóm và ba frontend trên Vercel Hobby. Xem [cấu hình, vận hành và giới hạn miễn phí](docs/deployment.md).
+CI/CD cho học tập: cấu hình cloud dùng Vercel Hobby + Render Free + Supabase Free, chạy kiểm tra và deploy FE/BE khi push/merge `main`. Xem [chuyển dữ liệu, cấu hình và giới hạn cloud](docs/cloud-deployment.md). [Cấu hình Docker/SQL Server local](docs/deployment.md) được giữ để phát triển và phục hồi.
 
 ## Chạy local trên PowerShell
 

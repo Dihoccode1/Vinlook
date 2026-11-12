@@ -12,11 +12,18 @@ test('untrusted pull requests cannot enter the production deployment job', async
   assert(!Object.hasOwn(pipeline.on, 'pull_request_target'));
   assert.match(pipeline.jobs.deploy.if, /github\.event_name != 'pull_request'/);
   assert.match(pipeline.jobs.deploy.if, /github\.ref == 'refs\/heads\/main'/);
-  assert.deepEqual(pipeline.jobs.deploy.needs.sort(), ['containers', 'quality', 'sql-integration']);
+  assert.deepEqual(pipeline.jobs.deploy.needs.sort(), [
+    'containers',
+    'postgres-integration',
+    'quality',
+    'sql-integration',
+  ]);
   assert.equal(pipeline.jobs.deploy.concurrency['cancel-in-progress'], false);
   for (const [name, job] of Object.entries(pipeline.jobs)) {
-    if (name !== 'deploy') assert.equal(job['runs-on'], 'ubuntu-latest');
+    if (name !== 'deploy-local') assert.equal(job['runs-on'], 'ubuntu-24.04');
   }
+  assert.match(pipeline.jobs.deploy.if, /VINLOOK_DEPLOY_TARGET == 'cloud'/);
+  assert.match(pipeline.jobs['deploy-local'].if, /VINLOOK_DEPLOY_TARGET != 'cloud'/);
 });
 
 test('invalid backend origins fail without replacing existing build output', () => {
