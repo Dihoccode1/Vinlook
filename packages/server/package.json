@@ -4,6 +4,14 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./postgres": {
+      "types": "./src/postgres.d.mts",
+      "default": "./src/postgres.mjs"
+    },
+    "./storage": {
+      "types": "./src/storage.d.mts",
+      "default": "./src/storage.mjs"
+    },
     "./runtime": {
       "types": "./src/runtime.d.mts",
       "default": "./src/runtime.mjs"
@@ -11,5 +19,8 @@
   },
   "scripts": {
     "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "pg": "8.23.1"
   }
 }

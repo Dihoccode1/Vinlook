@@ -1,5 +1,6 @@
 import sql from 'mssql';
 import { get_pool } from '../../config/database.js';
+import { postgres_poi_repository } from './poi.postgres.js';
 
 export interface Poi {
   id: string;
@@ -47,7 +48,7 @@ const columns = `id AS id, slug AS slug, name AS name, description AS descriptio
   image_credit AS image_credit, image_source_url AS image_source_url, image_license_url AS image_license_url`;
 const filter = `is_published = 1 AND (@search = N'' OR name LIKE @search ESCAPE N'~' OR address LIKE @search ESCAPE N'~') AND (@category IS NULL OR category = @category)`;
 
-export const poi_repository: PoiRepository = {
+const mssql_poi_repository: PoiRepository = {
   async list(query) {
     const pool = await get_pool();
     const escaped = query.q.replace(/[~%_\[]/g, '~$&');
@@ -92,3 +93,6 @@ export const poi_repository: PoiRepository = {
     return result.recordset[0];
   },
 };
+export const poi_repository = process.env.DATABASE_URL
+  ? postgres_poi_repository
+  : mssql_poi_repository;

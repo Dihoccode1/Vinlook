@@ -1,0 +1,29 @@
+FROM node:24-bookworm-slim AS build
+WORKDIR /app
+COPY package.json package-lock.json tsconfig.json ./
+COPY apps/admin-web/package.json ./apps/admin-web/package.json
+COPY apps/monitor-web/package.json ./apps/monitor-web/package.json
+COPY apps/user-web/package.json ./apps/user-web/package.json
+COPY services/api-gateway/package.json ./services/api-gateway/package.json
+COPY services/poi-service/package.json ./services/poi-service/package.json
+COPY services/navigation-service/package.json ./services/navigation-service/package.json
+COPY services/translation-service/package.json ./services/translation-service/package.json
+COPY packages/ui/package.json ./packages/ui/package.json
+COPY packages/server/package.json ./packages/server/package.json
+RUN npm ci --no-audit --no-fund
+COPY services/ ./services/
+COPY packages/ ./packages/
+RUN npm run build -w @tourism/api-gateway && npm run build -w @tourism/poi-service && npm run build -w @tourism/navigation-service && npm run build -w @tourism/translation-service
+RUN npm prune --omit=dev --no-audit --no-fund
+FROM node:24-bookworm-slim
+ENV NODE_ENV=production NODE_OPTIONS=--max-old-space-size=320
+WORKDIR /app
+COPY --from=build --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/package.json ./package.json
+COPY --from=build --chown=node:node /app/packages ./packages
+COPY --from=build --chown=node:node /app/services ./services
+COPY --chown=node:node scripts/cloud-start.mjs scripts/cloud-migrate.mjs ./scripts/
+COPY --chown=node:node database/postgres ./database/postgres
+USER node
+EXPOSE 10000
+CMD ["node","scripts/cloud-start.mjs"]

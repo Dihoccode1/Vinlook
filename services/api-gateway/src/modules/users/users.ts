@@ -3,6 +3,7 @@ import { randomBytes, scrypt } from 'node:crypto';
 import { promisify } from 'node:util';
 import sql from 'mssql';
 import { auth_pool } from '../auth/auth-store.js';
+import { postgres_user_routes } from './users.postgres.js';
 
 const derive = promisify(scrypt);
 export interface UserInput {
@@ -41,6 +42,7 @@ export function validate_user(body: unknown, creating: boolean): UserInput | und
 const public_fields =
   'id AS id, username AS username, full_name AS full_name, role AS role, status AS status, created_at AS created_at, login_locked AS login_locked';
 export function user_routes() {
+  if (process.env.DATABASE_URL) return postgres_user_routes();
   const router = Router();
   router.use((req, res, next) => {
     if (res.locals.adminUser?.role !== 'admin') {

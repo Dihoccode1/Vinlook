@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: vinlook-api
+    runtime: docker
+    plan: free
+    region: singapore
+    repo: https://github.com/Dihoccode1/Vinlook
+    branch: main
+    dockerfilePath: ./Dockerfile.cloud
+    autoDeployTrigger: off
+    healthCheckPath: /health/ready
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: VINLOOK_DATASET_ID
+        sync: false
+      - key: ADMIN_API_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: vinlook-media
+      - key: TRANSLATION_PROVIDERS
+        value: mymemory
