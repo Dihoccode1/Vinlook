@@ -129,14 +129,9 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
           VINLOOK_DATASET_ID: ${{ vars.VINLOOK_DATASET_ID }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/backup-cloud.mjs
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
-        with:
-          name: encrypted-database-${{ github.sha }}-${{ github.run_attempt }}
-          path: .local-deploy/cloud-backups/*.enc
-          include-hidden-files: true
-          retention-days: 7
-          if-no-files-found: error
       - name: Deploy backend, verify, then promote frontend
         env:
           VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}

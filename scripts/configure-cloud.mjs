@@ -104,12 +104,18 @@ function gh(args, input) {
   if (result.status !== 0) throw new Error(`GitHub configuration failed: ${args[0]} ${args[1]}`);
   return result.stdout;
 }
-for (const key of ['DATABASE_URL', 'BACKUP_ENCRYPTION_KEY', 'RENDER_API_KEY'])
+for (const key of [
+  'DATABASE_URL',
+  'BACKUP_ENCRYPTION_KEY',
+  'RENDER_API_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+])
   gh(['secret', 'set', key, '--repo', repo, '--env', 'production'], process.env[key]);
 for (const [key, value] of Object.entries({
   VINLOOK_DATASET_ID: process.env.VINLOOK_DATASET_ID,
   RENDER_SERVICE_ID: service.id,
   VINLOOK_API_ORIGIN: service.serviceDetails.url,
+  SUPABASE_URL: process.env.SUPABASE_URL,
 }))
   gh(['variable', 'set', key, '--repo', repo, '--body', value]);
 await writeFile(
