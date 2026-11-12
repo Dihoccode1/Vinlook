@@ -32,8 +32,15 @@ async function render(path, method = 'GET', body) {
     ...(body ? { body: JSON.stringify(body) } : {}),
     signal: AbortSignal.timeout(30000),
   });
-  if (!response.ok)
-    throw new Error(`Render ${method} ${path.split('?')[0]} failed (${response.status})`);
+  if (!response.ok) {
+    let detail = (await response.json().catch(() => ({}))).message || '';
+    for (const [name, value] of Object.entries(process.env))
+      if (/KEY|TOKEN|PASSWORD|DATABASE_URL/.test(name) && value?.length > 8)
+        detail = detail.replaceAll(value, '[redacted]');
+    throw new Error(
+      `Render ${method} ${path.split('?')[0]} failed (${response.status}): ${detail}`,
+    );
+  }
   return response.json();
 }
 const owner = await render('/owners/' + ownerId);
@@ -66,7 +73,6 @@ if (!service) {
     ownerId,
     repo: 'https://github.com/' + repo,
     branch: 'codex/cloud-free-supabase',
-    autoDeploy: 'no',
     autoDeployTrigger: 'off',
     envVars,
     serviceDetails: {
