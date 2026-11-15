@@ -89,11 +89,21 @@ node('scripts/smoke.mjs', [api.origin]);
 await currentMain();
 node('scripts/build-web.mjs');
 node('scripts/release-frontend.mjs');
-const publicRelease = await fetch('https://vinlook-poc-web.vercel.app/release.json', {
-  cache: 'no-store',
-  signal: AbortSignal.timeout(20000),
-});
-if (!publicRelease.ok || (await publicRelease.json()).revision !== sha)
-  throw new Error('Production frontend revision check failed');
+// The production alias can briefly serve the previous revision after promotion.
+let publicRevision;
+for (let attempt = 0; attempt < 12; attempt++) {
+  try {
+    const response = await fetch('https://vinlook-poc-web.vercel.app/release.json', {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(5000),
+    });
+    if (response.ok) publicRevision = (await response.json()).revision;
+    if (publicRevision === sha) break;
+  } catch {
+    // Wait for the public alias before running the release smoke checks.
+  }
+  if (attempt < 11) await new Promise((resolve) => setTimeout(resolve, 3000));
+}
+if (publicRevision !== sha) throw new Error('Production frontend revision check failed');
 node('scripts/smoke.mjs', ['https://vinlook-poc-web.vercel.app']);
 console.log(`Cloud FE and BE verified: ${sha}`);
