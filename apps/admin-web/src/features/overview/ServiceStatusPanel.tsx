@@ -1,4 +1,21 @@
-import type { useMonitorDashboard } from './useMonitorDashboard';
+import {
+  format_metric_number,
+  format_metric_time,
+  type RenderMetrics,
+  type useMonitorDashboard,
+} from './useMonitorDashboard';
+
+function render_status_badge(metrics: RenderMetrics | undefined): {
+  tone: 'healthy' | 'unavailable' | 'unreachable' | 'stale';
+  label: string;
+} {
+  if (!metrics) return { tone: 'stale', label: 'Đang kiểm tra...' };
+  if (metrics.status === 'ok') return { tone: 'healthy', label: 'Đang thu thập' };
+  if (metrics.status === 'unconfigured') return { tone: 'stale', label: 'Chưa cấu hình' };
+  if (metrics.status === 'empty') return { tone: 'unavailable', label: 'Chưa có số liệu' };
+  return { tone: 'unreachable', label: 'Lỗi API Render' };
+}
+
 type Props = Pick<
   ReturnType<typeof useMonitorDashboard>,
   | 'snapshot'
@@ -20,6 +37,23 @@ export function ServiceStatusPanel({
   ci_label,
   status_names,
 }: Props) {
+  const render_metrics = snapshot?.render_metrics;
+  const render_badge = render_status_badge(render_metrics);
+  const render_summary_parts: string[] = [];
+  if (render_metrics?.status === 'ok') {
+    if (typeof render_metrics.cpu_percent === 'number') {
+      render_summary_parts.push(`CPU ${format_metric_number(render_metrics.cpu_percent)}%`);
+    }
+    if (typeof render_metrics.memory_used_mib === 'number') {
+      const limit =
+        typeof render_metrics.memory_limit_mib === 'number'
+          ? ` / ${format_metric_number(render_metrics.memory_limit_mib)} MiB`
+          : '';
+      render_summary_parts.push(
+        `RAM ${format_metric_number(render_metrics.memory_used_mib)} MiB${limit}`,
+      );
+    }
+  }
   return (
     <>
       <section className="panel">
@@ -150,6 +184,30 @@ export function ServiceStatusPanel({
                       </small>
                     ))}
                   Microsoft SQL Server • Kiểm tra qua endpoint readiness mỗi 5 giây
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <strong>Tài nguyên Render (vinlook-api)</strong>
+                </td>
+                <td data-label="Trạng thái">
+                  <span className={`monitor-status ${render_badge.tone}`}>
+                    {render_badge.label}
+                  </span>
+                </td>
+                <td data-label="Chi tiết kiểm tra">
+                  {render_metrics?.status === 'ok'
+                    ? render_summary_parts.join(' • ')
+                    : (render_metrics?.message ??
+                      'Đang lấy số liệu CPU/RAM từ Render Metrics API...')}
+                  {render_metrics && (
+                    <small className="monitor-service-id">
+                      {render_metrics.updated_at
+                        ? `Cập nhật lúc ${format_metric_time(render_metrics.updated_at)}`
+                        : `Kiểm tra lúc ${format_metric_time(render_metrics.checked_at)}`}
+                    </small>
+                  )}
                 </td>
               </tr>
             </tbody>
