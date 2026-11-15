@@ -1050,6 +1050,18 @@
     margin-top: 17px;
     font-size: 11px;
   }
+  .username-availability {
+    margin: 5px 0 0;
+    min-height: 17px;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .username-availability[data-state='available'] {
+    color: #386a42;
+  }
+  .username-availability:is([data-state='taken'], [data-state='invalid']) {
+    color: #a3402d;
+  }
   .user-form-actions {
     display: flex;
     gap: 10px;

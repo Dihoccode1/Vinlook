@@ -26,6 +26,15 @@ const BLANK_FORM: UserFormData = {
   password: '',
 };
 
+const username_messages = {
+  idle: '',
+  invalid: 'Nhập từ 3 đến 100 ký tự. Dùng chữ, số, dấu chấm, gạch dưới hoặc gạch nối.',
+  checking: 'Đang kiểm tra tên tài khoản…',
+  available: 'Tên tài khoản có thể sử dụng.',
+  taken: 'Tên tài khoản đã được sử dụng hoặc dành riêng.',
+  unavailable: 'Chưa kiểm tra được tên. Hệ thống sẽ kiểm tra lại khi lưu.',
+};
+
 function is_root_account(user: Pick<User, 'username'>) {
   return user.username.toLowerCase() === 'admin';
 }
@@ -54,6 +63,9 @@ export function UserManagement({
   const [refresh, set_refresh] = useState(0);
   const [query, set_query] = useState('');
   const [confirm_password, set_confirm_password] = useState('');
+  const [username_check, set_username_check] = useState<
+    'available' | 'taken' | 'unavailable' | null
+  >(null);
   const [changing_id, set_changing_id] = useState<string | null>(null);
   const [pending_status, set_pending_status] = useState<User | null>(null);
   const [password_target, set_password_target] = useState<User | null>(null);
@@ -61,6 +73,14 @@ export function UserManagement({
   const confirm_input = useRef<HTMLInputElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const modal_open = editing !== undefined;
+  const checking_username = editing === null && /^[a-zA-Z0-9_.-]{3,100}$/.test(form.username);
+  const username_state =
+    editing !== null || !form.username
+      ? 'idle'
+      : checking_username
+        ? (username_check ?? 'checking')
+        : 'invalid';
+  const username_blocked = username_state === 'checking' || username_state === 'taken';
   const changing_own_password = password_target?.id.toLowerCase() === current_user_id.toLowerCase();
 
   // Quản lý hiển thị dialog modal cho tạo / sửa tài khoản
@@ -80,6 +100,28 @@ export function UserManagement({
       opener?.focus();
     };
   }, [modal_open]);
+
+  useEffect(() => {
+    if (!checking_username || busy) return;
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      try {
+        const result = await api<{ data: { available: boolean } }>(
+          `/users/availability?${new URLSearchParams({ username: form.username })}`,
+          { signal: controller.signal },
+        );
+        if (!controller.signal.aborted) {
+          set_username_check(result.data.available ? 'available' : 'taken');
+        }
+      } catch {
+        if (!controller.signal.aborted) set_username_check('unavailable');
+      }
+    }, 350);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [checking_username, form.username, busy]);
 
   function close_editor() {
     if (busy) return;
@@ -112,6 +154,7 @@ export function UserManagement({
   function edit(user: User | null) {
     if (user && !can_edit(user)) return;
     set_editing(user);
+    set_username_check(null);
     set_form(
       user
         ? {
@@ -133,7 +176,7 @@ export function UserManagement({
    */
   async function save(event: React.FormEvent) {
     event.preventDefault();
-    if (busy) return;
+    if (busy || username_blocked) return;
 
     if (form.password !== confirm_password) {
       set_error('Mật khẩu xác nhận không khớp. Vui lòng kiểm tra lại.');
@@ -142,6 +185,7 @@ export function UserManagement({
     }
 
     set_busy(true);
+    if (editing === null) set_username_check(null);
     set_error('');
 
     try {
@@ -315,19 +359,37 @@ export function UserManagement({
 
             <div className="user-dialog-body">
               <div className="form-grid">
-                <label>
-                  Tên tài khoản
-                  <input
-                    required
-                    pattern="[a-zA-Z0-9_.\-]{3,100}"
-                    minLength={3}
-                    maxLength={100}
-                    autoComplete="off"
-                    value={form.username}
-                    disabled={busy || !!editing}
-                    onChange={(e) => set_form({ ...form, username: e.target.value })}
-                  />
-                </label>
+                <div>
+                  <label>
+                    Tên tài khoản
+                    <input
+                      required
+                      pattern="[a-zA-Z0-9_.\-]{3,100}"
+                      minLength={3}
+                      maxLength={100}
+                      autoComplete="off"
+                      value={form.username}
+                      disabled={busy || !!editing}
+                      aria-describedby={editing === null ? 'username-availability' : undefined}
+                      aria-invalid={username_state === 'invalid' || username_state === 'taken'}
+                      onChange={(e) => {
+                        set_form({ ...form, username: e.target.value });
+                        set_username_check(null);
+                        set_error('');
+                      }}
+                    />
+                  </label>
+                  {editing === null && (
+                    <p
+                      id="username-availability"
+                      className="username-availability"
+                      data-state={username_state}
+                      role="status"
+                    >
+                      {username_messages[username_state]}
+                    </p>
+                  )}
+                </div>
 
                 {editing && (
                   <label>
@@ -432,7 +494,7 @@ export function UserManagement({
               <button type="button" disabled={busy} onClick={close_editor}>
                 Hủy bỏ
               </button>
-              <button className="primary" disabled={busy}>
+              <button className="primary" disabled={busy || username_blocked}>
                 {busy ? 'Đang lưu...' : 'Lưu tài khoản'}
               </button>
             </footer>

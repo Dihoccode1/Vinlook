@@ -35,6 +35,15 @@ test('SQL-backed account creation, roles, password reset, locking and session re
         .set('x-vinlook-admin', '1')
         .send({ username: name, password });
     await login(admin, username, 'test12345').expect(200);
+    const availability = '/api/admin/users/availability';
+    await request(app).get(availability).query({ username: staffname }).expect(401);
+    await admin.get(availability).query({ username: 'a' }).expect(400);
+    await admin
+      .get(availability)
+      .query({ username: staffname })
+      .expect(200, {
+        data: { available: true },
+      });
     const body = {
       username: staffname,
       full_name: 'Test Staff',
@@ -48,6 +57,12 @@ test('SQL-backed account creation, roles, password reset, locking and session re
       .send(body)
       .expect(201);
     staff_id = created.body.data.id;
+    await admin
+      .get(availability)
+      .query({ username: staffname.toUpperCase() })
+      .expect(200, {
+        data: { available: false },
+      });
     await admin.post('/api/admin/users').set('x-vinlook-admin', '1').send(body).expect(409);
     const listed = await admin.get('/api/admin/users').expect(200);
     assert.ok(listed.body.data.some((u: { id: string }) => u.id === staff_id));
@@ -88,6 +103,7 @@ test('SQL-backed account creation, roles, password reset, locking and session re
     await staff.get('/api/admin/pois').expect(200);
     await staff.get('/api/admin/monitor').expect(403);
     await staff.get('/api/admin/users').expect(403);
+    await staff.get(availability).query({ username: staffname }).expect(403);
     await admin
       .put(`/api/admin/users/${admin_id.toUpperCase()}`)
       .set('x-vinlook-admin', '1')
