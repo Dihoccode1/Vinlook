@@ -1,3 +1,4 @@
+import { Button } from '@vinlook/ui/button';
 import { PoiDetailPanel } from './features/poi/PoiDetailPanel';
 import { ExplorePanel } from './features/poi/ExplorePanel';
 
@@ -54,7 +55,7 @@ export default function App() {
     categories,
   } = useExplorePage();
   return (
-    <main className="app">
+    <main className="app grid grid-cols-[410px_1fr] h-[100dvh] [@media(max-width:_760px)]:grid-cols-[1fr] [@media(max-width:_760px)]:grid-rows-[52dvh_48dvh] [@media(max-width:_760px)]:h-[100dvh] [@media(max-width:_760px)]:min-h-0 [@media(max-width:_760px)]:relative [@media(max-width:_760px)]:block [@media(max-width:_760px)]:overflow-hidden">
       {show_gps_permission && (
         <LocationPermissionDialog
           on_allow={() => {
@@ -68,8 +69,11 @@ export default function App() {
         />
       )}
       <MobileSheet ref={sheet}>
-        <header className="brand">
-          <span className="brand-icon" aria-hidden="true">
+        <header className="brand flex gap-[11px] items-center">
+          <span
+            className="brand-icon grid bg-vinlook-forest text-[white] rounded-[13px] w-[43px] h-[43px] font-extrabold text-[24px] [@media(max-width:_760px)]:w-[35px] [@media(max-width:_760px)]:h-[35px] [@media(max-width:_760px)]:text-[20px]"
+            aria-hidden="true"
+          >
             V
           </span>
           <div>
@@ -79,8 +83,10 @@ export default function App() {
             <p>ĐI ĐỂ HIỂU THÊM</p>
           </div>
         </header>
-        <div className="view-tabs" role="group" aria-label="Chế độ bản đồ">
-          <button
+        <div className="view-tabs flex" role="group" aria-label="Chế độ bản đồ">
+          <Button
+            variant="custom"
+            type="submit"
             aria-pressed={view === 'explore'}
             onClick={() => {
               set_view('explore');
@@ -88,8 +94,10 @@ export default function App() {
             }}
           >
             Khám phá
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="custom"
+            type="submit"
             aria-pressed={view === 'route'}
             onClick={() => {
               set_view('route');
@@ -97,7 +105,7 @@ export default function App() {
             }}
           >
             Lộ trình{plan.stops.length > 0 ? ` · ${plan.stops.length}` : ''}
-          </button>
+          </Button>
         </div>
         {view === 'route' ? (
           <RoutePlanner
@@ -148,7 +156,7 @@ export default function App() {
           VINLOOK <span>Khởi đầu hành trình của bạn</span>
         </footer>
       </MobileSheet>
-      <section className="map-panel" aria-label="Khám phá trên bản đồ">
+      <section className="map-panel min-w-0" aria-label="Khám phá trên bản đồ">
         <PoiMap
           pois={map_pois}
           selected={selected}
@@ -163,9 +171,12 @@ export default function App() {
           profile={plan.profile}
         />
         <LocationControls {...location} on_locate={locate} />
-        <div className="map-badge">
-          <span className="live-dot" /> Thành phố Hồ Chí Minh{' '}
-          <span className="badge-country">VIỆT NAM</span>
+        <div className="map-badge absolute top-[25px] left-[25px] z-[450] flex items-center gap-[10px] bg-[#fffffff2] shadow-[0_4px_20px_#16342613] rounded-[9px] py-[14px] px-[18px] text-[11px] font-semibold [@media(max-width:_760px)]:top-[15px] [@media(max-width:_760px)]:left-[15px] [@media(max-width:_760px)]:p-[11px] [@media(max-width:_760px)]:text-[10px]">
+          <span className="live-dot h-[7px] w-[7px] rounded-[50%] bg-[#789765]" /> Thành phố Hồ Chí
+          Minh{' '}
+          <span className="badge-country text-[8px] text-[#8a9387] pl-[12px] tracking-[1px] [@media(max-width:_760px)]:hidden">
+            VIỆT NAM
+          </span>
         </div>
         {selected && (
           <PoiDetailPanel

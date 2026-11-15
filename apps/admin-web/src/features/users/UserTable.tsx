@@ -1,3 +1,6 @@
+import { Table } from '@vinlook/ui/table';
+import { Input } from '@vinlook/ui/input';
+import { Button } from '@vinlook/ui/button';
 import type { useUserManagement } from './useUserManagement';
 type Props = Pick<
   ReturnType<typeof useUserManagement>,
@@ -38,17 +41,24 @@ export function UserTable({
 }: Props) {
   return (
     <>
-      <section className="panel">
-        <div className="panel-title">
+      <section className="panel overflow-hidden">
+        <div className="panel-title justify-between">
           <h2>Danh sách tài khoản ({users.length})</h2>
-          <button className="primary" disabled={busy} onClick={() => edit(null)}>
+          <Button
+            variant="custom"
+            type="submit"
+            className="primary"
+            disabled={busy}
+            onClick={() => edit(null)}
+          >
             + Tạo tài khoản
-          </button>
+          </Button>
         </div>
 
-        <div className="filters">
-          <label className="search">
-            <input
+        <div className="filters flex items-center [@media(max-width:_760px)]:min-w-0">
+          <label className="search flex items-center gap-[8px] flex-[1] text-[#93a383]">
+            <Input
+              appearance="custom"
               type="search"
               aria-label="Tìm tài khoản"
               placeholder="Tìm tài khoản hoặc họ tên..."
@@ -56,13 +66,18 @@ export function UserTable({
               onChange={(e) => set_query(e.target.value)}
             />
           </label>
-          <button disabled={loading || busy} onClick={() => set_refresh((v) => v + 1)}>
+          <Button
+            variant="custom"
+            type="submit"
+            disabled={loading || busy}
+            onClick={() => set_refresh((v) => v + 1)}
+          >
             Làm mới
-          </button>
+          </Button>
         </div>
 
         <div className="table-wrap" aria-busy={loading}>
-          <table>
+          <Table>
             <thead>
               <tr>
                 <th>Tài khoản / Họ tên</th>
@@ -87,7 +102,9 @@ export function UserTable({
                     </span>
                   </td>
                   <td data-label="Trạng thái">
-                    <span className={`publish-status ${u.status === 'active' ? 'published' : ''}`}>
+                    <span
+                      className={`publish-status [@media(max-width:_760px)]:max-w-[100%] ${u.status === 'active' ? 'published' : ''}`}
+                    >
                       {u.status === 'active'
                         ? 'Hoạt động'
                         : u.login_locked
@@ -97,7 +114,9 @@ export function UserTable({
                   </td>
                   <td>
                     <div className="account-actions">
-                      <button
+                      <Button
+                        variant="custom"
+                        type="submit"
                         className="account-edit"
                         disabled={busy || !can_edit(u)}
                         title={
@@ -106,9 +125,10 @@ export function UserTable({
                         onClick={() => edit(u)}
                       >
                         Chỉnh sửa
-                      </button>
+                      </Button>
                       {can_edit(u) && (
-                        <button
+                        <Button
+                          variant="custom"
                           className="account-password"
                           type="button"
                           disabled={busy}
@@ -116,10 +136,12 @@ export function UserTable({
                           onClick={() => set_password_target(u)}
                         >
                           Đổi mật khẩu
-                        </button>
+                        </Button>
                       )}
                       {!(u.username.toLowerCase() === 'admin' && u.status === 'active') && (
-                        <button
+                        <Button
+                          variant="custom"
+                          type="submit"
                           className={u.status === 'active' ? 'account-lock' : 'account-unlock'}
                           disabled={busy}
                           aria-label={`${u.status === 'active' ? 'Khóa' : 'Mở khóa'} tài khoản ${u.username}`}
@@ -134,19 +156,23 @@ export function UserTable({
                             : u.status === 'active'
                               ? 'Khóa'
                               : 'Mở khóa'}
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
 
           {loading ? (
-            <p className="empty-state">Đang tải danh sách tài khoản...</p>
+            <p className="empty-state p-[25px] text-center text-[#8c9a7f]">
+              Đang tải danh sách tài khoản...
+            </p>
           ) : !filtered.length ? (
-            <p className="empty-state">Không tìm thấy tài khoản phù hợp.</p>
+            <p className="empty-state p-[25px] text-center text-[#8c9a7f]">
+              Không tìm thấy tài khoản phù hợp.
+            </p>
           ) : null}
         </div>
       </section>

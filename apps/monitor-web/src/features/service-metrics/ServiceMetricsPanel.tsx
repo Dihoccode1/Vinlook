@@ -1,3 +1,4 @@
+import { Table } from '@vinlook/ui/table';
 /**
  * @file ServiceMetricsPanel.tsx
  * @description Bảng đo lường chi tiết độ trễ và trạng thái từng Microservice (Service Metrics Feature)
@@ -24,10 +25,10 @@ export function ServiceMetricsPanel({ services }: ServiceMetricsPanelProps) {
   };
 
   return (
-    <div className="service-metrics-panel">
+    <div className="service-metrics-panel bg-[var(--card-bg)] p-[1.5rem]">
       <h2>Chi tiết từng dịch vụ</h2>
-      <div className="table-responsive">
-        <table>
+      <div className="table-responsive overflow-x-auto mt-[1rem]">
+        <Table>
           <thead>
             <tr>
               <th>Tên dịch vụ</th>
@@ -52,7 +53,7 @@ export function ServiceMetricsPanel({ services }: ServiceMetricsPanelProps) {
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       </div>
     </div>
   );

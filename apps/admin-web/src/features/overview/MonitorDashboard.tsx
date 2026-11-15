@@ -66,28 +66,33 @@ export function MonitorDashboard() {
         : 'Đang kiểm tra...';
 
   return (
-    <div className="monitor-dashboard">
+    <div className="monitor-dashboard flex flex-col">
       {error && (
-        <p className="error-banner" role="alert">
+        <p
+          className="error-banner py-[13px] px-[15px] bg-[#fff0e8] text-[#a65d40] rounded-[8px]"
+          role="alert"
+        >
           {error}
         </p>
       )}
 
-      <section className="metrics" aria-label="Giám sát trực tiếp">
+      <section className="metrics grid" aria-label="Giám sát trực tiếp">
         <article>
-          <div className="metric-label">Dịch vụ sẵn sàng</div>
+          <div className="metric-label flex justify-between items-center gap-[8px]">
+            Dịch vụ sẵn sàng
+          </div>
           <strong>{snapshot && !error ? `${healthy}/${snapshot.services.length}` : '—'}</strong>
           <p>{error ? 'Chưa cập nhật được' : 'Kiểm tra trực tiếp mỗi 5 giây'}</p>
         </article>
 
         <article>
-          <div className="metric-label">CPU</div>
+          <div className="metric-label flex justify-between items-center gap-[8px]">CPU</div>
           <strong>{cpu_value}</strong>
           <p>{cpu_note}</p>
         </article>
 
         <article>
-          <div className="metric-label">RAM</div>
+          <div className="metric-label flex justify-between items-center gap-[8px]">RAM</div>
           <strong>{ram_value}</strong>
           <p>{ram_note}</p>
         </article>
@@ -113,7 +118,10 @@ export function MonitorDashboard() {
         status_names={status_names}
       />
       {journal_error && (
-        <p className="error-banner" role="alert">
+        <p
+          className="error-banner py-[13px] px-[15px] bg-[#fff0e8] text-[#a65d40] rounded-[8px]"
+          role="alert"
+        >
           {journal_error}
         </p>
       )}

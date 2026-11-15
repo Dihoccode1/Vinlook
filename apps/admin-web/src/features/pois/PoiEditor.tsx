@@ -1,3 +1,5 @@
+import { NativeDialog } from '@vinlook/ui/dialog';
+import { Button } from '@vinlook/ui/button';
 import { PoiImageFields } from './PoiImageFields';
 import { PoiContentFields } from './PoiContentFields';
 import { PoiLocationFields } from './PoiLocationFields';
@@ -45,24 +47,25 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
     categories,
   } = usePoiForm({ poi, on_close, on_saved });
   return (
-    <dialog ref={dialog} className="editor-dialog" aria-labelledby="editor-title">
+    <NativeDialog ref={dialog} className="editor-dialog" aria-labelledby="editor-title">
       <form onSubmit={save}>
-        <header className="editor-header">
+        <header className="editor-header flex items-center justify-between">
           <div>
             <h2 id="editor-title">
               {poi ? 'Chỉnh sửa điểm tham quan' : 'Thêm điểm tham quan mới'}
             </h2>
             <p>Cập nhật thông tin, hình ảnh và nội dung thuyết minh.</p>
           </div>
-          <button
-            className="icon-button"
+          <Button
+            variant="custom"
+            className="icon-button leading-[30px]"
             type="button"
             aria-label="Đóng cửa sổ"
             disabled={saving}
             onClick={on_close}
           >
             ✕
-          </button>
+          </Button>
         </header>
 
         <div className="editor-body">
@@ -93,7 +96,7 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
             poi={poi}
           />
           {/* Tùy chọn xuất bản */}
-          <label className="publish-option">
+          <label className="publish-option items-start p-[15px] bg-[#eff4e7]">
             <input
               type="checkbox"
               checked={form.is_published}
@@ -106,25 +109,29 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
           </label>
 
           {error && (
-            <p className="error-banner" role="alert">
+            <p
+              className="error-banner py-[13px] px-[15px] bg-[#fff0e8] text-[#a65d40] rounded-[8px]"
+              role="alert"
+            >
               {error}
             </p>
           )}
         </div>
 
-        <footer className="editor-footer">
-          <button type="button" disabled={saving} onClick={on_close}>
+        <footer className="editor-footer flex justify-end [@media(max-width:_760px)]:relative [@media(max-width:_760px)]:z-[1] [@media(max-width:_760px)]:shadow-[0_-4px_12px_#153f3206]">
+          <Button variant="custom" type="button" disabled={saving} onClick={on_close}>
             Hủy bỏ
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="custom"
             className="primary"
             disabled={saving || locating || matches.length > 0}
             type="submit"
           >
             {saving ? 'Đang lưu...' : poi ? 'Lưu thay đổi' : 'Tạo điểm tham quan'}
-          </button>
+          </Button>
         </footer>
       </form>
-    </dialog>
+    </NativeDialog>
   );
 }

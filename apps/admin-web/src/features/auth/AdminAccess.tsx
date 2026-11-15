@@ -141,7 +141,7 @@ export function AdminAccess() {
   // Màn hình chờ khi đang kiểm tra session cookie
   if (checking) {
     return (
-      <div className="login-page">
+      <div className="login-page min-h-[100dvh] grid p-[28px]">
         <p role="status">Đang kiểm tra phiên đăng nhập...</p>
       </div>
     );
@@ -169,14 +169,22 @@ export function AdminAccess() {
 
   // Màn hình form đăng nhập
   return (
-    <main className="login-page">
-      <section className="login-card" aria-labelledby="login-title">
-        <a className="login-brand" href="/">
+    <main className="login-page min-h-[100dvh] grid p-[28px]">
+      <section
+        className="login-card w-[min(100%,_450px)] bg-[#fffefb] p-[40px] shadow-[0_18px_65px_#153f3210] [@media(max-width:_520px)]:py-[28px] [@media(max-width:_520px)]:px-[22px]"
+        aria-labelledby="login-title"
+      >
+        <a
+          className="login-brand text-[38px] font-bold text-vinlook-forest tracking-[-1.5px]"
+          href="/"
+        >
           vinlook<span>.</span>
         </a>
         <p className="eyebrow">KHÔNG GIAN ĐIỀU HÀNH</p>
         <h1 id="login-title">Đăng nhập quản trị</h1>
-        <p className="login-intro">Quản lý điểm đến và theo dõi hoạt động của nền tảng Vinlook.</p>
+        <p className="login-intro text-[14px] text-[#768573]">
+          Quản lý điểm đến và theo dõi hoạt động của nền tảng Vinlook.
+        </p>
 
         <form onSubmit={login} aria-busy={busy}>
           <label htmlFor="admin-username">Tài khoản</label>
@@ -193,7 +201,7 @@ export function AdminAccess() {
           />
 
           <label htmlFor="admin-password">Mật khẩu</label>
-          <div className="login-password-field">
+          <div className="login-password-field relative">
             <Input
               id="admin-password"
               type={show_password ? 'text' : 'password'}
@@ -205,7 +213,8 @@ export function AdminAccess() {
               placeholder="Nhập mật khẩu"
               disabled={busy}
             />
-            <button
+            <Button
+              variant="custom"
               type="button"
               className="login-password-toggle"
               aria-label={show_password ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
@@ -230,11 +239,14 @@ export function AdminAccess() {
                 <circle cx="12" cy="12" r="3" />
                 {show_password && <path d="m3 3 18 18" />}
               </svg>
-            </button>
+            </Button>
           </div>
 
           {error && (
-            <p className="error-banner" role="alert">
+            <p
+              className="error-banner py-[13px] px-[15px] bg-[#fff0e8] text-[#a65d40] rounded-[8px]"
+              role="alert"
+            >
               {error}
             </p>
           )}
@@ -252,7 +264,7 @@ export function AdminAccess() {
         </form>
 
         <a
-          className="login-map-link"
+          className="login-map-link inline-block mt-[24px] text-[13px] text-[#73896b]"
           href={
             import.meta.env.VITE_PUBLIC_WEB_URL ||
             (import.meta.env.PROD ? '/' : 'http://127.0.0.1:5173/')

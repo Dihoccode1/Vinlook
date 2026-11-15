@@ -1,3 +1,5 @@
+import { Button } from '@vinlook/ui/button';
+import { Input } from '@vinlook/ui/input';
 import { PoiCard } from './PoiCard';
 
 import type { useExplorePage } from '../../hooks/useExplorePage';
@@ -47,7 +49,9 @@ export function ExplorePanel({
   return (
     <>
       <section className="intro">
-        <span className="eyebrow">KHÁM PHÁ THÀNH PHỐ</span>
+        <span className="eyebrow text-[9px] tracking-[1.8px] font-bold text-vinlook-sage">
+          KHÁM PHÁ THÀNH PHỐ
+        </span>
         <h2>
           <span className="intro-desktop">
             Mỗi nơi đến,
@@ -58,10 +62,11 @@ export function ExplorePanel({
         </h2>
         <p>Tìm những điểm dừng thú vị giữa lòng Sài Gòn.</p>
       </section>
-      <label className="search-label" htmlFor="search">
+      <label className="search-label text-[11px] font-semibold mb-[10px]" htmlFor="search">
         Bạn muốn khám phá đâu?
       </label>
-      <input
+      <Input
+        appearance="custom"
         id="search"
         type="search"
         placeholder="Tìm tên hoặc địa chỉ…"
@@ -72,9 +77,11 @@ export function ExplorePanel({
           set_page(1);
         }}
       />
-      <div className="filters" aria-label="Lọc danh mục">
+      <div className="filters gap-[7px] flex-wrap" aria-label="Lọc danh mục">
         {Object.entries({ '': 'Tất cả', ...categories }).map(([value, label]) => (
-          <button
+          <Button
+            variant="custom"
+            type="submit"
             key={value}
             aria-pressed={category === value}
             className={category === value ? 'active' : ''}
@@ -84,14 +91,14 @@ export function ExplorePanel({
             }}
           >
             {label}
-          </button>
+          </Button>
         ))}
       </div>
-      <div className="list-heading">
+      <div className="list-heading items-center justify-between mb-[10px]">
         <h3>{searching ? 'Kết quả tìm kiếm' : 'Địa điểm gần bạn'}</h3>
         <span>{total} địa điểm</span>
       </div>
-      <p className="discovery-scope">
+      <p className="discovery-scope text-[10px] leading-[1.6] text-[#788b71]">
         {searching
           ? 'Tìm theo tên hoặc địa chỉ · Không giới hạn khoảng cách'
           : 'Trong bán kính 5 km · Khoảng cách đường chim bay'}
@@ -105,14 +112,16 @@ export function ExplorePanel({
         aria-busy={loading}
       >
         {loading ? (
-          <p className="state">Đang tải địa điểm…</p>
+          <p className="state py-[20px] px-[4px] text-[12px] leading-[1.9]">Đang tải địa điểm…</p>
         ) : error ? (
-          <div className="state error" role="alert">
+          <div className="state py-[20px] px-[4px] text-[12px] leading-[1.9] error" role="alert">
             <p>{error}</p>
-            <button onClick={() => set_retry((value) => value + 1)}>Thử lại</button>
+            <Button variant="custom" type="submit" onClick={() => set_retry((value) => value + 1)}>
+              Thử lại
+            </Button>
           </div>
         ) : !searching && !has_gps ? (
-          <div className="state">
+          <div className="state py-[20px] px-[4px] text-[12px] leading-[1.9]">
             <p>
               {location.status === 'locating'
                 ? 'Đang chờ vị trí GPS để tìm địa điểm trong 5 km…'
@@ -120,10 +129,12 @@ export function ExplorePanel({
                   ? 'Đang chờ GPS cập nhật. Bạn vẫn có thể tìm kiếm địa điểm bằng tên hoặc địa chỉ.'
                   : 'Cho phép vị trí để xem địa điểm trong 5 km, hoặc nhập tên/địa chỉ để tìm kiếm.'}
             </p>
-            <button onClick={locate}>Về vị trí của tôi</button>
+            <Button variant="custom" type="submit" onClick={locate}>
+              Về vị trí của tôi
+            </Button>
           </div>
         ) : visible_pois.length === 0 ? (
-          <p className="state">
+          <p className="state py-[20px] px-[4px] text-[12px] leading-[1.9]">
             {searching
               ? 'Chưa tìm thấy địa điểm phù hợp. Thử từ khóa khác nhé.'
               : 'Chưa có địa điểm phù hợp trong bán kính 5 km. Nhập tên hoặc địa chỉ để tìm xa hơn.'}
@@ -142,22 +153,29 @@ export function ExplorePanel({
         )}
       </div>
       {total > 20 && (
-        <nav className="pagination" aria-label="Phân trang">
-          <button
+        <nav
+          className="pagination items-center justify-between text-[10px] pt-[12px]"
+          aria-label="Phân trang"
+        >
+          <Button
+            variant="custom"
+            type="submit"
             disabled={current_page === 1 || loading}
             onClick={() => set_page(current_page - 1)}
           >
             Trước
-          </button>
+          </Button>
           <span>
             Trang {current_page} / {page_count}
           </span>
-          <button
+          <Button
+            variant="custom"
+            type="submit"
             disabled={current_page === page_count || loading}
             onClick={() => set_page(current_page + 1)}
           >
             Sau
-          </button>
+          </Button>
         </nav>
       )}
     </>

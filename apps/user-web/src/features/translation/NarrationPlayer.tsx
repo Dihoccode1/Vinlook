@@ -1,3 +1,4 @@
+import { Button } from '@vinlook/ui/button';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { set_listening } from '../../services/activity';
@@ -121,12 +122,14 @@ export function NarrationPlayer({
   }
   return (
     <section
-      className="narration-player"
+      className="narration-player p-[14px] my-[14px] mx-[0] shadow-[0_5px_18px_#174c3c0c]"
       aria-label="Thuyết minh địa điểm"
       aria-busy={state === 'loading'}
     >
-      <div className="narration-actions">
-        <button
+      <div className="narration-actions grid grid-cols-[minmax(0,_1.25fr)_minmax(0,_1fr)] gap-[10px] mb-[10px]">
+        <Button
+          variant="custom"
+          type="submit"
           className="narration-play"
           disabled={disabled || state === 'loading'}
           onClick={() => void play()}
@@ -138,12 +141,12 @@ export function NarrationPlayer({
               : state === 'paused'
                 ? '▶ Tiếp tục'
                 : '▶ Nghe thuyết minh'}
-        </button>
+        </Button>
         {language_control}
         {['loading', 'playing', 'paused'].includes(state) && (
-          <button className="narration-stop" onClick={stop}>
+          <Button variant="custom" type="submit" className="narration-stop" onClick={stop}>
             Dừng
-          </button>
+          </Button>
         )}
       </div>
       <small role="status">

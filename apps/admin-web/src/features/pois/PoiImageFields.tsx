@@ -1,3 +1,4 @@
+import { Input } from '@vinlook/ui/input';
 import type { usePoiForm } from './usePoiForm';
 type Props = Pick<
   ReturnType<typeof usePoiForm>,
@@ -12,7 +13,7 @@ export function PoiImageFields({ form, file, set_file, preview, set_error, set, 
         </h3>
         {(preview || poi?.image_url) && (
           <img
-            className="editor-photo"
+            className="editor-photo w-full max-h-[200px] object-cover rounded-[9px] mb-[15px]"
             src={preview || `${poi?.image_url}?v=${encodeURIComponent(poi?.updated_at ?? '')}`}
             alt="Ảnh minh họa điểm tham quan"
           />
@@ -41,13 +42,14 @@ export function PoiImageFields({ form, file, set_file, preview, set_error, set, 
             }}
           />
         </label>
-        <p className="field-note">
+        <p className="field-note text-[#a1a98f]">
           Định dạng JPG, PNG hoặc WebP • Tối đa 5 MB • Lưu trữ an toàn trong cơ sở dữ liệu.
         </p>
 
         <label>
           Tác giả / Ghi công bản quyền ảnh
-          <input
+          <Input
+            appearance="custom"
             required={!!file}
             maxLength={300}
             value={form.image_credit}
@@ -56,10 +58,11 @@ export function PoiImageFields({ form, file, set_file, preview, set_error, set, 
           />
         </label>
 
-        <div className="form-grid">
+        <div className="form-grid grid">
           <label>
             Đường dẫn nguồn ảnh gốc
-            <input
+            <Input
+              appearance="custom"
               type="url"
               maxLength={2048}
               value={form.image_source_url}
@@ -70,7 +73,8 @@ export function PoiImageFields({ form, file, set_file, preview, set_error, set, 
 
           <label>
             Đường dẫn giấy phép bản quyền
-            <input
+            <Input
+              appearance="custom"
               type="url"
               maxLength={2048}
               value={form.image_license_url}

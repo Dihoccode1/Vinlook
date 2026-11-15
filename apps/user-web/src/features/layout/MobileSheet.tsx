@@ -1,3 +1,4 @@
+import { Button } from '@vinlook/ui/button';
 import {
   forwardRef,
   useImperativeHandle,
@@ -121,13 +122,14 @@ export const MobileSheet = forwardRef<MobileSheetHandle, { children: ReactNode }
     return (
       <aside
         ref={element}
-        className={`sidebar mobile-sheet${dragging ? ' is-dragging' : ''}`}
+        className={`sidebar flex flex-col min-h-0 bg-vinlook-paper z-[500] shadow-[4px_0_24px_#1230210c] [@media(max-width:_760px)]:overflow-auto mobile-sheet${dragging ? ' is-dragging' : ''}`}
         data-sheet-state={is_expanded ? 'expanded' : 'collapsed'}
         aria-label="Khám phá và lộ trình"
       >
-        <button
+        <Button
+          variant="custom"
           type="button"
-          className="sheet-handle"
+          className="sheet-handle hidden [@media(max-width:_760px)]:flex [@media(max-width:_760px)]:relative [@media(max-width:_760px)]:flex-[0_0_44px] [@media(max-width:_760px)]:w-full [@media(max-width:_760px)]:h-[44px] [@media(max-width:_760px)]:items-center [@media(max-width:_760px)]:justify-center [@media(max-width:_760px)]:gap-[12px] [@media(max-width:_760px)]:bg-[transparent] [@media(max-width:_760px)]:text-[#778c77] [@media(max-width:_760px)]:select-none"
           aria-controls="sidebar-content"
           aria-expanded={is_expanded}
           aria-label={
@@ -152,17 +154,23 @@ export const MobileSheet = forwardRef<MobileSheetHandle, { children: ReactNode }
             }
           }}
         >
-          <span className="sheet-grip" aria-hidden="true" />
-          <span className="sheet-hint">
+          <span
+            className="sheet-grip [@media(max-width:_760px)]:absolute [@media(max-width:_760px)]:top-[7px] [@media(max-width:_760px)]:left-[50%] [@media(max-width:_760px)]:w-[42px] [@media(max-width:_760px)]:h-[4px] [@media(max-width:_760px)]:rounded-[8px] [@media(max-width:_760px)]:bg-[#b8c7b3]"
+            aria-hidden="true"
+          />
+          <span className="sheet-hint [@media(max-width:_760px)]:text-[10px] [@media(max-width:_760px)]:leading-[1.4]">
             {is_expanded ? 'Kéo xuống để xem bản đồ' : 'Kéo lên để khám phá'}
           </span>
-          <span className="sheet-chevron" aria-hidden="true">
+          <span
+            className="sheet-chevron [@media(max-width:_760px)]:absolute [@media(max-width:_760px)]:right-[22px] [@media(max-width:_760px)]:top-[11px] [@media(max-width:_760px)]:text-[22px] [@media(max-width:_760px)]:leading-[24px] [@media(max-width:_760px)]:text-[#567754]"
+            aria-hidden="true"
+          >
             {is_expanded ? '⌄' : '⌃'}
           </span>
-        </button>
+        </Button>
         <div
           id="sidebar-content"
-          className="sidebar-content"
+          className="sidebar-content flex flex-col flex-[1] min-h-0"
           onFocusCapture={(event) => {
             if (['INPUT', 'SELECT', 'TEXTAREA'].includes(event.target.tagName)) snap(expanded);
           }}

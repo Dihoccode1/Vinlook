@@ -1,3 +1,6 @@
+import { Button } from '@vinlook/ui/button';
+import { NativeSelect } from '@vinlook/ui/native-select';
+import { Input } from '@vinlook/ui/input';
 import type { usePoiForm } from './usePoiForm';
 type Props = Pick<
   ReturnType<typeof usePoiForm>,
@@ -34,7 +37,8 @@ export function PoiLocationFields({
         </h3>
         <label>
           Tên điểm tham quan
-          <input
+          <Input
+            appearance="custom"
             required
             maxLength={200}
             value={form.name}
@@ -43,21 +47,24 @@ export function PoiLocationFields({
           />
         </label>
 
-        <div className="form-grid">
+        <div className="form-grid grid">
           <label>
             Danh mục
-            <select value={form.category} onChange={(event) => set('category', event.target.value)}>
+            <NativeSelect
+              value={form.category}
+              onChange={(event) => set('category', event.target.value)}
+            >
               {Object.entries(categories).map(([key, label]) => (
                 <option key={key} value={key}>
                   {label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
 
           <label>
             Ngôn ngữ gốc của kịch bản
-            <select
+            <NativeSelect
               value={form.source_language}
               onChange={(event) => set('source_language', event.target.value)}
             >
@@ -66,13 +73,14 @@ export function PoiLocationFields({
                   {label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
         </div>
 
         <label>
           Địa chỉ thực tế
-          <input
+          <Input
+            appearance="custom"
             required
             maxLength={300}
             value={form.address}
@@ -87,35 +95,44 @@ export function PoiLocationFields({
           />
         </label>
 
-        <p className="field-note" role="status">
+        <p className="field-note text-[#a1a98f]" role="status">
           {location_note ||
             'Tọa độ địa lý sẽ được điền tự động; bạn vẫn có thể chỉnh sửa thủ công bên dưới.'}
         </p>
 
         {matches.length > 0 && (
-          <div className="geocode-matches" aria-label="Chọn vị trí phù hợp">
+          <div
+            className="geocode-matches grid gap-[7px] my-[10px] mx-[0]"
+            aria-label="Chọn vị trí phù hợp"
+          >
             {matches.map((match, index) => (
-              <button type="button" key={index} onClick={() => choose_location(match)}>
+              <Button
+                variant="custom"
+                type="button"
+                key={index}
+                onClick={() => choose_location(match)}
+              >
                 {match.label}
                 <small>
                   {match.latitude}, {match.longitude}
                 </small>
-              </button>
+              </Button>
             ))}
           </div>
         )}
 
-        <p className="field-note">
+        <p className="field-note text-[#a1a98f]">
           Dữ liệu tra cứu:{' '}
           <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
             © OpenStreetMap contributors
           </a>
         </p>
 
-        <div className="form-grid">
+        <div className="form-grid grid">
           <label>
             Vĩ độ (Latitude)
-            <input
+            <Input
+              appearance="custom"
               required
               type="number"
               min={-90}
@@ -128,7 +145,8 @@ export function PoiLocationFields({
 
           <label>
             Kinh độ (Longitude)
-            <input
+            <Input
+              appearance="custom"
               required
               type="number"
               min={-180}

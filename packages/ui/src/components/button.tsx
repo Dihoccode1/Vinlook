@@ -8,6 +8,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        custom: '',
         default: 'border border-transparent bg-primary text-primary-foreground hover:bg-primary/90',
         destructive: 'border border-transparent bg-destructive text-white hover:bg-destructive/90',
         outline: 'border border-border bg-background text-foreground hover:bg-accent',
@@ -38,7 +39,7 @@ function Button({
     <Component
       data-slot="button"
       type={asChild ? undefined : type}
-      className={cn(buttonVariants({ variant, size }), className)}
+      className={cn(variant === 'custom' ? '' : buttonVariants({ variant, size }), className)}
       {...props}
     />
   );
