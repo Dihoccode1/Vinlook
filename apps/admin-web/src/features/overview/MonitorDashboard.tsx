@@ -4,7 +4,7 @@
  * Theo dõi trực tiếp trạng thái microservices (POI, Navigation, Translation, SQL Server), CI/CD và nhật ký sự kiện.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { api } from '../../services/api';
 
 interface JournalEntry {
@@ -20,18 +20,47 @@ interface Journal {
   usage: JournalEntry[];
 }
 
+interface CiStatus {
+  state: string;
+  conclusion?: string | null;
+  url?: string;
+}
+
 interface Delivery {
   checked_at: string;
-  ci: {
-    state: string;
-    conclusion?: string | null;
-    url?: string;
-    updated_at?: string;
-  };
+  ci: CiStatus;
   cd: { state: string; revision?: string };
 }
 
-function ci_label(ci: Delivery['ci']): string {
+const workflow_url =
+  'https://github.com/Dihoccode1/Vinlook/actions/workflows/ci-cd.yml?query=branch%3Amain';
+
+async function fetch_public_ci(signal: AbortSignal): Promise<CiStatus> {
+  const response = await fetch(
+    'https://api.github.com/repos/Dihoccode1/Vinlook/actions/workflows/ci-cd.yml/runs?branch=main&per_page=1',
+    {
+      signal: AbortSignal.any([signal, AbortSignal.timeout(5000)]),
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer',
+    },
+  );
+  if (!response.ok) throw new Error('GitHub Actions unavailable');
+  const body = await response.json();
+  if (!Array.isArray(body.workflow_runs)) throw new Error('Invalid GitHub Actions response');
+  if (!body.workflow_runs.length) return { state: 'no_runs' };
+
+  const run = body.workflow_runs[0];
+  if (typeof run?.status !== 'string') throw new Error('Invalid GitHub Actions run');
+  return {
+    state: run.status,
+    conclusion: typeof run.conclusion === 'string' ? run.conclusion : null,
+    url: Number.isSafeInteger(run.id)
+      ? `https://github.com/Dihoccode1/Vinlook/actions/runs/${run.id}`
+      : undefined,
+  };
+}
+
+function ci_label(ci: CiStatus): string {
   if (ci.state === 'unknown') return 'Không kiểm tra được';
   if (ci.state === 'no_runs') return 'Chưa có lần chạy';
   if (ci.state === 'completed') {
@@ -75,6 +104,10 @@ export function MonitorDashboard() {
   const [journal_error, set_journal_error] = useState('');
   const [delivery, set_delivery] = useState<Delivery | null>(null);
   const [delivery_error, set_delivery_error] = useState(false);
+  const public_ci = useRef<{
+    next_check_at: number;
+    result?: Pick<Delivery, 'ci' | 'checked_at'>;
+  }>({ next_check_at: 0 });
 
   // Polling định kỳ mỗi 5 giây để cập nhật trạng thái hệ thống
   useEffect(() => {
@@ -87,9 +120,19 @@ export function MonitorDashboard() {
 
       await Promise.allSettled([
         api<{ data: Delivery }>('/monitor/delivery', { signal: controller.signal })
-          .then((result) => {
+          .then(async ({ data }) => {
+            if (data.ci.state === 'unknown' && !controller.signal.aborted) {
+              const fallback = public_ci.current;
+              if (Date.now() >= fallback.next_check_at) {
+                const ci = await fetch_public_ci(controller.signal).catch(() => undefined);
+                if (controller.signal.aborted) return;
+                fallback.next_check_at = Date.now() + 120_000;
+                fallback.result = ci ? { ci, checked_at: new Date().toISOString() } : undefined;
+              }
+              if (fallback.result) data = { ...data, ...fallback.result };
+            }
             if (!controller.signal.aborted) {
-              set_delivery(result.data);
+              set_delivery(data);
               set_delivery_error(false);
             }
           })
@@ -203,16 +246,9 @@ export function MonitorDashboard() {
                   </span>
                 </td>
                 <td data-label="Chi tiết kiểm tra">
-                  GitHub Actions CI Pipeline
-                  {delivery?.ci.url && (
-                    <>
-                      {' '}
-                      •{' '}
-                      <a href={delivery.ci.url} target="_blank" rel="noreferrer">
-                        Xem lần chạy ↗
-                      </a>
-                    </>
-                  )}
+                  <a href={delivery?.ci.url ?? workflow_url} target="_blank" rel="noreferrer">
+                    {delivery?.ci.url ? 'Xem lần chạy trên GitHub ↗' : 'Mở GitHub Actions ↗'}
+                  </a>
                   {delivery && (
                     <small className="monitor-service-id">
                       Kiểm tra lúc {new Date(delivery.checked_at).toLocaleTimeString('vi-VN')}
