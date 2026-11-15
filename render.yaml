@@ -24,3 +24,5 @@ services:
         value: vinlook-media
       - key: TRANSLATION_PROVIDERS
         value: mymemory
+      - key: RENDER_API_KEY
+        sync: false

@@ -927,6 +927,24 @@
     font-size: 12px;
     line-height: 1.8;
   }
+  .admin-app .monitor-resource-notice {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 15px;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+  .admin-app .monitor-resource-notice.info {
+    background: #f5f7f1;
+    border-color: #d6dfd0;
+    color: #4b5842;
+  }
+  .admin-app .monitor-resource-notice.error {
+    background: #fbe7e4;
+    border-color: #e9b9b2;
+    color: #a53f32;
+  }
   .admin-app button:not(.workspace-nav button):hover:not(:disabled) {
     filter: brightness(0.98);
   }
@@ -1897,6 +1915,29 @@
     }
     .overview-metric-label {
       font-size: 10px;
+    }
+    .admin-app .monitor-dashboard .metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .admin-app .monitor-dashboard .metrics article:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+    .admin-app .monitor-dashboard .metrics strong {
+      font-size: clamp(22px, 5.2vw, 28px);
+      overflow-wrap: anywhere;
+    }
+    .admin-app .monitor-dashboard .metrics small {
+      overflow-wrap: anywhere;
+    }
+    .admin-app .monitor-resource-notice {
+      padding: 10px 12px;
+      font-size: 11px;
+    }
+  }
+  @media (max-width: 520px) {
+    .admin-app .monitor-dashboard .metrics {
+      grid-template-columns: 1fr;
     }
   }
 }
