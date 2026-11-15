@@ -6,6 +6,7 @@ interface AdminLayoutProps {
   currentView: AdminViewTab;
   onViewChange: (view: AdminViewTab) => void;
   onLogout: () => void;
+  on_change_password: () => void;
   loggingOut?: boolean;
   toast?: string;
   onClearToast?: () => void;
@@ -50,6 +51,7 @@ export function AdminLayout({
   currentView,
   onViewChange,
   onLogout,
+  on_change_password,
   loggingOut = false,
   toast,
   onClearToast,
@@ -77,9 +79,22 @@ export function AdminLayout({
         <strong>Xin chào, {user.username}</strong>
         <span>Quyền hạn: {user.role === 'admin' ? 'Admin' : 'Staff'}</span>
       </div>
-      <button className="workspace-logout" onClick={onLogout} disabled={loggingOut}>
-        {loggingOut ? 'Đang thoát…' : 'Đăng xuất'}
-      </button>
+      <div className="workspace-account-actions">
+        <button
+          type="button"
+          className="workspace-password-button"
+          aria-label="Đổi mật khẩu"
+          title="Đổi mật khẩu"
+          onClick={on_change_password}
+          disabled={loggingOut}
+        >
+          <Icon kind="key" size={16} />
+          <span>Đổi mật khẩu</span>
+        </button>
+        <button type="button" className="workspace-logout" onClick={onLogout} disabled={loggingOut}>
+          {loggingOut ? 'Đang thoát…' : 'Đăng xuất'}
+        </button>
+      </div>
     </>
   );
   return (
@@ -182,6 +197,7 @@ export function AdminLayout({
         </main>
       </div>
       <button
+        type="button"
         className="workspace-back-top"
         aria-label="Về đầu trang"
         title="Về đầu trang"
@@ -191,19 +207,7 @@ export function AdminLayout({
           )
         }
       >
-        <svg
-          width="21"
-          height="21"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M12 20V5m-7 7 7-7 7 7M5 3h14" />
-        </svg>
+        <Icon kind="arrow-up" size={22} />
       </button>
     </div>
   );

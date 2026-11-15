@@ -253,15 +253,37 @@
     font-size: 10px;
     color: var(--muted);
   }
-  .workspace-logout {
+  .workspace-account-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-inline-start: 6px;
+  }
+  .workspace-account-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     border: 1px solid #dce4d7;
-    border-radius: 7px;
+    border-radius: 8px;
     padding: 8px 11px;
     background: #fff;
     color: #566c53;
-    font-size: 10px;
-    margin-left: 6px;
-    flex-shrink: 0;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .workspace-account-actions .workspace-password-button {
+    border-color: #d5e2cf;
+    background: #edf4e9;
+    color: #254c38;
+    font-weight: 600;
+  }
+  .workspace-account-actions .workspace-password-button:hover:not(:disabled) {
+    background: #e3eedf;
+  }
+  .password-current-field {
+    grid-column: 1 / -1;
   }
   .workspace-mobile-account {
     display: none;
@@ -772,13 +794,22 @@
     z-index: 30;
     display: grid;
     place-items: center;
-    height: 40px;
-    width: 40px;
+    height: 48px;
+    width: 48px;
+    padding: 0;
     border-radius: 50%;
-    border: 1px solid #ffffff65;
-    background: #194c3b;
-    color: white;
-    box-shadow: 0 5px 15px #193f3325;
+    border: 2px solid #f5f7f3;
+    background: var(--forest);
+    color: #fff;
+    box-shadow:
+      0 0 0 1px #809d8a,
+      0 4px 12px #193f3329;
+  }
+  .workspace-back-top:hover {
+    background: #28644d;
+  }
+  .workspace-back-top svg {
+    stroke-width: 2;
   }
   .workspace-toast {
     display: flex;
@@ -818,13 +849,30 @@
     margin: 0;
   }
   .admin-app .account-actions {
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: min(100%, 270px);
+    margin-inline: auto;
     gap: 7px;
   }
   .admin-app .account-actions button {
     font-size: 10px;
-    padding: 7px 10px;
+    padding: 7px 5px;
     min-height: 33px;
+    white-space: normal;
+    overflow-wrap: normal;
+  }
+  .account-actions .account-edit {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .account-actions .account-password {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .account-actions :is(.account-lock, .account-unlock) {
+    grid-column: 3;
+    grid-row: 1;
   }
   .admin-app .notice-banner {
     padding: 14px 18px;
@@ -1253,14 +1301,28 @@
       font-size: 9px;
       color: #a9bfa7;
     }
-    .workspace-mobile-account .workspace-logout {
+    .workspace-mobile-account .workspace-account-actions {
+      margin-inline-start: 0;
+    }
+    .workspace-mobile-account .workspace-account-actions button {
       font-size: 9px;
       padding: 7px 9px;
       border-color: #ffffff25;
       background: #ffffff0a;
       color: #e4eddf;
-      min-height: 32px;
-      margin-left: 3px;
+    }
+    .workspace-mobile-account .workspace-account-actions .workspace-password-button {
+      width: 36px;
+      padding: 0;
+      background: #ffffff12;
+    }
+    .workspace-mobile-account
+      .workspace-account-actions
+      .workspace-password-button:hover:not(:disabled) {
+      background: #ffffff22;
+    }
+    .workspace-mobile-account .workspace-password-button span {
+      display: none;
     }
     .workspace-nav-caption,
     .workspace-sidebar-bottom,
@@ -1467,8 +1529,7 @@
       height: 48px;
       width: 51px;
     }
-    .admin-app .poi-actions,
-    .admin-app .account-actions {
+    .admin-app .poi-actions {
       justify-content: flex-start;
       gap: 8px;
     }
@@ -1528,10 +1589,10 @@
       font-size: 8px;
     }
     .workspace-back-top {
-      right: 17px;
-      bottom: 17px;
-      height: 36px;
-      width: 36px;
+      right: calc(16px + env(safe-area-inset-right, 0px));
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      height: 44px;
+      width: 44px;
     }
     .workspace-toast {
       font-size: 11px;
@@ -1567,6 +1628,10 @@
     .user-form-actions > button {
       flex: 1;
       min-height: 43px;
+    }
+    .account-edit-actions > button {
+      min-width: 0;
+      padding-inline: 8px;
     }
     .admin-app dialog h2 {
       font-size: 21px;
@@ -1656,9 +1721,6 @@
       font-size: 12px;
     }
     .workspace-greeting > span {
-      font-size: 11px;
-    }
-    .workspace-logout {
       font-size: 11px;
     }
     .workspace-page-heading p {

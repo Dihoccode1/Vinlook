@@ -8,6 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { api } from '../../services/api';
 import type { User } from '../../types';
 import { AccountStatusDialog } from './AccountStatusDialog';
+import { PasswordChangeDialog } from './PasswordChangeDialog';
 
 interface UserFormData {
   username: string;
@@ -25,7 +26,15 @@ const BLANK_FORM: UserFormData = {
   password: '',
 };
 
-export function UserManagement({ current_user_id }: { current_user_id: string }) {
+export function UserManagement({
+  current_user,
+  on_password_changed,
+}: {
+  current_user: Pick<User, 'id' | 'username'>;
+  on_password_changed: () => void;
+}) {
+  const current_user_id = current_user.id;
+  const is_root = current_user.username.toLowerCase() === 'admin';
   const [users, set_users] = useState<User[]>([]);
   const [loading, set_loading] = useState(true);
   const [error, set_error] = useState('');
@@ -38,10 +47,12 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
   const [confirm_password, set_confirm_password] = useState('');
   const [changing_id, set_changing_id] = useState<string | null>(null);
   const [pending_status, set_pending_status] = useState<User | null>(null);
+  const [password_target, set_password_target] = useState<User | null>(null);
 
   const confirm_input = useRef<HTMLInputElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const modal_open = editing !== undefined;
+  const changing_own_password = password_target?.id.toLowerCase() === current_user_id.toLowerCase();
 
   // Quản lý hiển thị dialog modal cho tạo / sửa tài khoản
   useEffect(() => {
@@ -90,7 +101,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
   }, [refresh]);
 
   function edit(user: User | null) {
-    if (user && is_other_admin(user)) return;
+    if (user && !can_edit(user)) return;
     set_editing(user);
     set_form(
       user
@@ -139,15 +150,13 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
       set_editing(undefined);
       set_form(BLANK_FORM);
       set_confirm_password('');
-      set_notice(
-        'Đã lưu tài khoản thành công. Nếu thay đổi mật khẩu hoặc quyền hạn, tài khoản cần đăng nhập lại.',
-      );
+      set_notice('Đã lưu tài khoản thành công.');
       set_refresh((v) => v + 1);
 
-      // Nếu người dùng đang chỉnh sửa chính mình và đổi mật khẩu/khóa, kết thúc session
+      // Khóa tài khoản đang đăng nhập sẽ kết thúc phiên.
       if (
         editing?.id.toLowerCase() === current_user_id.toLowerCase() &&
-        (password || form.status === 'disabled')
+        form.status === 'disabled'
       ) {
         window.dispatchEvent(new Event('admin-session-expired'));
       }
@@ -162,8 +171,10 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
     `${u.username} ${u.full_name}`.toLocaleLowerCase('vi').includes(query.toLocaleLowerCase('vi')),
   );
 
-  function is_other_admin(user: User) {
-    return user.role === 'admin' && user.id.toLowerCase() !== current_user_id.toLowerCase();
+  function can_edit(user: User) {
+    return (
+      is_root || user.role === 'staff' || user.id.toLowerCase() === current_user_id.toLowerCase()
+    );
   }
 
   /**
@@ -227,12 +238,15 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
         </p>
         <p>
           <strong>Admin (Quản trị viên):</strong> Toàn bộ quyền của Staff, Giám sát hệ thống, Quản
-          lý tài khoản. Có thể khóa và mở khóa Staff hoặc Admin khác. Không được chỉnh sửa thông
-          tin, đổi mật khẩu hay hạ quyền Admin khác.
+          lý tài khoản. Có thể chỉnh sửa Staff và khóa hoặc mở khóa các tài khoản khác.
+        </p>
+        <p>
+          <strong>Root:</strong> Có thể chỉnh sửa, đổi mật khẩu, phân quyền và khóa hoặc mở khóa cả
+          Admin lẫn Staff.
         </p>
       </div>
 
-      {notice && (
+      {notice && !modal_open && (
         <div className="notice-banner" role="status">
           {notice}
         </div>
@@ -319,12 +333,7 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                   Quyền hạn
                   <select
                     value={form.role}
-                    disabled={
-                      busy ||
-                      (!!editing &&
-                        (editing.id.toLowerCase() === current_user_id.toLowerCase() ||
-                          editing.role === 'admin'))
-                    }
+                    disabled={busy || editing?.id.toLowerCase() === current_user_id.toLowerCase()}
                     onChange={(e) => set_form({ ...form, role: e.target.value as User['role'] })}
                   >
                     <option value="staff">Staff (Nhân viên)</option>
@@ -332,28 +341,28 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                   </select>
                 </label>
 
-                <div className="password-pair form-grid">
-                  <label>
-                    {editing ? 'Mật khẩu mới (để trống nếu giữ nguyên)' : 'Mật khẩu'}
-                    <input
-                      type="password"
-                      autoComplete="new-password"
-                      required={!editing}
-                      minLength={5}
-                      maxLength={200}
-                      value={form.password}
-                      disabled={busy}
-                      onChange={(e) => {
-                        set_form({ ...form, password: e.target.value });
-                        set_confirm_password('');
-                        set_error('');
-                      }}
-                    />
-                  </label>
-
-                  {(!editing || form.password) && (
+                {!editing && (
+                  <div className="password-pair form-grid">
                     <label>
-                      {editing ? 'Xác nhận mật khẩu mới' : 'Xác nhận mật khẩu'}
+                      Mật khẩu
+                      <input
+                        type="password"
+                        autoComplete="new-password"
+                        required
+                        minLength={5}
+                        maxLength={200}
+                        value={form.password}
+                        disabled={busy}
+                        onChange={(e) => {
+                          set_form({ ...form, password: e.target.value });
+                          set_confirm_password('');
+                          set_error('');
+                        }}
+                      />
+                    </label>
+
+                    <label>
+                      Xác nhận mật khẩu
                       <input
                         ref={confirm_input}
                         type="password"
@@ -369,8 +378,8 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                         }}
                       />
                     </label>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <label>
                   Trạng thái
@@ -382,34 +391,31 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                     }
                   >
                     <option value="active">Đang hoạt động</option>
-                    <option
-                      value="disabled"
-                      disabled={
-                        !!editing &&
-                        editing.role === 'admin' &&
-                        editing.id.toLowerCase() !== current_user_id.toLowerCase() &&
-                        editing.status === 'active'
-                      }
-                    >
-                      Đã khóa
-                    </option>
+                    <option value="disabled">Đã khóa</option>
                   </select>
                 </label>
               </div>
-
-              <p className="field-note">
-                Mật khẩu được lưu an toàn và không hiển thị lại. Chỉ nhập mật khẩu mới khi cần thay
-                đổi.
-              </p>
 
               {error && (
                 <div className="error-banner" role="alert">
                   {error}
                 </div>
               )}
+              {notice && (
+                <div className="notice-banner" role="status">
+                  {notice}
+                </div>
+              )}
             </div>
 
-            <footer className="user-form-actions">
+            <footer
+              className={editing ? 'user-form-actions account-edit-actions' : 'user-form-actions'}
+            >
+              {editing && (
+                <button type="button" disabled={busy} onClick={() => set_password_target(editing)}>
+                  Đổi mật khẩu
+                </button>
+              )}
               <button type="button" disabled={busy} onClick={close_editor}>
                 Hủy bỏ
               </button>
@@ -419,6 +425,24 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
             </footer>
           </form>
         </dialog>
+      )}
+
+      {password_target && (
+        <PasswordChangeDialog
+          username={password_target.username}
+          target_user_id={changing_own_password ? undefined : password_target.id}
+          on_close={() => set_password_target(null)}
+          on_saved={() => {
+            set_password_target(null);
+            if (changing_own_password) {
+              on_password_changed();
+              return;
+            }
+            set_notice(
+              `Đã đổi mật khẩu cho ${password_target.username}. Tài khoản cần đăng nhập lại.`,
+            );
+          }}
+        />
       )}
 
       {/* Bảng danh sách tài khoản */}
@@ -483,16 +507,26 @@ export function UserManagement({ current_user_id }: { current_user_id: string })
                   <td>
                     <div className="account-actions">
                       <button
-                        disabled={busy || is_other_admin(u)}
+                        className="account-edit"
+                        disabled={busy || !can_edit(u)}
                         title={
-                          is_other_admin(u)
-                            ? 'Không được chỉnh sửa tài khoản Admin khác'
-                            : undefined
+                          !can_edit(u) ? 'Không được chỉnh sửa tài khoản Admin khác' : undefined
                         }
                         onClick={() => edit(u)}
                       >
                         Chỉnh sửa
                       </button>
+                      {can_edit(u) && (
+                        <button
+                          className="account-password"
+                          type="button"
+                          disabled={busy}
+                          aria-label={`Đổi mật khẩu cho ${u.username}`}
+                          onClick={() => set_password_target(u)}
+                        >
+                          Đổi mật khẩu
+                        </button>
+                      )}
                       {!(u.username.toLowerCase() === 'admin' && u.status === 'active') && (
                         <button
                           className={u.status === 'active' ? 'account-lock' : 'account-unlock'}

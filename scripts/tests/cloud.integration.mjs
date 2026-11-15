@@ -141,6 +141,95 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
         .map((value) => value.split(';')[0])
         .join('; ');
       assert.equal((await request('/api/admin/users')).status, 403);
+      const change_password = (body) => request('/api/admin/auth/password', 'POST', body);
+      const staff_password = 'NewStaffFixture_123!';
+      assert.equal(
+        (
+          await change_password({
+            current_password: 'StaffFixture_123!',
+            new_password: staff_password,
+            target_user_id: admin.id,
+          })
+        ).status,
+        403,
+      );
+      assert.equal(
+        (
+          await change_password({
+            current_password: 'wrong',
+            new_password: staff_password,
+          })
+        ).status,
+        400,
+      );
+      assert.equal(
+        (
+          await change_password({
+            current_password: 'StaffFixture_123!',
+            new_password: '1234567',
+          })
+        ).status,
+        400,
+      );
+      assert.equal(
+        (
+          await change_password({
+            current_password: 'StaffFixture_123!',
+            new_password: staff_password,
+          })
+        ).status,
+        200,
+      );
+      assert.equal((await request('/api/admin/auth/session')).status, 401);
+      const login_with_new_password = await request(
+        '/api/admin/auth/login',
+        'POST',
+        {
+          username: 'ci_staff',
+          password: staff_password,
+        },
+        false,
+      );
+      assert.equal(login_with_new_password.status, 200);
+      const staff_cookie = login_with_new_password.headers.getSetCookie()[0].split(';')[0];
+
+      cookie = rootCookie;
+      const reset_password = 'ResetStaffFixture_123!';
+      assert.equal(
+        (
+          await change_password({
+            current_password: 'CloudFixtureOnly_123!',
+            new_password: reset_password,
+            target_user_id: staffId,
+          })
+        ).status,
+        200,
+      );
+      assert.equal((await request('/api/admin/auth/session')).status, 200);
+      cookie = staff_cookie;
+      assert.equal((await request('/api/admin/auth/session')).status, 401);
+      assert.equal(
+        (
+          await request(
+            '/api/admin/auth/login',
+            'POST',
+            { username: 'ci_staff', password: staff_password },
+            false,
+          )
+        ).status,
+        401,
+      );
+      assert.equal(
+        (
+          await request(
+            '/api/admin/auth/login',
+            'POST',
+            { username: 'ci_staff', password: reset_password },
+            false,
+          )
+        ).status,
+        200,
+      );
       cookie = rootCookie;
       await query('UPDATE users SET failed_login_count=14 WHERE id=$1', [staffId]);
       assert.equal(
@@ -159,6 +248,76 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
           .status,
         200,
       );
+    });
+    await t.test('Root can manage other admins and the admin username is reserved', async () => {
+      const root_cookie = cookie;
+      const admin_input = {
+        username: 'ci_admin',
+        full_name: 'CI admin',
+        role: 'admin',
+        status: 'active',
+      };
+      const admin_password = 'AdminFixture_123!';
+      const create_admin = (username) =>
+        request('/api/admin/users', 'POST', { ...admin_input, username, password: admin_password });
+      const created = await create_admin(admin_input.username);
+      assert.equal(created.status, 201);
+      const other = await create_admin('ci_other_admin');
+      assert.equal(other.status, 201);
+      const id = (await created.json()).data.id;
+      const other_id = (await other.json()).data.id;
+      const login_admin = (password) =>
+        request(
+          '/api/admin/auth/login',
+          'POST',
+          { username: admin_input.username, password },
+          false,
+        );
+      const session = await login_admin(admin_password);
+      assert.equal(session.status, 200);
+      const admin_cookie = session.headers.getSetCookie()[0].split(';')[0];
+      cookie = admin_cookie;
+      assert.equal((await create_admin('ADMIN')).status, 403);
+      assert.equal((await request('/api/admin/users/' + other_id, 'PUT', admin_input)).status, 403);
+      const reset_password = (current_password, target_user_id) =>
+        request('/api/admin/auth/password', 'POST', {
+          current_password,
+          new_password: 'NewAdminFixture_123!',
+          target_user_id,
+        });
+      assert.equal((await reset_password(admin_password, other_id)).status, 403);
+
+      cookie = root_cookie;
+      assert.equal((await reset_password('CloudFixtureOnly_123!', id)).status, 200);
+      cookie = admin_cookie;
+      assert.equal((await request('/api/admin/auth/session')).status, 401);
+      assert.equal((await login_admin('NewAdminFixture_123!')).status, 200);
+
+      cookie = root_cookie;
+      const admin_path = '/api/admin/users/' + id;
+      assert.equal(
+        (await request(admin_path + '/status', 'PATCH', { status: 'disabled' })).status,
+        200,
+      );
+      assert.equal(
+        (await request(admin_path + '/status', 'PATCH', { status: 'active' })).status,
+        200,
+      );
+      assert.equal(
+        (
+          await request(admin_path, 'PUT', {
+            ...admin_input,
+            full_name: 'Updated by Root',
+            role: 'staff',
+          })
+        ).status,
+        200,
+      );
+      const updated = (await (await request('/api/admin/users')).json()).data.find(
+        (user) => user.id === id,
+      );
+      assert.equal(updated.role, 'staff');
+      assert.equal(updated.full_name, 'Updated by Root');
       assert.equal((await request('/api/admin/auth/logout', 'POST')).status, 204);
       assert.equal((await request('/api/admin/auth/session')).status, 401);
     });

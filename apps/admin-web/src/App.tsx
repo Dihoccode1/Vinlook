@@ -13,6 +13,7 @@ import { OverviewDashboard } from './features/overview/OverviewDashboard';
 import { PoiEditor } from './features/pois/PoiEditor';
 import { PoiListPanel } from './features/pois/PoiListPanel';
 import { PoiNarrationDialog } from './features/pois/PoiNarrationDialog';
+import { PasswordChangeDialog } from './features/users/PasswordChangeDialog';
 import { UserManagement } from './features/users/UserManagement';
 import { AdminLayout, type AdminViewTab } from './layouts/AdminLayout';
 import { api } from './services/api';
@@ -20,6 +21,7 @@ import type { ActivitySample, Poi, Stats } from './types';
 
 interface AppProps {
   on_logout: () => Promise<void>;
+  on_password_changed: () => void;
   user: {
     id: string;
     username: string;
@@ -27,7 +29,7 @@ interface AppProps {
   };
 }
 
-export default function App({ on_logout, user }: AppProps) {
+export default function App({ on_logout, on_password_changed, user }: AppProps) {
   const [view, set_view] = useState<AdminViewTab>('overview');
 
   // Thống kê và danh sách POI
@@ -47,6 +49,7 @@ export default function App({ on_logout, user }: AppProps) {
   const [refresh, set_refresh] = useState(0);
   const [toast, set_toast] = useState('');
   const [logging_out, set_logging_out] = useState(false);
+  const [changing_password, set_changing_password] = useState(false);
 
   // Hoạt động thời gian thực (visitors / listeners)
   const [activity, set_activity] = useState<{ visitors: number; listeners: number } | null>(null);
@@ -184,6 +187,7 @@ export default function App({ on_logout, user }: AppProps) {
       onRefresh={() => set_refresh((value) => value + 1)}
       onViewChange={navigate}
       onLogout={logout}
+      on_change_password={() => set_changing_password(true)}
       loggingOut={logging_out}
       toast={toast}
       onClearToast={() => set_toast('')}
@@ -198,7 +202,9 @@ export default function App({ on_logout, user }: AppProps) {
         />
       )}
 
-      {view === 'users' && user.role === 'admin' && <UserManagement current_user_id={user.id} />}
+      {view === 'users' && user.role === 'admin' && (
+        <UserManagement current_user={user} on_password_changed={on_password_changed} />
+      )}
       {view === 'monitor' && user.role === 'admin' && <MonitorDashboard />}
       {view === 'categories' && <CategoryManager stats={stats} />}
       {view === 'languages' && <LanguageManager />}
@@ -244,6 +250,13 @@ export default function App({ on_logout, user }: AppProps) {
       )}
       {editor !== undefined && (
         <PoiEditor poi={editor} on_close={() => set_editor(undefined)} on_saved={saved} />
+      )}
+      {changing_password && (
+        <PasswordChangeDialog
+          username={user.username}
+          on_close={() => set_changing_password(false)}
+          on_saved={on_password_changed}
+        />
       )}
     </AdminLayout>
   );

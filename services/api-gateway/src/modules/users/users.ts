@@ -84,6 +84,12 @@ export function user_routes() {
           'SELECT id AS id,username AS username,role AS role,status AS status,login_locked FROM dbo.users WITH (UPDLOCK,HOLDLOCK) ORDER BY id',
         )
       ).recordset;
+      const current = users.find((u) => u.id.toLowerCase() === actor);
+      if (current?.role !== 'admin' || current.status !== 'active' || current.login_locked) {
+        await tx.rollback();
+        res.status(403).json({ error: { message: 'Chỉ Admin được quản lý tài khoản.' } });
+        return;
+      }
       const target = users.find((u) => u.id.toLowerCase() === id);
       if (!target) {
         await tx.rollback();
@@ -168,15 +174,27 @@ export function user_routes() {
           'SELECT id AS id, username, role AS role, status AS status,login_locked FROM dbo.users WITH (UPDLOCK,HOLDLOCK) ORDER BY id',
         )
       ).recordset;
-      const target = users.find((u) => u.id.toLowerCase() === id?.toLowerCase());
+      const current = users.find((u) => u.id.toLowerCase() === actor);
+      if (current?.role !== 'admin' || current.status !== 'active' || current.login_locked) {
+        await tx.rollback();
+        res.status(403).json({ error: { message: 'Chỉ Admin được quản lý tài khoản.' } });
+        return;
+      }
+      const target = users.find((u) => u.id.toLowerCase() === id);
       if (!creating && !target) {
         await tx.rollback();
         res.status(404).json({ error: { message: 'Tài khoản không tồn tại.' } });
         return;
       }
+      const target_is_root = target?.username.toLowerCase() === 'admin';
+      if (input.username.toLowerCase() === 'admin' && !target_is_root) {
+        await tx.rollback();
+        res.status(403).json({ error: { message: 'Tên admin dành riêng cho tài khoản Root.' } });
+        return;
+      }
       if (
-        target?.username.toLowerCase() === 'admin' &&
-        (input.status !== 'active' || input.role !== 'admin' || input.username !== 'admin')
+        target_is_root &&
+        (input.status !== 'active' || input.role !== 'admin' || input.username !== target.username)
       ) {
         await tx.rollback();
         res.status(403).json({
@@ -186,7 +204,7 @@ export function user_routes() {
         });
         return;
       }
-      if (target?.role === 'admin' && id !== actor) {
+      if (target?.role === 'admin' && id !== actor && current.username.toLowerCase() !== 'admin') {
         await tx.rollback();
         res.status(403).json({
           error: { message: 'Không được chỉnh sửa hoặc đổi mật khẩu tài khoản Admin khác.' },
