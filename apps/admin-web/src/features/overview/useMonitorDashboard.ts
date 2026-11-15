@@ -72,7 +72,17 @@ function ci_label(ci: CiStatus): string {
   return ci.state === 'in_progress' ? 'Đang chạy' : 'Đang chờ';
 }
 
-interface Snapshot {
+export interface RenderMetrics {
+  status: 'ok' | 'unconfigured' | 'empty' | 'error';
+  cpu_percent: number | null;
+  memory_used_mib: number | null;
+  memory_limit_mib: number | null;
+  updated_at: string | null;
+  checked_at: string;
+  message: string | null;
+}
+
+export interface Snapshot {
   checked_at: string;
   uptime_seconds: number;
   services: {
@@ -82,6 +92,18 @@ interface Snapshot {
     latency_ms: number | null;
     database: string | null;
   }[];
+  render_metrics?: RenderMetrics;
+}
+
+export function format_metric_number(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
+
+export function format_metric_time(iso: string | null | undefined): string {
+  if (!iso) return '—';
+  const parsed = new Date(iso);
+  if (Number.isNaN(parsed.getTime())) return '—';
+  return parsed.toLocaleTimeString('vi-VN');
 }
 
 const status_names = {
