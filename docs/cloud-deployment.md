@@ -50,3 +50,16 @@ Vercel: `https://vinlook-poc-web.vercel.app`, `/admin/`, `/monitor/`. Backend or
 TTS mới vẫn cần credential provider có quota miễn phí được nhóm chủ động cấp. Không có API trả phí hoặc billing fallback được bật bởi quy trình chuyển cloud.
 
 Backup được giữ trong thư mục `backups/` của bucket riêng tư. Khi quota Storage Free đầy, bước backup thất bại và deployment dừng; không mua thêm dung lượng. Nhóm có thể tải backup cũ về máy rồi chủ động quản lý dung lượng trên dashboard. Script deploy không tự xóa dữ liệu hoặc backup.
+
+## Giám sát CPU/RAM Render trên trang Admin
+
+Trang Admin **Giám sát hệ thống** (`/admin/`) đọc chỉ số CPU (%) và RAM (MiB, kèm giới hạn RAM nếu Render trả về) của dịch vụ backend `vinlook-api` thông qua API nội bộ `/api/admin/monitor` (chỉ tài khoản quyền `admin` mới truy cập được). Frontend trên Vercel không giữ khóa API Render.
+
+- Biến môi trường phía backend (`vinlook-api` trên Render):
+  - `RENDER_API_KEY`: Render API Key lưu dưới dạng secret ở Environment Variables của service `vinlook-api` (`sync: false` trong `render.yaml`).
+  - `RENDER_SERVICE_ID`: ID service `vinlook-api` trên Render (Render tự cung cấp biến mặc định `RENDER_SERVICE_ID` cho Web Service khi runtime; có thể khai báo tường minh trong `.env`/Render nếu cần).
+- Cache và giới hạn tần suất: Backend cache phản hồi Render Metrics API trong 30 giây (15 giây khi lỗi) và gộp các yêu cầu đồng thời để vòng làm mới 5 giây của trang Admin không gọi dồn dập tới Render API. Khi thiếu cấu hình, Render chưa có điểm dữ liệu mới hoặc API lỗi, giao diện hiển thị thông báo tương ứng và dấu `—` thay vì giả lập `0`.
+- Cách kiểm chứng sau deploy:
+  1. Mở Render Dashboard -> service `vinlook-api` -> **Environment**, kiểm tra đã có `RENDER_API_KEY` hợp lệ và lưu/deploy nếu vừa thêm biến mới.
+  2. Đăng nhập trang `/admin/` bằng tài khoản `admin`, mở mục **Giám sát hệ thống**.
+  3. Đối chiếu giá trị **CPU vinlook-api (%)**, **RAM vinlook-api (MiB)** và **Giới hạn RAM** trên `/admin/` với biểu đồ **Metrics** (độ phân giải 60 giây) trong Render Dashboard của `vinlook-api`; sai lệch nhỏ về thời điểm hiển thị có thể do bước lấy mẫu 60s của Render và cache 30s ở API Gateway.
