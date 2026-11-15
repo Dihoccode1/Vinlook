@@ -96,9 +96,9 @@ test('MonitorDashboard renders real Render CPU, RAM, limit, timestamp and preser
     message: null,
   });
 
-  const labels = Array.from(container.querySelectorAll('.metrics article .metric-label')).map(
-    (el) => el.textContent,
-  );
+  const labels = Array.from(
+    container.querySelectorAll('[aria-label="Giám sát trực tiếp"] article > div:first-child'),
+  ).map((el) => el.textContent);
   assert.deepEqual(labels, ['Dịch vụ sẵn sàng', 'CPU', 'RAM']);
   const text = container.textContent ?? '';
   assert.match(text, /12\.5%/);
@@ -106,7 +106,7 @@ test('MonitorDashboard renders real Render CPU, RAM, limit, timestamp and preser
   assert.match(text, /Giới hạn 512 MiB/);
   assert.match(text, /Cập nhật lúc/);
   assert.match(text, /12 ms/);
-  assert.equal(container.querySelector('.monitor-resource-notice'), null);
+  assert.equal(container.querySelector('[role="status"], [role="alert"]'), null);
 });
 
 test('MonitorDashboard displays exact 0% and 0 MiB when Render returns numeric 0 and omits absent RAM limit', async (t) => {
@@ -120,9 +120,9 @@ test('MonitorDashboard displays exact 0% and 0 MiB when Render returns numeric 0
     message: null,
   });
 
-  const metric_values = Array.from(container.querySelectorAll('.metrics article strong')).map(
-    (el) => el.textContent,
-  );
+  const metric_values = Array.from(
+    container.querySelectorAll('[aria-label="Giám sát trực tiếp"] article strong'),
+  ).map((el) => el.textContent);
   assert.deepEqual(metric_values, ['2/2', '0%', '0 MiB']);
   assert.doesNotMatch(container.textContent ?? '', /Giới hạn/);
 });
@@ -138,15 +138,15 @@ test('MonitorDashboard shows unconfigured notice without faking 0', async (t) =>
     message:
       'Chưa cấu hình RENDER_API_KEY và RENDER_SERVICE_ID trên máy chủ để đọc số liệu Render.',
   });
-  const unconf_values = Array.from(unconfigured.querySelectorAll('.metrics article strong')).map(
-    (el) => el.textContent,
-  );
+  const unconf_values = Array.from(
+    unconfigured.querySelectorAll('[aria-label="Giám sát trực tiếp"] article strong'),
+  ).map((el) => el.textContent);
   assert.deepEqual(unconf_values, ['2/2', '—', '—']);
   assert.match(unconfigured.textContent ?? '', /Chưa cấu hình Render Metrics/);
   assert.match(unconfigured.textContent ?? '', /Chưa cấu hình RENDER_API_KEY/);
   assert.equal(
-    unconfigured.querySelector('.monitor-resource-notice.info')?.getAttribute('role'),
-    'status',
+    unconfigured.querySelector('[role="status"]')?.textContent?.includes('RENDER_API_KEY'),
+    true,
   );
   assert.match(unconfigured.textContent ?? '', /12 ms/);
 });
@@ -161,14 +161,14 @@ test('MonitorDashboard shows empty notice when Render has no metrics yet', async
     checked_at: '2026-11-15T10:00:00.000Z',
     message: 'Render chưa có số liệu CPU/RAM cho vinlook-api trong 15 phút gần đây.',
   });
-  const empty_values = Array.from(empty.querySelectorAll('.metrics article strong')).map(
-    (el) => el.textContent,
-  );
+  const empty_values = Array.from(
+    empty.querySelectorAll('[aria-label="Giám sát trực tiếp"] article strong'),
+  ).map((el) => el.textContent);
   assert.deepEqual(empty_values, ['2/2', '—', '—']);
   assert.match(empty.textContent ?? '', /Render chưa có số liệu/);
   assert.equal(
-    empty.querySelector('.monitor-resource-notice.info')?.getAttribute('role'),
-    'status',
+    empty.querySelector('[role="status"]')?.textContent?.includes('Render chưa có số liệu'),
+    true,
   );
   assert.match(empty.textContent ?? '', /12 ms/);
 });
@@ -183,17 +183,17 @@ test('MonitorDashboard shows error alert when Render Metrics API fails without f
     checked_at: '2026-11-15T10:00:00.000Z',
     message: 'Không lấy được số liệu CPU/RAM từ Render Metrics API.',
   });
-  const err_values = Array.from(api_error.querySelectorAll('.metrics article strong')).map(
-    (el) => el.textContent,
-  );
+  const err_values = Array.from(
+    api_error.querySelectorAll('[aria-label="Giám sát trực tiếp"] article strong'),
+  ).map((el) => el.textContent);
   assert.deepEqual(err_values, ['2/2', '—', '—']);
   assert.match(
     api_error.textContent ?? '',
     /Không lấy được số liệu CPU\/RAM từ Render Metrics API/,
   );
   assert.equal(
-    api_error.querySelector('.monitor-resource-notice.error')?.getAttribute('role'),
-    'alert',
+    api_error.querySelector('[role="alert"]')?.textContent?.includes('Render Metrics API'),
+    true,
   );
   assert.match(api_error.textContent ?? '', /12 ms/);
 });
