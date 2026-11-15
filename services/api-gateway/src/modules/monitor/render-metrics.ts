@@ -423,3 +423,72 @@ export async function fetch_render_metrics(
     message: null,
   };
 }
+
+/**
+ * Tạo bộ đọc số liệu Render có cache ngắn hạn và gom các yêu cầu trùng thời điểm.
+ */
+export function create_render_metrics_reader(
+  options: {
+    env?: Record<string, string | undefined>;
+    fetcher?: typeof fetch;
+    now?: () => number;
+    cache_ttl_ms?: number;
+    error_cache_ttl_ms?: number;
+  } = {},
+): () => Promise<RenderMetricsSnapshot> {
+  const now = options.now ?? Date.now;
+  const cache_ttl_ms = options.cache_ttl_ms ?? config.renderMetrics.cacheTtlMs;
+  const error_cache_ttl_ms =
+    options.error_cache_ttl_ms ?? Math.min(cache_ttl_ms, config.renderMetrics.errorCacheTtlMs);
+
+  let cached: RenderMetricsSnapshot | undefined;
+  let expires_at = 0;
+  let pending: Promise<RenderMetricsSnapshot> | undefined;
+
+  return async () => {
+    const cfg_check = read_render_metrics_config(options.env ?? process.env);
+    if (!cfg_check.ok) {
+      return {
+        status: 'unconfigured',
+        cpu_percent: null,
+        memory_used_mib: null,
+        memory_limit_mib: null,
+        updated_at: null,
+        checked_at: new Date(now()).toISOString(),
+        message: cfg_check.message,
+      };
+    }
+
+    if (cached && now() < expires_at) {
+      return cached;
+    }
+
+    if (!pending) {
+      pending = fetch_render_metrics({
+        env: options.env,
+        fetcher: options.fetcher,
+        now,
+      })
+        .catch(() => ({
+          status: 'error' as const,
+          cpu_percent: null,
+          memory_used_mib: null,
+          memory_limit_mib: null,
+          updated_at: null,
+          checked_at: new Date(now()).toISOString(),
+          message: 'Không lấy được số liệu CPU/RAM từ Render Metrics API.',
+        }))
+        .then((snapshot) => {
+          const ttl = snapshot.status === 'error' ? error_cache_ttl_ms : cache_ttl_ms;
+          cached = snapshot;
+          expires_at = now() + ttl;
+          return snapshot;
+        })
+        .finally(() => {
+          pending = undefined;
+        });
+    }
+
+    return pending;
+  };
+}
