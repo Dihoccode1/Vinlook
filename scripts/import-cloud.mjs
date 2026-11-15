@@ -53,7 +53,9 @@ try {
         ).rows.map((row) => row.column_name),
       );
       for (const row of tables[name] || []) {
-        const columns = Object.keys(row);
+        const columns = Object.keys(row).filter(
+          (col) => !(name === 'pois' && col === 'slug' && !available.has(col)),
+        );
         for (const col of columns)
           if (!available.has(col)) throw new Error(`Unmapped column: ${name}.${col}`);
         const values = columns.map((col) => decode(row[col]));
@@ -61,7 +63,7 @@ try {
           `INSERT INTO ${quote(name)}(${columns.map(quote).join(',')}) VALUES(${columns.map((_, i) => '$' + (i + 1)).join(',')})`,
           values,
         );
-        // Compare every source column, not just the count; includes binary images/audio and password hashes.
+        // Compare all imported values, including images, audio, and password hashes.
         const primary =
           name === 'poi_images'
             ? ['poi_id']
