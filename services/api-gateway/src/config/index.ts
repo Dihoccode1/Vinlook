@@ -30,4 +30,14 @@ export const config = {
     translationBody: '1kb',
     routesBody: '16kb',
   },
+
+  /** Cấu hình truy vấn và cache Render Metrics API (chỉ dùng phía backend). */
+  renderMetrics: {
+    apiBaseUrl: 'https://api.render.com/v1',
+    timeoutMs: 5000,
+    cacheTtlMs: 30000,
+    errorCacheTtlMs: 15000,
+    windowMinutes: 15,
+    resolutionSeconds: 60,
+  },
 };
