@@ -1,3 +1,4 @@
+import { Table } from '@vinlook/ui/table';
 /**
  * @file LanguageManager.tsx
  * @description Phân hệ Quản lý Ngôn ngữ Thuyết minh (Languages Feature)
@@ -131,8 +132,8 @@ const SUPPORTED_LANGUAGES: LanguageItem[] = [
 
 export function LanguageManager() {
   return (
-    <section className="panel language-manager">
-      <div className="panel-title">
+    <section className="panel overflow-hidden language-manager">
+      <div className="panel-title justify-between">
         <div>
           <h2>Danh sách ngôn ngữ thuyết minh ({SUPPORTED_LANGUAGES.length})</h2>
           <p>Các ngôn ngữ được dịch tự động và tổng hợp giọng đọc AI cho du khách quốc tế.</p>
@@ -140,7 +141,7 @@ export function LanguageManager() {
       </div>
 
       <div className="table-wrap">
-        <table>
+        <Table>
           <thead>
             <tr>
               <th>Mã ngôn ngữ</th>
@@ -164,12 +165,14 @@ export function LanguageManager() {
                   <small>{lang.ttsEngine}</small>
                 </td>
                 <td>
-                  <span className="publish-status published">Sẵn sàng</span>
+                  <span className="publish-status [@media(max-width:_760px)]:max-w-[100%] published">
+                    Sẵn sàng
+                  </span>
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       </div>
     </section>
   );

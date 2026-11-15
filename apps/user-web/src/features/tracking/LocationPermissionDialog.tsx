@@ -1,3 +1,4 @@
+import { NativeDialog } from '@vinlook/ui/dialog';
 import { useEffect, useRef } from 'react';
 import { Button } from '@vinlook/ui/button';
 
@@ -15,9 +16,9 @@ export function LocationPermissionDialog({
     return () => element?.close();
   }, []);
   return (
-    <dialog
+    <NativeDialog
       ref={dialog}
-      className="gps-permission-dialog"
+      className="gps-permission-dialog box-border w-[min(440px,_calc(100%_-_32px))] max-h-[calc(100dvh_-_48px)] overflow-auto p-[28px] text-[#243d33] shadow-[0_20px_80px_#153f3240] [@media(max-width:_480px)]:p-[22px]"
       aria-labelledby="gps-permission-title"
       aria-describedby="gps-permission-description"
       onCancel={(event) => {
@@ -25,7 +26,10 @@ export function LocationPermissionDialog({
         on_later();
       }}
     >
-      <div className="gps-permission-icon" aria-hidden="true">
+      <div
+        className="gps-permission-icon grid w-[54px] h-[54px] rounded-[16px] bg-[#eaf2e4] text-vinlook-forest text-[34px]"
+        aria-hidden="true"
+      >
         ⌖
       </div>
       <h2 id="gps-permission-title">Khám phá địa điểm gần bạn</h2>
@@ -37,7 +41,7 @@ export function LocationPermissionDialog({
         Bấm Cho phép định vị, sau đó cho phép truy cập vị trí nếu trình duyệt hỏi. Bạn vẫn có thể
         xem bản đồ và tìm kiếm khi chọn Để sau.
       </p>
-      <div className="gps-permission-actions">
+      <div className="gps-permission-actions flex gap-[12px] justify-end flex-wrap mt-[24px]">
         <Button variant="outline" onClick={on_later}>
           Để sau
         </Button>
@@ -45,6 +49,6 @@ export function LocationPermissionDialog({
           Cho phép định vị
         </Button>
       </div>
-    </dialog>
+    </NativeDialog>
   );
 }

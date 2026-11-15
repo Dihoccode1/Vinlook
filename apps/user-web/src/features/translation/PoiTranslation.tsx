@@ -1,3 +1,5 @@
+import { Button } from '@vinlook/ui/button';
+import { NativeSelect } from '@vinlook/ui/native-select';
 import { useEffect, useState } from 'react';
 import type { Poi } from '../../types/poi';
 import { NarrationPlayer } from './NarrationPlayer';
@@ -73,7 +75,7 @@ export function PoiTranslation({
         language_control={
           <label className="narration-language">
             Ngôn ngữ{' '}
-            <select
+            <NativeSelect
               aria-label="Ngôn ngữ câu chuyện"
               value={language}
               onChange={(event) => on_language(event.target.value)}
@@ -85,7 +87,7 @@ export function PoiTranslation({
                   {item.code === poi.source_language ? ' · Bản gốc' : ''}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
         }
       />
@@ -122,7 +124,10 @@ export function PoiTranslation({
       )}
       {error && (
         <p role="alert">
-          {error} <button onClick={() => set_retry((value) => value + 1)}>Thử lại</button>
+          {error}{' '}
+          <Button variant="custom" type="submit" onClick={() => set_retry((value) => value + 1)}>
+            Thử lại
+          </Button>
         </p>
       )}
     </section>

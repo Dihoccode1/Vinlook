@@ -1,3 +1,4 @@
+import { Table } from '@vinlook/ui/table';
 import type { useMonitorDashboard } from './useMonitorDashboard';
 type Props = Pick<ReturnType<typeof useMonitorDashboard>, 'journal' | 'journal_error'>;
 export function MonitorJournalPanels({ journal, journal_error }: Props) {
@@ -10,8 +11,8 @@ export function MonitorJournalPanels({ journal, journal_error }: Props) {
           ['usage', 'Sự kiện sử dụng & yêu cầu'],
         ] as const
       ).map(([key, title]) => (
-        <section className="panel" key={key}>
-          <div className="panel-title">
+        <section className="panel overflow-hidden" key={key}>
+          <div className="panel-title justify-between">
             <div>
               <h2>{title}</h2>
               <p>
@@ -23,16 +24,16 @@ export function MonitorJournalPanels({ journal, journal_error }: Props) {
           </div>
 
           {!journal ? (
-            <p className="empty-state" role="status">
+            <p className="empty-state p-[25px] text-center text-[#8c9a7f]" role="status">
               {journal_error ? 'Chưa có dữ liệu để hiển thị.' : 'Đang tải dữ liệu...'}
             </p>
           ) : journal[key].length === 0 ? (
-            <p className="empty-state">
+            <p className="empty-state p-[25px] text-center text-[#8c9a7f]">
               Chưa ghi nhận {key === 'system' ? 'nhật ký' : 'sự kiện nào'}.
             </p>
           ) : (
             <div className="table-wrap">
-              <table>
+              <Table>
                 <thead>
                   <tr>
                     <th>Thời gian</th>
@@ -47,7 +48,7 @@ export function MonitorJournalPanels({ journal, journal_error }: Props) {
                       <td data-label="Nội dung">{entry.message}</td>
                       <td data-label="Kết quả">
                         <span
-                          className={`monitor-status ${entry.level === 'error' ? 'unreachable' : 'healthy'}`}
+                          className={`monitor-status inline-block rounded-[20px] font-semibold [@media(max-width:_760px)]:max-w-[100%] ${entry.level === 'error' ? 'unreachable' : 'healthy'}`}
                         >
                           {entry.status === null
                             ? 'Thông tin'
@@ -57,7 +58,7 @@ export function MonitorJournalPanels({ journal, journal_error }: Props) {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </Table>
             </div>
           )}
 

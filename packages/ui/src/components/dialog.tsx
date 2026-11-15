@@ -48,3 +48,8 @@ export function DialogFooter({ className, ...props }: React.ComponentProps<'div'
     />
   );
 }
+
+/** Browser top-layer dialog for existing imperative refs and map/mobile-sheet integrations. */
+export function NativeDialog({ className, ...props }: React.ComponentProps<'dialog'>) {
+  return <dialog data-slot="native-dialog" className={cn(className)} {...props} />;
+}

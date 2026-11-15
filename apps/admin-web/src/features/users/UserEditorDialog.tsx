@@ -1,3 +1,7 @@
+import { NativeDialog } from '@vinlook/ui/dialog';
+import { NativeSelect } from '@vinlook/ui/native-select';
+import { Input } from '@vinlook/ui/input';
+import { Button } from '@vinlook/ui/button';
 import type { User } from '../../types';
 
 import type { useUserManagement } from './useUserManagement';
@@ -46,9 +50,13 @@ export function UserEditorDialog({
 }: Props) {
   return (
     <>
-      <dialog ref={dialog} className="user-dialog" aria-labelledby="user-dialog-title">
+      <NativeDialog
+        ref={dialog}
+        className="user-dialog p-[0] text-[#294532] shadow-[0_24px_90px_#12302238]"
+        aria-labelledby="user-dialog-title"
+      >
         <form onSubmit={save}>
-          <header className="user-dialog-header">
+          <header className="user-dialog-header flex justify-between gap-[16px] shrink-0 items-start">
             <div>
               <h2 id="user-dialog-title">
                 {editing ? 'Chỉnh sửa tài khoản' : 'Tạo tài khoản mới'}
@@ -59,23 +67,25 @@ export function UserEditorDialog({
                   : 'Thêm thành viên mới vào không gian điều hành Vinlook.'}
               </p>
             </div>
-            <button
-              className="icon-button"
+            <Button
+              variant="custom"
+              className="icon-button leading-[30px]"
               type="button"
               aria-label="Đóng cửa sổ tài khoản"
               disabled={busy}
               onClick={close_editor}
             >
               ✕
-            </button>
+            </Button>
           </header>
 
-          <div className="user-dialog-body">
-            <div className="form-grid">
-              <div className={editing === null ? 'account-username-wide' : undefined}>
+          <div className="user-dialog-body min-h-0 flex-[1]">
+            <div className="form-grid grid">
+              <div className={editing === null ? 'account-username-wide min-w-0' : undefined}>
                 <label>
                   Tên tài khoản
-                  <input
+                  <Input
+                    appearance="custom"
                     required
                     pattern="[a-zA-Z0-9_.\-]{3,100}"
                     minLength={3}
@@ -95,7 +105,7 @@ export function UserEditorDialog({
                 {editing === null && (
                   <p
                     id="username-availability"
-                    className="username-availability"
+                    className="username-availability min-h-[17px] text-[11px]"
                     data-state={username_state}
                     role="status"
                   >
@@ -107,7 +117,8 @@ export function UserEditorDialog({
               {editing && (
                 <label>
                   Họ và tên
-                  <input
+                  <Input
+                    appearance="custom"
                     required
                     maxLength={200}
                     value={form.full_name}
@@ -118,10 +129,11 @@ export function UserEditorDialog({
               )}
 
               {!editing && (
-                <div className="password-pair form-grid">
+                <div className="password-pair form-grid grid">
                   <label>
                     Mật khẩu
-                    <input
+                    <Input
+                      appearance="custom"
                       type="password"
                       autoComplete="new-password"
                       required
@@ -139,7 +151,8 @@ export function UserEditorDialog({
 
                   <label>
                     Xác nhận mật khẩu
-                    <input
+                    <Input
+                      appearance="custom"
                       ref={confirm_input}
                       type="password"
                       autoComplete="new-password"
@@ -159,31 +172,34 @@ export function UserEditorDialog({
 
               <label>
                 Quyền hạn
-                <select
+                <NativeSelect
                   value={form.role}
                   disabled={busy || editing?.id.toLowerCase() === current_user_id.toLowerCase()}
                   onChange={(e) => set_form({ ...form, role: e.target.value as User['role'] })}
                 >
                   <option value="staff">Staff (Nhân viên)</option>
                   <option value="admin">Admin (Quản trị viên)</option>
-                </select>
+                </NativeSelect>
               </label>
 
               <label>
                 Trạng thái
-                <select
+                <NativeSelect
                   value={form.status}
                   disabled={busy || editing?.username.toLowerCase() === 'admin'}
                   onChange={(e) => set_form({ ...form, status: e.target.value as User['status'] })}
                 >
                   <option value="active">Đang hoạt động</option>
                   <option value="disabled">Đã khóa</option>
-                </select>
+                </NativeSelect>
               </label>
             </div>
 
             {error && (
-              <div className="error-banner" role="alert">
+              <div
+                className="error-banner py-[13px] px-[15px] bg-[#fff0e8] text-[#a65d40] rounded-[8px]"
+                role="alert"
+              >
                 {error}
               </div>
             )}
@@ -195,22 +211,36 @@ export function UserEditorDialog({
           </div>
 
           <footer
-            className={editing ? 'user-form-actions account-edit-actions' : 'user-form-actions'}
+            className={
+              editing
+                ? 'user-form-actions flex justify-end account-edit-actions'
+                : 'user-form-actions flex justify-end'
+            }
           >
             {editing && (
-              <button type="button" disabled={busy} onClick={() => set_password_target(editing)}>
+              <Button
+                variant="custom"
+                type="button"
+                disabled={busy}
+                onClick={() => set_password_target(editing)}
+              >
                 Đổi mật khẩu
-              </button>
+              </Button>
             )}
-            <button type="button" disabled={busy} onClick={close_editor}>
+            <Button variant="custom" type="button" disabled={busy} onClick={close_editor}>
               Hủy bỏ
-            </button>
-            <button className="primary" disabled={busy || username_blocked}>
+            </Button>
+            <Button
+              variant="custom"
+              type="submit"
+              className="primary"
+              disabled={busy || username_blocked}
+            >
               {busy ? 'Đang lưu...' : 'Lưu tài khoản'}
-            </button>
+            </Button>
           </footer>
         </form>
-      </dialog>
+      </NativeDialog>
     </>
   );
 }

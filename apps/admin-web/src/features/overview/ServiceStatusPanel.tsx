@@ -1,3 +1,5 @@
+import { Table } from '@vinlook/ui/table';
+import { Button } from '@vinlook/ui/button';
 import {
   format_metric_number,
   format_metric_time,
@@ -56,8 +58,8 @@ export function ServiceStatusPanel({
   }
   return (
     <>
-      <section className="panel">
-        <div className="panel-title">
+      <section className="panel overflow-hidden">
+        <div className="panel-title justify-between">
           <div>
             <h2>Trạng thái hệ thống</h2>
             <p>
@@ -66,12 +68,14 @@ export function ServiceStatusPanel({
                 : 'Đang kiểm tra các dịch vụ...'}
             </p>
           </div>
-          <button onClick={() => set_refresh((value) => value + 1)}>Làm mới</button>
+          <Button variant="custom" type="submit" onClick={() => set_refresh((value) => value + 1)}>
+            Làm mới
+          </Button>
         </div>
 
         {/* Bảng trạng thái CI / CD / Database */}
         <div className="table-wrap">
-          <table>
+          <Table>
             <thead>
               <tr>
                 <th>Hạng mục</th>
@@ -86,7 +90,7 @@ export function ServiceStatusPanel({
                 </td>
                 <td data-label="Trạng thái">
                   <span
-                    className={`monitor-status ${
+                    className={`monitor-status inline-block rounded-[20px] font-semibold [@media(max-width:_760px)]:max-w-[100%] ${
                       delivery_error || delivery?.ci.state === 'unknown'
                         ? 'stale'
                         : delivery?.ci.conclusion === 'success'
@@ -106,7 +110,7 @@ export function ServiceStatusPanel({
                     {delivery?.ci.url ? 'Xem lần chạy trên GitHub ↗' : 'Mở GitHub Actions ↗'}
                   </a>
                   {delivery && (
-                    <small className="monitor-service-id">
+                    <small className="monitor-service-id block mt-[5px]">
                       Kiểm tra lúc {new Date(delivery.checked_at).toLocaleTimeString('vi-VN')}
                     </small>
                   )}
@@ -119,7 +123,7 @@ export function ServiceStatusPanel({
                 </td>
                 <td data-label="Trạng thái">
                   <span
-                    className={`monitor-status ${delivery?.cd.state === 'backend_running' ? 'healthy' : 'stale'}`}
+                    className={`monitor-status inline-block rounded-[20px] font-semibold [@media(max-width:_760px)]:max-w-[100%] ${delivery?.cd.state === 'backend_running' ? 'healthy' : 'stale'}`}
                   >
                     {delivery_error
                       ? 'Không cập nhật được'
@@ -133,11 +137,11 @@ export function ServiceStatusPanel({
                 <td data-label="Chi tiết kiểm tra">
                   Docker trên máy nhóm; frontend được kiểm tra rồi promote lên Vercel.
                   {delivery?.cd.revision && (
-                    <small className="monitor-service-id">
+                    <small className="monitor-service-id block mt-[5px]">
                       Backend: {delivery.cd.revision.slice(0, 7)}
                     </small>
                   )}
-                  <small className="monitor-service-id">
+                  <small className="monitor-service-id block mt-[5px]">
                     Xem workflow để xác nhận kết quả toàn bộ lần triển khai.
                   </small>
                 </td>
@@ -149,7 +153,7 @@ export function ServiceStatusPanel({
                 </td>
                 <td data-label="Trạng thái">
                   <span
-                    className={`monitor-status ${
+                    className={`monitor-status inline-block rounded-[20px] font-semibold [@media(max-width:_760px)]:max-w-[100%] ${
                       error || !snapshot
                         ? 'stale'
                         : snapshot.services
@@ -174,7 +178,7 @@ export function ServiceStatusPanel({
                   {snapshot?.services
                     .filter((s) => s.database)
                     .map((s) => (
-                      <small className="monitor-service-id" key={s.id}>
+                      <small className="monitor-service-id block mt-[5px]" key={s.id}>
                         {s.database} •{' '}
                         {error
                           ? 'Chưa cập nhật'
@@ -192,7 +196,9 @@ export function ServiceStatusPanel({
                   <strong>Tài nguyên Render (vinlook-api)</strong>
                 </td>
                 <td data-label="Trạng thái">
-                  <span className={`monitor-status ${render_badge.tone}`}>
+                  <span
+                    className={`monitor-status inline-block rounded-[20px] font-semibold [@media(max-width:_760px)]:max-w-[100%] ${render_badge.tone}`}
+                  >
                     {render_badge.label}
                   </span>
                 </td>
@@ -202,7 +208,7 @@ export function ServiceStatusPanel({
                     : (render_metrics?.message ??
                       'Đang lấy số liệu CPU/RAM từ Render Metrics API...')}
                   {render_metrics && (
-                    <small className="monitor-service-id">
+                    <small className="monitor-service-id block mt-[5px]">
                       {render_metrics.updated_at
                         ? `Cập nhật lúc ${format_metric_time(render_metrics.updated_at)}`
                         : `Kiểm tra lúc ${format_metric_time(render_metrics.checked_at)}`}
@@ -211,12 +217,12 @@ export function ServiceStatusPanel({
                 </td>
               </tr>
             </tbody>
-          </table>
+          </Table>
         </div>
 
         {/* Bảng trạng thái chi tiết các Microservices */}
         <div className="table-wrap">
-          <table>
+          <Table>
             <thead>
               <tr>
                 <th>Dịch vụ</th>
@@ -230,10 +236,12 @@ export function ServiceStatusPanel({
                 <tr key={service.id}>
                   <td>
                     <strong>{service.name}</strong>
-                    <small className="monitor-service-id">{service.id}</small>
+                    <small className="monitor-service-id block mt-[5px]">{service.id}</small>
                   </td>
                   <td data-label="Trạng thái">
-                    <span className={`monitor-status ${error ? 'stale' : service.status}`}>
+                    <span
+                      className={`monitor-status inline-block rounded-[20px] font-semibold [@media(max-width:_760px)]:max-w-[100%] ${error ? 'stale' : service.status}`}
+                    >
                       {error ? 'Chưa cập nhật' : status_names[service.status]}
                     </span>
                   </td>
@@ -254,7 +262,7 @@ export function ServiceStatusPanel({
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
         </div>
 
         <p className="chart-note">

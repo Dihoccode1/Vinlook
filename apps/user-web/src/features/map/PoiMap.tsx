@@ -286,12 +286,15 @@ export function PoiMap({
     <>
       <div
         ref={element}
-        className="map"
+        className="map h-full w-full bg-[#e9eddf]"
         aria-label="Bản đồ các địa điểm tại Thành phố Hồ Chí Minh"
       />
       <MapCredits />
       {route && (
-        <aside className="route-map-legend" aria-label="Thứ tự đường đi">
+        <aside
+          className="route-map-legend absolute z-[450] top-[82px] left-[25px] w-[min(280px,_calc(100%_-_50px))] max-h-[125px] overflow-auto py-[13px] px-[15px] bg-[#fffef9f5] shadow-[0_5px_20px_#16342618] [@media(max-width:_760px)]:top-[auto] [@media(max-width:_760px)]:left-[15px] [@media(max-width:_760px)]:w-[230px] [@media(max-width:_760px)]:max-h-[115px] [@media(max-width:_760px)]:py-[10px] [@media(max-width:_760px)]:px-[12px]"
+          aria-label="Thứ tự đường đi"
+        >
           <strong>Xuất phát A → {route.legs.map((_, index) => index + 1).join(' → ')}</strong>
           <ol>
             {route.legs.map((_, index) => (

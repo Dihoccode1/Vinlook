@@ -227,7 +227,6 @@
     padding: 12px 15px;
   }
   .metrics {
-    display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 15px;
     margin-bottom: 24px;
@@ -240,10 +239,6 @@
     box-shadow: 0 3px 10px #234e2503;
   }
   .metric-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
     font-size: 14px;
     color: #7f9078;
   }
@@ -296,12 +291,10 @@
     background: #fffefb;
     border: 1px solid #e0e6d8;
     border-radius: 12px;
-    overflow: hidden;
   }
   .panel-title {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 16px;
     padding: 23px 22px;
   }
@@ -318,7 +311,6 @@
   }
   .soft-badge {
     font-size: 12px;
-    white-space: nowrap;
     padding: 7px 9px;
     background: #f2f5ed;
     color: #8b9d7c;
@@ -422,9 +414,6 @@
     font-weight: 400;
     color: #d4dfc3;
   }
-  .poi-panel {
-    margin-bottom: 24px;
-  }
   .count-badge {
     font-size: 12px;
     background: #eff3e9;
@@ -432,32 +421,23 @@
     border-radius: 5px;
     padding: 3px 7px;
     color: #8ba176;
-    margin-left: 6px;
     vertical-align: middle;
   }
   .text-button {
     border: 0;
-    background: transparent;
     padding: 6px;
     font-size: 13px;
     color: #799261;
   }
   .filters {
-    display: flex;
     gap: 10px;
-    align-items: center;
     margin: 0 22px 20px;
   }
   .search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
     border: 1px solid #dfe6d7;
     background: #fafcf6;
     border-radius: 8px;
     padding: 0 11px;
-    color: #93a383;
   }
   .search svg {
     width: 15px;
@@ -515,8 +495,6 @@
     font-size: 13px;
   }
   .poi-cell {
-    display: flex;
-    align-items: center;
     gap: 12px;
   }
   .poi-cell > img,
@@ -528,10 +506,7 @@
     flex-shrink: 0;
   }
   .photo-placeholder {
-    display: grid;
     place-items: center;
-    background: #edf2e6;
-    color: #95a583;
   }
   .poi-cell strong {
     font-size: 14px;
@@ -548,7 +523,6 @@
   }
   .category-tag {
     white-space: nowrap;
-    display: inline-block;
     font-size: 12px;
     padding: 6px 8px;
     background: #f2f4ed;
@@ -589,7 +563,6 @@
     color: #939d87;
   }
   .edit-button {
-    white-space: nowrap;
     border: 0;
     background: transparent;
     padding: 5px 0;
@@ -597,9 +570,6 @@
     font-size: 12px;
   }
   .table-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     padding: 15px 22px;
     font-size: 12px;
     color: #a0aa94;
@@ -613,10 +583,7 @@
     font-size: 13px;
   }
   .empty-state {
-    padding: 25px;
-    text-align: center;
     font-size: 15px;
-    color: #8c9a7f;
   }
   .page-footer {
     display: flex;
@@ -633,13 +600,9 @@
     font-size: 12px;
   }
   .error-banner {
-    padding: 13px 15px;
     margin: 10px 22px 15px;
-    background: #fff0e8;
-    color: #a65d40;
     font-size: 15px;
     line-height: 1.8;
-    border-radius: 8px;
   }
   .error-banner button {
     margin-left: 10px;
@@ -656,14 +619,7 @@
     margin: 0 0 20px;
   }
   .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
     clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
     border: 0;
   }
   .editor {
@@ -689,9 +645,6 @@
   .editor-header {
     padding: 23px 27px;
     border-bottom: 1px solid #e4eadc;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
   }
   .editor-header h2 {
     margin: 8px 0 0;
@@ -704,7 +657,6 @@
     border: 0;
     background: transparent;
     font-size: 28px;
-    line-height: 30px;
     width: 30px;
     height: 30px;
   }
@@ -755,22 +707,13 @@
     min-height: 150px;
   }
   .form-grid {
-    display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
   }
   .field-note {
     font-size: 13px;
     line-height: 1.9;
-    color: #a1a98f;
     margin: 0;
-  }
-  .editor-photo {
-    width: 100%;
-    max-height: 200px;
-    object-fit: cover;
-    border-radius: 9px;
-    margin-bottom: 15px;
   }
   .file-input input {
     font-size: 14px !important;
@@ -778,10 +721,7 @@
   .publish-option {
     display: flex;
     gap: 12px;
-    align-items: flex-start;
     margin: 20px 0 0;
-    padding: 15px;
-    background: #eff4e7;
     border: 1px solid #dfe8d1;
     border-radius: 9px;
   }
@@ -809,8 +749,6 @@
   .editor-footer {
     border-top: 1px solid #e3e9db;
     padding: 16px 27px;
-    display: flex;
-    justify-content: flex-end;
     gap: 9px;
   }
   .editor-footer button {
@@ -982,11 +920,6 @@
   .geocode-tools small {
     color: #63776c;
   }
-  .geocode-matches {
-    display: grid;
-    gap: 7px;
-    margin: 10px 0;
-  }
   .geocode-matches button {
     text-align: left;
     white-space: normal;
@@ -1006,8 +939,6 @@
   }
 
   .monitor-dashboard {
-    display: flex;
-    flex-direction: column;
     gap: 24px;
   }
   .monitor-dashboard > .metrics {
@@ -1017,17 +948,12 @@
     margin: 0;
   }
   .monitor-service-id {
-    display: block;
     color: #78847c;
-    margin-top: 5px;
     font-size: 15px;
   }
   .monitor-status {
-    display: inline-block;
     padding: 6px 10px;
-    border-radius: 20px;
     font-size: 16px;
-    font-weight: 600;
   }
   .monitor-status.healthy {
     background: #e7f1e9;
@@ -1066,11 +992,8 @@
     fill: #6c7c72;
   }
   .activity-legend {
-    display: flex;
-    flex-wrap: wrap;
     gap: 14px;
     font-size: 16px;
-    color: #576b5e;
   }
   .activity-legend span {
     display: flex;
@@ -1082,12 +1005,6 @@
     height: 9px;
     border-radius: 50%;
     display: inline-block;
-  }
-  .visitor-dot {
-    background: #246d9b;
-  }
-  .listener-dot {
-    background: #ca762c;
   }
   @media (max-width: 760px) {
     .activity-chart .panel-title {
@@ -1149,26 +1066,15 @@
   }
 
   .login-page {
-    min-height: 100dvh;
-    display: grid;
     place-items: center;
-    padding: 28px;
     background: radial-gradient(ellipse at top left, #e1ebda, transparent 65%), #f5f7f1;
   }
   .login-card {
-    width: min(100%, 450px);
-    background: #fffefb;
     border: 1px solid #dde5d8;
     border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 18px 65px #153f3210;
   }
   .login-brand {
     text-decoration: none;
-    font-size: 38px;
-    font-weight: 700;
-    color: #174c3c;
-    letter-spacing: -1.5px;
   }
   .login-brand span {
     color: #d98b45;
@@ -1182,8 +1088,6 @@
     line-height: 1.4;
   }
   .login-intro {
-    font-size: 14px;
-    color: #768573;
     margin: 0 0 28px;
   }
   .login-card label {
@@ -1211,11 +1115,7 @@
     margin: 16px 0 0;
   }
   .login-map-link {
-    display: inline-block;
-    margin-top: 24px;
-    font-size: 13px;
     text-decoration: none;
-    color: #73896b;
   }
   .admin-badge button {
     margin-left: 10px;
@@ -1223,9 +1123,6 @@
     padding: 7px 10px;
   }
   @media (max-width: 520px) {
-    .login-card {
-      padding: 28px 22px;
-    }
     .admin-badge {
       gap: 5px;
       font-size: 12px;
@@ -1274,20 +1171,15 @@
     color: #294532;
   }
   .user-form-actions {
-    display: flex;
-    justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
   }
   .user-dialog {
     border: 1px solid #dce5d7;
     border-radius: 18px;
-    padding: 0;
     width: min(700px, calc(100% - 32px));
     max-height: calc(100dvh - 64px);
-    color: #294532;
     background: #fffefb;
-    box-shadow: 0 24px 90px #12302238;
     overflow: hidden;
   }
   .user-dialog[open] {
@@ -1305,13 +1197,8 @@
     max-height: calc(100dvh - 64px);
   }
   .user-dialog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
     padding: 24px 28px 20px;
     border-bottom: 1px solid #e4eadc;
-    flex-shrink: 0;
   }
   .user-dialog-header h2 {
     font-size: 24px;
@@ -1644,7 +1531,6 @@
     }
     .poi-cell {
       gap: 10px;
-      align-items: flex-start;
     }
     .poi-cell > div {
       min-width: 0;
@@ -1667,7 +1553,6 @@
     .publish-status,
     .monitor-status {
       white-space: normal;
-      max-width: 100%;
       font-size: 12px;
     }
     .updated-date {
@@ -1693,9 +1578,6 @@
     }
     .table-footer > div {
       flex-wrap: wrap;
-    }
-    .filters {
-      min-width: 0;
     }
     .filters .search {
       min-width: 0;
@@ -1957,12 +1839,9 @@
       font-size: 16px;
     }
     .editor-footer {
-      position: relative;
-      z-index: 1;
       padding: 12px 18px;
       gap: 10px;
       border-top: 1px solid #dce5d5;
-      box-shadow: 0 -4px 12px #153f3206;
     }
     .editor-footer button {
       flex: 1;
@@ -2121,10 +2000,6 @@
     margin-top: 8px;
     font-size: 13px;
     color: #71836d;
-  }
-
-  .login-password-field {
-    position: relative;
   }
   .login-password-field input {
     padding-right: 54px;

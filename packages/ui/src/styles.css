@@ -39,3 +39,16 @@
     --primary: #285d48;
   }
 }
+
+@theme {
+  --color-vinlook-forest: #174c3c;
+  --color-vinlook-ink: #223c32;
+  --color-vinlook-muted: #5a6b60;
+  --color-vinlook-paper: #fbfcf8;
+  --color-vinlook-canvas: #f7f8f4;
+  --color-vinlook-line: #dce3d9;
+  --color-vinlook-sage: #798d7b;
+  --color-vinlook-gold: #d78642;
+  --color-vinlook-sidebar: #173f34;
+  --color-vinlook-dialog: #fffefa;
+}

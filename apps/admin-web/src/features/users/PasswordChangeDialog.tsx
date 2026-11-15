@@ -1,3 +1,6 @@
+import { NativeDialog } from '@vinlook/ui/dialog';
+import { Input } from '@vinlook/ui/input';
+import { Button } from '@vinlook/ui/button';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { api } from '../../services/api';
 
@@ -60,9 +63,9 @@ export function PasswordChangeDialog({
   }
 
   return (
-    <dialog
+    <NativeDialog
       ref={dialog}
-      className="user-dialog"
+      className="user-dialog p-[0] text-[#294532] shadow-[0_24px_90px_#12302238]"
       aria-labelledby="password-dialog-title"
       onCancel={(event) => {
         event.preventDefault();
@@ -70,7 +73,7 @@ export function PasswordChangeDialog({
       }}
     >
       <form onSubmit={save} aria-busy={busy}>
-        <header className="user-dialog-header">
+        <header className="user-dialog-header flex justify-between gap-[16px] shrink-0 items-start">
           <div>
             <h2 id="password-dialog-title">Đổi mật khẩu</h2>
             <p>
@@ -80,22 +83,24 @@ export function PasswordChangeDialog({
                 : 'Bạn sẽ cần đăng nhập lại bằng mật khẩu mới.'}
             </p>
           </div>
-          <button
+          <Button
+            variant="custom"
             type="button"
-            className="icon-button"
+            className="icon-button leading-[30px]"
             aria-label="Đóng"
             onClick={on_close}
             disabled={busy}
           >
             ✕
-          </button>
+          </Button>
         </header>
 
-        <div className="user-dialog-body">
-          <div className="form-grid">
+        <div className="user-dialog-body min-h-0 flex-[1]">
+          <div className="form-grid grid">
             <label className="password-current-field">
               {target_user_id ? 'Mật khẩu hiện tại của bạn' : 'Mật khẩu hiện tại'}
-              <input
+              <Input
+                appearance="custom"
                 type="password"
                 autoComplete="current-password"
                 required
@@ -107,7 +112,8 @@ export function PasswordChangeDialog({
             </label>
             <label>
               Mật khẩu mới
-              <input
+              <Input
+                appearance="custom"
                 type="password"
                 autoComplete="new-password"
                 required
@@ -120,7 +126,8 @@ export function PasswordChangeDialog({
             </label>
             <label>
               Xác nhận mật khẩu mới
-              <input
+              <Input
+                appearance="custom"
                 ref={confirmation}
                 type="password"
                 autoComplete="new-password"
@@ -133,23 +140,26 @@ export function PasswordChangeDialog({
               />
             </label>
           </div>
-          <p className="field-note">Mật khẩu mới cần ít nhất 8 ký tự.</p>
+          <p className="field-note text-[#a1a98f]">Mật khẩu mới cần ít nhất 8 ký tự.</p>
           {error && (
-            <p className="error-banner" role="alert">
+            <p
+              className="error-banner py-[13px] px-[15px] bg-[#fff0e8] text-[#a65d40] rounded-[8px]"
+              role="alert"
+            >
               {error}
             </p>
           )}
         </div>
 
-        <footer className="user-form-actions">
-          <button type="button" onClick={on_close} disabled={busy}>
+        <footer className="user-form-actions flex justify-end">
+          <Button variant="custom" type="button" onClick={on_close} disabled={busy}>
             Hủy bỏ
-          </button>
-          <button type="submit" className="primary" disabled={busy}>
+          </Button>
+          <Button variant="custom" type="submit" className="primary" disabled={busy}>
             {busy ? 'Đang lưu...' : 'Lưu mật khẩu mới'}
-          </button>
+          </Button>
         </footer>
       </form>
-    </dialog>
+    </NativeDialog>
   );
 }

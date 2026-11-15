@@ -1,3 +1,6 @@
+import { NativeDialog } from '@vinlook/ui/dialog';
+import { NativeSelect } from '@vinlook/ui/native-select';
+import { Button } from '@vinlook/ui/button';
 import { useEffect, useRef, useState } from 'react';
 import type { Poi } from '../../types';
 import { Icon } from '../../components/Icon';
@@ -87,51 +90,59 @@ export function PoiNarrationDialog({ poi, on_close }: { poi: Poi; on_close: () =
   }
 
   return (
-    <dialog
+    <NativeDialog
       ref={dialog}
-      className="narration-dialog"
+      className="narration-dialog w-[min(580px,_calc(100%_-_32px))] max-h-[calc(100dvh_-_48px)] p-[0] text-[#214337] overflow-y-auto shadow-[0_28px_100px_#102d3555] [@media(max-width:_600px)]:w-[calc(100%_-_24px)] [@media(max-width:_600px)]:max-h-[calc(100dvh_-_32px)]"
       aria-labelledby="preview-title"
       onCancel={on_close}
     >
-      <header className="preview-hero">
+      <header className="preview-hero relative min-h-[244px] flex items-end bg-[#355b48] [@media(max-width:_600px)]:min-h-[205px]">
         {poi.image_url && !image_failed ? (
           <img
-            className="preview-photo"
+            className="preview-photo absolute w-full h-full object-cover"
             src={poi.image_url}
             alt={poi.name}
             onError={() => set_image_failed(true)}
           />
         ) : (
-          <div className="preview-photo-placeholder">
+          <div className="preview-photo-placeholder absolute w-full h-full grid text-[#b4c7a5]">
             <Icon kind="photo" size={64} />
           </div>
         )}
-        <div className="preview-hero-shade" />
-        <span className="preview-tag">
+        <div className="preview-hero-shade absolute w-full h-full" />
+        <span className="preview-tag absolute top-[22px] left-[24px] flex gap-[7px] items-center text-[9px] font-semibold tracking-[1.4px] text-white bg-[#173f348c] py-[9px] px-[11px] [@media(max-width:_600px)]:top-[17px] [@media(max-width:_600px)]:left-[18px] [@media(max-width:_600px)]:text-[8px] [@media(max-width:_600px)]:tracking-[1px] [@media(max-width:_600px)]:py-[8px] [@media(max-width:_600px)]:px-[9px]">
           <Icon kind="listen" size={14} /> NGHE THỬ THUYẾT MINH
         </span>
-        <button
+        <Button
+          variant="custom"
           className="preview-close"
           type="button"
           aria-label="Đóng nghe thử"
           onClick={on_close}
         >
           <Icon kind="close" size={20} />
-        </button>
-        <div className="preview-place">
+        </Button>
+        <div className="preview-place relative w-full text-[white]">
           <span>{categories[poi.category] ?? poi.category}</span>
           <h2 id="preview-title">{poi.name}</h2>
         </div>
       </header>
-      <div className="preview-body">
+      <div className="preview-body flex flex-col gap-[13px] [@media(max-width:_600px)]:gap-[12px]">
         <p className="preview-address">
           <Icon kind="pin" size={16} />
           <span>{poi.address}</span>
         </p>
-        {poi.image_credit && <small className="preview-credit">Ảnh: {poi.image_credit}</small>}
-        <section className="preview-audio-card" aria-label="Nghe thử mẫu">
-          <div className="preview-section-title">
-            <span className="preview-listen-icon">
+        {poi.image_credit && (
+          <small className="preview-credit text-[9px] text-[#86937e] mt-[-7px]">
+            Ảnh: {poi.image_credit}
+          </small>
+        )}
+        <section
+          className="preview-audio-card flex flex-col gap-[17px] p-[21px] bg-[white] [@media(max-width:_600px)]:p-[16px] [@media(max-width:_600px)]:gap-[15px]"
+          aria-label="Nghe thử mẫu"
+        >
+          <div className="preview-section-title flex items-center gap-[12px] [@media(max-width:_600px)]:gap-[10px]">
+            <span className="preview-listen-icon grid shrink-0 w-[44px] h-[44px] bg-[#edf3e7] text-[#356045] rounded-[13px]">
               <Icon kind="listen" size={22} />
             </span>
             <div>
@@ -141,7 +152,7 @@ export function PoiNarrationDialog({ poi, on_close }: { poi: Poi; on_close: () =
           </div>
           <label>
             Ngôn ngữ thuyết minh
-            <select
+            <NativeSelect
               value={language}
               onChange={(event) => {
                 clear_audio();
@@ -162,16 +173,17 @@ export function PoiNarrationDialog({ poi, on_close }: { poi: Poi; on_close: () =
                   {item.code === poi.source_language ? ' · Bản gốc' : ''}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
-          <button
+          <Button
+            variant="custom"
             type="button"
             className="primary"
             disabled={loading}
             onClick={() => void prepare_audio()}
           >
             {loading ? 'Đang chuẩn bị audio…' : src ? 'Tải lại audio' : '▶ Nghe thử mẫu'}
-          </button>
+          </Button>
           {loading && <p role="status">Lần tạo đầu tiên có thể mất một chút thời gian.</p>}
           {src && (
             <>
@@ -186,16 +198,19 @@ export function PoiNarrationDialog({ poi, on_close }: { poi: Poi; on_close: () =
             </>
           )}
           {error && (
-            <div className="error-banner" role="alert">
+            <div
+              className="error-banner py-[13px] px-[15px] bg-[#fff0e8] text-[#a65d40] rounded-[8px]"
+              role="alert"
+            >
               {error}
             </div>
           )}
         </section>
-        <div className="preview-note">
+        <div className="preview-note flex items-start gap-[7px] text-[10px] leading-[1.7] text-[#87937d]">
           <Icon kind="check" size={15} />
           <span>Ưu tiên audio đã lưu. Bản mới sẽ tự động được lưu cho lần nghe sau.</span>
         </div>
       </div>
-    </dialog>
+    </NativeDialog>
   );
 }

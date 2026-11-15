@@ -1,3 +1,7 @@
+import { Table } from '@vinlook/ui/table';
+import { NativeSelect } from '@vinlook/ui/native-select';
+import { Input } from '@vinlook/ui/input';
+import { Button } from '@vinlook/ui/button';
 /**
  * @file PoiListPanel.tsx
  * @description Bảng danh sách, tìm kiếm, lọc và phân trang Điểm tham quan (POI List Panel).
@@ -61,12 +65,14 @@ export function PoiListPanel({
   const isOverview = mode === 'overview';
 
   return (
-    <section className="panel poi-panel">
-      <div className="panel-title">
+    <section className="panel overflow-hidden poi-panel mb-[24px]">
+      <div className="panel-title justify-between">
         <div>
           <h2>
             {isOverview ? 'Cập nhật gần đây' : 'Danh sách điểm tham quan'}{' '}
-            <span className="count-badge">{isOverview ? (overviewTotal ?? '—') : total}</span>
+            <span className="count-badge ml-[6px]">
+              {isOverview ? (overviewTotal ?? '—') : total}
+            </span>
           </h2>
           <p>
             {isOverview
@@ -75,21 +81,27 @@ export function PoiListPanel({
           </p>
         </div>
         {isOverview ? (
-          <button className="text-button" onClick={onViewAll}>
+          <Button
+            variant="custom"
+            type="submit"
+            className="text-button bg-[transparent]"
+            onClick={onViewAll}
+          >
             Xem tất cả điểm đến →
-          </button>
+          </Button>
         ) : (
-          <button onClick={onRefresh} disabled={loading}>
+          <Button variant="custom" type="submit" onClick={onRefresh} disabled={loading}>
             Làm mới
-          </button>
+          </Button>
         )}
       </div>
 
       {!isOverview && (
-        <div className="filters">
-          <label className="search">
+        <div className="filters flex items-center [@media(max-width:_760px)]:min-w-0">
+          <label className="search flex items-center gap-[8px] flex-[1] text-[#93a383]">
             <Icon kind="search" />
-            <input
+            <Input
+              appearance="custom"
               aria-label="Tìm điểm tham quan"
               type="search"
               value={search}
@@ -99,7 +111,7 @@ export function PoiListPanel({
             />
           </label>
 
-          <select
+          <NativeSelect
             aria-label="Lọc danh mục"
             value={category}
             onChange={(event) => onCategoryChange(event.target.value)}
@@ -110,9 +122,9 @@ export function PoiListPanel({
                 {name}
               </option>
             ))}
-          </select>
+          </NativeSelect>
 
-          <select
+          <NativeSelect
             aria-label="Lọc trạng thái"
             value={status}
             onChange={(event) => onStatusChange(event.target.value)}
@@ -120,18 +132,24 @@ export function PoiListPanel({
             <option value="all">Tất cả trạng thái</option>
             <option value="published">Đã xuất bản</option>
             <option value="draft">Bản nháp</option>
-          </select>
+          </NativeSelect>
         </div>
       )}
 
       {error && (
-        <div className="error-banner" role="alert">
-          {error} <button onClick={onRefresh}>Thử lại</button>
+        <div
+          className="error-banner py-[13px] px-[15px] bg-[#fff0e8] text-[#a65d40] rounded-[8px]"
+          role="alert"
+        >
+          {error}{' '}
+          <Button variant="custom" type="submit" onClick={onRefresh}>
+            Thử lại
+          </Button>
         </div>
       )}
 
       <div className="table-wrap" aria-busy={loading}>
-        <table>
+        <Table>
           <thead>
             <tr>
               <th>Điểm tham quan</th>
@@ -139,7 +157,9 @@ export function PoiListPanel({
               <th>Trạng thái</th>
               <th>Cập nhật</th>
               <th>
-                <span className="sr-only">Thao tác</span>
+                <span className="sr-only absolute w-[1px] h-[1px] p-[0] m-[-1px] overflow-hidden whitespace-nowrap">
+                  Thao tác
+                </span>
               </th>
             </tr>
           </thead>
@@ -149,7 +169,7 @@ export function PoiListPanel({
               pois.map((poi) => (
                 <tr key={poi.id}>
                   <td>
-                    <div className="poi-cell">
+                    <div className="poi-cell flex items-center [@media(max-width:_760px)]:items-start">
                       {poi.image_url ? (
                         <img
                           src={`${poi.image_url}?v=${encodeURIComponent(poi.updated_at)}`}
@@ -157,7 +177,7 @@ export function PoiListPanel({
                           loading="lazy"
                         />
                       ) : (
-                        <span className="photo-placeholder">
+                        <span className="photo-placeholder grid bg-[#edf2e6] text-[#95a583]">
                           <Icon kind="photo" />
                         </span>
                       )}
@@ -168,12 +188,16 @@ export function PoiListPanel({
                     </div>
                   </td>
                   <td data-label="Danh mục">
-                    <span className={`category-tag ${poi.category}`}>
+                    <span
+                      className={`category-tag inline-block [@media(max-width:_760px)]:max-w-[100%] ${poi.category}`}
+                    >
                       {categories[poi.category] ?? poi.category}
                     </span>
                   </td>
                   <td data-label="Trạng thái">
-                    <span className={`publish-status ${poi.is_published ? 'published' : ''}`}>
+                    <span
+                      className={`publish-status [@media(max-width:_760px)]:max-w-[100%] ${poi.is_published ? 'published' : ''}`}
+                    >
                       <i />
                       {poi.is_published ? 'Đã xuất bản' : 'Bản nháp'}
                     </span>
@@ -183,40 +207,44 @@ export function PoiListPanel({
                   </td>
                   <td>
                     <div className="poi-actions">
-                      <button
+                      <Button
+                        variant="custom"
                         type="button"
-                        className="edit-button"
+                        className="edit-button whitespace-nowrap"
                         aria-label={`Nghe thử mẫu ${poi.name}`}
                         onClick={() => onPreview(poi)}
                       >
                         Nghe thử mẫu
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant="custom"
                         type="button"
-                        className="edit-button primary-edit"
+                        className="edit-button whitespace-nowrap primary-edit"
                         aria-label={`Chỉnh sửa ${poi.name}`}
                         onClick={() => onEditPoi(poi)}
                       >
                         Chỉnh sửa →
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
               ))}
           </tbody>
-        </table>
+        </Table>
 
         {loading && (
-          <p className="empty-state" role="status">
+          <p className="empty-state p-[25px] text-center text-[#8c9a7f]" role="status">
             Đang tải danh sách điểm tham quan...
           </p>
         )}
         {!loading && !error && !pois.length && (
-          <p className="empty-state">Không có địa điểm nào phù hợp. Vui lòng thử bộ lọc khác.</p>
+          <p className="empty-state p-[25px] text-center text-[#8c9a7f]">
+            Không có địa điểm nào phù hợp. Vui lòng thử bộ lọc khác.
+          </p>
         )}
       </div>
 
-      <footer className="table-footer">
+      <footer className="table-footer flex items-center justify-between">
         <span>
           {isOverview
             ? `Hiển thị ${pois.length} địa điểm cập nhật gần nhất`
@@ -224,12 +252,22 @@ export function PoiListPanel({
         </span>
         {!isOverview && (
           <div>
-            <button disabled={page === 1 || loading} onClick={() => onPageChange(page - 1)}>
+            <Button
+              variant="custom"
+              type="submit"
+              disabled={page === 1 || loading}
+              onClick={() => onPageChange(page - 1)}
+            >
               ← Trước
-            </button>
-            <button disabled={page * 10 >= total || loading} onClick={() => onPageChange(page + 1)}>
+            </Button>
+            <Button
+              variant="custom"
+              type="submit"
+              disabled={page * 10 >= total || loading}
+              onClick={() => onPageChange(page + 1)}
+            >
               Sau →
-            </button>
+            </Button>
           </div>
         )}
       </footer>

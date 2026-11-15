@@ -79,7 +79,10 @@ export function UserManagement({
       )}
 
       {error && !modal_open && !pending_status && (
-        <div className="error-banner" role="alert">
+        <div
+          className="error-banner py-[13px] px-[15px] bg-[#fff0e8] text-[#a65d40] rounded-[8px]"
+          role="alert"
+        >
           {error}
         </div>
       )}

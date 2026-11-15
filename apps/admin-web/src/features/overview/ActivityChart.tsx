@@ -55,24 +55,24 @@ export function ActivityChart({ samples }: ActivityChartProps) {
   }
 
   return (
-    <section className="panel activity-chart">
-      <div className="panel-title">
+    <section className="panel overflow-hidden activity-chart">
+      <div className="panel-title justify-between">
         <div>
           <h2>Hoạt động theo thời gian thực</h2>
           <p>5 phút gần nhất · Cập nhật mỗi 5 giây</p>
         </div>
-        <div className="activity-legend">
+        <div className="activity-legend flex flex-wrap text-[#576b5e]">
           <span>
-            <i className="visitor-dot" /> Đang truy cập
+            <i className="visitor-dot bg-[#246d9b]" /> Đang truy cập
           </span>
           <span>
-            <i className="listener-dot" /> Đang lắng nghe
+            <i className="listener-dot bg-[#ca762c]" /> Đang lắng nghe
           </span>
         </div>
       </div>
 
       {!samples.some((point) => point.visitors !== null) ? (
-        <p className="empty-state" role="status">
+        <p className="empty-state p-[25px] text-center text-[#8c9a7f]" role="status">
           Chưa nhận được dữ liệu hoạt động.
         </p>
       ) : (

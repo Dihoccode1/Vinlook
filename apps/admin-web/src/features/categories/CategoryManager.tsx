@@ -1,3 +1,4 @@
+import { Table } from '@vinlook/ui/table';
 /**
  * @file CategoryManager.tsx
  * @description Phân hệ Quản lý Danh mục Điểm tham quan (Categories Feature)
@@ -19,8 +20,8 @@ export function CategoryManager({ stats }: CategoryManagerProps) {
   });
 
   return (
-    <section className="panel category-manager">
-      <div className="panel-title">
+    <section className="panel overflow-hidden category-manager">
+      <div className="panel-title justify-between">
         <div>
           <h2>Danh mục điểm tham quan</h2>
           <p>Phân loại chủ đề cho các điểm đến trên bản đồ du lịch.</p>
@@ -28,7 +29,7 @@ export function CategoryManager({ stats }: CategoryManagerProps) {
       </div>
 
       <div className="table-wrap">
-        <table>
+        <Table>
           <thead>
             <tr>
               <th>Mã danh mục</th>
@@ -61,7 +62,7 @@ export function CategoryManager({ stats }: CategoryManagerProps) {
               );
             })}
           </tbody>
-        </table>
+        </Table>
       </div>
     </section>
   );

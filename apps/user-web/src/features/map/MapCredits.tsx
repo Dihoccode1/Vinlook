@@ -1,3 +1,4 @@
+import { Button } from '@vinlook/ui/button';
 import { useEffect, useState } from 'react';
 
 export function MapCredits() {
@@ -11,20 +12,22 @@ export function MapCredits() {
     return () => window.clearTimeout(timer);
   }, [view]);
   return (
-    <div className="map-credits">
+    <div className="map-credits absolute z-[450]">
       {view !== 'closed' && (
         <section
           id="map-credits-panel"
-          className={`map-credits-panel ${view}`}
+          className={`map-credits-panel absolute bottom-[40px] left-[0] max-w-[calc(100vw_-_30px)] bg-[#fffef9] shadow-[0_4px_20px_#12302122] text-[12px] leading-[1.7] text-[#61725b] ${view}`}
           aria-label="Nguồn dữ liệu bản đồ"
         >
-          <button
-            className="credits-close"
+          <Button
+            variant="custom"
+            type="submit"
+            className="credits-close absolute top-[4px] right-[4px] w-[28px] h-[28px] bg-[transparent] text-[#667b5c] text-[20px]"
             aria-label="Đóng thông tin nguồn"
             onClick={() => set_view('closed')}
           >
             ×
-          </button>
+          </Button>
           {view === 'details' && <h3>Nguồn dữ liệu</h3>}
           <a
             href="https://www.openstreetmap.org/copyright"
@@ -47,8 +50,10 @@ export function MapCredits() {
           )}
         </section>
       )}
-      <button
-        className="map-credits-toggle"
+      <Button
+        variant="custom"
+        type="submit"
+        className="map-credits-toggle grid w-[30px] h-[30px] p-[0] bg-[#fffef9f2] text-[#55714f] text-[21px] leading-[1] shadow-[0_2px_8px_#12302114]"
         aria-label="Thông tin nguồn bản đồ"
         aria-controls="map-credits-panel"
         aria-expanded={view !== 'closed'}
@@ -59,7 +64,7 @@ export function MapCredits() {
         }
       >
         ⓘ
-      </button>
+      </Button>
     </div>
   );
 }
