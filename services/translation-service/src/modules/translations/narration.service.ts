@@ -35,7 +35,7 @@ export function create_narration_service(
               (await files?.find(id, language, previous_key));
             if (previous) {
               saved = previous;
-              await repository?.save(id, language, key, previous);
+              if (!provider.cache_only) await repository?.save(id, language, key, previous);
               break;
             }
           }
@@ -49,8 +49,10 @@ export function create_narration_service(
             generating--;
           }
         }
-        if (!saved) await repository?.save(id, language, key, audio);
-        if (!local) await files?.save(id, language, key, audio);
+        if (!provider.cache_only) {
+          if (!saved) await repository?.save(id, language, key, audio);
+          if (!local) await files?.save(id, language, key, audio);
+        }
         if (audio.length <= 32_000_000) {
           while (cache_bytes + audio.length > 32_000_000 && cache.size) {
             const first = cache.keys().next().value!;

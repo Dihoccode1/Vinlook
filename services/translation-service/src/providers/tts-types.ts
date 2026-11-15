@@ -2,6 +2,7 @@ import { TranslationError } from '../modules/translations/types.js';
 export interface TtsProvider {
   identity: string;
   cache_identities?: string[];
+  cache_only?: boolean;
   generate(text: string, language?: string): Promise<Buffer>;
 }
 export function require_wav(audio: Buffer) {

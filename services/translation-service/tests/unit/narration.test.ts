@@ -3,12 +3,47 @@ import assert from 'node:assert/strict';
 import request from 'supertest';
 import { create_gemini_tts } from '../../src/providers/gemini-tts.js';
 import { create_narration_service } from '../../src/modules/translations/narration.service.js';
+import { narration_key } from '../../src/modules/translations/narration-key.js';
+import { create_tts_provider } from '../../src/providers/tts-provider.js';
 import { create_app } from '../../src/app.js';
 
 const wav = Buffer.alloc(48);
 wav.write('RIFF');
 wav.writeUInt32LE(40, 4);
 wav.write('WAVE', 8);
+test('saved Gemini audio plays without a configured TTS key and keeps its stored identity', async (t) => {
+  const tts_providers = process.env.TTS_PROVIDERS;
+  const gemini_key = process.env.GEMINI_API_KEY;
+  process.env.TTS_PROVIDERS = 'gemini';
+  delete process.env.GEMINI_API_KEY;
+  t.after(() => {
+    if (tts_providers === undefined) delete process.env.TTS_PROVIDERS;
+    else process.env.TTS_PROVIDERS = tts_providers;
+    if (gemini_key === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = gemini_key;
+  });
+
+  const provider = create_tts_provider();
+  const data = { name: 'POI', description: 'Story' };
+  const id = 'POI029';
+  const old_key = narration_key(
+    id,
+    'vi',
+    data.name,
+    data.description,
+    create_gemini_tts().identity,
+  );
+  const service = create_narration_service({ get: async () => ({ data }) }, provider, {
+    find: async (_id, _language, key) => (key === old_key ? wav : undefined),
+    save: async () => assert.fail('replaying saved audio should not change storage'),
+  });
+
+  assert.deepEqual(await service.get(id, 'vi'), wav);
+  await assert.rejects(service.get(id, 'pt'), { code: 'PROVIDER_NOT_CONFIGURED' });
+  data.description = 'Updated story';
+  await assert.rejects(service.get(id, 'vi'), { code: 'PROVIDER_NOT_CONFIGURED' });
+});
+
 test('saved audio remains available while two other audio files are being generated', async () => {
   let release!: () => void;
   const gate = new Promise<void>((resolve) => {

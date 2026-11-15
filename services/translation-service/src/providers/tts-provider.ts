@@ -79,32 +79,40 @@ export function create_tts_provider(): TtsProvider {
   ];
   if (!names.length || names.some((name) => !['gemini', 'azure', 'google'].includes(name)))
     throw new Error('TTS_PROVIDERS must contain gemini, azure or google');
-  const providers = names.flatMap((name) => {
+  const candidates = names.map((name) => {
     if (name === 'gemini') {
       const configured = !!process.env.GEMINI_API_KEY?.trim();
       const provider = track_tts('Gemini TTS', configured, create_gemini_tts());
-      return configured ? [provider] : [];
+      return { configured, provider };
     }
     if (name === 'azure') {
       const configured = !!(
         process.env.AZURE_SPEECH_KEY?.trim() && process.env.AZURE_SPEECH_REGION?.trim()
       );
       const provider = track_tts('Azure Speech', configured, create_azure_tts());
-      return configured ? [provider] : [];
+      return { configured, provider };
     }
-    if (name === 'google') {
-      const configured = !!process.env.GOOGLE_TTS_API_KEY?.trim();
-      const provider = track_tts('Google Cloud TTS', configured, create_google_cloud_tts());
-      return configured ? [provider] : [];
-    }
-    return [];
+    const configured = !!process.env.GOOGLE_TTS_API_KEY?.trim();
+    const provider = track_tts('Google Cloud TTS', configured, create_google_cloud_tts());
+    return { configured, provider };
   });
+  const providers = candidates
+    .filter(({ configured }) => configured)
+    .map(({ provider }) => provider);
   if (!providers.length)
     return {
       identity: 'unconfigured-tts',
+      cache_identities: candidates.map(({ provider }) => provider.identity),
+      cache_only: true,
       async generate() {
         throw new TranslationError('PROVIDER_NOT_CONFIGURED');
       },
     };
-  return create_tts_pool(providers);
+  const pool = create_tts_pool(providers);
+  return {
+    ...pool,
+    cache_identities: [...new Set(candidates.map(({ provider }) => provider.identity))].filter(
+      (identity) => identity !== pool.identity,
+    ),
+  };
 }
