@@ -25,6 +25,13 @@
 }
 
 @layer base {
+  /* Preflight clears the browser's automatic margins for native dialogs. */
+  dialog:modal {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+  }
+
   :root {
     --background: #ffffff;
     --foreground: #1b3027;
