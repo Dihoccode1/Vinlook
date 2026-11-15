@@ -16,7 +16,7 @@ export default function App() {
 
   return (
     <MonitorLayout>
-      <div className="monitor-container">
+      <div className="flex flex-col gap-6">
         <SystemHealthPanel
           snapshot={snapshot}
           loading={loading}
@@ -28,7 +28,7 @@ export default function App() {
 
         {snapshot && <ServiceMetricsPanel services={snapshot.services} />}
 
-        <div className="split-panels">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <AlertsList alerts={journal?.system ?? []} />
           <EventLogs systemLogs={journal?.system ?? []} usageLogs={journal?.usage ?? []} />
         </div>
