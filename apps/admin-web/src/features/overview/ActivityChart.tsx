@@ -5,6 +5,7 @@
  */
 
 import React, { useRef } from 'react';
+import { Card } from '@vinlook/ui/card';
 import type { ActivitySample } from '../../types';
 
 interface ActivityChartProps {
@@ -55,28 +56,33 @@ export function ActivityChart({ samples }: ActivityChartProps) {
   }
 
   return (
-    <section className="panel activity-chart">
-      <div className="panel-title">
+    <Card className="flex min-w-0 flex-col justify-between gap-0 rounded-xl border-[#e2e8dc] bg-white shadow-[0_2px_4px_#14372103]">
+      <div className="flex flex-wrap items-start justify-between gap-2.5 px-[22px] py-[21px]">
         <div>
-          <h2>Hoạt động theo thời gian thực</h2>
-          <p>5 phút gần nhất · Cập nhật mỗi 5 giây</p>
+          <h2 className="m-0 text-[15px] leading-[1.6] font-semibold text-[#2d473a] md:text-base">
+            Hoạt động theo thời gian thực
+          </h2>
+          <p className="mt-1 mb-0 text-[10px] leading-[1.8] text-[#96a18b] md:text-[11px]">
+            5 phút gần nhất · Cập nhật mỗi 5 giây
+          </p>
         </div>
-        <div className="activity-legend">
-          <span>
-            <i className="visitor-dot" /> Đang truy cập
+        <div className="flex items-center gap-3 text-[10px] leading-[1.7] text-[#7c8b74] md:text-[11px]">
+          <span className="inline-flex items-center gap-1.5">
+            <i className="inline-block h-1.5 w-1.5 rounded-full bg-[#246d9b]" /> Đang truy cập
           </span>
-          <span>
-            <i className="listener-dot" /> Đang lắng nghe
+          <span className="inline-flex items-center gap-1.5">
+            <i className="inline-block h-1.5 w-1.5 rounded-full bg-[#ca762c]" /> Đang lắng nghe
           </span>
         </div>
       </div>
 
       {!samples.some((point) => point.visitors !== null) ? (
-        <p className="empty-state" role="status">
+        <p className="px-[22px] py-10 text-center text-xs text-[#85917d]" role="status">
           Chưa nhận được dữ liệu hoạt động.
         </p>
       ) : (
         <svg
+          className="my-auto max-h-[245px] w-full px-[15px] [&_text]:fill-[#94a18d] [&_text]:text-[13px] md:[&_text]:text-[15px]"
           viewBox="0 0 700 240"
           role="img"
           aria-label="Biểu đồ số phiên truy cập và số phiên nghe thuyết minh trong 5 phút gần nhất"
@@ -134,9 +140,9 @@ export function ActivityChart({ samples }: ActivityChartProps) {
         </svg>
       )}
 
-      <p className="chart-note">
+      <p className="mx-[22px] mt-2.5 mb-[19px] text-[10px] leading-[1.8] text-[#a1aa98]">
         Dữ liệu được ghi nhận từ khi mở trang. Khoảng mất kết nối được để trống.
       </p>
-    </section>
+    </Card>
   );
 }
