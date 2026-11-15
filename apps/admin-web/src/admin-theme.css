@@ -1046,6 +1046,13 @@
     color: #77896c;
     min-width: 0;
   }
+  .user-dialog-body .form-grid {
+    align-items: start;
+  }
+  .account-username-wide {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
   .user-dialog-body .field-note {
     margin-top: 17px;
     font-size: 11px;

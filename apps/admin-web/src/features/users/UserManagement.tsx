@@ -359,7 +359,7 @@ export function UserManagement({
 
             <div className="user-dialog-body">
               <div className="form-grid">
-                <div>
+                <div className={editing === null ? 'account-username-wide' : undefined}>
                   <label>
                     Tên tài khoản
                     <input
@@ -416,6 +416,20 @@ export function UserManagement({
                   </select>
                 </label>
 
+                <label>
+                  Trạng thái
+                  <select
+                    value={form.status}
+                    disabled={busy || editing?.username.toLowerCase() === 'admin'}
+                    onChange={(e) =>
+                      set_form({ ...form, status: e.target.value as User['status'] })
+                    }
+                  >
+                    <option value="active">Đang hoạt động</option>
+                    <option value="disabled">Đã khóa</option>
+                  </select>
+                </label>
+
                 {!editing && (
                   <div className="password-pair form-grid">
                     <label>
@@ -455,20 +469,6 @@ export function UserManagement({
                     </label>
                   </div>
                 )}
-
-                <label>
-                  Trạng thái
-                  <select
-                    value={form.status}
-                    disabled={busy || editing?.username.toLowerCase() === 'admin'}
-                    onChange={(e) =>
-                      set_form({ ...form, status: e.target.value as User['status'] })
-                    }
-                  >
-                    <option value="active">Đang hoạt động</option>
-                    <option value="disabled">Đã khóa</option>
-                  </select>
-                </label>
               </div>
 
               {error && (
