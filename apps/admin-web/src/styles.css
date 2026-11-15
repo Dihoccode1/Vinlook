@@ -1280,14 +1280,11 @@
     margin-top: 20px;
   }
   .user-dialog {
-    position: fixed;
-    inset: 0;
     border: 1px solid #dce5d7;
     border-radius: 18px;
     padding: 0;
     width: min(700px, calc(100% - 32px));
     max-height: calc(100dvh - 64px);
-    margin: 32px auto auto;
     color: #294532;
     background: #fffefb;
     box-shadow: 0 24px 90px #12302238;
@@ -1357,7 +1354,6 @@
   @media (max-width: 520px) {
     .user-dialog {
       width: calc(100% - 20px);
-      margin-top: 12px;
       max-height: calc(100dvh - 24px);
       border-radius: 14px;
     }
