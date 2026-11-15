@@ -286,21 +286,31 @@ export function PoiMap({
     <>
       <div
         ref={element}
-        className="map"
+        className="map-canvas h-full w-full bg-[#e9eddf]"
         aria-label="Bản đồ các địa điểm tại Thành phố Hồ Chí Minh"
       />
       <MapCredits />
       {route && (
-        <aside className="route-map-legend" aria-label="Thứ tự đường đi">
-          <strong>Xuất phát A → {route.legs.map((_, index) => index + 1).join(' → ')}</strong>
-          <ol>
+        <aside
+          className="route-map-legend absolute top-[82px] left-[25px] z-[450] max-h-40 w-[260px] overflow-y-auto rounded-xl border border-[#dce4d5] bg-[#fffef9f5] p-3 text-xs shadow-[0_4px_20px_#16342616]"
+          aria-label="Thứ tự đường đi"
+        >
+          <strong className="block text-[11px] font-semibold text-foreground">
+            Xuất phát A → {route.legs.map((_, index) => index + 1).join(' → ')}
+          </strong>
+          <ol className="mt-2 space-y-1.5">
             {route.legs.map((_, index) => (
-              <li key={index}>
-                <span style={{ backgroundColor: route_leg_color(route.profile, index) }}>
+              <li key={index} className="flex items-center gap-2 text-[11px] text-foreground">
+                <span
+                  className="grid size-[18px] shrink-0 place-items-center rounded-full text-[10px] font-bold text-white"
+                  style={{ backgroundColor: route_leg_color(route.profile, index) }}
+                >
                   {index + 1}
                 </span>
-                {itinerary.find((poi) => poi.id === route.stop_ids?.[index])?.name ??
-                  `Điểm ${index + 1}`}
+                <span className="truncate">
+                  {itinerary.find((poi) => poi.id === route.stop_ids?.[index])?.name ??
+                    `Điểm ${index + 1}`}
+                </span>
               </li>
             ))}
           </ol>
