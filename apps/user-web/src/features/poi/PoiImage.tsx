@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { placeholder_image, poi_image_url } from './image-url';
+import { cn } from '@vinlook/ui/utils';
 
 interface Props {
   src: string | null;
@@ -14,7 +15,7 @@ export function PoiImage({ src, name, class_name, lazy = true }: Props) {
   const fallback = source === placeholder_image || source === failed_source;
   return (
     <img
-      className={class_name}
+      className={cn('bg-[#e9eee2] object-cover', class_name)}
       src={fallback ? placeholder_image : source}
       alt={fallback ? `${name} — chưa có ảnh` : `Ảnh ${name}`}
       loading={lazy ? 'lazy' : 'eager'}
