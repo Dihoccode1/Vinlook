@@ -12,7 +12,6 @@ const defaults: Options = { search: '', category: '', position: origin };
 function poi(id: string, meters: number, overrides: Partial<Poi> = {}): Poi {
   return {
     id,
-    slug: id,
     name: id,
     description: '',
     address: 'Địa chỉ',

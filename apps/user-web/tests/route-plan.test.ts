@@ -9,7 +9,6 @@ import type { LocationFix } from '../src/features/tracking/location-tracker.js';
 
 const poi: Poi = {
   id: 'POI001',
-  slug: 'cho-ben-thanh',
   name: 'Chợ Bến Thành',
   description: '',
   address: '',

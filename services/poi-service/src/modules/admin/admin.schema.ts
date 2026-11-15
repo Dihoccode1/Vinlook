@@ -20,7 +20,8 @@ export const admin_poi_schema = z
       .trim()
       .min(1)
       .max(160)
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+      .optional(),
     description: z.string().trim().min(1).max(20000),
     address: z.string().trim().min(1).max(500),
     visitor_description: z.string().trim().max(3000).optional(),

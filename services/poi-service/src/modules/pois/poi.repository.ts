@@ -4,7 +4,7 @@ import { postgres_poi_repository } from './poi.postgres.js';
 
 export interface Poi {
   id: string;
-  slug: string;
+  slug?: string;
   name: string;
   description: string;
   visitor_description?: string;

@@ -7,7 +7,6 @@ import type { Poi } from '../src/types/poi';
 
 const poi: Poi = {
   id: 'POI001',
-  slug: 'museum',
   name: 'Bảo tàng',
   description: 'KỊCH BẢN AUDIO KHÔNG HIỂN THỊ',
   visitor_description: 'Giới thiệu cho khách đọc.',

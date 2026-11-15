@@ -1842,9 +1842,6 @@
     .user-dialog form {
       max-height: calc(100svh - 104px);
     }
-    .admin-app .editor-dialog .editor-section:first-child > .form-grid:first-of-type {
-      grid-template-columns: 1fr;
-    }
     .workspace-nav button {
       font-size: 11px;
     }
