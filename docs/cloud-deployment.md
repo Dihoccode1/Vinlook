@@ -62,4 +62,4 @@ Trang Admin **Giám sát hệ thống** (`/admin/`) đọc chỉ số CPU (%) v�
 - Cách kiểm chứng sau deploy:
   1. Mở Render Dashboard -> service `vinlook-api` -> **Environment**, kiểm tra đã có `RENDER_API_KEY` hợp lệ và lưu/deploy nếu vừa thêm biến mới.
   2. Đăng nhập trang `/admin/` bằng tài khoản `admin`, mở mục **Giám sát hệ thống**.
-  3. Đối chiếu giá trị **CPU vinlook-api (%)**, **RAM vinlook-api (MiB)** và **Giới hạn RAM** trên `/admin/` với biểu đồ **Metrics** (độ phân giải 60 giây) trong Render Dashboard của `vinlook-api`; sai lệch nhỏ về thời điểm hiển thị có thể do bước lấy mẫu 60s của Render và cache 30s ở API Gateway.
+  3. Đối chiếu giá trị **CPU (%)**, **RAM (MiB)** và **Giới hạn RAM** trên `/admin/` với biểu đồ **Metrics** (độ phân giải 60 giây) trong Render Dashboard của `vinlook-api`; sai lệch nhỏ về thời điểm hiển thị có thể do bước lấy mẫu 60s của Render và cache 30s ở API Gateway.

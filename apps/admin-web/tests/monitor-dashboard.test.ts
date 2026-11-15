@@ -96,10 +96,12 @@ test('MonitorDashboard renders real Render CPU, RAM, limit, timestamp and preser
     message: null,
   });
 
+  const labels = Array.from(container.querySelectorAll('.metrics article .metric-label')).map(
+    (el) => el.textContent,
+  );
+  assert.deepEqual(labels, ['Dịch vụ sẵn sàng', 'CPU', 'RAM']);
   const text = container.textContent ?? '';
-  assert.match(text, /CPU vinlook-api/);
   assert.match(text, /12\.5%/);
-  assert.match(text, /RAM vinlook-api/);
   assert.match(text, /256\.4 MiB/);
   assert.match(text, /Giới hạn 512 MiB/);
   assert.match(text, /Cập nhật lúc/);
