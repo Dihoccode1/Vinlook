@@ -23,6 +23,8 @@ Trước khi đổi traffic, đối chiếu lại nguồn để tránh bỏ sót
 
 Runtime cloud từ chối phục vụ nếu dataset ID không trùng. Migration có khóa, transaction và checksum; sửa file migration đã áp dụng sẽ bị từ chối. Trước/sau migration, hệ thống so fingerprint của toàn bộ giá trị cũ, rollback nếu có thay đổi hoặc mất bản ghi. Vì vậy migration thông thường phải bổ sung cấu trúc và giữ dữ liệu. Các thay đổi dữ liệu có chủ đích cần một quy trình riêng có backup và kiểm chứng, không bỏ chốt an toàn để deploy cho qua.
 
+Cột `vinlook.pois.slug` được xóa qua migration `003_drop_poi_slug.sql` sau khi backend đã chuyển sang dùng mã POI. Migration này đối chiếu tất cả cột còn lại. Bản sao lưu trước triển khai giữ giá trị slug cũ, còn script nhập từ SQL Server chỉ bỏ qua cột đó khi đích đã xóa nó.
+
 ## Tự động deploy main
 
 PR chạy format/typecheck/unit tests, integration SQL Server, integration PostgreSQL cloud và Docker builds. PR không nhận secret triển khai. Job cloud chỉ chạy trên `main` khi `VINLOOK_DEPLOY_ENABLED=true` và `VINLOOK_DEPLOY_TARGET=cloud`.

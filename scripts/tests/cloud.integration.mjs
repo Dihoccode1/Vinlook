@@ -14,7 +14,33 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
     /^(127\.0\.0\.1|localhost)$/,
     'Tests must use an isolated local PostgreSQL instance',
   );
+  const old_migrations = await mkdtemp(join(tmpdir(), 'vinlook-before-slug-removal-'));
+  for (const name of ['001_initial.sql', '002_default_poi_slug.sql']) {
+    await copyFile(
+      new URL(`../../database/postgres/${name}`, import.meta.url),
+      join(old_migrations, name),
+    );
+  }
+  await migrate(pathToFileURL(old_migrations + '/'));
+  await query(`INSERT INTO pois(id,slug,name,description,address,latitude,longitude,category)
+    VALUES('POI900','existing-poi','Điểm đã có','Nội dung gốc','Địa chỉ',10.7,106.6,'history')`);
+  await query(`INSERT INTO poi_images(poi_id,content,content_type,sha256)
+    VALUES('POI900',decode('010203','hex'),'image/jpeg',repeat('0',64))`);
   await migrate();
+  assert.equal(
+    (
+      await query(
+        "SELECT 1 FROM information_schema.columns WHERE table_schema='vinlook' AND table_name='pois' AND column_name='slug'",
+      )
+    ).rowCount,
+    0,
+  );
+  const preserved = (
+    await query(
+      "SELECT p.name,p.description,encode(i.content,'hex') AS image FROM pois p JOIN poi_images i ON i.poi_id=p.id WHERE p.id='POI900'",
+    )
+  ).rows[0];
+  assert.deepEqual(preserved, { name: 'Điểm đã có', description: 'Nội dung gốc', image: '010203' });
   await migrate();
   const dataset = 'c527f7eb-9d7e-4e62-9d68-1c7df8ef1c7a';
   const salt = randomBytes(16).toString('hex');
