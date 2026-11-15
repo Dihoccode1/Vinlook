@@ -26,6 +26,15 @@ const BLANK_FORM: UserFormData = {
   password: '',
 };
 
+function is_root_account(user: Pick<User, 'username'>) {
+  return user.username.toLowerCase() === 'admin';
+}
+
+function role_order(user: User) {
+  if (is_root_account(user)) return 0;
+  return user.role === 'admin' ? 1 : 2;
+}
+
 export function UserManagement({
   current_user,
   on_password_changed,
@@ -34,7 +43,7 @@ export function UserManagement({
   on_password_changed: () => void;
 }) {
   const current_user_id = current_user.id;
-  const is_root = current_user.username.toLowerCase() === 'admin';
+  const is_root = is_root_account(current_user);
   const [users, set_users] = useState<User[]>([]);
   const [loading, set_loading] = useState(true);
   const [error, set_error] = useState('');
@@ -167,9 +176,13 @@ export function UserManagement({
     }
   }
 
-  const filtered = users.filter((u) =>
-    `${u.username} ${u.full_name}`.toLocaleLowerCase('vi').includes(query.toLocaleLowerCase('vi')),
-  );
+  const filtered = users
+    .filter((u) =>
+      `${u.username} ${u.full_name}`
+        .toLocaleLowerCase('vi')
+        .includes(query.toLocaleLowerCase('vi')),
+    )
+    .sort((a, b) => role_order(a) - role_order(b));
 
   function can_edit(user: User) {
     return (
@@ -234,15 +247,15 @@ export function UserManagement({
     <section className="user-management">
       <div className="user-permissions">
         <p>
-          <strong>Staff (Nhân viên):</strong> Tổng quan, Quản lý điểm đến (POI).
+          <strong>Root:</strong> Có thể chỉnh sửa, đổi mật khẩu, phân quyền và khóa hoặc mở khóa cả
+          Admin lẫn Staff.
         </p>
         <p>
           <strong>Admin (Quản trị viên):</strong> Toàn bộ quyền của Staff, Giám sát hệ thống, Quản
           lý tài khoản. Có thể chỉnh sửa Staff và khóa hoặc mở khóa các tài khoản khác.
         </p>
         <p>
-          <strong>Root:</strong> Có thể chỉnh sửa, đổi mật khẩu, phân quyền và khóa hoặc mở khóa cả
-          Admin lẫn Staff.
+          <strong>Staff (Nhân viên):</strong> Tổng quan, Quản lý điểm đến (POI).
         </p>
       </div>
 
@@ -485,14 +498,13 @@ export function UserManagement({
                   <td>
                     <strong>
                       {u.username}
-                      {u.username.toLowerCase() === 'admin' ? ' · Root' : ''}
                       {u.id === current_user_id ? ' (Bạn)' : ''}
                     </strong>
                     {u.full_name !== u.username && <div>{u.full_name}</div>}
                   </td>
                   <td data-label="Quyền hạn">
                     <span className={`role-badge ${u.role}`}>
-                      {u.role === 'admin' ? 'Admin' : 'Staff'}
+                      {is_root_account(u) ? 'Root' : u.role === 'admin' ? 'Admin' : 'Staff'}
                     </span>
                   </td>
                   <td data-label="Trạng thái">
