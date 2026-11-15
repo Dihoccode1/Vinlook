@@ -2,7 +2,7 @@ import { Router, json } from 'express';
 import { randomBytes, scrypt } from 'node:crypto';
 import { promisify } from 'node:util';
 import { query, transaction } from '@vinlook/server/postgres';
-import { validate_user } from './users.js';
+import { username_availability, validate_user } from './users.js';
 
 const derive = promisify(scrypt);
 const fields = 'id,username,full_name,role,status,created_at,login_locked';
@@ -28,6 +28,15 @@ export function postgres_user_routes() {
       data: (await query(`SELECT ${fields} FROM users ORDER BY created_at DESC,username`)).rows,
     });
   });
+  router.get(
+    '/availability',
+    username_availability(async (username) => {
+      const result = await query('SELECT 1 FROM users WHERE lower(username)=lower($1) LIMIT 1', [
+        username,
+      ]);
+      return result.rows.length > 0;
+    }),
+  );
   router.use(json({ limit: '4kb' }));
   router.patch('/:id/status', async (req, res) => {
     const id = String(req.params.id).toUpperCase(),

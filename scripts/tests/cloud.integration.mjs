@@ -144,6 +144,16 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
     });
     await t.test('account restrictions, staff access, login lockout and logout', async () => {
       const admin = (await (await request('/api/admin/auth/session')).json()).data;
+      const availability = '/api/admin/users/availability';
+      assert.equal((await request(availability + '?username=a')).status, 400);
+      for (const [username, available] of [
+        ['ci_staff', true],
+        ['ADMIN', false],
+      ]) {
+        const check = await request(availability + '?username=' + username);
+        assert.equal(check.status, 200);
+        assert.equal((await check.json()).data.available, available);
+      }
       assert.equal(
         (await request('/api/admin/users/' + admin.id + '/status', 'PATCH', { status: 'disabled' }))
           .status,
@@ -158,6 +168,9 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
       });
       assert.equal(created.status, 201);
       const staffId = (await created.json()).data.id;
+      const taken = await request(availability + '?username=CI_STAFF');
+      assert.equal(taken.status, 200);
+      assert.equal((await taken.json()).data.available, false);
       const rootCookie = cookie;
       const staffLogin = await request(
         '/api/admin/auth/login',
@@ -171,6 +184,7 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
         .map((value) => value.split(';')[0])
         .join('; ');
       assert.equal((await request('/api/admin/users')).status, 403);
+      assert.equal((await request(availability + '?username=ci_staff')).status, 403);
       const change_password = (body) => request('/api/admin/auth/password', 'POST', body);
       const staff_password = 'NewStaffFixture_123!';
       assert.equal(

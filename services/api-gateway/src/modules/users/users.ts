@@ -1,4 +1,4 @@
-import { Router, json } from 'express';
+import { Router, json, type RequestHandler } from 'express';
 import { randomBytes, scrypt } from 'node:crypto';
 import { promisify } from 'node:util';
 import sql from 'mssql';
@@ -6,6 +6,24 @@ import { auth_pool } from '../auth/auth-store.js';
 import { postgres_user_routes } from './users.postgres.js';
 
 const derive = promisify(scrypt);
+const valid_username = (value: unknown): value is string =>
+  typeof value === 'string' && /^[a-zA-Z0-9_.-]{3,100}$/.test(value);
+
+export function username_availability(
+  is_taken: (username: string) => Promise<boolean>,
+): RequestHandler {
+  return async (req, res) => {
+    const { username } = req.query;
+    if (!valid_username(username)) {
+      res.status(400).json({ error: { message: 'Tên tài khoản không hợp lệ.' } });
+      return;
+    }
+    const available = username.toLowerCase() !== 'admin' && !(await is_taken(username));
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({ data: { available } });
+  };
+}
+
 export interface UserInput {
   username: string;
   full_name: string;
@@ -17,8 +35,7 @@ export function validate_user(body: unknown, creating: boolean): UserInput | und
   if (!body || typeof body !== 'object') return;
   const b = body as Record<string, unknown>;
   if (
-    typeof b.username !== 'string' ||
-    !/^[a-zA-Z0-9_.-]{3,100}$/.test(b.username) ||
+    !valid_username(b.username) ||
     typeof b.full_name !== 'string' ||
     !b.full_name.trim() ||
     b.full_name.trim().length > 200 ||
@@ -61,6 +78,17 @@ export function user_routes() {
       ).recordset,
     });
   });
+  router.get(
+    '/availability',
+    username_availability(async (username) => {
+      const pool = await auth_pool();
+      const result = await pool
+        .request()
+        .input('username', sql.NVarChar(100), username)
+        .query('SELECT TOP (1) 1 FROM dbo.users WHERE username=@username');
+      return result.recordset.length > 0;
+    }),
+  );
   router.use(json({ limit: '4kb' }));
   router.patch('/:id/status', async (req, res) => {
     const id = String(req.params.id).toLowerCase();
