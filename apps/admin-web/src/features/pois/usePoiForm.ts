@@ -33,7 +33,7 @@ interface PoiEditorProps {
 }
 
 export function usePoiForm({ poi, on_close, on_saved }: PoiEditorProps) {
-  const dialog = useRef<HTMLDialogElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
 
   const [form, set_form] = useState({
     name: poi?.name ?? '',
@@ -64,10 +64,6 @@ export function usePoiForm({ poi, on_close, on_saved }: PoiEditorProps) {
     set,
     choose_location,
   } = useGeocoding(form, set_form, saving, poi?.address ?? '');
-  useEffect(() => {
-    dialog.current?.showModal();
-    return () => dialog.current?.close();
-  }, []);
 
   // Xử lý chiều cao viewport động (tránh bàn phím ảo che khuất trên mobile/tablet)
   useEffect(() => {

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import { Alert } from '@vinlook/ui/alert';
+import { Button } from '@vinlook/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@vinlook/ui/dialog';
+import { Select } from '@vinlook/ui/select';
 import type { Poi } from '../../types';
 import { Icon } from '../../components/Icon';
 import { categories } from '../../services/api';
-import './narration-dialog.css';
 
 export function PoiNarrationDialog({ poi, on_close }: { poi: Poi; on_close: () => void }) {
-  const dialog = useRef<HTMLDialogElement>(null);
   const player = useRef<HTMLAudioElement>(null);
   const request = useRef<AbortController | null>(null);
   const audio_url = useRef<string | null>(null);
@@ -24,11 +26,7 @@ export function PoiNarrationDialog({ poi, on_close }: { poi: Poi; on_close: () =
   }
 
   useEffect(() => {
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const overflow = document.body.style.overflow;
     const controller = new AbortController();
-    dialog.current?.showModal();
-    document.body.style.overflow = 'hidden';
     fetch('/api/languages', { signal: controller.signal })
       .then(async (response) => {
         if (!response.ok)
@@ -44,8 +42,6 @@ export function PoiNarrationDialog({ poi, on_close }: { poi: Poi; on_close: () =
     return () => {
       controller.abort();
       clear_audio();
-      document.body.style.overflow = overflow;
-      opener?.focus();
     };
   }, []);
 
@@ -87,115 +83,154 @@ export function PoiNarrationDialog({ poi, on_close }: { poi: Poi; on_close: () =
   }
 
   return (
-    <dialog
-      ref={dialog}
-      className="narration-dialog"
-      aria-labelledby="preview-title"
-      onCancel={on_close}
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) on_close();
+      }}
     >
-      <header className="preview-hero">
-        {poi.image_url && !image_failed ? (
-          <img
-            className="preview-photo"
-            src={poi.image_url}
-            alt={poi.name}
-            onError={() => set_image_failed(true)}
-          />
-        ) : (
-          <div className="preview-photo-placeholder">
-            <Icon kind="photo" size={64} />
-          </div>
-        )}
-        <div className="preview-hero-shade" />
-        <span className="preview-tag">
-          <Icon kind="listen" size={14} /> NGHE THỬ THUYẾT MINH
-        </span>
-        <button
-          className="preview-close"
-          type="button"
-          aria-label="Đóng nghe thử"
-          onClick={on_close}
-        >
-          <Icon kind="close" size={20} />
-        </button>
-        <div className="preview-place">
-          <span>{categories[poi.category] ?? poi.category}</span>
-          <h2 id="preview-title">{poi.name}</h2>
-        </div>
-      </header>
-      <div className="preview-body">
-        <p className="preview-address">
-          <Icon kind="pin" size={16} />
-          <span>{poi.address}</span>
-        </p>
-        {poi.image_credit && <small className="preview-credit">Ảnh: {poi.image_credit}</small>}
-        <section className="preview-audio-card" aria-label="Nghe thử mẫu">
-          <div className="preview-section-title">
-            <span className="preview-listen-icon">
-              <Icon kind="listen" size={22} />
-            </span>
-            <div>
-              <h3>Nghe câu chuyện nơi đây</h3>
-              <p>Chọn ngôn ngữ để nghe thử bài thuyết minh.</p>
+      <DialogContent
+        showCloseButton={false}
+        aria-labelledby="preview-title"
+        className="w-[min(94vw,490px)] max-w-[490px] gap-0 overflow-hidden rounded-[22px] border-[#dfe6d9] bg-white p-0 shadow-[0_24px_60px_#14332638]"
+      >
+        <DialogDescription className="sr-only">
+          Nghe thử audio thuyết minh theo ngôn ngữ cho {poi.name}
+        </DialogDescription>
+        <header className="relative h-[220px] overflow-hidden bg-[#174636]">
+          {poi.image_url && !image_failed ? (
+            <img
+              className="h-full w-full object-cover"
+              src={poi.image_url}
+              alt={poi.name}
+              onError={() => set_image_failed(true)}
+            />
+          ) : (
+            <div className="grid h-full w-full place-items-center bg-[radial-gradient(circle_at_top_right,#3b785f,#153d2f)] text-[#b6cdb9]">
+              <Icon kind="photo" size={64} />
             </div>
-          </div>
-          <label>
-            Ngôn ngữ thuyết minh
-            <select
-              value={language}
-              onChange={(event) => {
-                clear_audio();
-                set_src('');
-                set_loading(false);
-                set_error('');
-                set_language(event.target.value);
-              }}
-            >
-              {!languages.length && (
-                <option value={poi.source_language}>
-                  {poi.source_language === 'vi' ? 'Tiếng Việt' : poi.source_language}
-                </option>
-              )}
-              {languages.map((item) => (
-                <option key={item.code} value={item.code}>
-                  {item.name}
-                  {item.code === poi.source_language ? ' · Bản gốc' : ''}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
+          )}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#174234]/25 via-[#153e30]/55 to-[#102e24]/90" />
+          <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/35 px-3 py-1.5 text-[10px] font-semibold tracking-[1.2px] text-white backdrop-blur-sm">
+            <Icon kind="listen" size={14} /> NGHE THỬ THUYẾT MINH
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white text-[#233d32] shadow-sm hover:bg-[#f5f7f3]"
             type="button"
-            className="primary"
-            disabled={loading}
-            onClick={() => void prepare_audio()}
+            aria-label="Đóng nghe thử"
+            onClick={on_close}
           >
-            {loading ? 'Đang chuẩn bị audio…' : src ? 'Tải lại audio' : '▶ Nghe thử mẫu'}
-          </button>
-          {loading && <p role="status">Lần tạo đầu tiên có thể mất một chút thời gian.</p>}
-          {src && (
-            <>
-              <audio
-                ref={player}
-                src={src}
-                controls
-                autoPlay
-                onError={() => set_error('Không phát được audio. Vui lòng tải lại.')}
-              />
-              <small>Nhấn nút phát nếu trình duyệt chưa tự phát âm thanh.</small>
-            </>
-          )}
-          {error && (
-            <div className="error-banner" role="alert">
-              {error}
+            <Icon kind="close" size={20} />
+          </Button>
+          <div className="absolute inset-x-6 bottom-5 text-white">
+            <span className="block text-[11px] font-medium text-[#d3e2d4]">
+              {categories[poi.category] ?? poi.category}
+            </span>
+            <DialogTitle
+              id="preview-title"
+              className="mt-1 text-xl leading-tight font-semibold text-white sm:text-2xl"
+            >
+              {poi.name}
+            </DialogTitle>
+          </div>
+        </header>
+        <div className="space-y-4 p-5 sm:p-6">
+          <div className="space-y-1">
+            <p className="m-0 flex items-start gap-2 text-xs leading-relaxed text-[#5c6f59]">
+              <Icon kind="pin" size={16} className="mt-0.5 shrink-0 text-[#7d9276]" />
+              <span>{poi.address}</span>
+            </p>
+            {poi.image_credit && (
+              <small className="block pl-6 text-[11px] text-[#8d9986]">
+                Ảnh: {poi.image_credit}
+              </small>
+            )}
+          </div>
+          <section
+            className="space-y-4 rounded-2xl border border-[#e3e9dd] bg-[#fcfdf9] p-4 sm:p-5"
+            aria-label="Nghe thử mẫu"
+          >
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#edf3e6] text-[#557855]">
+                <Icon kind="listen" size={22} />
+              </span>
+              <div>
+                <h3 className="m-0 text-sm font-semibold text-[#1e3a2e]">
+                  Nghe câu chuyện nơi đây
+                </h3>
+                <p className="m-0 text-xs text-[#7c8b74]">
+                  Chọn ngôn ngữ để nghe thử bài thuyết minh.
+                </p>
+              </div>
             </div>
-          )}
-        </section>
-        <div className="preview-note">
-          <Icon kind="check" size={15} />
-          <span>Ưu tiên audio đã lưu. Bản mới sẽ tự động được lưu cho lần nghe sau.</span>
+            <label className="grid gap-1.5 text-xs font-medium text-[#475d45]">
+              <span>Ngôn ngữ thuyết minh</span>
+              <Select
+                value={language}
+                onChange={(event) => {
+                  clear_audio();
+                  set_src('');
+                  set_loading(false);
+                  set_error('');
+                  set_language(event.target.value);
+                }}
+                className="h-11 rounded-xl border-[#d6e0d2] bg-white text-sm"
+              >
+                {!languages.length && (
+                  <option value={poi.source_language}>
+                    {poi.source_language === 'vi' ? 'Tiếng Việt' : poi.source_language}
+                  </option>
+                )}
+                {languages.map((item) => (
+                  <option key={item.code} value={item.code}>
+                    {item.name}
+                    {item.code === poi.source_language ? ' · Bản gốc' : ''}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <Button
+              type="button"
+              disabled={loading}
+              onClick={() => void prepare_audio()}
+              className="h-11 w-full rounded-xl text-sm font-semibold"
+            >
+              {loading ? 'Đang chuẩn bị audio…' : src ? 'Tải lại audio' : '▶ Nghe thử mẫu'}
+            </Button>
+            {loading && (
+              <p role="status" className="m-0 text-center text-xs text-[#6f826c]">
+                Lần tạo đầu tiên có thể mất một chút thời gian.
+              </p>
+            )}
+            {src && (
+              <div className="space-y-1.5">
+                <audio
+                  ref={player}
+                  src={src}
+                  controls
+                  autoPlay
+                  className="w-full"
+                  onError={() => set_error('Không phát được audio. Vui lòng tải lại.')}
+                />
+                <small className="block text-[11px] text-[#7c8b74]">
+                  Nhấn nút phát nếu trình duyệt chưa tự phát âm thanh.
+                </small>
+              </div>
+            )}
+            {error && (
+              <Alert variant="destructive" role="alert" className="text-xs leading-relaxed">
+                {error}
+              </Alert>
+            )}
+          </section>
+          <div className="flex items-start gap-2 text-[11px] text-[#83927d]">
+            <Icon kind="check" size={15} className="mt-0.5 shrink-0 text-[#5d8259]" />
+            <span>Ưu tiên audio đã lưu. Bản mới sẽ tự động được lưu cho lần nghe sau.</span>
+          </div>
         </div>
-      </div>
-    </dialog>
+      </DialogContent>
+    </Dialog>
   );
 }
