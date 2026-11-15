@@ -1,7 +1,7 @@
 import { useUsers } from './useUsers';
 import { useUsernameAvailability } from './useUsernameAvailability';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { api } from '../../services/api';
 import type { User } from '../../types';
 
@@ -67,7 +67,6 @@ export function useUserManagement({
   const [password_target, set_password_target] = useState<User | null>(null);
 
   const confirm_input = useRef<HTMLInputElement>(null);
-  const dialog = useRef<HTMLDialogElement>(null);
   const modal_open = editing !== undefined;
   const checking_username = editing === null && /^[a-zA-Z0-9_.-]{3,100}$/.test(form.username);
   const username_state: keyof typeof username_messages =
@@ -78,24 +77,6 @@ export function useUserManagement({
         : 'invalid';
   const username_blocked = username_state === 'checking' || username_state === 'taken';
   const changing_own_password = password_target?.id.toLowerCase() === current_user_id.toLowerCase();
-
-  // Quản lý hiển thị dialog modal cho tạo / sửa tài khoản
-  useEffect(() => {
-    if (!modal_open) return;
-    const element = dialog.current;
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const overflow = document.body.style.overflow;
-
-    element?.showModal();
-    element?.querySelector('input')?.focus();
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      element?.close();
-      document.body.style.overflow = overflow;
-      opener?.focus();
-    };
-  }, [modal_open]);
 
   function close_editor() {
     if (busy) return;
@@ -265,7 +246,6 @@ export function useUserManagement({
     password_target,
     set_password_target,
     confirm_input,
-    dialog,
     modal_open,
     username_state,
     username_blocked,
