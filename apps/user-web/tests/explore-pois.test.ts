@@ -7,7 +7,6 @@ const origin = { latitude: 0, longitude: 0 };
 function poi(id: string, meters: number, overrides: Partial<Poi> = {}): Poi {
   return {
     id,
-    slug: id,
     name: id,
     description: '',
     address: 'Đường Nguyễn Huệ',

@@ -1,7 +1,7 @@
 import { query } from '@vinlook/server/postgres';
 import type { PoiRepository } from './poi.repository.js';
 
-export const poi_columns = `p.id,p.slug,p.name,p.description,p.visitor_description,p.address,
+export const poi_columns = `p.id,p.name,p.description,p.visitor_description,p.address,
  p.latitude,p.longitude,p.category,p.source_language,p.image_credit,p.image_source_url,p.image_license_url,
  CASE WHEN EXISTS(SELECT 1 FROM poi_images i WHERE i.poi_id=p.id)
  THEN '/api/pois/'||p.id||'/image' ELSE p.image_url END AS image_url`;

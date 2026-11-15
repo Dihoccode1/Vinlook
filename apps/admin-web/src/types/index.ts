@@ -10,7 +10,6 @@
 export interface Poi {
   id: string;
   name: string;
-  slug: string;
   description: string;
   visitor_description?: string;
   address: string;

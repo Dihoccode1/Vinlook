@@ -65,10 +65,9 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
       assert.equal((await request('/api/admin/auth/session')).status, 200);
     });
     let poi;
-    await t.test('POI editing, Unicode, duplicate slugs and optimistic concurrency', async () => {
+    await t.test('POI editing, Unicode and optimistic concurrency without slugs', async () => {
       const input = {
         name: 'Địa điểm kiểm thử %_',
-        slug: 'dia-diem-ci',
         description: 'Mô tả tiếng Việt',
         visitor_description: 'Giới thiệu',
         address: 'Thành phố Hồ Chí Minh',
@@ -81,7 +80,11 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
       const created = await request('/api/admin/pois', 'POST', input);
       assert.equal(created.status, 201);
       poi = (await created.json()).data;
-      assert.equal((await request('/api/admin/pois', 'POST', input)).status, 409);
+      const second = await request('/api/admin/pois', 'POST', { ...input, is_published: false });
+      assert.equal(second.status, 201);
+      const draft = (await second.json()).data;
+      assert.notEqual(draft.id, poi.id);
+      assert.equal(draft.slug, undefined);
       const list = await (await request('/api/pois?q=%25_')).json();
       assert.equal(list.data.length, 1);
       assert.equal(
@@ -107,6 +110,7 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
       const { postgres_poi_repository } =
         await import('../../services/poi-service/dist/modules/pois/poi.postgres.js');
       assert.equal((await postgres_poi_repository.find(poi.id.toLowerCase())).name, 'Đã sửa');
+      assert.equal(list.data[0].slug, undefined);
       await query("SELECT setval('pois_id_seq',1000,false)");
       const { postgres_admin_repository } =
         await import('../../services/poi-service/dist/modules/admin/admin.postgres.js');

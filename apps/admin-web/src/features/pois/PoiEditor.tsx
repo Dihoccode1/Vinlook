@@ -31,19 +31,6 @@ const LANGUAGE_NAMES: Record<string, string> = {
   hi: 'हिन्दी',
 };
 
-/**
- * Hàm chuẩn hóa chuỗi tiêu đề thành slug URL an toàn
- */
-function slugify(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[đĐ]/g, 'd')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
 interface PoiEditorProps {
   poi: Poi | null;
   on_close: () => void;
@@ -55,7 +42,6 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
 
   const [form, set_form] = useState({
     name: poi?.name ?? '',
-    slug: poi?.slug ?? '',
     description: poi?.description ?? '',
     address: poi?.address ?? '',
     visitor_description: poi?.visitor_description ?? '',
@@ -248,7 +234,6 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
     try {
       const payload = {
         name: form.name.trim(),
-        slug: form.slug.trim(),
         description: form.description.trim(),
         visitor_description: form.visitor_description.trim(),
         address: form.address.trim(),
@@ -321,40 +306,16 @@ export function PoiEditor({ poi, on_close, on_saved }: PoiEditorProps) {
             <h3>
               01 <span>Thông tin cơ bản & Vị trí</span>
             </h3>
-            <div className="form-grid">
-              <label>
-                Tên điểm tham quan
-                <input
-                  required
-                  maxLength={200}
-                  value={form.name}
-                  onChange={(event) => {
-                    const name = event.target.value;
-                    set_form((previous) => ({
-                      ...previous,
-                      name,
-                      slug:
-                        !poi && (!previous.slug || previous.slug === slugify(previous.name))
-                          ? slugify(name)
-                          : previous.slug,
-                    }));
-                  }}
-                  placeholder="Ví dụ: Chợ Bến Thành"
-                />
-              </label>
-
-              <label>
-                Đường dẫn tĩnh (Slug URL)
-                <input
-                  required
-                  maxLength={100}
-                  pattern="[a-z0-9\-]+"
-                  value={form.slug}
-                  onChange={(event) => set('slug', event.target.value.toLowerCase())}
-                  placeholder="cho-ben-thanh"
-                />
-              </label>
-            </div>
+            <label>
+              Tên điểm tham quan
+              <input
+                required
+                maxLength={200}
+                value={form.name}
+                onChange={(event) => set('name', event.target.value)}
+                placeholder="Ví dụ: Chợ Bến Thành"
+              />
+            </label>
 
             <div className="form-grid">
               <label>

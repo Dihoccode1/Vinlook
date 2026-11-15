@@ -93,7 +93,7 @@ const mssql_admin_repository: AdminRepository = {
       const req = new sql.Request(tx)
         .input('id', sql.VarChar(36), id)
         .input('name', sql.NVarChar(200), input.name)
-        .input('slug', sql.NVarChar(160), input.slug)
+        .input('slug', sql.NVarChar(160), input.slug ?? (create ? id.toLowerCase() : null))
         .input('user_id', sql.VarChar(36), user_id ?? null)
         .input('description', sql.NVarChar(sql.MAX), input.description)
         .input('address', sql.NVarChar(500), input.address)
@@ -111,7 +111,7 @@ const mssql_admin_repository: AdminRepository = {
         create
           ? `INSERT INTO dbo.pois (id, name, slug, description, visitor_description, address, latitude, longitude, category, source_language, is_published, image_credit, image_source_url, image_license_url, created_by, updated_by)
         VALUES (@id,@name,@slug,@description,COALESCE(@visitor_description,N''),@address,@lat,@lon,@category,@source,@published,@credit,@imageSource,@license,@user_id,@user_id); SELECT 1 AS changed;`
-          : `UPDATE dbo.pois SET name=@name, slug=@slug, description=@description, visitor_description=COALESCE(@visitor_description,visitor_description), address=@address, latitude=@lat, longitude=@lon,
+          : `UPDATE dbo.pois SET name=@name, slug=COALESCE(@slug,slug), description=@description, visitor_description=COALESCE(@visitor_description,visitor_description), address=@address, latitude=@lat, longitude=@lon,
           category=@category, source_language=@source, is_published=@published, image_credit=@credit, image_source_url=@imageSource, image_license_url=@license, updated_at=SYSUTCDATETIME(), updated_by=@user_id
           WHERE id=@id AND CONVERT(DATETIME2(3), updated_at)=@version; SELECT @@ROWCOUNT AS changed;`,
       );

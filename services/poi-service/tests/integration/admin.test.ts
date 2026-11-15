@@ -68,7 +68,6 @@ test('SQL admin CRUD preserves draft privacy, saves photo atomically and rejects
   const second = 'POI' + BigInt('0x' + randomUUID().replaceAll('-', '').slice(0, 12)).toString();
   const input = {
     name: 'Địa điểm kiểm thử',
-    slug: `admin-test-${id}`,
     description: 'Nội dung tiếng Việt',
     visitor_description: 'Giới thiệu cho khách, tách khỏi bài thuyết minh.',
     address: 'Địa chỉ thử',
@@ -78,8 +77,9 @@ test('SQL admin CRUD preserves draft privacy, saves photo atomically and rejects
     source_language: 'vi' as const,
     is_published: false,
   };
+  const existing_slug = `admin-test-${id}`;
   try {
-    assert.equal(await admin_repository.save(id, input, true), true);
+    assert.equal(await admin_repository.save(id, { ...input, slug: existing_slug }, true), true);
     assert.equal(await poi_repository.find(id), undefined);
     const first = await admin_repository.find(id);
     assert.ok(first);
@@ -103,6 +103,7 @@ test('SQL admin CRUD preserves draft privacy, saves photo atomically and rejects
       true,
     );
     assert.equal((await poi_repository.find(id))?.name, input.name);
+    assert.equal((await poi_repository.find(id))?.slug, existing_slug);
     assert.equal((await poi_repository.find(id))?.visitor_description, input.visitor_description);
     assert.equal((await poi_repository.find(id))?.description, input.description);
     assert.deepEqual((await poi_repository.find_image(id))?.content, jpeg);
@@ -115,7 +116,9 @@ test('SQL admin CRUD preserves draft privacy, saves photo atomically and rejects
       false,
     );
     assert.equal((await admin_repository.find(id))?.name, input.name);
-    await assert.rejects(admin_repository.save(second, input, true));
+    await assert.rejects(admin_repository.save(second, { ...input, slug: existing_slug }, true));
+    assert.equal(await admin_repository.save(second, input, true), true);
+    assert.equal((await admin_repository.find(second))?.slug, second.toLowerCase());
     const latest = await admin_repository.find(id);
     assert.ok(latest);
     await assert.rejects(

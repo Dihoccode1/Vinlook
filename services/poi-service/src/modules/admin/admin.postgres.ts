@@ -49,7 +49,6 @@ export const postgres_admin_repository: AdminRepository = {
       const args = [
         id,
         input.name,
-        input.slug,
         input.description,
         input.visitor_description ?? null,
         input.address,
@@ -65,11 +64,11 @@ export const postgres_admin_repository: AdminRepository = {
       ];
       const result = create
         ? await tx.query(
-            `INSERT INTO pois(id,name,slug,description,visitor_description,address,latitude,longitude,category,source_language,is_published,image_credit,image_source_url,image_license_url,created_by,updated_by) VALUES($1,$2,$3,$4,COALESCE($5,''),$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$15)`,
+            `INSERT INTO pois(id,name,description,visitor_description,address,latitude,longitude,category,source_language,is_published,image_credit,image_source_url,image_license_url,created_by,updated_by) VALUES($1,$2,$3,COALESCE($4,''),$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$14)`,
             args,
           )
         : await tx.query(
-            `UPDATE pois SET name=$2,slug=$3,description=$4,visitor_description=COALESCE($5,visitor_description),address=$6,latitude=$7,longitude=$8,category=$9,source_language=$10,is_published=$11,image_credit=$12,image_source_url=$13,image_license_url=$14,updated_by=$15,updated_at=date_trunc('milliseconds',clock_timestamp()) WHERE id=$1 AND updated_at=$16`,
+            `UPDATE pois SET name=$2,description=$3,visitor_description=COALESCE($4,visitor_description),address=$5,latitude=$6,longitude=$7,category=$8,source_language=$9,is_published=$10,image_credit=$11,image_source_url=$12,image_license_url=$13,updated_by=$14,updated_at=date_trunc('milliseconds',clock_timestamp()) WHERE id=$1 AND updated_at=$15`,
             [...args, new Date(input.updated_at!)],
           );
       if (!result.rowCount) return false;
