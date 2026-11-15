@@ -1,3 +1,4 @@
+import { render_environment } from './render-environment.mjs';
 /** One-time setup using ignored .env.cloud; never prints credentials or enables paid plans. */
 import { writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
@@ -47,25 +48,7 @@ const owner = await render('/owners/' + ownerId);
 if (owner.id !== ownerId) throw new Error('Unexpected Render workspace');
 const matches = await render('/services?ownerId=' + ownerId + '&name=vinlook-api&limit=20');
 let service = matches.map((entry) => entry.service).find((entry) => entry?.name === 'vinlook-api');
-const envKeys = [
-  'DATABASE_URL',
-  'VINLOOK_DATASET_ID',
-  'ADMIN_API_KEY',
-  'SUPABASE_URL',
-  'SUPABASE_SERVICE_ROLE_KEY',
-  'SUPABASE_STORAGE_BUCKET',
-  'TRANSLATION_PROVIDERS',
-];
-const envVars = envKeys.map((key) => ({
-  key,
-  value:
-    process.env[key] ||
-    (key === 'SUPABASE_STORAGE_BUCKET'
-      ? 'vinlook-media'
-      : key === 'TRANSLATION_PROVIDERS'
-        ? 'mymemory'
-        : ''),
-}));
+const envVars = render_environment(process.env, !service);
 if (!service) {
   const result = await render('/services', 'POST', {
     type: 'web_service',
@@ -94,7 +77,11 @@ if (
   throw new Error(
     'Existing service is not the expected Free Vinlook service. No settings changed.',
   );
-await render('/services/' + service.id + '/env-vars', 'PUT', envVars);
+// Update individual keys: never replace the service environment (including dashboard-only secrets).
+for (const { key, value } of envVars)
+  await render('/services/' + service.id + '/env-vars/' + encodeURIComponent(key), 'PUT', {
+    value,
+  });
 function gh(args, input) {
   const result = spawnSync('gh', args, {
     input,
