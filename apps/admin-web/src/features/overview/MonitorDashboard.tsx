@@ -81,13 +81,13 @@ export function MonitorDashboard() {
         </article>
 
         <article>
-          <div className="metric-label">CPU vinlook-api</div>
+          <div className="metric-label">CPU</div>
           <strong>{cpu_value}</strong>
           <p>{cpu_note}</p>
         </article>
 
         <article>
-          <div className="metric-label">RAM vinlook-api</div>
+          <div className="metric-label">RAM</div>
           <strong>{ram_value}</strong>
           <p>{ram_note}</p>
         </article>
