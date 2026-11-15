@@ -1,3 +1,4 @@
+import { Alert } from '@vinlook/ui/alert';
 import { MonitorJournalPanels } from './MonitorJournalPanels';
 import { ServiceStatusPanel } from './ServiceStatusPanel';
 /**
@@ -66,40 +67,56 @@ export function MonitorDashboard() {
         : 'Đang kiểm tra...';
 
   return (
-    <div className="monitor-dashboard">
+    <div className="grid gap-5">
       {error && (
-        <p className="error-banner" role="alert">
+        <Alert variant="destructive" role="alert" className="text-xs leading-[1.8]">
           {error}
-        </p>
+        </Alert>
       )}
 
-      <section className="metrics" aria-label="Giám sát trực tiếp">
-        <article>
-          <div className="metric-label">Dịch vụ sẵn sàng</div>
-          <strong>{snapshot && !error ? `${healthy}/${snapshot.services.length}` : '—'}</strong>
-          <p>{error ? 'Chưa cập nhật được' : 'Kiểm tra trực tiếp mỗi 5 giây'}</p>
+      <section
+        className="grid grid-cols-1 gap-[15px] sm:grid-cols-2 lg:grid-cols-3"
+        aria-label="Giám sát trực tiếp"
+      >
+        <article className="rounded-xl border border-[#e2e8dc] bg-white p-5 text-card-foreground shadow-[0_2px_4px_#14372103]">
+          <div className="text-[11px] font-medium text-[#7e8b75]">Dịch vụ sẵn sàng</div>
+          <strong className="mt-1 mb-1.5 block text-[26px] leading-[1.3] font-semibold tracking-[-0.8px] text-foreground md:text-[31px]">
+            {snapshot && !error ? `${healthy}/${snapshot.services.length}` : '—'}
+          </strong>
+          <p className="m-0 text-[11px] leading-[1.7] text-[#98a18e]">
+            {error ? 'Chưa cập nhật được' : 'Kiểm tra trực tiếp mỗi 5 giây'}
+          </p>
         </article>
 
-        <article>
-          <div className="metric-label">CPU</div>
-          <strong>{cpu_value}</strong>
-          <p>{cpu_note}</p>
+        <article className="rounded-xl border border-[#e2e8dc] bg-white p-5 text-card-foreground shadow-[0_2px_4px_#14372103]">
+          <div className="text-[11px] font-medium text-[#7e8b75]">CPU</div>
+          <strong className="mt-1 mb-1.5 block text-[26px] leading-[1.3] font-semibold tracking-[-0.8px] text-foreground md:text-[31px]">
+            {cpu_value}
+          </strong>
+          <p className="m-0 text-[11px] leading-[1.7] text-[#98a18e]">{cpu_note}</p>
         </article>
 
-        <article>
-          <div className="metric-label">RAM</div>
-          <strong>{ram_value}</strong>
-          <p>{ram_note}</p>
+        <article className="rounded-xl border border-[#e2e8dc] bg-white p-5 text-card-foreground shadow-[0_2px_4px_#14372103] sm:col-span-2 lg:col-span-1">
+          <div className="text-[11px] font-medium text-[#7e8b75]">RAM</div>
+          <strong className="mt-1 mb-1.5 block text-[26px] leading-[1.3] font-semibold tracking-[-0.8px] text-foreground md:text-[31px]">
+            {ram_value}
+          </strong>
+          <p className="m-0 text-[11px] leading-[1.7] text-[#98a18e]">{ram_note}</p>
         </article>
       </section>
 
       {render_metrics && render_metrics.status !== 'ok' && render_metrics.message && (
-        <p
-          className={`monitor-resource-notice ${render_metrics.status === 'error' ? 'error' : 'info'}`}
+        <Alert
+          variant={render_metrics.status === 'error' ? 'destructive' : 'default'}
           role={render_metrics.status === 'error' ? 'alert' : 'status'}
+          className={
+            render_metrics.status === 'error'
+              ? 'rounded-xl border-[#e9b9b2] bg-[#fbe7e4] px-[15px] py-3 text-xs leading-[1.7] [overflow-wrap:anywhere] text-[#a53f32]'
+              : 'rounded-xl border-[#d6dfd0] bg-[#f5f7f1] px-[15px] py-3 text-xs leading-[1.7] [overflow-wrap:anywhere] text-[#4b5842]'
+          }
         >
           {render_metrics.message}
-        </p>
+        </Alert>
       )}
 
       <ServiceStatusPanel

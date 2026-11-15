@@ -5,10 +5,12 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { Alert } from '@vinlook/ui/alert';
 import { Button } from '@vinlook/ui/button';
+import { Card } from '@vinlook/ui/card';
 import { Input } from '@vinlook/ui/input';
+import { Label } from '@vinlook/ui/label';
 import App from '../../App';
-import type { User } from '../../types';
 
 interface AuthSessionUser {
   id: string;
@@ -141,8 +143,10 @@ export function AdminAccess() {
   // Màn hình chờ khi đang kiểm tra session cookie
   if (checking) {
     return (
-      <div className="login-page">
-        <p role="status">Đang kiểm tra phiên đăng nhập...</p>
+      <div className="grid min-h-dvh place-items-center bg-[radial-gradient(ellipse_at_top_left,#e1ebda,transparent_65%),#f5f7f1] p-7">
+        <p role="status" className="text-sm text-[#768573]">
+          Đang kiểm tra phiên đăng nhập...
+        </p>
       </div>
     );
   }
@@ -169,80 +173,113 @@ export function AdminAccess() {
 
   // Màn hình form đăng nhập
   return (
-    <main className="login-page">
-      <section className="login-card" aria-labelledby="login-title">
-        <a className="login-brand" href="/">
-          vinlook<span>.</span>
+    <main className="grid min-h-dvh place-items-center bg-[radial-gradient(ellipse_at_top_left,#e1ebda,transparent_65%),#f5f7f1] p-5 sm:p-7">
+      <Card
+        aria-labelledby="login-title"
+        className="w-full max-w-[450px] gap-0 rounded-[20px] border-[#dde5d8] bg-[#fffefb] p-7 shadow-[0_18px_65px_#153f3210] sm:p-10"
+      >
+        <a
+          className="inline-block text-[38px] leading-none font-bold tracking-[-1.5px] text-primary no-underline"
+          href="/"
+        >
+          vinlook<span className="text-[#d98b45]">.</span>
         </a>
-        <p className="eyebrow">KHÔNG GIAN ĐIỀU HÀNH</p>
-        <h1 id="login-title">Đăng nhập quản trị</h1>
-        <p className="login-intro">Quản lý điểm đến và theo dõi hoạt động của nền tảng Vinlook.</p>
+        <p className="mt-6 mb-2.5 text-[11px] font-semibold tracking-[1.7px] text-[#8b9a7c] uppercase">
+          KHÔNG GIAN ĐIỀU HÀNH
+        </p>
+        <h1
+          id="login-title"
+          className="m-0 mb-3 text-[26px] leading-[1.35] font-semibold text-foreground"
+        >
+          Đăng nhập quản trị
+        </h1>
+        <p className="m-0 mb-7 text-sm leading-relaxed text-[#768573]">
+          Quản lý điểm đến và theo dõi hoạt động của nền tảng Vinlook.
+        </p>
 
-        <form onSubmit={login} aria-busy={busy}>
-          <label htmlFor="admin-username">Tài khoản</label>
-          <Input
-            id="admin-username"
-            autoComplete="username"
-            required
-            maxLength={100}
-            value={username}
-            onChange={(event) => set_username(event.target.value)}
-            autoFocus
-            placeholder="Nhập tên tài khoản"
-            disabled={busy}
-          />
-
-          <label htmlFor="admin-password">Mật khẩu</label>
-          <div className="login-password-field">
+        <form onSubmit={login} aria-busy={busy} className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="admin-username" className="text-sm font-medium text-foreground">
+              Tài khoản
+            </Label>
             <Input
-              id="admin-password"
-              type={show_password ? 'text' : 'password'}
-              autoComplete="current-password"
+              id="admin-username"
+              autoComplete="username"
               required
-              maxLength={200}
-              value={password}
-              onChange={(event) => set_password(event.target.value)}
-              placeholder="Nhập mật khẩu"
+              maxLength={100}
+              value={username}
+              onChange={(event) => set_username(event.target.value)}
+              autoFocus
+              placeholder="Nhập tên tài khoản"
               disabled={busy}
+              className="h-auto rounded-[9px] border-[#d4dfcf] bg-[#fcfdf9] px-3.5 py-3 text-base text-[#294532]"
             />
-            <button
-              type="button"
-              className="login-password-toggle"
-              aria-label={show_password ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
-              aria-pressed={show_password}
-              aria-controls="admin-password"
-              title={show_password ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
-              onClick={() => set_show_password((value) => !value)}
-              disabled={busy}
-            >
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="admin-password" className="text-sm font-medium text-foreground">
+              Mật khẩu
+            </Label>
+            <div className="relative">
+              <Input
+                id="admin-password"
+                type={show_password ? 'text' : 'password'}
+                autoComplete="current-password"
+                required
+                maxLength={200}
+                value={password}
+                onChange={(event) => set_password(event.target.value)}
+                placeholder="Nhập mật khẩu"
+                disabled={busy}
+                className="h-auto rounded-[9px] border-[#d4dfcf] bg-[#fcfdf9] py-3 pr-14 pl-3.5 text-base text-[#294532]"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute top-1/2 right-1.5 h-11 w-11 -translate-y-1/2 rounded-[7px] text-[#54715e] hover:bg-[#edf3e8] hover:text-[#294532]"
+                aria-label={show_password ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                aria-pressed={show_password}
+                aria-controls="admin-password"
+                title={show_password ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                onClick={() => set_show_password((value) => !value)}
+                disabled={busy}
               >
-                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
-                <circle cx="12" cy="12" r="3" />
-                {show_password && <path d="m3 3 18 18" />}
-              </svg>
-            </button>
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                  <circle cx="12" cy="12" r="3" />
+                  {show_password && <path d="m3 3 18 18" />}
+                </svg>
+              </Button>
+            </div>
           </div>
 
           {error && (
-            <p className="error-banner" role="alert">
+            <Alert variant="destructive" role="alert" className="text-[13px]">
               {error}
-            </p>
+            </Alert>
           )}
           {password_changed && (
-            <p role="status">Đã đổi mật khẩu. Hãy đăng nhập bằng mật khẩu mới.</p>
+            <Alert variant="success" role="status" className="text-[13px]">
+              Đã đổi mật khẩu. Hãy đăng nhập bằng mật khẩu mới.
+            </Alert>
           )}
 
-          <Button className="primary w-full" type="submit" disabled={busy || retry_seconds > 0}>
+          <Button
+            className="mt-2 h-auto w-full rounded-[9px] py-3.5 text-base font-medium"
+            type="submit"
+            disabled={busy || retry_seconds > 0}
+          >
             {busy
               ? 'Đang đăng nhập...'
               : retry_seconds > 0
@@ -252,7 +289,7 @@ export function AdminAccess() {
         </form>
 
         <a
-          className="login-map-link"
+          className="mt-6 inline-block text-[13px] text-[#73896b] no-underline hover:text-primary hover:underline"
           href={
             import.meta.env.VITE_PUBLIC_WEB_URL ||
             (import.meta.env.PROD ? '/' : 'http://127.0.0.1:5173/')
@@ -260,7 +297,7 @@ export function AdminAccess() {
         >
           ← Về bản đồ khám phá du lịch
         </a>
-      </section>
+      </Card>
     </main>
   );
 }

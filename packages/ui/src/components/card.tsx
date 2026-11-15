@@ -1,3 +1,4 @@
+import * as React from 'react';
 import type { ComponentProps } from 'react';
 import { cn } from '../lib/utils';
 
@@ -6,7 +7,7 @@ export function Card({ className, ...props }: ComponentProps<'div'>) {
     <div
       data-slot="card"
       className={cn(
-        'rounded-xl border border-border bg-card text-card-foreground shadow-sm',
+        'rounded-2xl border border-border bg-card text-card-foreground shadow-(--card-shadow)',
         className,
       )}
       {...props}
@@ -42,4 +43,13 @@ export function CardDescription({ className, ...props }: ComponentProps<'p'>) {
 }
 export function CardContent({ className, ...props }: ComponentProps<'div'>) {
   return <div data-slot="card-content" className={cn('px-6 pb-6', className)} {...props} />;
+}
+export function CardFooter({ className, ...props }: ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="card-footer"
+      className={cn('flex items-center px-6 pb-6', className)}
+      {...props}
+    />
+  );
 }

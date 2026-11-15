@@ -1,3 +1,4 @@
+import { Alert } from '@vinlook/ui/alert';
 import { UserTable } from './UserTable';
 import { UserEditorDialog } from './UserEditorDialog';
 /**
@@ -42,7 +43,6 @@ export function UserManagement({
     password_target,
     set_password_target,
     confirm_input,
-    dialog,
     modal_open,
     username_state,
     username_blocked,
@@ -57,31 +57,33 @@ export function UserManagement({
     is_root_account,
   } = useUserManagement({ current_user, on_password_changed });
   return (
-    <section className="user-management">
-      <div className="user-permissions">
-        <p>
-          <strong>Root:</strong> Có thể chỉnh sửa, đổi mật khẩu, phân quyền và khóa hoặc mở khóa cả
-          Admin lẫn Staff.
+    <section className="space-y-5">
+      <div className="flex flex-wrap gap-x-6 gap-y-2 rounded-[10px] border border-[#e1e7d9] bg-[#f0f4eb] px-5 py-3.5 text-xs leading-[1.8] text-[#7c8c70]">
+        <p className="m-0">
+          <strong className="font-semibold text-[#3f5741]">Root:</strong> Có thể chỉnh sửa, đổi mật
+          khẩu, phân quyền và khóa hoặc mở khóa cả Admin lẫn Staff.
         </p>
-        <p>
-          <strong>Admin (Quản trị viên):</strong> Toàn bộ quyền của Staff, Giám sát hệ thống, Quản
-          lý tài khoản. Có thể chỉnh sửa Staff và khóa hoặc mở khóa các tài khoản khác.
+        <p className="m-0">
+          <strong className="font-semibold text-[#3f5741]">Admin (Quản trị viên):</strong> Toàn bộ
+          quyền của Staff, Giám sát hệ thống, Quản lý tài khoản. Có thể chỉnh sửa Staff và khóa hoặc
+          mở khóa các tài khoản khác.
         </p>
-        <p>
-          <strong>Staff (Nhân viên):</strong> Tổng quan, Quản lý điểm đến (POI).
+        <p className="m-0">
+          <strong className="font-semibold text-[#3f5741]">Staff (Nhân viên):</strong> Tổng quan,
+          Quản lý điểm đến (POI).
         </p>
       </div>
 
       {notice && !modal_open && (
-        <div className="notice-banner" role="status">
+        <Alert variant="success" role="status" className="text-xs leading-[1.7]">
           {notice}
-        </div>
+        </Alert>
       )}
 
       {error && !modal_open && !pending_status && (
-        <div className="error-banner" role="alert">
+        <Alert variant="destructive" role="alert" className="text-xs leading-[1.7]">
           {error}
-        </div>
+        </Alert>
       )}
 
       {pending_status && (
@@ -116,7 +118,6 @@ export function UserManagement({
           set_username_check={set_username_check}
           set_password_target={set_password_target}
           confirm_input={confirm_input}
-          dialog={dialog}
           username_state={username_state}
           username_blocked={username_blocked}
           close_editor={close_editor}

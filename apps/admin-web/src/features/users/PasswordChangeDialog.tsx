@@ -1,4 +1,8 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
+import { Alert } from '@vinlook/ui/alert';
+import { Button } from '@vinlook/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@vinlook/ui/dialog';
+import { Input } from '@vinlook/ui/input';
 import { api } from '../../services/api';
 
 interface PasswordChangeDialogProps {
@@ -14,26 +18,12 @@ export function PasswordChangeDialog({
   on_close,
   on_saved,
 }: PasswordChangeDialogProps) {
-  const dialog = useRef<HTMLDialogElement>(null);
   const confirmation = useRef<HTMLInputElement>(null);
   const [current_password, set_current_password] = useState('');
   const [new_password, set_new_password] = useState('');
   const [confirm_password, set_confirm_password] = useState('');
   const [busy, set_busy] = useState(false);
   const [error, set_error] = useState('');
-
-  useEffect(() => {
-    const element = dialog.current;
-    const opener = document.activeElement;
-    const overflow = document.body.style.overflow;
-    element?.showModal();
-    if (overflow !== 'hidden') document.body.style.overflow = 'hidden';
-    return () => {
-      element?.close();
-      if (overflow !== 'hidden') document.body.style.overflow = overflow;
-      if (opener instanceof HTMLElement) opener.focus();
-    };
-  }, []);
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -60,96 +50,129 @@ export function PasswordChangeDialog({
   }
 
   return (
-    <dialog
-      ref={dialog}
-      className="user-dialog"
-      aria-labelledby="password-dialog-title"
-      onCancel={(event) => {
-        event.preventDefault();
-        if (!busy) on_close();
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open && !busy) on_close();
       }}
     >
-      <form onSubmit={save} aria-busy={busy}>
-        <header className="user-dialog-header">
-          <div>
-            <h2 id="password-dialog-title">Đổi mật khẩu</h2>
-            <p>
-              {username} ·{' '}
-              {target_user_id
-                ? 'Tài khoản này sẽ cần đăng nhập lại.'
-                : 'Bạn sẽ cần đăng nhập lại bằng mật khẩu mới.'}
-            </p>
-          </div>
-          <button
-            type="button"
-            className="icon-button"
-            aria-label="Đóng"
-            onClick={on_close}
-            disabled={busy}
-          >
-            ✕
-          </button>
-        </header>
+      <DialogContent
+        showCloseButton={false}
+        aria-labelledby="password-dialog-title"
+        onEscapeKeyDown={(event) => {
+          if (busy) event.preventDefault();
+        }}
+        onInteractOutside={(event) => {
+          if (busy) event.preventDefault();
+        }}
+        className="w-[min(94vw,520px)] max-w-[520px] gap-0 overflow-hidden rounded-[20px] border-[#e2e8dc] bg-[#fffefb] p-0 shadow-[0_24px_70px_#14372128]"
+      >
+        <form
+          onSubmit={save}
+          aria-busy={busy}
+          className="grid max-h-[88dvh] grid-rows-[auto_minmax(0,1fr)_auto]"
+        >
+          <header className="flex shrink-0 items-start justify-between gap-4 border-b border-[#e5ebe0] px-6 py-5">
+            <div>
+              <DialogTitle
+                id="password-dialog-title"
+                className="text-lg font-semibold text-[#173329]"
+              >
+                Đổi mật khẩu
+              </DialogTitle>
+              <DialogDescription className="mt-1 text-xs text-[#7c8b74]">
+                {username} ·{' '}
+                {target_user_id
+                  ? 'Tài khoản này sẽ cần đăng nhập lại.'
+                  : 'Bạn sẽ cần đăng nhập lại bằng mật khẩu mới.'}
+              </DialogDescription>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 shrink-0 rounded-[10px] border-[#dce4d7] text-[#385344]"
+              aria-label="Đóng"
+              onClick={on_close}
+              disabled={busy}
+            >
+              ✕
+            </Button>
+          </header>
 
-        <div className="user-dialog-body">
-          <div className="form-grid">
-            <label className="password-current-field">
-              {target_user_id ? 'Mật khẩu hiện tại của bạn' : 'Mật khẩu hiện tại'}
-              <input
-                type="password"
-                autoComplete="current-password"
-                required
-                maxLength={200}
-                value={current_password}
-                disabled={busy}
-                onChange={(event) => set_current_password(event.target.value)}
-              />
-            </label>
-            <label>
-              Mật khẩu mới
-              <input
-                type="password"
-                autoComplete="new-password"
-                required
-                minLength={8}
-                maxLength={200}
-                value={new_password}
-                disabled={busy}
-                onChange={(event) => set_new_password(event.target.value)}
-              />
-            </label>
-            <label>
-              Xác nhận mật khẩu mới
-              <input
-                ref={confirmation}
-                type="password"
-                autoComplete="new-password"
-                required
-                minLength={8}
-                maxLength={200}
-                value={confirm_password}
-                disabled={busy}
-                onChange={(event) => set_confirm_password(event.target.value)}
-              />
-            </label>
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-5">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label className="grid gap-1.5 text-xs font-medium text-[#475d45] sm:col-span-2">
+                <span>{target_user_id ? 'Mật khẩu hiện tại của bạn' : 'Mật khẩu hiện tại'}</span>
+                <Input
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  maxLength={200}
+                  value={current_password}
+                  disabled={busy}
+                  onChange={(event) => set_current_password(event.target.value)}
+                  className="h-10 rounded-[9px] border-[#d6e0d2] bg-white text-base md:text-[13px]"
+                />
+              </label>
+              <label className="grid gap-1.5 text-xs font-medium text-[#475d45]">
+                <span>Mật khẩu mới</span>
+                <Input
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                  maxLength={200}
+                  value={new_password}
+                  disabled={busy}
+                  onChange={(event) => set_new_password(event.target.value)}
+                  className="h-10 rounded-[9px] border-[#d6e0d2] bg-white text-base md:text-[13px]"
+                />
+              </label>
+              <label className="grid gap-1.5 text-xs font-medium text-[#475d45]">
+                <span>Xác nhận mật khẩu mới</span>
+                <Input
+                  ref={confirmation}
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                  maxLength={200}
+                  value={confirm_password}
+                  disabled={busy}
+                  onChange={(event) => set_confirm_password(event.target.value)}
+                  className="h-10 rounded-[9px] border-[#d6e0d2] bg-white text-base md:text-[13px]"
+                />
+              </label>
+            </div>
+            <p className="m-0 text-[11px] text-[#82917b]">Mật khẩu mới cần ít nhất 8 ký tự.</p>
+            {error && (
+              <Alert variant="destructive" role="alert" className="text-xs leading-relaxed">
+                {error}
+              </Alert>
+            )}
           </div>
-          <p className="field-note">Mật khẩu mới cần ít nhất 8 ký tự.</p>
-          {error && (
-            <p className="error-banner" role="alert">
-              {error}
-            </p>
-          )}
-        </div>
 
-        <footer className="user-form-actions">
-          <button type="button" onClick={on_close} disabled={busy}>
-            Hủy bỏ
-          </button>
-          <button type="submit" className="primary" disabled={busy}>
-            {busy ? 'Đang lưu...' : 'Lưu mật khẩu mới'}
-          </button>
-        </footer>
-      </form>
-    </dialog>
+          <footer className="flex shrink-0 items-center justify-end gap-2.5 border-t border-[#e5ebe0] bg-[#fffefb] px-6 py-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={on_close}
+              disabled={busy}
+              className="h-10 rounded-lg border-[#dce3d6] px-4 text-xs font-medium text-[#475d45]"
+            >
+              Hủy bỏ
+            </Button>
+            <Button
+              type="submit"
+              disabled={busy}
+              className="h-10 rounded-lg px-4 text-xs font-semibold"
+            >
+              {busy ? 'Đang lưu...' : 'Lưu mật khẩu mới'}
+            </Button>
+          </footer>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
