@@ -43,8 +43,11 @@ export function postgres_user_routes() {
           'SELECT id,username,role,status,login_locked FROM users ORDER BY id FOR UPDATE',
         )
       ).rows;
-      const target = users.find((user) => user.id === id);
       const actor = String(res.locals.adminUser.id).toUpperCase();
+      const current = users.find((user) => user.id === actor);
+      if (current?.role !== 'admin' || current.status !== 'active' || current.login_locked)
+        throw new UserError(403, 'Chỉ Admin được quản lý tài khoản.');
+      const target = users.find((user) => user.id === id);
       if (!target) throw new UserError(404, 'Tài khoản không tồn tại.');
       if (target.username.toLowerCase() === 'admin' && status === 'disabled')
         throw new UserError(403, 'Không thể khóa tài khoản root admin.');
@@ -93,17 +96,23 @@ export function postgres_user_routes() {
           'SELECT id,username,role,status,login_locked FROM users ORDER BY id FOR UPDATE',
         )
       ).rows;
+      const current = users.find((user) => user.id === actor);
+      if (current?.role !== 'admin' || current.status !== 'active' || current.login_locked)
+        throw new UserError(403, 'Chỉ Admin được quản lý tài khoản.');
       const target = users.find((user) => user.id === id);
       if (!creating && !target) throw new UserError(404, 'Tài khoản không tồn tại.');
+      const target_is_root = target?.username.toLowerCase() === 'admin';
+      if (input.username.toLowerCase() === 'admin' && !target_is_root)
+        throw new UserError(403, 'Tên admin dành riêng cho tài khoản Root.');
       if (
-        target?.username.toLowerCase() === 'admin' &&
-        (input.status !== 'active' || input.role !== 'admin' || input.username !== 'admin')
+        target_is_root &&
+        (input.status !== 'active' || input.role !== 'admin' || input.username !== target.username)
       )
         throw new UserError(
           403,
           'Tài khoản root admin không được khóa, đổi tên đăng nhập hoặc hạ quyền.',
         );
-      if (target?.role === 'admin' && id !== actor)
+      if (target?.role === 'admin' && id !== actor && current.username.toLowerCase() !== 'admin')
         throw new UserError(403, 'Không được chỉnh sửa hoặc đổi mật khẩu tài khoản Admin khác.');
       if (target?.login_locked && input.status === 'active')
         throw new UserError(409, 'Vui lòng dùng nút Mở khóa để Admin khác mở lại tài khoản.');

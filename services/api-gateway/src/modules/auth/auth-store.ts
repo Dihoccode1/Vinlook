@@ -14,6 +14,12 @@ export interface AuthStore {
   create_session(hash: string, user: AdminUser, expires: Date): Promise<boolean>;
   find_session(hash: string): Promise<AdminUser | undefined>;
   revoke_session(hash: string): Promise<void>;
+  change_password(
+    actor: AdminUser,
+    session_hash: string,
+    target_id: string,
+    new_hash: string,
+  ): Promise<boolean>;
 }
 export type LoginResult =
   | { kind: 'success'; user: AdminUser }
@@ -54,6 +60,39 @@ export async function close_auth_pool() {
 }
 
 const mssql_auth_store: AuthStore = {
+  async change_password(actor, session_hash, target_id, new_hash) {
+    const pool = await auth_pool();
+    const result = await pool
+      .request()
+      .input('actor_id', sql.VarChar(36), actor.id)
+      .input('target_id', sql.VarChar(36), target_id)
+      .input('old_hash', sql.VarChar(200), actor.password_hash)
+      .input('new_hash', sql.VarChar(200), new_hash)
+      .input('session_hash', sql.Char(64), session_hash).query<{ changed: boolean }>(`
+        SET XACT_ABORT ON;
+        BEGIN TRANSACTION;
+        UPDATE target SET password_hash=@new_hash,failed_login_count=0,login_retry_at=NULL
+        FROM dbo.users target
+        WHERE target.id=@target_id
+          AND EXISTS (
+            SELECT 1 FROM dbo.users actor WITH(UPDLOCK,HOLDLOCK)
+            JOIN dbo.admin_sessions s ON s.user_id=actor.id
+            WHERE actor.id=@actor_id AND actor.password_hash=@old_hash
+              AND actor.status='active' AND actor.login_locked=0
+              AND s.token_hash=@session_hash AND s.revoked_at IS NULL
+              AND s.expires_at>SYSUTCDATETIME()
+              AND (target.id=actor.id OR (actor.role='admin' AND
+                (target.role='staff' OR LOWER(actor.username) COLLATE Latin1_General_100_BIN2=N'admin')))
+          );
+        IF @@ROWCOUNT=0
+        BEGIN SELECT CAST(0 AS BIT) AS changed; COMMIT TRANSACTION; RETURN; END;
+        UPDATE dbo.admin_sessions SET revoked_at=SYSUTCDATETIME() WHERE user_id=@target_id AND revoked_at IS NULL;
+        INSERT INTO dbo.system_logs(user_id,component,level,action,message)
+          VALUES(@actor_id,'admin-auth','info','password_change',CONCAT(N'Đã đổi mật khẩu tài khoản ',@target_id));
+        COMMIT TRANSACTION;
+        SELECT CAST(1 AS BIT) AS changed;`);
+    return result.recordset[0]?.changed === true;
+  },
   async login(username, password) {
     const tx = new sql.Transaction(await auth_pool());
     await tx.begin();

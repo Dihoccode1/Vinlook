@@ -1852,15 +1852,6 @@
     background: #e5efdc;
     border-color: #8fac80;
   }
-  .account-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 8px;
-  }
-  .account-actions button {
-    white-space: nowrap;
-  }
   .user-management .account-actions .account-lock {
     background: #fff2ed;
     border: 1px solid #e3bbae;
@@ -1879,17 +1870,9 @@
     background: #dfecd6;
     border-color: #93b481;
   }
-  @media (max-width: 760px) {
-    .account-actions {
-      justify-content: flex-end;
-    }
-  }
   .user-management .table-wrap th:last-child,
   .user-management .table-wrap td:last-child {
     text-align: center;
-  }
-  .user-management .account-actions {
-    justify-content: center;
   }
   .user-dialog .password-pair {
     grid-column: 1/-1;

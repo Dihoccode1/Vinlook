@@ -27,6 +27,7 @@ export function AdminAccess() {
   const [show_password, set_show_password] = useState(false);
   const [busy, set_busy] = useState(false);
   const [error, set_error] = useState('');
+  const [password_changed, set_password_changed] = useState(false);
   const [retry_at, set_retry_at] = useState(0);
   const [now, set_now] = useState(Date.now);
   const [retry_user, set_retry_user] = useState('');
@@ -84,6 +85,7 @@ export function AdminAccess() {
     if (busy || retry_seconds > 0) return;
     set_busy(true);
     set_error('');
+    set_password_changed(false);
     set_show_password(false);
 
     try {
@@ -147,7 +149,22 @@ export function AdminAccess() {
 
   // Khi đã đăng nhập hợp lệ, render giao diện chính ứng dụng quản trị
   if (user) {
-    return <App key={user.id} user={user} on_logout={logout} />;
+    return (
+      <App
+        key={user.id}
+        user={user}
+        on_logout={logout}
+        on_password_changed={() => {
+          set_username(user.username);
+          set_password('');
+          set_show_password(false);
+          set_error('');
+          set_retry_at(0);
+          set_password_changed(true);
+          set_user(null);
+        }}
+      />
+    );
   }
 
   // Màn hình form đăng nhập
@@ -220,6 +237,9 @@ export function AdminAccess() {
             <p className="error-banner" role="alert">
               {error}
             </p>
+          )}
+          {password_changed && (
+            <p role="status">Đã đổi mật khẩu. Hãy đăng nhập bằng mật khẩu mới.</p>
           )}
 
           <Button className="primary w-full" type="submit" disabled={busy || retry_seconds > 0}>

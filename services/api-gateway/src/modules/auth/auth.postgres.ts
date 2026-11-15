@@ -3,6 +3,40 @@ import { password_matches, failed_login_state } from './login-policy.js';
 import type { AuthStore, AdminUser } from './auth-store.js';
 
 export const postgres_auth_store: AuthStore = {
+  async change_password(actor, session_hash, target_id, new_hash) {
+    return transaction(async (tx) => {
+      await tx.query('SELECT id FROM users WHERE id IN ($1,$2) ORDER BY id FOR UPDATE', [
+        actor.id,
+        target_id,
+      ]);
+      const current = (
+        await tx.query(
+          `SELECT actor.role,lower(actor.username)='admin' AS is_root
+           FROM users actor JOIN admin_sessions s ON s.user_id=actor.id
+           WHERE actor.id=$1 AND actor.password_hash=$2 AND actor.status='active' AND NOT actor.login_locked
+             AND s.token_hash=$3 AND s.revoked_at IS NULL AND s.expires_at>now()`,
+          [actor.id, actor.password_hash, session_hash],
+        )
+      ).rows[0];
+      if (!current) return false;
+      const result = await tx.query(
+        `UPDATE users SET password_hash=$2,failed_login_count=0,login_retry_at=NULL
+         WHERE id=$1 AND (id=$3 OR ($4='admin' AND (role='staff' OR $5::boolean)))`,
+        [target_id, new_hash, actor.id, current.role, current.is_root],
+      );
+      if (!result.rowCount) return false;
+      await tx.query(
+        'UPDATE admin_sessions SET revoked_at=now() WHERE user_id=$1 AND revoked_at IS NULL',
+        [target_id],
+      );
+      await tx.query(
+        `INSERT INTO system_logs(user_id,component,level,action,message)
+         VALUES($1,'admin-auth','info','password_change',$2)`,
+        [actor.id, `Đã đổi mật khẩu tài khoản ${target_id}`],
+      );
+      return true;
+    });
+  },
   async login(username, password) {
     return transaction(async (tx) => {
       const row = (

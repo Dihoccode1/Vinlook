@@ -14,6 +14,8 @@ export type IconKind =
   | 'search'
   | 'listen'
   | 'user'
+  | 'key'
+  | 'arrow-up'
   | 'close'
   | 'plus'
   | 'refresh'
@@ -27,6 +29,8 @@ interface IconProps {
 
 const ICON_PATHS: Record<IconKind, string> = {
   user: 'M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2',
+  key: 'M15.5 3a5.5 5.5 0 0 0-5.2 7.3L3 17.6V21h3.4l2-2H11v-2.6l2.7-2.7A5.5 5.5 0 1 0 15.5 3z M16.5 7.5h.01',
+  'arrow-up': 'M12 20V4m-6 6 6-6 6 6',
   listen: 'M4 14v-3a8 8 0 0 1 16 0v3 M4 13H2v7h5v-7z M20 13h2v7h-5v-7z',
   grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
   pin: 'M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0z M12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6',

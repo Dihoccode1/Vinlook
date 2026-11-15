@@ -58,6 +58,12 @@ function setup(role: 'admin' | 'staff' = 'admin', now = Date.now) {
     revoke_session: async (hash) => {
       sessions.delete(hash);
     },
+    change_password: async (actor, hash, target_id, new_hash) => {
+      if (actor.id !== target_id || !sessions.has(hash)) return false;
+      user.password_hash = new_hash;
+      sessions.clear();
+      return true;
+    },
   };
   app.use('/api/admin', admin_auth(options, store));
   app.get('/api/admin/private', (req, res) =>
