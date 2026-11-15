@@ -53,10 +53,30 @@ for (const endpoint of [
   '/api/pois?limit=1',
 ]) {
   // Authenticate to the exact protected deployment; leave Deployment Protection enabled.
-  const body = vercel(
-    ['curl', `${staged}${endpoint}`, '--', '--fail', '--silent', '--show-error'],
-    true,
-  );
+  // A Ready deployment can take a few seconds to respond at the edge.
+  let body;
+  try {
+    body = vercel(
+      [
+        'curl',
+        `${staged}${endpoint}`,
+        '--',
+        '--fail',
+        '--silent',
+        '--show-error',
+        '--max-time',
+        '15',
+        '--retry',
+        '4',
+        '--retry-all-errors',
+        '--retry-delay',
+        '2',
+      ],
+      true,
+    );
+  } catch (error) {
+    throw new Error(`Staged Vercel check failed: ${endpoint}`, { cause: error });
+  }
   if (endpoint === '/health/ready' && JSON.parse(body).status !== 'ok')
     throw new Error('Staged API is not ready');
   if (endpoint.startsWith('/api/pois') && !Array.isArray(JSON.parse(body).data))
