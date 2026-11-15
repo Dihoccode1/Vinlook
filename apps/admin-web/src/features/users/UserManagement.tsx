@@ -404,32 +404,6 @@ export function UserManagement({
                   </label>
                 )}
 
-                <label>
-                  Quyền hạn
-                  <select
-                    value={form.role}
-                    disabled={busy || editing?.id.toLowerCase() === current_user_id.toLowerCase()}
-                    onChange={(e) => set_form({ ...form, role: e.target.value as User['role'] })}
-                  >
-                    <option value="staff">Staff (Nhân viên)</option>
-                    <option value="admin">Admin (Quản trị viên)</option>
-                  </select>
-                </label>
-
-                <label>
-                  Trạng thái
-                  <select
-                    value={form.status}
-                    disabled={busy || editing?.username.toLowerCase() === 'admin'}
-                    onChange={(e) =>
-                      set_form({ ...form, status: e.target.value as User['status'] })
-                    }
-                  >
-                    <option value="active">Đang hoạt động</option>
-                    <option value="disabled">Đã khóa</option>
-                  </select>
-                </label>
-
                 {!editing && (
                   <div className="password-pair form-grid">
                     <label>
@@ -469,6 +443,32 @@ export function UserManagement({
                     </label>
                   </div>
                 )}
+
+                <label>
+                  Quyền hạn
+                  <select
+                    value={form.role}
+                    disabled={busy || editing?.id.toLowerCase() === current_user_id.toLowerCase()}
+                    onChange={(e) => set_form({ ...form, role: e.target.value as User['role'] })}
+                  >
+                    <option value="staff">Staff (Nhân viên)</option>
+                    <option value="admin">Admin (Quản trị viên)</option>
+                  </select>
+                </label>
+
+                <label>
+                  Trạng thái
+                  <select
+                    value={form.status}
+                    disabled={busy || editing?.username.toLowerCase() === 'admin'}
+                    onChange={(e) =>
+                      set_form({ ...form, status: e.target.value as User['status'] })
+                    }
+                  >
+                    <option value="active">Đang hoạt động</option>
+                    <option value="disabled">Đã khóa</option>
+                  </select>
+                </label>
               </div>
 
               {error && (
