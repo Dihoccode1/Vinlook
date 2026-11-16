@@ -26,7 +26,45 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
     VALUES('POI900','existing-poi','Điểm đã có','Nội dung gốc','Địa chỉ',10.7,106.6,'history')`);
   await query(`INSERT INTO poi_images(poi_id,content,content_type,sha256)
     VALUES('POI900',decode('010203','hex'),'image/jpeg',repeat('0',64))`);
+  await query("INSERT INTO visit_sessions(id) VALUES('VST900')");
+  await query(
+    "INSERT INTO usage_events(session_id,poi_id,event_type) VALUES('VST900','POI900','poi_view')",
+  );
+  await assert.rejects(migrate(), /usage_events contains data/);
+  assert.equal((await query('SELECT id FROM usage_events')).rowCount, 1);
+  await query("DELETE FROM usage_events WHERE session_id='VST900'");
+  await assert.rejects(migrate(), /visit_sessions contains data/);
+  assert.equal((await query('SELECT id FROM visit_sessions')).rowCount, 1);
+  await query("DELETE FROM visit_sessions WHERE id='VST900'");
+
+  await query(`INSERT INTO poi_narrations(poi_id,language_code,content_hash,storage_path,bytes,file_path,duration_seconds)
+    VALUES('POI900','vi',repeat('0',64),'narrations/test.wav',3,'legacy.wav',10)`);
+  await assert.rejects(migrate(), /retired narration columns contain data/);
+  assert.deepEqual((await query('SELECT file_path,duration_seconds FROM poi_narrations')).rows, [
+    { file_path: 'legacy.wav', duration_seconds: 10 },
+  ]);
+  await query(
+    "UPDATE poi_narrations SET file_path=NULL,duration_seconds=NULL WHERE poi_id='POI900'",
+  );
   await migrate();
+  assert.deepEqual(
+    (
+      await query(`SELECT to_regclass('vinlook.usage_events') AS events,
+      to_regclass('vinlook.visit_sessions') AS visits`)
+    ).rows,
+    [{ events: null, visits: null }],
+  );
+  assert.equal(
+    (
+      await query(`SELECT 1 FROM information_schema.columns
+      WHERE table_schema='vinlook' AND table_name='poi_narrations'
+        AND column_name IN ('file_path','duration_seconds')`)
+    ).rowCount,
+    0,
+  );
+  assert.deepEqual((await query('SELECT poi_id,storage_path,bytes FROM poi_narrations')).rows, [
+    { poi_id: 'POI900', storage_path: 'narrations/test.wav', bytes: 3 },
+  ]);
   assert.equal(
     (
       await query(

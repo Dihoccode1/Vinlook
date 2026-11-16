@@ -16,15 +16,17 @@ const order = [
   'users',
   'pois',
   'poi_images',
-  'visit_sessions',
-  'usage_events',
   'system_logs',
   'admin_sessions',
   'poi_translations',
   'poi_narrations',
 ];
-for (const name of Object.keys(tables))
-  if (!order.includes(name)) throw new Error(`Unmapped source table: ${name}`);
+for (const name of Object.keys(tables)) {
+  if (order.includes(name)) continue;
+  if (name !== 'visit_sessions' && name !== 'usage_events')
+    throw new Error(`Unmapped source table: ${name}`);
+  if (tables[name].length) throw new Error(`Cannot import records from retired table: ${name}`);
+}
 const quote = (name) => '"' + name.replaceAll('"', '""') + '"';
 const decode = (value) =>
   value?.type === 'Buffer' && Array.isArray(value.data) ? Buffer.from(value.data) : value;
@@ -53,9 +55,16 @@ try {
         ).rows.map((row) => row.column_name),
       );
       for (const row of tables[name] || []) {
-        const columns = Object.keys(row).filter(
-          (col) => !(name === 'pois' && col === 'slug' && !available.has(col)),
-        );
+        const columns = Object.keys(row).filter((col) => {
+          if (available.has(col)) return true;
+          if (name === 'pois' && col === 'slug') return false;
+          if (name === 'poi_narrations' && (col === 'file_path' || col === 'duration_seconds')) {
+            if (row[col] !== null)
+              throw new Error(`Cannot import value from retired column: ${name}.${col}`);
+            return false;
+          }
+          return true;
+        });
         for (const col of columns)
           if (!available.has(col)) throw new Error(`Unmapped column: ${name}.${col}`);
         const values = columns.map((col) => decode(row[col]));
@@ -97,7 +106,7 @@ try {
       if (count !== (tables[name] || []).length)
         throw new Error(`Imported row count mismatch: ${name}`);
     }
-    for (const name of ['users', 'pois', 'visit_sessions', 'poi_translations', 'poi_narrations']) {
+    for (const name of ['users', 'pois', 'poi_translations', 'poi_narrations']) {
       const maximum = (
         await tx.query(
           `SELECT COALESCE(max(substring(id COLLATE "C" from '[0-9]+$')::bigint),0)::text AS n FROM ${quote(name)}`,
@@ -108,11 +117,9 @@ try {
         String(BigInt(maximum) + 1n),
       ]);
     }
-    for (const name of ['usage_events', 'system_logs'])
-      await tx.query(
-        `SELECT setval(pg_get_serial_sequence($1,'id'),COALESCE((SELECT max(id) FROM ${quote(name)}),0)+1,false)`,
-        ['vinlook.' + name],
-      );
+    await tx.query(
+      `SELECT setval(pg_get_serial_sequence('vinlook.system_logs','id'),COALESCE((SELECT max(id) FROM system_logs),0)+1,false)`,
+    );
     await tx.query('INSERT INTO deployment_state(id,dataset_id,source_sha256) VALUES(1,$1,$2)', [
       dataset,
       hash,
