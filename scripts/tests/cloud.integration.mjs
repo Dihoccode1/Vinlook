@@ -22,8 +22,10 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
     );
   }
   await migrate(pathToFileURL(old_migrations + '/'));
-  await query(`INSERT INTO pois(id,slug,name,description,address,latitude,longitude,category)
-    VALUES('POI900','existing-poi','Điểm đã có','Nội dung gốc','Địa chỉ',10.7,106.6,'history')`);
+  await query(`INSERT INTO pois(id,slug,name,description,address,latitude,longitude,category,image_credit)
+    VALUES('POI900','existing-poi','Điểm đã có','Nội dung gốc','Địa chỉ',10.7,106.6,'history','Ảnh gốc')`);
+  await query(`INSERT INTO pois(id,slug,name,description,address,latitude,longitude,category,image_url)
+    VALUES('POI901','existing-link','Điểm có ảnh URL','Nội dung gốc','Địa chỉ',10.7,106.6,'history','https://example.test/photo.png')`);
   await query(`INSERT INTO poi_images(poi_id,content,content_type,sha256)
     VALUES('POI900',decode('010203','hex'),'image/jpeg',repeat('0',64))`);
   await query("INSERT INTO visit_sessions(id) VALUES('VST900')");
@@ -75,16 +77,36 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
   );
   const preserved = (
     await query(
-      "SELECT p.name,p.description,encode(i.content,'hex') AS image FROM pois p JOIN poi_images i ON i.poi_id=p.id WHERE p.id='POI900'",
+      `SELECT p.name,p.description,encode(i.content,'hex') AS image,i.image_credit
+       FROM pois p JOIN poi_images i ON i.poi_id=p.poi_id WHERE p.poi_id='POI900'`,
     )
   ).rows[0];
-  assert.deepEqual(preserved, { name: 'Điểm đã có', description: 'Nội dung gốc', image: '010203' });
+  assert.deepEqual(preserved, {
+    name: 'Điểm đã có',
+    description: 'Nội dung gốc',
+    image: '010203',
+    image_credit: 'Ảnh gốc',
+  });
+  assert.deepEqual(
+    (await query("SELECT image_url,content FROM poi_images WHERE poi_id='POI901'")).rows,
+    [{ image_url: 'https://example.test/photo.png', content: null }],
+  );
+  await assert.rejects(
+    query(`INSERT INTO poi_translations(poi_id,language_code,source_language,source_hash,name,description,provider,translated_at)
+      VALUES('POI999','en','vi',repeat('0',64),'Test','Test','test',now())`),
+    { code: '23503' },
+  );
+  await assert.rejects(
+    query(`INSERT INTO poi_narrations(poi_id,language_code,content_hash,storage_path)
+      VALUES('POI999','en',repeat('0',64),'narrations/test.wav')`),
+    { code: '23503' },
+  );
   await migrate();
   const dataset = 'c527f7eb-9d7e-4e62-9d68-1c7df8ef1c7a';
   const salt = randomBytes(16).toString('hex');
   const hash = salt + ':' + scryptSync('CloudFixtureOnly_123!', salt, 64).toString('hex');
   await query(
-    `INSERT INTO users(id,username,password_hash,full_name) VALUES('USR900','admin',$1,'CI administrator')`,
+    `INSERT INTO users(user_id,username,password_hash,full_name) VALUES('USR900','admin',$1,'CI administrator')`,
     [hash],
   );
   await query('INSERT INTO deployment_state(id,dataset_id,source_sha256) VALUES(1,$1,$2)', [
@@ -151,6 +173,15 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
       poi = (await created.json()).data;
       assert.equal(poi.image_credit, 'Vinlook test');
       assert.equal(poi.image_url, `/api/pois/${poi.id}/image`);
+      await query(
+        `INSERT INTO poi_images(poi_id,content,content_type,sha256)
+         VALUES($1,decode('040506','hex'),'image/png',repeat('1',64))`,
+        [poi.id],
+      );
+      const photographs = await query('SELECT poi_image_id FROM poi_images WHERE poi_id=$1', [
+        poi.id,
+      ]);
+      assert.equal(new Set(photographs.rows.map((row) => row.poi_image_id)).size, 2);
       const photo = await request(poi.image_url);
       assert.equal(photo.status, 200);
       assert.deepEqual(Buffer.from(await photo.arrayBuffer()), image);
@@ -323,7 +354,7 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
         200,
       );
       cookie = rootCookie;
-      await query('UPDATE users SET failed_login_count=14 WHERE id=$1', [staffId]);
+      await query('UPDATE users SET failed_login_count=14 WHERE user_id=$1', [staffId]);
       assert.equal(
         (
           await request(
@@ -422,7 +453,7 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
       await writeFile(join(folder, '002_unsafe.sql'), "UPDATE vinlook.pois SET name='UNSAFE';");
       await assert.rejects(migrate(pathToFileURL(folder + '/')), /changed existing data/);
       assert.equal(
-        (await query('SELECT name FROM pois WHERE id=$1', [poi.id])).rows[0].name,
+        (await query('SELECT name FROM pois WHERE poi_id=$1', [poi.id])).rows[0].name,
         'Đã sửa',
       );
       assert.equal(

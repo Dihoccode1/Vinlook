@@ -3,6 +3,21 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { transaction } from '@vinlook/server/postgres';
 
+const quote = (name) => '"' + name.replaceAll('"', '""') + '"';
+const renamed_keys = {
+  users: 'user_id',
+  pois: 'poi_id',
+  poi_translations: 'poi_translation_id',
+  poi_narrations: 'poi_narration_id',
+};
+const photo_metadata = ['image_url', 'image_credit', 'image_source_url', 'image_license_url'];
+
+function fingerprint_sql(columns, source, filter = '') {
+  return `SELECT md5(row_to_json(row)::text) AS hash
+          FROM (SELECT ${columns.join(',')} FROM ${source} ${filter}) row
+          ORDER BY hash`;
+}
+
 export async function migrate(folder = new URL('../database/postgres/', import.meta.url)) {
   await transaction(async (tx) => {
     await tx.query("SELECT pg_advisory_xact_lock(hashtext('vinlook-schema-migrations'))");
@@ -21,6 +36,8 @@ export async function migrate(folder = new URL('../database/postgres/', import.m
       names.includes('003_drop_poi_slug.sql') && !applied.has('003_drop_poi_slug.sql');
     const unused_migration = '004_drop_unused_usage_schema.sql';
     const drop_unused = names.includes(unused_migration) && !applied.has(unused_migration);
+    const poi_migration = '006_apply_poi_schema.sql';
+    const apply_poi_schema = names.includes(poi_migration) && !applied.has(poi_migration);
     const retired_tables = ['usage_events', 'visit_sessions'];
     const retired_narration_columns = ['file_path', 'duration_seconds'];
     const existing = (
@@ -29,7 +46,7 @@ export async function migrate(folder = new URL('../database/postgres/', import.m
       )
     ).rows;
     if (
-      (drop_slug || drop_unused) &&
+      (drop_slug || drop_unused || apply_poi_schema) &&
       process.env.VINLOOK_DATASET_ID &&
       existing.some((row) => row.table_name === 'deployment_state')
     ) {
@@ -50,20 +67,36 @@ export async function migrate(folder = new URL('../database/postgres/', import.m
           [name],
         )
       ).rows
-        .filter(({ column_name }) => {
+        .map(({ column_name }) => column_name)
+        .filter((column_name) => {
           if (drop_slug && name === 'pois' && column_name === 'slug') return false;
           return !(
             drop_unused &&
             name === 'poi_narrations' &&
             retired_narration_columns.includes(column_name)
           );
-        })
-        .map((row) => '"' + row.column_name.replaceAll('"', '""') + '"')
-        .join(',');
-      const table = 'vinlook."' + name.replaceAll('"', '""') + '"';
+        });
+      const table = 'vinlook.' + quote(name);
       await tx.query(`LOCK TABLE ${table} IN SHARE ROW EXCLUSIVE MODE`);
-      const sql = `SELECT md5(row_to_json(row)::text) AS hash FROM (SELECT ${columns} FROM ${table}) row ORDER BY hash`;
-      fingerprints.push({ sql, before: JSON.stringify((await tx.query(sql)).rows) });
+      const before_sql = fingerprint_sql(columns.map(quote), table);
+      let after_sql = before_sql;
+      if (apply_poi_schema && Object.hasOwn(renamed_keys, name)) {
+        const after_columns = columns.map((column) => {
+          if (column === 'id') return `p.${quote(renamed_keys[name])} AS "id"`;
+          if (name === 'pois' && photo_metadata.includes(column)) return `f.${quote(column)}`;
+          return `p.${quote(column)}`;
+        });
+        const source =
+          name === 'pois'
+            ? `${table} p LEFT JOIN vinlook_runtime.poi_photos f ON f.poi_id=p.poi_id`
+            : `${table} p`;
+        after_sql = fingerprint_sql(after_columns, source);
+      }
+      if (apply_poi_schema && name === 'poi_images') {
+        // Some legacy POIs have URL metadata only. Existing binary rows must match exactly.
+        after_sql = fingerprint_sql(columns.map(quote), table, 'WHERE content IS NOT NULL');
+      }
+      fingerprints.push({ after_sql, before: JSON.stringify((await tx.query(before_sql)).rows) });
     }
     for (const name of names) {
       const source = await readFile(new URL(name, folder), 'utf8');
@@ -81,7 +114,7 @@ export async function migrate(folder = new URL('../database/postgres/', import.m
       ]);
     }
     for (const saved of fingerprints)
-      if (JSON.stringify((await tx.query(saved.sql)).rows) !== saved.before)
+      if (JSON.stringify((await tx.query(saved.after_sql)).rows) !== saved.before)
         throw new Error(
           'Migration changed existing data. Transaction rolled back; review and back up before a data migration.',
         );

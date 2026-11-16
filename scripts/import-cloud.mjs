@@ -21,12 +21,64 @@ const order = [
   'poi_translations',
   'poi_narrations',
 ];
+const code_columns = {
+  users: 'user_id',
+  pois: 'poi_id',
+  poi_images: 'poi_image_id',
+  poi_translations: 'poi_translation_id',
+  poi_narrations: 'poi_narration_id',
+};
+const photo_columns = ['image_url', 'image_credit', 'image_source_url', 'image_license_url'];
 for (const name of Object.keys(tables)) {
   if (order.includes(name)) continue;
   if (name !== 'visit_sessions' && name !== 'usage_events')
     throw new Error(`Unmapped source table: ${name}`);
   if (tables[name].length) throw new Error(`Cannot import records from retired table: ${name}`);
 }
+for (const [name, column] of Object.entries(code_columns)) {
+  for (const row of tables[name] ?? []) {
+    if (!Object.hasOwn(row, 'id')) continue;
+    if (Object.hasOwn(row, column) && row.id !== row[column])
+      throw new Error(`Conflicting identifiers in backup: ${name}.${column}`);
+    row[column] = row.id;
+    delete row.id;
+  }
+}
+
+const images = (tables.poi_images ??= []);
+const images_by_poi = Map.groupBy(images, (row) => row.poi_id.toUpperCase());
+for (const row of tables.pois ?? []) {
+  const metadata = {};
+  for (const column of photo_columns) {
+    if (Object.hasOwn(row, column)) {
+      metadata[column] = row[column];
+      delete row[column];
+    }
+  }
+  if (!Object.values(metadata).some((value) => value != null)) continue;
+  const existing = images_by_poi.get(row.poi_id.toUpperCase()) ?? [];
+  if (existing.length > 1) throw new Error(`Ambiguous photo metadata for POI ${row.poi_id}`);
+  if (!existing.length) {
+    images.push({ poi_id: row.poi_id, updated_at: row.updated_at, ...metadata });
+    continue;
+  }
+  for (const [column, value] of Object.entries(metadata)) {
+    if (Object.hasOwn(existing[0], column) && existing[0][column] !== value)
+      throw new Error(`Conflicting photo metadata for POI ${row.poi_id}.${column}`);
+    existing[0][column] = value;
+  }
+}
+
+let maximum_image_id = 0n;
+for (const row of images) {
+  const code = /^IMG(\d+)$/i.exec(row.poi_image_id ?? '')?.[1];
+  if (code && BigInt(code) > maximum_image_id) maximum_image_id = BigInt(code);
+}
+for (const row of images) {
+  if (!Object.hasOwn(row, 'poi_image_id'))
+    row.poi_image_id = 'IMG' + String(++maximum_image_id).padStart(3, '0');
+}
+
 const quote = (name) => '"' + name.replaceAll('"', '""') + '"';
 const decode = (value) =>
   value?.type === 'Buffer' && Array.isArray(value.data) ? Buffer.from(value.data) : value;
@@ -74,17 +126,16 @@ try {
         );
         // Compare all imported values, including images, audio, and password hashes.
         const primary =
-          name === 'poi_images'
-            ? ['poi_id']
-            : name === 'admin_sessions'
-              ? ['token_hash']
-              : ['poi_translations', 'poi_narrations'].includes(name)
-                ? ['poi_id', 'language_code']
-                : ['id'];
+          name === 'admin_sessions'
+            ? ['token_hash']
+            : name === 'poi_translations' || name === 'poi_narrations'
+              ? ['poi_id', 'language_code']
+              : [code_columns[name] ?? 'id'];
         const saved = (
           await tx.query(
-            `SELECT ${columns.map(quote).join(',')} FROM ${quote(name)} WHERE ${primary.map((col, i) => quote(col) + '=$' + (i + 1)).join(' AND ')}`,
-            primary.map((col) => row[col]),
+            `SELECT ${columns.map(quote).join(',')} FROM ${quote(name)}
+             WHERE ${primary.map((column, i) => `${quote(column)}=$${i + 1}`).join(' AND ')}`,
+            primary.map((column) => row[column]),
           )
         ).rows[0];
         for (const col of columns) {
@@ -106,10 +157,10 @@ try {
       if (count !== (tables[name] || []).length)
         throw new Error(`Imported row count mismatch: ${name}`);
     }
-    for (const name of ['users', 'pois', 'poi_translations', 'poi_narrations']) {
+    for (const [name, column] of Object.entries(code_columns)) {
       const maximum = (
         await tx.query(
-          `SELECT COALESCE(max(substring(id COLLATE "C" from '[0-9]+$')::bigint),0)::text AS n FROM ${quote(name)}`,
+          `SELECT COALESCE(max(substring(${quote(column)} COLLATE "C" from '[0-9]+$')::bigint),0)::text AS n FROM ${quote(name)}`,
         )
       ).rows[0].n;
       await tx.query('SELECT setval($1::regclass,$2::bigint,false)', [
