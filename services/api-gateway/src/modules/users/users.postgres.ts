@@ -11,12 +11,17 @@ export const postgres_users: UserRepository = {
   normalize: (id) => id.toUpperCase(),
   invalid_input_message: 'Kiểm tra thông tin tài khoản.',
   async list() {
-    return (await query(`SELECT ${fields} FROM users ORDER BY created_at DESC,username`)).rows;
+    return (
+      await query(`SELECT ${fields} FROM vinlook_runtime.users ORDER BY created_at DESC,username`)
+    ).rows;
   },
   async is_taken(username) {
     return (
-      (await query('SELECT 1 FROM users WHERE lower(username)=lower($1) LIMIT 1', [username])).rows
-        .length > 0
+      (
+        await query('SELECT 1 FROM vinlook_runtime.users WHERE lower(username)=lower($1) LIMIT 1', [
+          username,
+        ])
+      ).rows.length > 0
     );
   },
   async change_status(id, status, actor) {
@@ -24,7 +29,7 @@ export const postgres_users: UserRepository = {
       // The same lock order is used by all account changes.
       const users = (
         await tx.query<Account>(
-          'SELECT id,username,role,status,login_locked FROM users ORDER BY id FOR UPDATE',
+          'SELECT id,username,role,status,login_locked FROM vinlook_runtime.users ORDER BY id FOR UPDATE',
         )
       ).rows;
 
@@ -32,7 +37,7 @@ export const postgres_users: UserRepository = {
       assert_status_change(target!, status, actor);
       if (target!.status !== status) {
         await tx.query(
-          `UPDATE users SET status=$2::varchar,failed_login_count=CASE WHEN $2='active' THEN 0 ELSE failed_login_count END,login_retry_at=CASE WHEN $2='active' THEN NULL ELSE login_retry_at END,login_locked=CASE WHEN $2='active' THEN false ELSE login_locked END WHERE id=$1`,
+          `UPDATE vinlook_runtime.users SET status=$2::varchar,failed_login_count=CASE WHEN $2='active' THEN 0 ELSE failed_login_count END,login_retry_at=CASE WHEN $2='active' THEN NULL ELSE login_retry_at END,login_locked=CASE WHEN $2='active' THEN false ELSE login_locked END WHERE id=$1`,
           [id, status],
         );
         await tx.query(
@@ -55,18 +60,18 @@ export const postgres_users: UserRepository = {
     const saved = await transaction(async (tx) => {
       const users = (
         await tx.query<Account>(
-          'SELECT id,username,role,status,login_locked FROM users ORDER BY id FOR UPDATE',
+          'SELECT id,username,role,status,login_locked FROM vinlook_runtime.users ORDER BY id FOR UPDATE',
         )
       ).rows;
       const { current, target } = account_context(users, actor, id);
       assert_user_change(current, target, input);
       const result = creating
         ? await tx.query(
-            'INSERT INTO users(username,password_hash,full_name,role,status) VALUES($1,$2,$3,$4,$5) RETURNING id',
+            'INSERT INTO vinlook_runtime.users(username,password_hash,full_name,role,status) VALUES($1,$2,$3,$4,$5) RETURNING id',
             [input.username, hash, input.full_name, input.role, input.status],
           )
         : await tx.query(
-            'UPDATE users SET username=$2,full_name=$3,role=$4,status=$5,password_hash=COALESCE($6,password_hash) WHERE id=$1 RETURNING id',
+            'UPDATE vinlook_runtime.users SET username=$2,full_name=$3,role=$4,status=$5,password_hash=COALESCE($6,password_hash) WHERE id=$1 RETURNING id',
             [id, input.username, input.full_name, input.role, input.status, hash],
           );
       const saved_id = result.rows[0].id;

@@ -141,9 +141,19 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
         source_language: 'vi',
         is_published: true,
       };
-      const created = await request('/api/admin/pois', 'POST', input);
+      const image = Buffer.from('89504e470d0a1a0a01020304', 'hex');
+      const created = await request('/api/admin/pois', 'POST', {
+        ...input,
+        image_credit: 'Vinlook test',
+        image: { content_type: 'image/png', base64: image.toString('base64') },
+      });
       assert.equal(created.status, 201);
       poi = (await created.json()).data;
+      assert.equal(poi.image_credit, 'Vinlook test');
+      assert.equal(poi.image_url, `/api/pois/${poi.id}/image`);
+      const photo = await request(poi.image_url);
+      assert.equal(photo.status, 200);
+      assert.deepEqual(Buffer.from(await photo.arrayBuffer()), image);
       const second = await request('/api/admin/pois', 'POST', { ...input, is_published: false });
       assert.equal(second.status, 201);
       const draft = (await second.json()).data;

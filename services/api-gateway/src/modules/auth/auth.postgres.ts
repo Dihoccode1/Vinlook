@@ -5,14 +5,14 @@ import type { AuthStore, AdminUser } from './auth-store.js';
 export const postgres_auth_store: AuthStore = {
   async change_password(actor, session_hash, target_id, new_hash) {
     return transaction(async (tx) => {
-      await tx.query('SELECT id FROM users WHERE id IN ($1,$2) ORDER BY id FOR UPDATE', [
-        actor.id,
-        target_id,
-      ]);
+      await tx.query(
+        'SELECT id FROM vinlook_runtime.users WHERE id IN ($1,$2) ORDER BY id FOR UPDATE',
+        [actor.id, target_id],
+      );
       const current = (
         await tx.query(
           `SELECT actor.role,lower(actor.username)='admin' AS is_root
-           FROM users actor JOIN admin_sessions s ON s.user_id=actor.id
+           FROM vinlook_runtime.users actor JOIN admin_sessions s ON s.user_id=actor.id
            WHERE actor.id=$1 AND actor.password_hash=$2 AND actor.status='active' AND NOT actor.login_locked
              AND s.token_hash=$3 AND s.revoked_at IS NULL AND s.expires_at>now()`,
           [actor.id, actor.password_hash, session_hash],
@@ -20,7 +20,7 @@ export const postgres_auth_store: AuthStore = {
       ).rows[0];
       if (!current) return false;
       const result = await tx.query(
-        `UPDATE users SET password_hash=$2,failed_login_count=0,login_retry_at=NULL
+        `UPDATE vinlook_runtime.users SET password_hash=$2,failed_login_count=0,login_retry_at=NULL
          WHERE id=$1 AND (id=$3 OR ($4='admin' AND (role='staff' OR $5::boolean)))`,
         [target_id, new_hash, actor.id, current.role, current.is_root],
       );
@@ -41,7 +41,7 @@ export const postgres_auth_store: AuthStore = {
     return transaction(async (tx) => {
       const row = (
         await tx.query(
-          `SELECT *,clock_timestamp() AS server_now FROM users WHERE lower(username)=lower($1) FOR UPDATE`,
+          `SELECT *,clock_timestamp() AS server_now FROM vinlook_runtime.users WHERE lower(username)=lower($1) FOR UPDATE`,
           [username],
         )
       ).rows[0];
@@ -58,9 +58,10 @@ export const postgres_auth_store: AuthStore = {
           retry_after: Math.ceil((row.login_retry_at.getTime() - row.server_now.getTime()) / 1000),
         };
       if (await password_matches(password, row.password_hash)) {
-        await tx.query('UPDATE users SET failed_login_count=0,login_retry_at=NULL WHERE id=$1', [
-          row.id,
-        ]);
+        await tx.query(
+          'UPDATE vinlook_runtime.users SET failed_login_count=0,login_retry_at=NULL WHERE id=$1',
+          [row.id],
+        );
         return {
           kind: 'success',
           user: {
@@ -73,7 +74,7 @@ export const postgres_auth_store: AuthStore = {
       }
       const state = failed_login_state(row.failed_login_count, row.server_now.getTime());
       await tx.query(
-        `UPDATE users SET failed_login_count=$2,login_retry_at=$3,login_locked=$4,status=CASE WHEN $4 THEN 'disabled' ELSE status END WHERE id=$1`,
+        `UPDATE vinlook_runtime.users SET failed_login_count=$2,login_retry_at=$3,login_locked=$4,status=CASE WHEN $4 THEN 'disabled' ELSE status END WHERE id=$1`,
         [row.id, state.failed_login_count, state.login_retry_at, state.login_locked],
       );
       if (state.login_locked) {
@@ -96,7 +97,7 @@ export const postgres_auth_store: AuthStore = {
   async find_user(username) {
     return (
       await query(
-        `SELECT id,username,password_hash,role FROM users WHERE lower(username)=lower($1) AND status='active' AND role IN ('admin','staff')`,
+        `SELECT id,username,password_hash,role FROM vinlook_runtime.users WHERE lower(username)=lower($1) AND status='active' AND role IN ('admin','staff')`,
         [username],
       )
     ).rows[0] as AdminUser | undefined;
@@ -105,7 +106,7 @@ export const postgres_auth_store: AuthStore = {
     return transaction(async (tx) => {
       const row = (
         await tx.query(
-          `SELECT id FROM users WHERE id=$1 AND status='active' AND NOT login_locked AND password_hash=$2 FOR UPDATE`,
+          `SELECT id FROM vinlook_runtime.users WHERE id=$1 AND status='active' AND NOT login_locked AND password_hash=$2 FOR UPDATE`,
           [user.id, user.password_hash],
         )
       ).rows[0];
@@ -125,7 +126,7 @@ export const postgres_auth_store: AuthStore = {
   async find_session(hash) {
     return (
       await query(
-        `SELECT u.id,u.username,u.password_hash,u.role FROM admin_sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires_at>now() AND s.revoked_at IS NULL AND u.status='active' AND NOT u.login_locked AND u.role IN ('admin','staff')`,
+        `SELECT u.id,u.username,u.password_hash,u.role FROM admin_sessions s JOIN vinlook_runtime.users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires_at>now() AND s.revoked_at IS NULL AND u.status='active' AND NOT u.login_locked AND u.role IN ('admin','staff')`,
         [hash],
       )
     ).rows[0] as AdminUser | undefined;
