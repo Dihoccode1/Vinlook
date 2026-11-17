@@ -354,18 +354,15 @@ test('cloud APIs, authorization and data-preserving migrations', async (t) => {
         200,
       );
       cookie = rootCookie;
-      await query('UPDATE users SET failed_login_count=14 WHERE user_id=$1', [staffId]);
-      assert.equal(
-        (
-          await request(
-            '/api/admin/auth/login',
-            'POST',
-            { username: 'ci_staff', password: 'wrong' },
-            false,
-          )
-        ).status,
-        423,
-      );
+      for (const expected_status of [401, 401, 423]) {
+        const response = await request(
+          '/api/admin/auth/login',
+          'POST',
+          { username: 'ci_staff', password: 'wrong' },
+          false,
+        );
+        assert.equal(response.status, expected_status);
+      }
       assert.equal(
         (await request('/api/admin/users/' + staffId + '/status', 'PATCH', { status: 'active' }))
           .status,
