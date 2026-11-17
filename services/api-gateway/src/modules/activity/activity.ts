@@ -2,29 +2,43 @@ import { Router, json } from 'express';
 import { timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 
+const activity_timeout_ms = 30_000;
+
 export function create_activity_tracker(now = Date.now) {
   const sessions = new Map<
     string,
-    { sequence: number; active: boolean; listening: boolean; seen: number }
+    { sequence: number; active: boolean; seen: number; quiet_since: number | null }
   >();
-  function prune() {
-    for (const [id, session] of sessions) if (now() - session.seen > 45000) sessions.delete(id);
+  function prune(time: number) {
+    for (const [id, session] of sessions)
+      if (time - session.seen >= activity_timeout_ms) sessions.delete(id);
   }
   return {
     heartbeat(input: { id: string; sequence: number; active: boolean; listening: boolean }) {
-      prune();
+      const time = now();
+      prune(time);
       const previous = sessions.get(input.id);
       if (previous && previous.sequence >= input.sequence) return;
       if (!previous && sessions.size >= 10000) throw new Error('ACTIVITY_CAPACITY');
-      sessions.set(input.id, { ...input, listening: input.active && input.listening, seen: now() });
+      sessions.set(input.id, {
+        sequence: input.sequence,
+        active: input.active,
+        seen: time,
+        quiet_since: input.active && input.listening ? null : (previous?.quiet_since ?? time),
+      });
     },
     snapshot() {
-      prune();
-      const active = [...sessions.values()].filter((session) => session.active);
-      return {
-        visitors: active.length,
-        listeners: active.filter((session) => session.listening).length,
-      };
+      const time = now();
+      prune(time);
+      let visitors = 0;
+      let listeners = 0;
+      for (const session of sessions.values()) {
+        if (!session.active) continue;
+        if (session.quiet_since === null) listeners++;
+        if (session.quiet_since === null || time - session.quiet_since < activity_timeout_ms)
+          visitors++;
+      }
+      return { visitors, listeners };
     },
   };
 }

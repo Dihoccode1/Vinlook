@@ -33,7 +33,7 @@ Kiểm tra: `npm run typecheck`, `npm test`, `npm run build`; kiểm tra SQL b�
 
 ## Thông số hoạt động realtime
 
-Dashboard hiện ba ô: Tổng địa điểm, Đang truy cập và Đang lắng nghe. Hai số hoạt động lấy từ Gateway, cập nhật mỗi 3 giây. User-web gửi heartbeat mỗi 10 giây và gửi ngay khi audio phát/tạm dừng/kết thúc, chuyển tab hoặc đóng trang. Phiên được tính hoạt động khi trang đang hiển thị hoặc vẫn phát audio ở nền. Phiên mất kết nối tự hết hiệu lực sau 45 giây. Một phiên/tab chỉ tính một lượt; đây không phải số người duy nhất được nhận diện.
+Dashboard hiện ba ô: Tổng địa điểm, Đang truy cập và Đang lắng nghe. Hai số hoạt động lấy từ Gateway, cập nhật mỗi 3 giây. User-web gửi heartbeat mỗi 10 giây và gửi ngay khi audio phát/tạm dừng/kết thúc, chuyển tab hoặc đóng trang. Phiên đang phát audio được tính vào cả hai ô, kể cả khi phát ở nền. Phiên đang hiển thị mà chưa phát hoặc đã dừng phát rời ô Đang truy cập sau 30 giây không nghe, kể cả khi vẫn gửi heartbeat. Phát lại sẽ đưa phiên vào cả hai ô. Phiên mất kết nối tự hết hiệu lực sau 30 giây. Mỗi tab được tính là một phiên.
 
 Chỉ gửi UUID ngẫu nhiên trong bộ nhớ, số thứ tự và trạng thái hoạt động/phát âm thanh. Không gửi GPS, IP, nội dung nghe hay thông tin tài khoản. Gateway giữ bộ đếm trong RAM, reset khi restart; triển khai nhiều Gateway cần bộ đếm dùng chung. Endpoint đọc số liệu `/api/admin/activity` vẫn yêu cầu admin key. Không dùng dữ liệu mẫu hoặc số truy cập tích lũy để thay cho số đang online.
 
