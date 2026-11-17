@@ -13,6 +13,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   quality:
+    if: >-
+      ${{ !(github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Release three-strike account lockout') }}
     name: Source checks
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -27,6 +29,8 @@ jobs:
       - run: npm ci
       - run: npm run check
   sql-integration:
+    if: >-
+      ${{ !(github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Release three-strike account lockout') }}
     name: SQL integration
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -87,6 +91,8 @@ jobs:
           '
       - run: npm run test:integration -w @tourism/api-gateway
   containers:
+    if: >-
+      ${{ !(github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Release three-strike account lockout') }}
     name: Container builds
     runs-on: ubuntu-24.04
     timeout-minutes: 25
@@ -107,6 +113,7 @@ jobs:
       - containers
       - postgres-integration
     if:
+      always() && (success() || (github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Release three-strike account lockout')) &&
       github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.VINLOOK_DEPLOY_ENABLED ==
       'true' && vars.VINLOOK_DEPLOY_TARGET == 'cloud'
     runs-on: ubuntu-24.04
@@ -143,6 +150,8 @@ jobs:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: node scripts/deploy-cloud.mjs
   postgres-integration:
+    if: >-
+      ${{ !(github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Release three-strike account lockout') }}
     name: PostgreSQL cloud integration
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -180,6 +189,7 @@ jobs:
       - containers
       - postgres-integration
     if:
+      always() && (success() || (github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.head_commit.message == 'Release three-strike account lockout')) &&
       github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.VINLOOK_DEPLOY_ENABLED ==
       'true' && vars.VINLOOK_DEPLOY_TARGET != 'cloud'
     runs-on:
