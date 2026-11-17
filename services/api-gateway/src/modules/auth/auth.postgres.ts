@@ -41,7 +41,7 @@ export const postgres_auth_store: AuthStore = {
     return transaction(async (tx) => {
       const row = (
         await tx.query(
-          `SELECT *,clock_timestamp() AS server_now FROM vinlook_runtime.users WHERE lower(username)=lower($1) FOR UPDATE`,
+          `SELECT * FROM vinlook_runtime.users WHERE lower(username)=lower($1) FOR UPDATE`,
           [username],
         )
       ).rows[0];
@@ -52,11 +52,6 @@ export const postgres_auth_store: AuthStore = {
       if (row.login_locked) return { kind: 'locked' };
       if (row.status !== 'active' || !['admin', 'staff'].includes(row.role))
         return { kind: 'invalid' };
-      if (row.login_retry_at && row.login_retry_at > row.server_now)
-        return {
-          kind: 'cooldown',
-          retry_after: Math.ceil((row.login_retry_at.getTime() - row.server_now.getTime()) / 1000),
-        };
       if (await password_matches(password, row.password_hash)) {
         await tx.query(
           'UPDATE vinlook_runtime.users SET failed_login_count=0,login_retry_at=NULL WHERE id=$1',
@@ -72,10 +67,10 @@ export const postgres_auth_store: AuthStore = {
           },
         };
       }
-      const state = failed_login_state(row.failed_login_count, row.server_now.getTime());
+      const state = failed_login_state(row.failed_login_count);
       await tx.query(
-        `UPDATE vinlook_runtime.users SET failed_login_count=$2,login_retry_at=$3,login_locked=$4,status=CASE WHEN $4 THEN 'disabled' ELSE status END WHERE id=$1`,
-        [row.id, state.failed_login_count, state.login_retry_at, state.login_locked],
+        `UPDATE vinlook_runtime.users SET failed_login_count=$2,login_retry_at=NULL,login_locked=$3,status=CASE WHEN $3 THEN 'disabled' ELSE status END WHERE id=$1`,
+        [row.id, state.failed_login_count, state.login_locked],
       );
       if (state.login_locked) {
         await tx.query(
@@ -83,15 +78,11 @@ export const postgres_auth_store: AuthStore = {
           [row.id],
         );
         await tx.query(
-          `INSERT INTO system_logs(user_id,component,level,action,message) VALUES($1,'admin-auth','warning','login_locked','Tự khóa tài khoản sau 15 lần nhập sai mật khẩu. Cần Admin khác mở khóa.')`,
+          `INSERT INTO system_logs(user_id,component,level,action,message) VALUES($1,'admin-auth','warning','login_locked','Tự khóa tài khoản sau 3 lần nhập sai mật khẩu. Cần Admin khác mở khóa.')`,
           [row.id],
         );
       }
-      return state.login_locked
-        ? { kind: 'locked' }
-        : state.retry_seconds
-          ? { kind: 'cooldown', retry_after: state.retry_seconds }
-          : { kind: 'invalid' };
+      return state.login_locked ? { kind: 'locked' } : { kind: 'invalid' };
     });
   },
   async find_user(username) {

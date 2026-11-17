@@ -6,7 +6,7 @@ import request from 'supertest';
 import { create_app } from '../../src/app.js';
 import { auth_pool, sql_auth_store } from '../../src/modules/auth/auth-store.js';
 
-test('SQL login cooldowns survive new app instances and only a different admin can unlock the 15-failure lock', async () => {
+test('SQL locks the third failed login across app instances and only a different admin can unlock it', async () => {
   const pool = await auth_pool();
   const ids: string[] = [];
   const suffix = randomUUID().replaceAll('-', '').slice(0, 12),
@@ -48,23 +48,10 @@ test('SQL login cooldowns survive new app instances and only a different admin c
       ).recordset[0];
     await login(victim, victim_name, 'test12345').expect(200);
     await login(admin, admin_name, 'test12345').expect(200);
-    for (let i = 1; i <= 15; i++) {
-      const result = await login(victim, victim_name).expect(
-        i === 15 ? 423 : i === 5 || i === 10 ? 429 : 401,
-      );
-      assert.equal((await state()).failed_login_count, i);
-      if (i === 5 || i === 10) {
-        assert.equal(Number(result.headers['retry-after']), i === 5 ? 30 : 60);
-        await login(request.agent(create_app()), victim_name, 'test12345').expect(429);
-        assert.equal((await state()).failed_login_count, i);
-        await pool
-          .request()
-          .input('id', sql.VarChar(36), victim_id)
-          .query(
-            'UPDATE dbo.users SET login_retry_at=DATEADD(SECOND,-1,SYSUTCDATETIME()) WHERE id=@id',
-          );
-      }
-    }
+    await login(victim, victim_name).expect(401);
+    await login(victim, victim_name).expect(401);
+    await login(request.agent(create_app()), victim_name).expect(423);
+    assert.equal((await state()).failed_login_count, 3);
     assert.equal((await state()).status, 'disabled');
     assert.equal((await state()).login_locked, true);
     await victim.get('/api/admin/auth/session').expect(401);
@@ -96,15 +83,15 @@ test('SQL login cooldowns survive new app instances and only a different admin c
       login_locked: false,
     });
     await login(victim, victim_name, 'test12345').expect(200);
-    for (let i = 0; i < 4; i++) await login(victim, victim_name).expect(401);
+    for (let i = 0; i < 2; i++) await login(victim, victim_name).expect(401);
     await login(victim, victim_name, 'test12345').expect(200);
     assert.equal((await state()).failed_login_count, 0);
     const concurrent = await Promise.all(
       Array.from({ length: 12 }, () => sql_auth_store.login(victim_name.toUpperCase(), 'wrong')),
     );
-    assert.equal(concurrent.filter((r) => r.kind === 'invalid').length, 4);
-    assert.equal((await state()).failed_login_count, 5);
-    assert.ok(concurrent.some((r) => r.kind === 'cooldown'));
+    assert.equal(concurrent.filter((r) => r.kind === 'invalid').length, 2);
+    assert.equal((await state()).failed_login_count, 3);
+    assert.ok(concurrent.some((r) => r.kind === 'locked'));
   } finally {
     for (const id of ids)
       await pool

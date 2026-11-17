@@ -22,7 +22,7 @@ function respond_to_login_failure(
       error: {
         code: 'ACCOUNT_LOCKED',
         message:
-          'Tài khoản đã bị khóa sau 15 lần nhập sai mật khẩu. Vui lòng liên hệ Admin khác để mở khóa.',
+          'Tài khoản đã bị khóa sau 3 lần nhập sai mật khẩu. Vui lòng liên hệ Admin khác để mở khóa.',
       },
     });
   } else if (result.kind === 'cooldown') {
